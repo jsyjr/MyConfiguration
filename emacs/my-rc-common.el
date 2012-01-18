@@ -377,9 +377,9 @@ mouse-3: Remove current window from display")))))
   "Accumulate max column visited to prevent mode-line jitter.")
 (make-variable-buffer-local 'buffer-max-column-visited)
 
-(defface mode-line-bold-highlight
-  '((t (:group 'modeline :inherit mode-line-highlight :weight bold)))
-  "")
+;; (defface mode-line-bold-highlight
+;;   '((t (:group 'modeline :inherit mode-line-highlight :weight bold)))
+;;   "")
 
 (defun my/position-widget ()
   (let*
@@ -400,7 +400,7 @@ mouse-3: Remove current window from display")))))
             (concat
              ;; Leading [
              (if (= wbeg-line 1)
-                 #("[" 0 1 (face mode-line-bold-highlight))
+                 #("[" 0 1 (face bold))
                "[")
              ;; Body
              (if (not (or l-n-m c-n-m))
@@ -452,7 +452,7 @@ mouse-3: Remove current window from display")))))
                  expanded))
              ;; Trailing ]
              (if (= wend-line eob-line)
-                 #("]" 0 1 (face mode-line-bold-highlight))
+                 #("]" 0 1 (face bold))
                "]"))))
 
         (propertize
@@ -464,14 +464,14 @@ mouse-3: Remove current window from display")))))
                        keymap
                        (down-mouse-1
                         keymap
-                        (column-number-mode
-                         menu-item "Global Column Number Mode" column-number-mode
-                         :help "Toggle column number display"
-                         :button (:toggle . column-number-mode))
                         (line-number-mode
                          menu-item "Global Line Number Mode" line-number-mode
                          :help "Toggle line number display"
                          :button (:toggle . line-number-mode))
+                        (column-number-mode
+                         menu-item "Global Column Number Mode" column-number-mode
+                         :help "Toggle column number display"
+                         :button (:toggle . column-number-mode))
                         "Control Line and Column Display Globally"))))))))
 
 ;;}}}
@@ -714,6 +714,45 @@ mouse-3: go to end") "]")))
  '(apropos-do-all t)                    ; invert sense of prefix arg
  )
 
+(defvar my/elisp-manuals
+  '("cl"
+    "ediff"
+    "efs"
+    "elisp"
+    "gnus"
+    "lispref"
+    "vm"
+    "w3"
+    ))
+
+(defun my/elisp-function-reference (func)
+  "Look up an Emacs Lisp function in the Elisp manual in the Info system.
+This command is designed to be used whether you are already in Info or not."
+  (interactive (let ((fn (function-called-at-point))
+                     (enable-recursive-minibuffers t)
+                     val)
+                 (setq val (completing-read
+                            (format "Look up Emacs Lisp function%s: "
+                                    (if fn
+                                        (format " (default %s)" fn)
+                                      ""))
+                            obarray 'fboundp t))
+                 (list (if (equal val "")
+                           fn (intern val)))))
+  (save-window-excursion
+    (info)
+    (let ((lst my/elisp-manuals))
+      (catch 'found
+        (while lst
+          (condition-case ()
+              (progn
+                (Info-find-node (car lst) "Top")
+                (Info-index (symbol-name func))
+                (throw 'found t))
+            (error nil))
+          (setq lst (cdr lst))))))
+  (pop-to-buffer "*info*"))
+
 ;;}}}
 ;;{{{  ediff
 
@@ -906,6 +945,7 @@ mouse-3: go to end") "]")))
 (keydef "C-x C-j"    ilocate-library-find-source)
 (keydef "C-c -"      replace-string)
 (keydef "C-c ="      replace-regexp)
+(keydef "C-c l"      my/elisp-function-reference)
 (keydef "C-c C-j"    grep)
 (keydef "C-c 4"      my/set-buffer-local-tab-width-to-4)
 (keydef "C-c 8"      my/set-buffer-local-tab-width-to-8)

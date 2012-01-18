@@ -15,9 +15,9 @@
 ;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ;; Floor, Boston, MA 02110-1301, USA.
 
-;;;---------------------------------------------------------------------
-;;; Augment LOAD-PATH
-;;;
+;;---------------------------------------------------------------------
+;; Augment LOAD-PATH
+;;
 (defvar my/load-path-roots '("~/emacs" "~/.emacs.d")
   "Ordered list of root directory paths for augmenting load-path.
 Each root will be searched recursively.  Any directory containing
@@ -46,15 +46,15 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
   (dolist (dir (nreverse (my/collect-lisp-dirs root)))
     (add-to-list 'load-path (expand-file-name dir))))
 
-;;;---------------------------------------------------------------------
-;;; The heavy lifting is mostly common
-;;;
+;;---------------------------------------------------------------------
+;; The heavy lifting is mostly common
+;;
 (setq custom-file "~/.emacs.d/my-customizations.el")
 (load-library "my-rc-common")
 
-;;;---------------------------------------------------------------------
-;;; Host specific initialization if it exists (my-rc-local-HOST.el[c])
-;;;
+;;---------------------------------------------------------------------
+;; Host specific initialization if it exists (my-rc-local-HOST.el[c])
+;;
 (require (intern (concat "my-rc-local-"
                          (let* ((host (system-name))
                                 (idx (string-match "\\." host)))
@@ -67,7 +67,7 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
 
 ;ao: (load "~/emacs/passwords.el.gpg")
 
-;;;---------------------------------------------------------------------
+;;---------------------------------------------------------------------
 
 ;; for org-mode
 ;ao: (setq comment-start nil)
@@ -75,3 +75,5 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
 ;; for emacs-jabber (overrides paredit-newline binding)
 ;(define-key ctl-x-map "\C-j" jabber-global-keymap)
 
+;;---------------------------------------------------------------------
+;; Experimental trash... do not commit if there is anything here!
