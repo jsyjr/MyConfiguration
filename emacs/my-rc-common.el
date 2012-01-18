@@ -311,28 +311,39 @@
  )
 
 (my/customize-variables
- `(mode-line-format
-   ,(eval-when-compile
-      (let* ((default-tooltip (concat "mouse-1: Select (drag to resize)\n"
-                                      "mouse-2: Make current window occupy enitre frame\n"
-                                      "mouse-3: Remove current window from display")))
-        `'("%e"
-           #("-" 0 1 (help-echo ,default-tooltip))
-           mode-line-mule-info
-           mode-line-client
-           mode-line-modified
-           mode-line-remote
-           #(" " 0 1 (help-echo ,default-tooltip))
-           mode-line-position
-           mode-line-frame-identification
-           mode-line-buffer-identification
-           #(" " 0 1 (help-echo ,default-tooltip))
-           (which-func-mode
-            ("" which-func-format
-             #(" " 0 1 (help-echo ,default-tooltip))))
-           mode-line-modes
-           (vc-mode ("" vc-mode #(" " 0 1 (help-echo ,default-tooltip))))
-           (global-mode-string (#("-" 0 1 (help-echo ,default-tooltip)) global-mode-string)))))))
+ '(mode-line-format
+   '("%e"
+     #("-" 0 1 (help-echo "mouse-1: Select (drag to resize)
+mouse-2: Make current window occupy enitre frame
+mouse-3: Remove current window from display"))
+     mode-line-mule-info
+     mode-line-client
+     mode-line-modified
+     mode-line-remote
+     #(" " 0 1 (help-echo "mouse-1: Select (drag to resize)
+mouse-2: Make current window occupy enitre frame
+mouse-3: Remove current window from display"))
+     mode-line-position
+     mode-line-frame-identification
+     mode-line-buffer-identification
+     #(" " 0 1 (help-echo "mouse-1: Select (drag to resize)
+mouse-2: Make current window occupy enitre frame
+mouse-3: Remove current window from display"))
+     (which-func-mode
+      ("" which-func-format
+       #(" " 0 1 (help-echo "mouse-1: Select (drag to resize)
+mouse-2: Make current window occupy enitre frame
+mouse-3: Remove current window from display"))))
+     mode-line-modes
+     (vc-mode ("" vc-mode #(" " 0 1 (help-echo "mouse-1: Select (drag to resize)
+mouse-2: Make current window occupy enitre frame
+mouse-3: Remove current window from display"))))
+     (global-mode-string (#("-" 0 1 (help-echo "mouse-1: Select (drag to resize)
+mouse-2: Make current window occupy enitre frame
+mouse-3: Remove current window from display")) global-mode-string))
+     #("-%-" 0 3 (help-echo "mouse-1: Select (drag to resize)
+mouse-2: Make current window occupy enitre frame
+mouse-3: Remove current window from display")))))
 
 ;;}}}
 ;;{{{  mode-line eol-mnemonic
