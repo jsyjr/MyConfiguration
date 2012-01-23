@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-02 11:37:03 jyates"
+;; Time-stamp: "2012-01-20 09:52:32 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -6,7 +6,7 @@
 ;; (at your option) any later version.
 ;;
 ;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; but WITHOUT ANY WARRANTY; without even the implied warranty ofn
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ;; General Public License for more details.
 ;;
@@ -179,6 +179,7 @@
    ;; Add elements to this list to avoid being queried when visiting
    ;; file with Local Variables: sections.
    '((folded-file . t)
+     (folding-mode . t)
      )))
 
 ;;}}}
@@ -635,6 +636,12 @@ mouse-3: go to end") "]")))
 ;;}}}
 
 ;;;== Utilities ========================================================
+;;{{{  Update timestamps before saving files
+
+(add-hook 'before-save-hook 'time-stamp)
+
+
+;;}}}
 ;;{{{  Always byte compile after saving elisp
 
 (defun my/byte-compile-saved-elisp-buffer ()
@@ -784,6 +791,11 @@ This command is designed to be used whether you are already in Info or not."
 (add-to-list 'el-get-sources
              '(:name  folding
                :after folding-mode-add-find-file-hook))
+
+(my/customize-variables
+ '(folding-advice-instantiate nil)      ; not advising M-g g
+ '(folding-goto-key "\M-gf")            ; Restore M-g's prefix behavior
+ )
 
 ;;}}}
 
@@ -941,16 +953,22 @@ This command is designed to be used whether you are already in Info or not."
 ;; `C-x E')
 (keydef "C-x E"      apply-macro-to-region-lines)
 
-(keydef "C-h A"      apropos-toc)                  ; mnemonic: apropos All
+(keydef "C-h A"      apropos-toc)       ; mnemonic: apropos All
+(keydef "C-h L"      (info "elisp"))    ; was describe-language-environment
+
 (keydef "C-x C-j"    ilocate-library-find-source)
+
 (keydef "C-c -"      replace-string)
 (keydef "C-c ="      replace-regexp)
 (keydef "C-c l"      my/elisp-function-reference)
 (keydef "C-c C-j"    grep)
 (keydef "C-c 4"      my/set-buffer-local-tab-width-to-4)
 (keydef "C-c 8"      my/set-buffer-local-tab-width-to-8)
+
 (keydef "M-g b"      bookmark-jump)
+(keydef "M-g M-b"    bookmark-jump)
 (keydef "M-g r"      jump-to-register)
+(keydef "M-g M-r"    jump-to-register)
 
 (keydef "<f12>"      customize-apropos)
 (keydef "C-<f12>"    customize-group)
@@ -964,5 +982,6 @@ This command is designed to be used whether you are already in Info or not."
 ;;;=====================================================================
 ;; Local Variables:
 ;; comment-column: 40
+;; folding-mode: t
 ;; folded-file: t
 ;; End:
