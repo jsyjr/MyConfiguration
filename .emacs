@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-22 22:42:23 jyates"
+;; Time-stamp: "2012-01-24 00:06:36 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -15,16 +15,31 @@
 ;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ;; Floor, Boston, MA 02110-1301, USA.
 
-;;-- MISSING
+;;=== Notes ============================================================
+;;{{{  Setup
+
+;; Gnome system:  http://www.emacswiki.org/emacs/MovingTheCtrlKey#toc2
+;;                I chose "Make Caps Lock an additional Ctrl"
+
+;; Directories
+;; ~/.emacs.d/auto-save-Confluence
+;; ~/.emacs.d/backup
+
+;;}}}
+;;{{{  Missing
+
 ;; swap caps lock and control
-;; Sanjay Dixit's am package
+;; Sanjay Dixit's am package - add autoload cookies, use el-get
 ;; filladapt
 ;; align
 ;; occur
 ;; grep
 ;; sort lines
 ;; collapse to a single space
-;;
+;; dvc, magit
+;; e/vtags
+
+;;}}}
 
 ;;--
 
@@ -134,7 +149,7 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
 ;;}}}
 ;;{{{  Load customizations
 
-(setq custom-file "~/.emacs.d/my-customizations.el")
+(setq custom-file "~/emacs/custom-file.el")
 (load custom-file)
 
 ;; Host specific initialization if it exists (my-rc-local-HOST.el[c])
@@ -655,7 +670,7 @@ mouse-3: go to end") "]")))
 
 ;;}}}
 
-;;=== Editing ==========================================================
+;;=== Searching and editing ============================================
 
 (my/custom-set-variables
  '(cua-enable-cua-keys nil)
@@ -664,6 +679,14 @@ mouse-3: go to end") "]")))
  '(kill-whole-line t)
  )
 
+;;{{{  Occur
+
+;; (autoload 'occur "replace"
+;;   "Show all lines in the current buffer containing a match for REGEXP.
+
+;; \(fn REGEXP &optional NLINES)" t)
+
+;;}}}
 ;;{{{  Filling
 
 (my/custom-set-variables
@@ -741,7 +764,6 @@ mouse-3: go to end") "]")))
 
 (add-hook 'before-save-hook 'time-stamp)
 
-
 ;;}}}
 ;;{{{  Always byte compile after saving elisp
 
@@ -795,6 +817,7 @@ mouse-3: go to end") "]")))
            ".x86f"
            "~"
            )))
+ '(ido-mode 'both nil (ido))
  )
 
 ;;}}}
@@ -833,6 +856,12 @@ mouse-3: go to end") "]")))
     "vm"
     "w3"
     ))
+
+;; Not autoloaded in current sources
+(autoload 'Info-find-node "info"
+  "Go to an Info node specified as separate FILENAME and NODENAME.
+
+\(fn FILENAME NODENAME &optional NO-GOING-BACK)" t)
 
 (defun my/elisp-function-reference (func)
   "Look up an Emacs Lisp function in the Elisp manual in the Info system.
@@ -886,6 +915,14 @@ This command is designed to be used whether you are already in Info or not."
                             :features    (ilocate-library)))
 
 ;;}}}
+;;{{{  Named shells
+
+(defun my/named-shell (BUFFER)
+  "Create or switch to a running shell process in BUFFER."
+  (interactive "BShell buffer: ")
+  (shell BUFFER))
+
+;;}}}
 
 ;;=== Minor modes ======================================================
 ;;{{{  folding
@@ -933,6 +970,9 @@ This command is designed to be used whether you are already in Info or not."
  '(confluence-min-page-repeat-completion-length 1)
  '(confluence-auto-save-dir "~/.emacs.d/auto-save-Confluence")
  )
+
+(my/custom-set-faces
+ '(confluence-panel-face ((t (:background "gray8"))))) ; subtle panels
 
 (autoload 'confluence-get-page "confluence" nil t)
 
@@ -986,12 +1026,65 @@ This command is designed to be used whether you are already in Info or not."
                         (with-current-buffer tmp-buf
                           (longlines-restore))))))))
 
-
 ;;}}}
 
 ;;=== Programming ======================================================
 ;;{{{  Sanjay Dixit's am package
 
+(autoload 'am-scan "am" nil t)
+
+(autoload 'am-find-file "am"
+  "Find file known to amake."
+  t)
+
+(autoload 'am-find-file-other-window "am"
+  "Find file known to amake, open it in another window."
+  t)
+
+;;}}}
+;;{{{  C/C++ mode hooks
+
+(defun my/activate-semantic-imenu ()
+  ""
+  (require 'semantic/imenu)
+  (setq imenu-create-index-function 'semantic-create-imenu-index))
+
+(my/custom-set-variables
+ '(c-mode-hook    '(turn-on-auto-fill
+;;                  turn-off-filladapt-mode
+                    my/activate-semantic-imenu))
+ '(c++-mode-hook  '(turn-on-auto-fill
+;;                  turn-off-filladapt-mode
+                    my/activate-semantic-imenu))
+ '(java-mode-hook '(turn-on-auto-fill
+;;                  turn-off-filladapt-mode
+                    my/activate-semantic-imenu))
+ )
+
+;;}}}
+;;{{{  GDB support
+
+(eval-after-load "gud" '(progn
+  (defun my/gud-cont-to-tbreak ()
+    "Run to cursor"
+    (interactive)
+    (gud-tbreak)(gud-cont))
+
+  (defun my/gud-stepi ()
+    "Step one instruction then display the next instruction"
+    (interactive)
+    (gud-stepi 1)(gud-call "x/i $pc"))
+
+  (defun my/gud-regs ()
+    "Display register in tabular format."
+    (interactive)
+    (gud-call "regs"))
+
+  (defun my/gud-keys ()
+    "Display function key bindings in tabular format."
+    (interactive)
+    (gud-call "my/keys"))
+  ))
 
 ;;}}}
 
@@ -1121,15 +1214,28 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 
 ;;=== Now that all packages have been processed ========================
-;;{{{  Apply customizations
-
-(apply 'custom-set-variables my/custom-variables)
-(apply 'custom-set-faces     my/custom-faces)
+;;{{{  Audit customizations
 
 (my/check-custom-file)
 
 ;;}}}
 ;;{{{  Key bindings
+
+(keydef "C-c -"      replace-string)
+(keydef "C-c C--"    query-replace-string)
+(keydef "C-c ="      replace-regexp)
+(keydef "C-c C-="    query-replace-regexp)
+(keydef "C-c 4"      my/set-buffer-local-tab-width-to-4)
+(keydef "C-c 8"      my/set-buffer-local-tab-width-to-8)
+
+;; Additions to the help command
+;;
+(keydef "C-h A"      apropos-toc)       ; mnemonic: apropos All
+(keydef "C-h L"      (info "elisp"))    ; was describe-language-environment
+(keydef "C-h R"      my/elisp-function-reference)
+
+
+(keydef "C-x C-b"    bs-show)           ; same binding as <f1>
 
 ;; Kevin Rodgers <kevinr@ihs.com>
 ;;
@@ -1143,28 +1249,67 @@ This command is designed to be used whether you are already in Info or not."
 ;; `C-x E')
 (keydef "C-x E"      apply-macro-to-region-lines)
 
-(keydef "C-h A"      apropos-toc)       ; mnemonic: apropos All
-(keydef "C-h L"      (info "elisp"))    ; was describe-language-environment
+(keydef "C-x ,"      am-find-file)
+(keydef "C-x 4 ,"    am-find-file-other-window)
 
-(keydef "C-x C-j"    ilocate-library-find-source)
-
-(keydef "C-c -"      replace-string)
-(keydef "C-c ="      replace-regexp)
-(keydef "C-c l"      my/elisp-function-reference)
-(keydef "C-c C-j"    grep)
-(keydef "C-c 4"      my/set-buffer-local-tab-width-to-4)
-(keydef "C-c 8"      my/set-buffer-local-tab-width-to-8)
-
+;; Additions to binding.el's goto-map; prior bindings:
+;;  g   goto-line
+;;  n   next-error
+;;  p   previous-error
+;;
 (keydef "M-g b"      bookmark-jump)
 (keydef "M-g M-b"    bookmark-jump)
+(keydef "M-g l"      ilocate-library-find-source)
 (keydef "M-g r"      jump-to-register)
 (keydef "M-g M-r"    jump-to-register)
+
+;; Additions to binding.el's search-map; prior bindings:
+;;  h*  highlight-*/hi-lock-*
+;;  o   occur
+;;  w   isearch-forward-word
+;;
+(keydef "M-s g"      grep)
+(keydef "M-s l"      lgrep)
+(keydef "M-s m"      multi-occur-in-matching-buffers)
+(keydef "M-s r"      rgrep)
+
+
+(keydef "<f1>"       bs-show)
+(keydef "C-<f1>"     my/named-shell)
+
+
+;; Strong similarity to MS Visual Studio's function keys
+(keydef    "<f4>" next-error)
+(keydef  "C-<f4>" first-error)
+
+(eval-after-load "gud" '(progn
+  (keydef   "<f5>"   gud-cont)          ; MS go / continue
+  (keydef "C-<f5>"   my/gud-cont-to-tbreak) ; MS run to cursor
+  ))
+
+(keydef   "C-<f7>"   compile)
+
+(eval-after-load "gud" '(progn
+  (keydef   "<f8>"   my/gud-regs)       ; show registers
+  (keydef "C-<f8>"   my/gud-keys)       ; show key bindings
+
+  (keydef   "<f9>"   gud-step)          ; MS step into
+  (keydef "C-<f9>"   my/gud-stepi)
+  (keydef "M-<f9>"   gud-down)
+
+  (keydef   "<f10>"  gud-next)          ; MS step over
+  (keydef "C-<f10>"  gud-finish)        ; MS step out
+  (keydef "M-<f10>"  gud-up)
+
+  (keydef   "<f11>"  gud-break)
+  (keydef "C-<f11>"  gud-tbreak)
+  (keydef "M-<f11>"  gud-remove)
+  ))
 
 (keydef "<f12>"      customize-apropos)
 (keydef "C-<f12>"    customize-group)
 
-(keydef "C-x C-b"    bs-show)
-(keydef "<f1>"       bs-show)
+
 (eval-after-load "bs" '(keydef (bs "<f1>")  bs-kill))
 
 ;;}}}
