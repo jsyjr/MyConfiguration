@@ -64,6 +64,11 @@
     keymap)
   "Keymap used in the apropos-toc buffer.")
 
+(defvar apropos-toc-font-lock-keywords
+  (list
+   '("^\\(Function\\|Variable\\)s:" . font-lock-keyword-face))
+  "Additional expressions to highlight in Apropos TOC mode")
+
 (defun apropos-toc (regexp)
   "Show bound symbols whose names match REGEXP."
   (interactive "sapropos-toc (regexp): ")
@@ -72,6 +77,8 @@
   (use-local-map apropos-toc-map)
   (setq major-mode 'apropos-toc-mode)
   (setq mode-name "apropos-toc")
+  (make-local-variable 'font-lock-defaults)
+  (setq font-lock-defaults '(apropos-toc-font-lock-keywords nil t))
   (setq default-directory "/")
   (setq buffer-read-only nil)
   (erase-buffer)
@@ -84,7 +91,7 @@
   (setq buffer-read-only t)
   (set-buffer-modified-p nil)
   (setq truncate-lines t)
-  (goto-line 3))
+  (goto-char (point-min)) (forward-line (1- 3)))
 
 (defun apropos-toc-insert-table (table-data row-type)
   "Insert entries in TABLE-DATA into the current buffer.
