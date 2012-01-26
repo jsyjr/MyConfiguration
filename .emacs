@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-24 00:06:36 jyates"
+;; Time-stamp: "2012-01-24 23:31:13 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -943,8 +943,7 @@ This command is designed to be used whether you are already in Info or not."
 
 (my/custom-set-variables
  `(org-hide-leading-stars t)
- `(org-mobile-directory "~/Dropbox/MobileOrg")
- '(org-mobile-files '(org-agenda-files "~/org"))
+ '(org-default-notes-file "~/org/captute.org")
  '(org-modules
    '(org-docview                ; Links to doc-view buffers
      org-info                   ; Links to Info nodes
@@ -952,7 +951,10 @@ This command is designed to be used whether you are already in Info or not."
      org-inlinetask             ; Tasks independent of outline hierarchy
      org-protocol               ; Intercept calls from emacsclient
      org-mouse                  ; Additional mouse support
-     )))
+     ))
+ `(org-mobile-directory "~/Dropbox/MobileOrg")
+ '(org-mobile-files '(org-agenda-files "~/org"))
+ )
 
 ;;}}}
 ;;{{{  Confluence wiki
@@ -1227,6 +1229,7 @@ This command is designed to be used whether you are already in Info or not."
 (keydef "C-c C-="    query-replace-regexp)
 (keydef "C-c 4"      my/set-buffer-local-tab-width-to-4)
 (keydef "C-c 8"      my/set-buffer-local-tab-width-to-8)
+(keydef "C-c c"      org-capture)
 
 ;; Additions to the help command
 ;;
