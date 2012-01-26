@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-24 23:31:13 jyates"
+;; Time-stamp: "2012-01-26 08:49:39 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -21,9 +21,19 @@
 ;; Gnome system:  http://www.emacswiki.org/emacs/MovingTheCtrlKey#toc2
 ;;                I chose "Make Caps Lock an additional Ctrl"
 
+;; Remove older versions of emacs and emacs-goodies
+
+;; Prerequisites:
+;; - git, bzr, cvs, svn, hg
+
 ;; Directories
 ;; ~/.emacs.d/auto-save-Confluence
 ;; ~/.emacs.d/backup
+;; ~/.emacs.d/semanticdb
+
+;; - el-get-emacswiki-refresh (no separate subdirectory)
+;; - el-get-install emacs-goodies-el, then byte recompile entire tree
+;; - el-get-install every el-get-sources entry in this file
 
 ;;}}}
 ;;{{{  Missing
@@ -1089,6 +1099,13 @@ This command is designed to be used whether you are already in Info or not."
   ))
 
 ;;}}}
+;;{{{  Cedet, semantic, etc
+
+(my/custom-set-variables
+ '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
+ )
+
+;;}}}
 
 ;;=== el-get (epilog) ==================================================
 ;;{{{  Sync and update
@@ -1223,13 +1240,16 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  Key bindings
 
+
 (keydef "C-c -"      replace-string)
-(keydef "C-c C--"    query-replace-string)
+(keydef "C-c C--"    query-replace)
 (keydef "C-c ="      replace-regexp)
 (keydef "C-c C-="    query-replace-regexp)
 (keydef "C-c 4"      my/set-buffer-local-tab-width-to-4)
 (keydef "C-c 8"      my/set-buffer-local-tab-width-to-8)
 (keydef "C-c c"      org-capture)
+(keydef "C-c l"      org-store-link)
+
 
 ;; Additions to the help command
 ;;
@@ -1255,6 +1275,7 @@ This command is designed to be used whether you are already in Info or not."
 (keydef "C-x ,"      am-find-file)
 (keydef "C-x 4 ,"    am-find-file-other-window)
 
+
 ;; Additions to binding.el's goto-map; prior bindings:
 ;;  g   goto-line
 ;;  n   next-error
@@ -1265,6 +1286,7 @@ This command is designed to be used whether you are already in Info or not."
 (keydef "M-g l"      ilocate-library-find-source)
 (keydef "M-g r"      jump-to-register)
 (keydef "M-g M-r"    jump-to-register)
+
 
 ;; Additions to binding.el's search-map; prior bindings:
 ;;  h*  highlight-*/hi-lock-*
