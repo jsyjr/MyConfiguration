@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-26 08:49:39 jyates"
+;; Time-stamp: "2012-01-26 11:06:46 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -192,7 +192,12 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
 ;;}}}
 ;;{{{  Debian emacs-goodies package
 
-(add-to-list 'el-get-sources 'emacs-goodies-el)
+(add-to-list 'el-get-sources 'emacs-goodies-el
+             '(:name        emacs-goodies
+                            :description "A standard Debian collection"
+                            :type        cvs
+                            :url         ":pserver:anonymous@anonscm.debian.org:/pkg-goodies-el"
+                            :localname   "emacs-goodies-el"))
 
 ;;}}}
 
