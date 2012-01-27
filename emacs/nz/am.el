@@ -577,6 +577,16 @@ Keybindings:
             (message (format "%s (%d)" match-file match-file-point)))
         (ding)))))
 
+;; modify function to work better with ECB persistent compile window
+(defun am-grep-display-file-ECB (match-file match-file-point other-window-p)
+  (let ((match-buffer nil)
+        (o-buffer (current-buffer))
+        (o-point (point)))
+    (find-file match-file)
+    (goto-char match-file-point)
+    (switch-to-buffer o-buffer)
+    (set-window-point (get-buffer-window o-buffer) o-point)))
+
 ;;;
 (defun am-grep-display-file (match-file match-file-point other-window-p)
   (let ((match-buffer nil)

@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-26 11:06:46 jyates"
+;; Time-stamp: "2012-01-27 09:35:56 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -170,6 +170,7 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
                                (substring host 0 idx)
                              host))))
          nil t)
+
 ;;}}}
 
 ;;=== Package management ===============================================
@@ -698,7 +699,7 @@ mouse-3: go to end") "]")))
 
 ;; (autoload 'occur "replace"
 ;;   "Show all lines in the current buffer containing a match for REGEXP.
-
+;;
 ;; \(fn REGEXP &optional NLINES)" t)
 
 ;;}}}
@@ -773,6 +774,67 @@ mouse-3: go to end") "]")))
     (tabify (point-min) (point-max))))
 
 ;;}}}
+;;{{{  Buffer life cycle
+
+;; Cribbed from:
+;;; disk.el --- simplified find-file, revert-file, save-buffer interface
+;; Copyright (C) 2002  Alex Schroeder <alex@gnu.org>
+;; URL: http://www.emacswiki.org/cgi-bin/wiki.pl?DiskKey
+
+(defvar disk-access nil)
+(make-variable-buffer-local 'disk-access)
+
+(add-hook 'find-file-hooks 'disk-notice)
+(add-hook 'view-mode-hooks 'disk-notice)
+(add-hook 'after-save-hook 'disk-notice)
+
+(defun disk-file-modification-time ()
+  "Return modification time of the visited file."
+  (nth 5 (file-attributes (buffer-file-name))))
+
+(defun disk-notice ()
+  "Store access time in `disk-acess'."
+  (setq disk-access (disk-file-modification-time)))
+
+(defun disk-file-modified-p ()
+  "Return non-nil if the visited file has been modified."
+  (not (equal disk-access
+	      (disk-file-modification-time))))
+
+(defun disk ()
+  "Do the right thing with files.
+
+If buffer has no file, view a file.  If buffer needs saving, and
+file is unchanged, save buffer returning to readonly/view-mode.
+If buffer needs saving, and file has changed, warn the user.  If
+buffer is unchanged, and file has changed on disk, revert buffer,
+switch to readonly/view-mode.  If buffer is readonly convert it
+to writable, dropping view-mode.  Otherwise buffer is writable so
+convert it to readonly/view-mode."
+  (interactive)
+  (cond ((not (buffer-file-name))
+	 (call-interactively 'view-file))
+	((and (buffer-modified-p)
+	      (not (disk-file-modified-p)))
+	 (save-buffer)
+         (toggle-read-only 1)
+         (view-mode 1))
+	((and (buffer-modified-p)
+	      (disk-file-modified-p))
+	 (error "Buffer must be saved, but the file has also changed."))
+	((and (not (buffer-modified-p))
+	      (disk-file-modified-p))
+	 (revert-buffer t t)
+         (toggle-read-only 1)
+         (view-mode 1))
+        (buffer-read-only
+         (view-mode -1)
+         (toggle-read-only -1))
+	(t
+         (toggle-read-only 1)
+         (view-mode 1))))
+
+;;}}}
 
 ;;=== Utilities ========================================================
 ;;{{{  Update timestamps before saving files
@@ -793,7 +855,7 @@ mouse-3: go to end") "]")))
 ;;{{{  Completion
 
 (my/custom-set-variables
- '(completion-ignored-extensions 
+ '(completion-ignored-extensions
    (quote (".a"
            ".aux"
            ".bak"
@@ -833,6 +895,14 @@ mouse-3: go to end") "]")))
            "~"
            )))
  '(ido-mode 'both nil (ido))
+ '(ido-save-directory-list-file "~/.emacs.d/ido.last")
+ )
+
+;;}}}
+;;{{{  Recent files
+
+(my/custom-set-variables
+ '(recentf-save-file "~/.emacs.d/recentf")
  )
 
 ;;}}}
@@ -947,6 +1017,7 @@ This command is designed to be used whether you are already in Info or not."
                       :after folding-mode-add-find-file-hook))
 
 (my/custom-set-variables
+ '(folding-mode-prefix-key "f")
  '(folding-advice-instantiate nil)      ; not advising M-g g
  '(folding-goto-key "\M-gf")            ; Restore M-g's prefix behavior
  )
@@ -1002,13 +1073,10 @@ This command is designed to be used whether you are already in Info or not."
        (add-hook 'confluence-before-revert-hook 'longlines-before-revert-hook)
        (add-hook 'confluence-mode-hook '(lambda () (local-set-key "\C-j" 'confluence-newline-and-indent))))))
 
-;; open confluence page
-(global-set-key "\C-xwf" 'confluence-get-page)
-
 ;; setup confluence mode
 (add-hook 'confluence-mode-hook
           '(lambda ()
-             (local-set-key "\C-xw" confluence-prefix-map)))
+             (local-set-key "\C-cw" confluence-prefix-map)))
 
 (eval-after-load "longlines"
   '(progn
@@ -1059,7 +1127,13 @@ This command is designed to be used whether you are already in Info or not."
   t)
 
 ;;}}}
-;;{{{  C/C++ mode hooks
+;;{{{  C/C++ mode
+
+;; Treat .h and .imp files as C++ source
+(setq auto-mode-alist (append '(("\\.h\\'" . c++-mode)
+                                ("\\.imp\\'" . c++-mode))
+			      auto-mode-alist))
+
 
 (defun my/activate-semantic-imenu ()
   ""
@@ -1109,6 +1183,31 @@ This command is designed to be used whether you are already in Info or not."
 (my/custom-set-variables
  '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
  )
+
+;;}}}
+;;{{{  Applying patches
+
+(eval-after-load "diff-mode"
+  '(progn
+     (
+      ;; make using patch mode more convenient
+      (defun my/diff-advance-apply-next-hunk-and-recenter ()
+        "Advance to next hunk, apply, and recenter windows for review."
+        (interactive)
+        (diff-hunk-next)
+        (diff-apply-hunk)
+        (when diff-advance-after-apply-hunk
+          (diff-hunk-prev))
+        (recenter 0)
+        (other-window 1)
+        (recenter 0)
+        (other-window 1))
+
+
+      (add-hook 'diff-mode-hook
+                (function (lambda ()
+                            (local-set-key "\C-c\C-c" 'my/diff-advance-apply-next-hunk-and-recenter))))
+      )))
 
 ;;}}}
 
@@ -1243,7 +1342,7 @@ This command is designed to be used whether you are already in Info or not."
 (my/check-custom-file)
 
 ;;}}}
-;;{{{  Key bindings
+;;{{{  Collected key bindings
 
 
 (keydef "C-c -"      replace-string)
@@ -1254,6 +1353,8 @@ This command is designed to be used whether you are already in Info or not."
 (keydef "C-c 8"      my/set-buffer-local-tab-width-to-8)
 (keydef "C-c c"      org-capture)
 (keydef "C-c l"      org-store-link)
+(keydef "C-c w f"    confluence-get-page) ; open page on confluence wiki
+
 
 
 ;; Additions to the help command
@@ -1293,6 +1394,9 @@ This command is designed to be used whether you are already in Info or not."
 (keydef "M-g M-r"    jump-to-register)
 
 
+(keydef "M-["        align)
+
+
 ;; Additions to binding.el's search-map; prior bindings:
 ;;  h*  highlight-*/hi-lock-*
 ;;  o   occur
@@ -1306,6 +1410,9 @@ This command is designed to be used whether you are already in Info or not."
 
 (keydef "<f1>"       bs-show)
 (keydef "C-<f1>"     my/named-shell)
+(keydef "M-<f1>"     menu-bar-mode)
+
+(keydef "<f2>"       disk)
 
 
 ;; Strong similarity to MS Visual Studio's function keys
@@ -1315,6 +1422,7 @@ This command is designed to be used whether you are already in Info or not."
 (eval-after-load "gud" '(progn
   (keydef   "<f5>"   gud-cont)          ; MS go / continue
   (keydef "C-<f5>"   my/gud-cont-to-tbreak) ; MS run to cursor
+  (keydef "M-<f5>"   gud-run)           ; restart
   ))
 
 (keydef   "C-<f7>"   compile)
