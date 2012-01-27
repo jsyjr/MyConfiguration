@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-27 09:35:56 jyates"
+;; Time-stamp: "2012-01-27 16:19:38 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -757,6 +757,7 @@ mouse-3: go to end") "]")))
 
 (my/custom-set-variables
  '(indent-tabs-mode nil)                ; no hard tabs
+ '(tab-always-indent 'complete)         ; tab when nothing to complete
  '(tab-stop-list '(  4   8  12  16  20  24  28  32  36  40
                          44  48  52  56  60  64  68  72  76  80
                          84  88  92  96 100 104 108 112 116 120
@@ -767,8 +768,8 @@ mouse-3: go to end") "]")))
                          284 288 292 296 300 304 308 312 316 320))
  )
 
-(defun canonicalize-tab4 (&rest ignored)
-  (interactive "P")
+(defun my/canonicalize-tab4 ()
+  (interactive)
   (let ((tab-width 4))
     (untabify (point-min) (point-max))
     (tabify (point-min) (point-max))))
@@ -1028,7 +1029,7 @@ This command is designed to be used whether you are already in Info or not."
 ;;{{{  Org
 
 (my/custom-set-variables
- `(org-hide-leading-stars t)
+ '(org-hide-leading-stars t)
  '(org-default-notes-file "~/org/captute.org")
  '(org-modules
    '(org-docview                ; Links to doc-view buffers
@@ -1038,7 +1039,7 @@ This command is designed to be used whether you are already in Info or not."
      org-protocol               ; Intercept calls from emacsclient
      org-mouse                  ; Additional mouse support
      ))
- `(org-mobile-directory "~/Dropbox/MobileOrg")
+ '(org-mobile-directory "~/Dropbox/MobileOrg")
  '(org-mobile-files '(org-agenda-files "~/org"))
  )
 
@@ -1135,22 +1136,93 @@ This command is designed to be used whether you are already in Info or not."
 			      auto-mode-alist))
 
 
-(defun my/activate-semantic-imenu ()
-  ""
-  (require 'semantic/imenu)
-  (setq imenu-create-index-function 'semantic-create-imenu-index))
+;;;;  (defun my/activate-semantic-imenu ()
+;;;;    ""
+;;;;    (require 'semantic/imenu)
+;;;;    (setq imenu-create-index-function 'semantic-create-imenu-index))
+;;;;
+;;;;  (my/custom-set-variables
+;;;;   '(c-mode-hook    '(turn-on-auto-fill
+;;;;  ;;                  turn-off-filladapt-mode
+;;;;                      my/activate-semantic-imenu))
+;;;;   '(c++-mode-hook  '(turn-on-auto-fill
+;;;;  ;;                  turn-off-filladapt-mode
+;;;;                      my/activate-semantic-imenu))
+;;;;   '(java-mode-hook '(turn-on-auto-fill
+;;;;  ;;                  turn-off-filladapt-mode
+;;;;                      my/activate-semantic-imenu))
+;;;;   )
+
+(defconst jsy-c-style
+  '((c-basic-offset			. 4)
+    (c-comment-only-line-offset		. 0)
+    (c-indent-comments-syntactically-p	. t)
+    (c-label-minimum-indentation	. 0)
+    (c-offsets-alist		        . (
+				           (inline-open         . 0)
+				           (block-close         . 0)
+					   (statement-cont	. c-lineup-math)
+					   (label		. -)
+					   (arglist-intro	. c-lineup-arglist-intro-after-paren)
+					   (arglist-close	. c-lineup-arglist-close-under-paren)
+					   (innamespace		. 0)
+                                           ))
+    (c-hanging-braces-alist		. (
+					   (defun-open		before after)
+					   (defun-close		before after)
+					   (class-open		before after)
+					   (class-close		before after)
+					   (inline-open		before after)
+					   (inline-close	before after)
+					   (block-open		after)
+					   (block-close		before after)
+					   (brace-list-open	after)
+					   (brace-list-close	before after)
+					   (statement-case-open	after)
+					   (substatement-open	after)
+                                           ))
+    (c-hanging-colons-alist		. (
+					   (case-label		after)
+					   (label 		after)
+					   (access-label 	after)
+                                           ))
+    (c-cleanup-list			. (scope-operator
+					   empty-defun-braces
+					   defun-close-semi))
+    (c-hanging-comment-ender-p		. nil)
+    (c-echo-syntactic-information-p	. t)
+    )
+  "jsy programming style"
+  )
+
+(eval-after-load "cc-mode"
+  `(progn
+     (defun my/c-mode-common-hook ()
+       ""
+       ;; Semantic does a better job supporting which-func in mode-line
+       ;;(require 'semantic/imenu)
+       ;;(setq imenu-create-index-function 'semantic-create-imenu-index)
+
+       (turn-on-auto-fill)
+       ;;(turn-off-filladapt-mode)
+
+       (setq tab-width 4)
+       (setq comment-column 40)
+       (setq fill-column 75)
+
+       (c-add-style "jsy" jsy-c-style t)
+       (c-set-style "jsy")
+
+       (c-toggle-auto-hungry-state 1)
+
+       ;;(define-key c-mode-base-map "\C-m" 'newline-and-indent)
+       ;;(define-key c-mode-base-map ")" 'jsy-c-electric-close-paren)
+       )))
 
 (my/custom-set-variables
- '(c-mode-hook    '(turn-on-auto-fill
-;;                  turn-off-filladapt-mode
-                    my/activate-semantic-imenu))
- '(c++-mode-hook  '(turn-on-auto-fill
-;;                  turn-off-filladapt-mode
-                    my/activate-semantic-imenu))
- '(java-mode-hook '(turn-on-auto-fill
-;;                  turn-off-filladapt-mode
-                    my/activate-semantic-imenu))
+ '(c-mode-common-hook '(my/c-mode-common-hook))
  )
+
 
 ;;}}}
 ;;{{{  GDB support
