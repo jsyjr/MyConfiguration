@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-28 12:35:34 jyates"
+;; Time-stamp: "2012-01-28 21:40:12 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -40,12 +40,10 @@
 
 ;; swap caps lock and control
 ;; Sanjay Dixit's am package - add autoload cookies, use el-get
-;; filladapt
 ;; align
 ;; occur
 ;; grep
 ;; sort lines
-;; collapse to a single space
 ;; dvc, magit
 ;; e/vtags
 
@@ -54,11 +52,6 @@
 ;;--
 
 ;;{{{  Augment LOAD-PATH
-
-(defvar my/load-path-roots '("~/emacs" "~/.emacs.d")
-  "Ordered list of root directory paths for augmenting load-path.
-Each root will be searched recursively.  Any directory containing
-at least one .el[c] or .el[c].gz file will be added to load-path.")
 
 (defun my/collect-lisp-dirs (dir)
   "Return directories at or below DIR with .el[c][.gz] files."
@@ -78,6 +71,11 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
          ((and (not add-this) (string-match "\\.elc?\\(\\.gz\\)?$" file))
           (setq add-this (list this-dir)))))
       (append add-this sub-dirs))))
+
+(defvar my/load-path-roots '("~/emacs" "~/.emacs.d")
+  "Ordered list of root directory paths for augmenting load-path.
+Each root will be searched recursively.  Any directory containing
+at least one .el[c] or .el[c].gz file will be added to load-path.")
 
 (dolist (root (nreverse my/load-path-roots))
   (dolist (dir (nreverse (my/collect-lisp-dirs root)))
@@ -707,7 +705,7 @@ mouse-3: go to end") "]")))
 
 (my/custom-set-variables
  '(text-mode-hook
-   '(text-mode-hook-identify turn-on-auto-fill))
+   '(text-mode-hook-identify turn-on-filladapt-mode))
  )
 
 ;;}}}
@@ -1024,6 +1022,14 @@ This command is designed to be used whether you are already in Info or not."
  )
 
 ;;}}}
+;;{{{  filladapt
+
+;; Redirect to a patched version more captible with cc-mode
+(add-to-list 'el-get-sources
+             '(:name filladapt
+                     :url "http://cc-mode.sourceforge.net/filladapt.el"))
+
+;;}}}
 
 ;;=== Major modes ======================================================
 ;;{{{  Org
@@ -1136,23 +1142,6 @@ This command is designed to be used whether you are already in Info or not."
 			      auto-mode-alist))
 
 
-;;;;  (defun my/activate-semantic-imenu ()
-;;;;    ""
-;;;;    (require 'semantic/imenu)
-;;;;    (setq imenu-create-index-function 'semantic-create-imenu-index))
-;;;;
-;;;;  (my/custom-set-variables
-;;;;   '(c-mode-hook    '(turn-on-auto-fill
-;;;;  ;;                  turn-off-filladapt-mode
-;;;;                      my/activate-semantic-imenu))
-;;;;   '(c++-mode-hook  '(turn-on-auto-fill
-;;;;  ;;                  turn-off-filladapt-mode
-;;;;                      my/activate-semantic-imenu))
-;;;;   '(java-mode-hook '(turn-on-auto-fill
-;;;;  ;;                  turn-off-filladapt-mode
-;;;;                      my/activate-semantic-imenu))
-;;;;   )
-
 (defconst jsy-c-style
   '((c-basic-offset			. 4)
     (c-comment-only-line-offset		. 0)
@@ -1203,8 +1192,8 @@ This command is designed to be used whether you are already in Info or not."
        ;;(require 'semantic/imenu)
        ;;(setq imenu-create-index-function 'semantic-create-imenu-index)
 
-       (turn-on-auto-fill)
-       ;;(turn-off-filladapt-mode)
+       (turn-off-filladapt-mode)
+       (c-setup-filladapt)
 
        (setq tab-width 4)
        (setq comment-column 40)
@@ -1222,6 +1211,12 @@ This command is designed to be used whether you are already in Info or not."
 (my/custom-set-variables
  '(c-mode-common-hook '(my/c-mode-common-hook))
  )
+
+;;}}}
+;;{{{  assembly language
+
+(my/custom-set-variables
+ '(asm-comment-char 35))                ; = '#'
 
 ;;}}}
 ;;{{{  GDB support
@@ -1259,7 +1254,7 @@ This command is designed to be used whether you are already in Info or not."
 ;;{{{  Applying patches
 
 (eval-when-compile
-  `(require `diff-mode))
+  `(load `diff-mode))
 
 ;; make using patch mode more convenient
 (defun my/diff-advance-apply-next-hunk-and-recenter ()
