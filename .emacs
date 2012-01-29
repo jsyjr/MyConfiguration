@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-27 16:19:38 jyates"
+;; Time-stamp: "2012-01-28 12:35:34 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -1223,7 +1223,6 @@ This command is designed to be used whether you are already in Info or not."
  '(c-mode-common-hook '(my/c-mode-common-hook))
  )
 
-
 ;;}}}
 ;;{{{  GDB support
 
@@ -1259,27 +1258,26 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  Applying patches
 
-(eval-after-load "diff-mode"
-  '(progn
-     (
-      ;; make using patch mode more convenient
-      (defun my/diff-advance-apply-next-hunk-and-recenter ()
-        "Advance to next hunk, apply, and recenter windows for review."
-        (interactive)
-        (diff-hunk-next)
-        (diff-apply-hunk)
-        (when diff-advance-after-apply-hunk
-          (diff-hunk-prev))
-        (recenter 0)
-        (other-window 1)
-        (recenter 0)
-        (other-window 1))
+(eval-when-compile
+  `(require `diff-mode))
+
+;; make using patch mode more convenient
+(defun my/diff-advance-apply-next-hunk-and-recenter ()
+  "Advance to next hunk, apply, and recenter windows for review."
+  (interactive)
+  (diff-hunk-next)
+  (diff-apply-hunk)
+  (when diff-advance-after-apply-hunk
+    (diff-hunk-prev))
+  (recenter 0)
+  (other-window 1)
+  (recenter 0)
+  (other-window 1))
 
 
-      (add-hook 'diff-mode-hook
-                (function (lambda ()
-                            (local-set-key "\C-c\C-c" 'my/diff-advance-apply-next-hunk-and-recenter))))
-      )))
+(add-hook 'diff-mode-hook
+          (function (lambda ()
+                      (local-set-key "\C-c\C-c" 'my/diff-advance-apply-next-hunk-and-recenter))))
 
 ;;}}}
 

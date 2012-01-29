@@ -1,17 +1,19 @@
 # Files, irrespective of where they occur
+*.[ao]
 *.elc
 *~
+%*
 
 # Hidden files in the root of the home directory
-~/.*
-!~/.emacs
-!~/.gitignore
+/.*
+!/.emacs
+!/.gitignore
 
 # Hidden directories in the root of the home directory
-~/.*/
-!~/.emacs.d/
+/.*/
+!/.emacs.d/
 
 # Subdirectories of the home directory
-~/*/
-!~/emacs/
-!~/org
+/*/
+!/emacs/
+!/org/
