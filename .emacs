@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-30 00:37:12 jyates"
+;; Time-stamp: "2012-01-30 08:40:25 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -1157,6 +1157,9 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  C/C++ mode
 
+(eval-when-compile
+  (require 'cc-mode))
+
 ;; Treat .h and .imp files as C++ source
 (setq auto-mode-alist (append '(("\\.h\\'" . c++-mode)
                                 ("\\.imp\\'" . c++-mode))
@@ -1342,7 +1345,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;{{{  Applying patches
 
 (eval-when-compile
-  `(load `diff-mode))
+  (require 'diff-mode))
 
 ;; make using patch mode more convenient
 (defun my/diff-advance-apply-next-hunk-and-recenter ()
