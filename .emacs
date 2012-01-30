@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-28 21:40:12 jyates"
+;; Time-stamp: "2012-01-30 00:37:12 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -34,6 +34,10 @@
 ;; - el-get-emacswiki-refresh (no separate subdirectory)
 ;; - el-get-install emacs-goodies-el, then byte recompile entire tree
 ;; - el-get-install every el-get-sources entry in this file
+
+;; Check *Messages* for files being loaded as source
+
+;; Launcher: /usr/bin/emacs-snapshot --no-site-file -bg black -fg white -fn dina -mm --debug-init
 
 ;;}}}
 ;;{{{  Missing
@@ -146,7 +150,7 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
   "Audit customized variables and faces against the custom file."
   (let ((disk-lists
          (with-current-buffer (get-buffer-create "*Custom File*")
-           (insert-file-contents-literally custom-file)
+           (insert-file-contents-literally custom-file )
            (let ((lists (list (cdr (read (current-buffer)))
                               (cdr (read (current-buffer))))))
              (kill-buffer)
@@ -157,7 +161,7 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
 ;;}}}
 ;;{{{  Load customizations
 
-(setq custom-file "~/emacs/custom-file.el")
+(setq custom-file "~/emacs/custom-file")
 (load custom-file)
 
 ;; Host specific initialization if it exists (my-rc-local-HOST.el[c])
@@ -201,24 +205,6 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
 ;;}}}
 
 ;;=== Coding convenience ===============================================
-;;{{{  emacs-goodies/diminish - short minor modes in mode-line
-
-(add-to-list 'el-get-sources 'diminish)
-
-;; To diminish minor mode FOO:
-;;
-;; (eval-after-load "FOO" '(diminish 'FOO-mode))     ; FOO displayed as ""
-;; (eval-after-load "FOO" '(diminish 'FOO-mode "X")) ; FOO displayed as "X"
-
-;; To diminish major mode BAR:
-;;
-;; (defun my/dimish-BAR-mode ()
-;;  "Display BAR-mode in mode line as \"X\"."
-;;  (setq mode-name "X"))
-;;
-;; (eval-after-load "FOO" '(add-hook 'FOO-mode-hook "X"))
-
-;;}}}
 ;;{{{  emacs-goodies/keydef - simpler definitions, autoloads for free
 
 (require 'keydef)       ; simpler key definitions, autoloads for free
@@ -603,6 +589,24 @@ mouse-3: go to end") "]")))
  )
 
 ;;}}}
+;;{{{  emacs-goodies/diminish
+
+(add-to-list 'el-get-sources 'diminish)
+
+;; To diminish minor mode FOO:
+;;
+;; (eval-after-load "FOO" '(diminish 'FOO-mode))     ; FOO displayed as ""
+;; (eval-after-load "FOO" '(diminish 'FOO-mode "X")) ; FOO displayed as "X"
+
+;; To diminish major mode BAR:
+;;
+;; (defun my/dimish-BAR-mode ()
+;;  "Display BAR-mode in mode line as \"X\"."
+;;  (setq mode-name "X"))
+;;
+;; (eval-after-load "FOO" '(add-hook 'FOO-mode-hook "X"))
+
+;;}}}
 ;;{{{  Uniquify buffer names
 
 (require 'uniquify)
@@ -626,7 +630,7 @@ mouse-3: go to end") "]")))
 (my/custom-set-variables
  '(pretty-control-l-mode t)
  '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)))
-                                        ;'(pp^L-^L-string-pre "")               ; eliminate preceding blank line
+;;'(pp^L-^L-string-pre "")               ; eliminate preceding blank line
  )
 
 (my/custom-set-faces
@@ -677,6 +681,13 @@ mouse-3: go to end") "]")))
   (setq tab-width 8))
 
 ;;}}}
+;;{{{  Extra color themes
+
+(my/custom-set-variables
+ '(custom-theme-directory "~/emacs/themes")
+ )
+
+;;}}}
 ;;{{{  Other stuff
 
 ;; Display Windows extended glyphs (instead of things like \223)
@@ -703,9 +714,19 @@ mouse-3: go to end") "]")))
 ;;}}}
 ;;{{{  Filling
 
+;; As distributed filladapt.el contains no autoload cookies
+(autoload 'turn-on-filladapt-mode "filladapt"
+  "Unconditionally turn on Filladapt mode in the current buffer.
+
+\(fn)" t)
+
+(eval-after-load "filladapt" '(diminish 'filladapt-mode "FA"))
+
 (my/custom-set-variables
  '(text-mode-hook
-   '(text-mode-hook-identify turn-on-filladapt-mode))
+   '(text-mode-hook-identify
+     turn-on-filladapt-mode
+     ))
  )
 
 ;;}}}
@@ -836,85 +857,6 @@ convert it to readonly/view-mode."
 ;;}}}
 
 ;;=== Utilities ========================================================
-;;{{{  Update timestamps before saving files
-
-(add-hook 'before-save-hook 'time-stamp)
-
-;;}}}
-;;{{{  Always byte compile after saving elisp
-
-(defun my/byte-compile-saved-elisp-buffer ()
-  "Byte compile an elisp buffer anytime it is saved."
-  (if (eq major-mode 'emacs-lisp-mode)
-      (byte-compile-file (buffer-file-name))))
-
-(add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
-
-;;}}}
-;;{{{  Completion
-
-(my/custom-set-variables
- '(completion-ignored-extensions
-   (quote (".a"
-           ".aux"
-           ".bak"
-           ".bbl"
-           ".bin"
-           ".blg"
-           ".class"
-           ".cp"
-           ".cps"
-           ".dvi"
-           ".elc"
-           ".fas"
-           ".fmt"
-           ".fn"
-           ".fns"
-           ".glo"
-           ".idx"
-           ".ky"
-           ".kys"
-           ".lib"
-           ".ln"
-           ".lof"
-           ".log"
-           ".lot"
-           ".map"
-           ".o"
-           ".obj"
-           ".pg"
-           ".pgs"
-           ".pyc"
-           ".toc"
-           ".tp"
-           ".tps"
-           ".vr"
-           ".vrs"
-           ".x86f"
-           "~"
-           )))
- '(ido-mode 'both nil (ido))
- '(ido-save-directory-list-file "~/.emacs.d/ido.last")
- )
-
-;;}}}
-;;{{{  Recent files
-
-(my/custom-set-variables
- '(recentf-save-file "~/.emacs.d/recentf")
- )
-
-;;}}}
-;;{{{  emacsclient and server
-
-(my/custom-set-variables
- '(server-done-hook (quote (delete-frame)))
- '(server-window (quote switch-to-buffer-other-frame))
- )
-
-(server-start)
-
-;;}}}
 ;;{{{  Help (apropos, info, etc)
 
 (add-to-list 'el-get-sources
@@ -976,15 +918,50 @@ This command is designed to be used whether you are already in Info or not."
   (pop-to-buffer "*info*"))
 
 ;;}}}
-;;{{{  ediff
+;;{{{  Completion
 
 (my/custom-set-variables
- '(ediff-keep-variants nil)
- '(ediff-make-buffers-readonly-at-startup t)
- '(ediff-merge-split-window-function 'split-window-vertically)
- '(ediff-split-window-function 'split-window-horizontally)
- '(ediff-use-last-dir t)
- '(ediff-window-setup-function 'ediff-setup-windows-plain)
+ '(completion-ignored-extensions
+   (quote (".a"
+           ".aux"
+           ".bak"
+           ".bbl"
+           ".bin"
+           ".blg"
+           ".class"
+           ".cp"
+           ".cps"
+           ".dvi"
+           ".elc"
+           ".fas"
+           ".fmt"
+           ".fn"
+           ".fns"
+           ".glo"
+           ".idx"
+           ".ky"
+           ".kys"
+           ".lib"
+           ".ln"
+           ".lof"
+           ".log"
+           ".lot"
+           ".map"
+           ".o"
+           ".obj"
+           ".pg"
+           ".pgs"
+           ".pyc"
+           ".toc"
+           ".tp"
+           ".tps"
+           ".vr"
+           ".vrs"
+           ".x86f"
+           "~"
+           )))
+ '(ido-mode 'both nil (ido))
+ '(ido-save-directory-list-file "~/.emacs.d/ido.last")
  )
 
 ;;}}}
@@ -997,6 +974,50 @@ This command is designed to be used whether you are already in Info or not."
                             :url         "https://github.com/emacsmirror/ilocate-library.git"
                             :localname   "ilocate-library.el"
                             :features    (ilocate-library)))
+
+;;}}}
+;;{{{  Update timestamps before saving files
+
+(add-hook 'before-save-hook 'time-stamp)
+
+;;}}}
+;;{{{  Always byte compile after saving elisp
+
+(defun my/byte-compile-saved-elisp-buffer ()
+  "Byte compile an elisp buffer anytime it is saved."
+  (if (eq major-mode 'emacs-lisp-mode)
+      (byte-compile-file (buffer-file-name))))
+
+(add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
+
+;;}}}
+;;{{{  Recent files
+
+(my/custom-set-variables
+ '(recentf-save-file "~/.emacs.d/recentf")
+ )
+
+;;}}}
+;;{{{  emacsclient and server
+
+(my/custom-set-variables
+ '(server-done-hook (quote (delete-frame)))
+ '(server-window (quote switch-to-buffer-other-frame))
+ )
+
+(server-start)
+
+;;}}}
+;;{{{  ediff
+
+(my/custom-set-variables
+ '(ediff-keep-variants nil)
+ '(ediff-make-buffers-readonly-at-startup t)
+ '(ediff-merge-split-window-function 'split-window-vertically)
+ '(ediff-split-window-function 'split-window-horizontally)
+ '(ediff-use-last-dir t)
+ '(ediff-window-setup-function 'ediff-setup-windows-plain)
+ )
 
 ;;}}}
 ;;{{{  Named shells
@@ -1142,65 +1163,132 @@ This command is designed to be used whether you are already in Info or not."
 			      auto-mode-alist))
 
 
-(defconst jsy-c-style
-  '((c-basic-offset			. 4)
-    (c-comment-only-line-offset		. 0)
-    (c-indent-comments-syntactically-p	. t)
-    (c-label-minimum-indentation	. 0)
-    (c-offsets-alist		        . (
-				           (inline-open         . 0)
-				           (block-close         . 0)
-					   (statement-cont	. c-lineup-math)
-					   (label		. -)
-					   (arglist-intro	. c-lineup-arglist-intro-after-paren)
-					   (arglist-close	. c-lineup-arglist-close-under-paren)
-					   (innamespace		. 0)
-                                           ))
-    (c-hanging-braces-alist		. (
-					   (defun-open		before after)
-					   (defun-close		before after)
-					   (class-open		before after)
-					   (class-close		before after)
-					   (inline-open		before after)
-					   (inline-close	before after)
-					   (block-open		after)
-					   (block-close		before after)
-					   (brace-list-open	after)
-					   (brace-list-close	before after)
-					   (statement-case-open	after)
-					   (substatement-open	after)
-                                           ))
-    (c-hanging-colons-alist		. (
-					   (case-label		after)
-					   (label 		after)
-					   (access-label 	after)
-                                           ))
-    (c-cleanup-list			. (scope-operator
-					   empty-defun-braces
-					   defun-close-semi))
-    (c-hanging-comment-ender-p		. nil)
-    (c-echo-syntactic-information-p	. t)
-    )
-  "jsy programming style"
-  )
+;; Closely parallels cc-align.el's c-lineup-arglist-operators
+(defun my/c-lineup-arglist-&&-or-|| (langelem)
+  "Line up lines starting with && or ||  under the open paren.
+Return nil on lines that start with neither && nor ||, to leave
+those cases to other line-up functions.  Example:
+
+if ( x < 10
+  || at_limit (x,       <- my/c-lineup-arglist-&&-or-||
+                list)    <- my/c-lineup-arglist-&&-or-|| returns nil
+   )
+
+Since this function doesn't do anything for lines without && or
+|| typically want to use it together with some other line-up
+settings, e.g. as follows \(the arglist-close setting is just a
+suggestion to get a consistent style):
+
+\(c-set-offset 'arglist-cont '(c-lineup-arglist-operators 0))
+\(c-set-offset 'arglist-cont-nonempty '(c-lineup-arglist-operators
+                                        c-lineup-arglist))
+\(c-set-offset 'arglist-close '(c-lineup-arglist-close-under-paren))
+
+Works with: arglist-cont, arglist-cont-nonempty."
+  (save-excursion
+    (back-to-indentation)
+    (when (looking-at "\\(&&\\|||\\)")
+      (let ((ret (c-lineup-arglist-close-under-paren langelem)))
+        (message "my/c-lineup-arglist-&&-or-||: ret = %s" ret)
+        (if (vectorp ret) (vector (1- (aref ret 0))) nil)))))
 
 (eval-after-load "cc-mode"
   `(progn
+     (setq c-style-variables-are-local-p nil) ; when tweaking sytles
+
+     (c-add-style
+      "jsy"
+      '("gnu"
+        (c-echo-syntactic-information-p . t)
+        (c-basic-offset . 4)
+        (c-offsets-alist
+         (access-label . 0)
+         (annotation-top-cont . 0)
+         (annotation-var-cont . +)
+         (arglist-close . c-lineup-close-paren)
+         (arglist-cont c-lineup-gcc-asm-reg 0)
+         (arglist-cont-nonempty my/c-lineup-arglist-&&-or-|| c-lineup-arglist-close-under-paren)
+         (arglist-intro . c-lineup-arglist-intro-after-paren)
+         (block-close . 0)
+         (block-open . 0)
+         (brace-entry-open . 0)
+         (brace-list-close . 0)
+         (brace-list-entry . 0)
+         (brace-list-intro . +)
+         (brace-list-open . +)
+         (c . c-lineup-C-comments)
+         (case-label . 0)
+         (catch-clause . 0)
+         (class-close . 0)
+         (class-open . 0)
+         (comment-intro . c-lineup-comment)
+         (composition-close . 0)
+         (composition-open . 0)
+         (cpp-define-intro c-lineup-cpp-define +)
+         (cpp-macro . -1000)
+         (cpp-macro-cont . +)
+         (defun-block-intro . +)
+         (defun-close . 0)
+         (defun-open . 0)
+         (do-while-closure . 0)
+         (else-clause . 0)
+         (extern-lang-close . 0)
+         (extern-lang-open . 0)
+         (friend . 0)
+         (func-decl-cont . +)
+         (inclass . +)
+         (incomposition . +)
+         (inexpr-class . +)
+         (inexpr-statement . +)
+         (inextern-lang . +)
+         (inher-cont . c-lineup-multi-inher)
+         (inher-intro . +)
+         (inlambda . c-lineup-inexpr-block)
+         (inline-close . 0)
+         (inline-open . 0)
+         (inmodule . +)
+         (innamespace . 0)
+         (knr-argdecl . 0)
+         (knr-argdecl-intro . 5)
+         (label . 0)
+         (lambda-intro-cont . +)
+         (member-init-cont . -)
+         (member-init-intro . 0)
+         (module-close . 0)
+         (module-open . 0)
+         (namespace-close . 0)
+         (namespace-open . 0)
+         (objc-method-args-cont . c-lineup-ObjC-method-args)
+         (objc-method-call-cont c-lineup-ObjC-method-call-colons c-lineup-ObjC-method-call +)
+         (objc-method-intro . [0])
+         (statement . 0)
+         (statement-block-intro . +)
+         (statement-case-intro . +)
+         (statement-case-open . +)
+         (statement-cont . 7)
+         (stream-op . c-lineup-streamop)
+         (string . -1000)
+         (substatement . +)
+         (substatement-label . 0)
+         (substatement-open . 0)
+         (template-args-cont c-lineup-template-args +)
+         (topmost-intro . 0)
+         (topmost-intro-cont . +))))
+
      (defun my/c-mode-common-hook ()
        ""
        ;; Semantic does a better job supporting which-func in mode-line
        ;;(require 'semantic/imenu)
        ;;(setq imenu-create-index-function 'semantic-create-imenu-index)
 
-       (turn-off-filladapt-mode)
+       (c-set-style "jsy")
+
+       (turn-on-filladapt-mode)
        (c-setup-filladapt)
 
        (setq tab-width 4)
        (setq comment-column 40)
        (setq fill-column 75)
-
-       (c-add-style "jsy" jsy-c-style t)
-       (c-set-style "jsy")
 
        (c-toggle-auto-hungry-state 1)
 
@@ -1279,7 +1367,7 @@ This command is designed to be used whether you are already in Info or not."
 ;;=== el-get (epilog) ==================================================
 ;;{{{  Sync and update
 
-(el-get 'sync)
+(el-get 'wait)
 
 ;; Use update all when first configuring a new machine or user
 ;; (el-get-update-all)
@@ -1407,7 +1495,7 @@ This command is designed to be used whether you are already in Info or not."
 (my/check-custom-file)
 
 ;;}}}
-;;{{{  Collected key bindings
+;;{{{  Key bindings
 
 
 (keydef "C-c -"      replace-string)
