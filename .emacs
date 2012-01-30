@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-30 08:40:25 jyates"
+;; Time-stamp: "2012-01-30 17:31:46 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -24,7 +24,7 @@
 ;; Remove older versions of emacs and emacs-goodies
 
 ;; Prerequisites:
-;; - git, bzr, cvs, svn, hg
+;; - git, bzr, cvs, svn, hg, makeinfo (from texinfo)
 
 ;; Directories
 ;; ~/.emacs.d/auto-save-Confluence
@@ -856,6 +856,59 @@ convert it to readonly/view-mode."
 
 ;;}}}
 
+;;=== VC, diff, merge, patch ===========================================
+;;{{{  Magit
+
+(add-to-list 'el-get-sources
+             '(:name magit))
+
+(add-to-list 'el-get-sources
+             '(:name magithub))
+
+;;}}}
+;;{{{  ediff
+
+(my/custom-set-variables
+ '(ediff-keep-variants nil)
+ '(ediff-make-buffers-readonly-at-startup t)
+ '(ediff-merge-split-window-function 'split-window-vertically)
+ '(ediff-split-window-function 'split-window-horizontally)
+ '(ediff-use-last-dir t)
+ '(ediff-window-setup-function 'ediff-setup-windows-plain)
+ )
+
+;;}}}
+;;{{{  smerge
+
+(my/custom-set-variables
+ '(smerge-command-prefix ""))
+
+;;}}}
+;;{{{  Applying patches
+
+(eval-when-compile
+  (require 'diff-mode))
+
+;; make using patch mode more convenient
+(defun my/diff-advance-apply-next-hunk-and-recenter ()
+  "Advance to next hunk, apply, and recenter windows for review."
+  (interactive)
+  (diff-hunk-next)
+  (diff-apply-hunk)
+  (when diff-advance-after-apply-hunk
+    (diff-hunk-prev))
+  (recenter 0)
+  (other-window 1)
+  (recenter 0)
+  (other-window 1))
+
+
+(add-hook 'diff-mode-hook
+          (function (lambda ()
+                      (local-set-key "\C-c\C-c" 'my/diff-advance-apply-next-hunk-and-recenter))))
+
+;;}}}
+
 ;;=== Utilities ========================================================
 ;;{{{  Help (apropos, info, etc)
 
@@ -965,6 +1018,13 @@ This command is designed to be used whether you are already in Info or not."
  )
 
 ;;}}}
+;;{{{  Recent files
+
+(my/custom-set-variables
+ '(recentf-save-file "~/.emacs.d/recentf")
+ )
+
+;;}}}
 ;;{{{  ilocate-library
 
 (add-to-list 'el-get-sources
@@ -991,13 +1051,6 @@ This command is designed to be used whether you are already in Info or not."
 (add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
 
 ;;}}}
-;;{{{  Recent files
-
-(my/custom-set-variables
- '(recentf-save-file "~/.emacs.d/recentf")
- )
-
-;;}}}
 ;;{{{  emacsclient and server
 
 (my/custom-set-variables
@@ -1006,18 +1059,6 @@ This command is designed to be used whether you are already in Info or not."
  )
 
 (server-start)
-
-;;}}}
-;;{{{  ediff
-
-(my/custom-set-variables
- '(ediff-keep-variants nil)
- '(ediff-make-buffers-readonly-at-startup t)
- '(ediff-merge-split-window-function 'split-window-vertically)
- '(ediff-split-window-function 'split-window-horizontally)
- '(ediff-use-last-dir t)
- '(ediff-window-setup-function 'ediff-setup-windows-plain)
- )
 
 ;;}}}
 ;;{{{  Named shells
@@ -1340,30 +1381,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (my/custom-set-variables
  '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
  )
-
-;;}}}
-;;{{{  Applying patches
-
-(eval-when-compile
-  (require 'diff-mode))
-
-;; make using patch mode more convenient
-(defun my/diff-advance-apply-next-hunk-and-recenter ()
-  "Advance to next hunk, apply, and recenter windows for review."
-  (interactive)
-  (diff-hunk-next)
-  (diff-apply-hunk)
-  (when diff-advance-after-apply-hunk
-    (diff-hunk-prev))
-  (recenter 0)
-  (other-window 1)
-  (recenter 0)
-  (other-window 1))
-
-
-(add-hook 'diff-mode-hook
-          (function (lambda ()
-                      (local-set-key "\C-c\C-c" 'my/diff-advance-apply-next-hunk-and-recenter))))
 
 ;;}}}
 
