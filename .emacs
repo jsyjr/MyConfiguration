@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-30 17:31:46 jyates"
+;; Time-stamp: "2012-01-31 00:11:38 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -53,42 +53,8 @@
 
 ;;}}}
 
-;;--
-
-;;{{{  Augment LOAD-PATH
-
-(defun my/collect-lisp-dirs (dir)
-  "Return directories at or below DIR with .el[c][.gz] files."
-  (if (not (file-accessible-directory-p dir))
-      nil ; Silently ignore inaccessible or non-existent directories
-    (let* ((home      (expand-file-name "~"))
-           (add-this  nil)
-	   (this-dir  (expand-file-name dir))
-	   (all-files (directory-files this-dir t))
-	   (file      nil)
-	   (sub-dirs  nil))
-      (dolist (file all-files)
-        (cond
-         ((file-directory-p file)
-          (if (not (string-match "/\\.\\.?$" file))  ; Ignore "." and ".."
-              (setq sub-dirs (append sub-dirs (my/collect-lisp-dirs file)))))
-         ((and (not add-this) (string-match "\\.elc?\\(\\.gz\\)?$" file))
-          (setq add-this (list this-dir)))))
-      (append add-this sub-dirs))))
-
-(defvar my/load-path-roots '("~/emacs" "~/.emacs.d")
-  "Ordered list of root directory paths for augmenting load-path.
-Each root will be searched recursively.  Any directory containing
-at least one .el[c] or .el[c].gz file will be added to load-path.")
-
-(dolist (root (nreverse my/load-path-roots))
-  (dolist (dir (nreverse (my/collect-lisp-dirs root)))
-    (add-to-list 'load-path (expand-file-name dir))))
-
-;;}}}
-
 ;;=== Customization ====================================================
-;;{{{  Auditing framework
+;;{{{  Auditing
 
 (defvar my/custom-variables nil
  "List of customizations to be compared to those in the custom file.")
@@ -105,9 +71,6 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
   "Accumulate ARGS on 'my/custom-faces."
   (dolist (entry args) (add-to-list
                         'my/custom-faces entry)))
-
-;;}}}
-;;{{{  Auditing functions
 
 (defun my/check-custom-list (kind custom local)
   "Write to *Custom KIND audit* an audit of CUSTOM versus LOCAL."
@@ -178,6 +141,8 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
 ;;=== Package management ===============================================
 ;;{{{  el-get (booststrap and init)
 
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
 ;; Minimal bootstrap
 (unless (require 'el-get nil t)
   (url-retrieve
@@ -201,13 +166,6 @@ at least one .el[c] or .el[c].gz file will be added to load-path.")
                             :type        cvs
                             :url         ":pserver:anonymous@anonscm.debian.org:/pkg-goodies-el"
                             :localname   "emacs-goodies-el"))
-
-;;}}}
-
-;;=== Coding convenience ===============================================
-;;{{{  emacs-goodies/keydef - simpler definitions, autoloads for free
-
-(require 'keydef)       ; simpler key definitions, autoloads for free
 
 ;;}}}
 
@@ -1516,6 +1474,10 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 ;;}}}
 ;;{{{  Key bindings
+
+(add-to-list 'load-path "~/.emacs.d/el-get/emacs-goodies-el/elisp/emacs-goodies-el")
+
+(require 'keydef)       ; simpler key definitions, autoloads for free
 
 
 (keydef "C-c -"      replace-string)
