@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-31 00:46:39 jyates"
+;; Time-stamp: "2012-01-31 08:54:36 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -24,7 +24,7 @@
 ;; Remove older versions of emacs and emacs-goodies
 
 ;; Prerequisites:
-;; - git, bzr, cvs, svn, hg, makeinfo (from texinfo)
+;; - git, bzr, cvs, svn, hg, autoconf, makeinfo (from texinfo)
 
 ;; Directories
 ;; ~/.emacs.d/auto-save-Confluence
@@ -815,13 +815,15 @@ convert it to readonly/view-mode."
 ;;}}}
 
 ;;=== VC, diff, merge, patch ===========================================
-;;{{{  Magit
+;;{{{  magit
 
-(add-to-list 'el-get-sources
-             '(:name magit))
+(add-to-list 'el-get-sources 'magit)
+(add-to-list 'el-get-sources 'magithub)
 
-(add-to-list 'el-get-sources
-             '(:name magithub))
+;;}}}
+;;{{{  dvc
+
+(add-to-list 'el-get-sources 'dvc)
 
 ;;}}}
 ;;{{{  ediff
@@ -929,7 +931,9 @@ This command is designed to be used whether you are already in Info or not."
   (pop-to-buffer "*info*"))
 
 ;;}}}
-;;{{{  Completion
+;;{{{  Completion (ido, smex)
+
+(add-to-list 'el-get-sources 'smex)
 
 (my/custom-set-variables
  '(completion-ignored-extensions
@@ -973,6 +977,7 @@ This command is designed to be used whether you are already in Info or not."
            )))
  '(ido-mode 'both nil (ido))
  '(ido-save-directory-list-file "~/.emacs.d/ido.last")
+ '(smex-save-file "~/.emacs.d/smex")
  )
 
 ;; from minibuf-electric-gnuemacs.el
@@ -1502,26 +1507,27 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (require 'keydef)       ; simpler key definitions, autoloads for free
 
 
-(keydef "C-c -"      replace-string)
-(keydef "C-c C--"    query-replace)
-(keydef "C-c ="      replace-regexp)
-(keydef "C-c C-="    query-replace-regexp)
-(keydef "C-c 4"      my/set-buffer-local-tab-width-to-4)
-(keydef "C-c 8"      my/set-buffer-local-tab-width-to-8)
-(keydef "C-c c"      org-capture)
-(keydef "C-c l"      org-store-link)
-(keydef "C-c w f"    confluence-get-page) ; open page on confluence wiki
+(keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
+(keydef "C-c -"         replace-string)
+(keydef "C-c C--"       query-replace)
+(keydef "C-c ="         replace-regexp)
+(keydef "C-c C-="       query-replace-regexp)
+(keydef "C-c 4"         my/set-buffer-local-tab-width-to-4)
+(keydef "C-c 8"         my/set-buffer-local-tab-width-to-8)
+(keydef "C-c c"         org-capture)
+(keydef "C-c l"         org-store-link)
+(keydef "C-c w f"       confluence-get-page) ; open page on confluence wiki
 
 
 
 ;; Additions to the help command
 ;;
-(keydef "C-h A"      apropos-toc)       ; mnemonic: apropos All
-(keydef "C-h L"      (info "elisp"))    ; was describe-language-environment
-(keydef "C-h R"      my/elisp-function-reference)
+(keydef "C-h A"         apropos-toc)       ; mnemonic: apropos All
+(keydef "C-h L"         (info "elisp"))    ; was describe-language-environment
+(keydef "C-h R"         my/elisp-function-reference)
 
 
-(keydef "C-x C-b"    bs-show)           ; same binding as <f1>
+(keydef "C-x C-b"       bs-show)           ; same binding as <f1>
 
 ;; Kevin Rodgers <kevinr@ihs.com>
 ;;
@@ -1533,10 +1539,10 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;; you can run the macro over a specified set of lines by marking the
 ;; region and using `M-x apply-macro-to-region-lines' (which I've bound to
 ;; `C-x E')
-(keydef "C-x E"      apply-macro-to-region-lines)
+(keydef "C-x E"         apply-macro-to-region-lines)
 
-(keydef "C-x ,"      am-find-file)
-(keydef "C-x 4 ,"    am-find-file-other-window)
+(keydef "C-x ,"         am-find-file)
+(keydef "C-x 4 ,"       am-find-file-other-window)
 
 
 ;; Additions to binding.el's goto-map; prior bindings:
@@ -1544,14 +1550,14 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;  n   next-error
 ;;  p   previous-error
 ;;
-(keydef "M-g b"      bookmark-jump)
-(keydef "M-g M-b"    bookmark-jump)
-(keydef "M-g l"      ilocate-library-find-source)
-(keydef "M-g r"      jump-to-register)
-(keydef "M-g M-r"    jump-to-register)
+(keydef "M-g b"         bookmark-jump)
+(keydef "M-g M-b"       bookmark-jump)
+(keydef "M-g l"         ilocate-library-find-source)
+(keydef "M-g r"         jump-to-register)
+(keydef "M-g M-r"       jump-to-register)
 
 
-(keydef "M-["        align)
+(keydef "M-["           align)
 
 
 ;; Additions to binding.el's search-map; prior bindings:
@@ -1559,50 +1565,52 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;  o   occur
 ;;  w   isearch-forward-word
 ;;
-(keydef "M-s g"      grep)
-(keydef "M-s l"      lgrep)
-(keydef "M-s m"      multi-occur-in-matching-buffers)
-(keydef "M-s r"      rgrep)
+(keydef "M-s g"         grep)
+(keydef "M-s l"         lgrep)
+(keydef "M-s m"         multi-occur-in-matching-buffers)
+(keydef "M-s r"         rgrep)
 
+(keydef "M-x"           smex)
+(keydef "M-X"           smex-major-mode-commands)
 
-(keydef "<f1>"       bs-show)
-(keydef "C-<f1>"     my/named-shell)
-(keydef "M-<f1>"     menu-bar-mode)
+(keydef "<f1>"          bs-show)
+(keydef "C-<f1>"        my/named-shell)
+(keydef "M-<f1>"        menu-bar-mode)
 
-(keydef "<f2>"       disk)
+(keydef "<f2>"          disk)
 
 
 ;; Strong similarity to MS Visual Studio's function keys
-(keydef    "<f4>" next-error)
-(keydef  "C-<f4>" first-error)
+(keydef    "<f4>"       next-error)
+(keydef  "C-<f4>"       first-error)
 
 (eval-after-load "gud" '(progn
-  (keydef   "<f5>"   gud-cont)          ; MS go / continue
-  (keydef "C-<f5>"   my/gud-cont-to-tbreak) ; MS run to cursor
-  (keydef "M-<f5>"   gud-run)           ; restart
+  (keydef   "<f5>"      gud-cont)          ; MS go / continue
+  (keydef "C-<f5>"      my/gud-cont-to-tbreak) ; MS run to cursor
+  (keydef "M-<f5>"      gud-run)           ; restart
   ))
 
-(keydef   "C-<f7>"   compile)
+(keydef   "C-<f7>"      compile)
 
 (eval-after-load "gud" '(progn
-  (keydef   "<f8>"   my/gud-regs)       ; show registers
-  (keydef "C-<f8>"   my/gud-keys)       ; show key bindings
+  (keydef   "<f8>"      my/gud-regs)       ; show registers
+  (keydef "C-<f8>"      my/gud-keys)       ; show key bindings
 
-  (keydef   "<f9>"   gud-step)          ; MS step into
-  (keydef "C-<f9>"   my/gud-stepi)
-  (keydef "M-<f9>"   gud-down)
+  (keydef   "<f9>"      gud-step)          ; MS step into
+  (keydef "C-<f9>"      my/gud-stepi)
+  (keydef "M-<f9>"      gud-down)
 
-  (keydef   "<f10>"  gud-next)          ; MS step over
-  (keydef "C-<f10>"  gud-finish)        ; MS step out
-  (keydef "M-<f10>"  gud-up)
+  (keydef   "<f10>"     gud-next)          ; MS step over
+  (keydef "C-<f10>"     gud-finish)        ; MS step out
+  (keydef "M-<f10>"     gud-up)
 
-  (keydef   "<f11>"  gud-break)
-  (keydef "C-<f11>"  gud-tbreak)
-  (keydef "M-<f11>"  gud-remove)
+  (keydef   "<f11>"     gud-break)
+  (keydef "C-<f11>"     gud-tbreak)
+  (keydef "M-<f11>"     gud-remove)
   ))
 
-(keydef "<f12>"      customize-apropos)
-(keydef "C-<f12>"    customize-group)
+(keydef "<f12>"         customize-apropos)
+(keydef "C-<f12>"       customize-group)
 
 
 (eval-after-load "bs" '(keydef (bs "<f1>")  bs-kill))
