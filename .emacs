@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-31 00:11:38 jyates"
+;; Time-stamp: "2012-01-31 00:46:39 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -974,6 +974,28 @@ This command is designed to be used whether you are already in Info or not."
  '(ido-mode 'both nil (ido))
  '(ido-save-directory-list-file "~/.emacs.d/ido.last")
  )
+
+;; from minibuf-electric-gnuemacs.el
+(defun ido-electric-slash ()
+  (interactive)
+  (and (eq ?/ (preceding-char))
+       ;; permit `//hostname/path/to/file'
+       (not (eq (point) (1+ (minibuffer-prompt-end))))
+       ;; permit `http://url/goes/here'
+       (not (eq ?: (char-after (- (point) 2))))
+       (delete-region (minibuffer-prompt-end) (point)))
+  (insert ?/))
+
+(defun ido-electric-tilde ()
+  (interactive)
+  (if (eq ?/ (preceding-char))
+      (delete-region (minibuffer-prompt-end) (point)))
+  (insert ?~))
+
+(add-hook 'ido-setup-hook
+          '(lambda ()
+             (define-key ido-completion-map "/" 'ido-electric-slash)
+             (define-key ido-completion-map "~" 'ido-electric-tilde)))
 
 ;;}}}
 ;;{{{  Recent files
