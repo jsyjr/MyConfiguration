@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-02-02 08:13:50 jyates"
+;; Time-stamp: "2012-02-02 11:12:05 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -223,19 +223,9 @@
      )))
 
 ;;}}}
-
-;;=== Uncatergorized ===================================================
-;;{{{  Always use y/n instead of yes/no
+;;{{{  Less safe: y/n instead of yes/no
 
 (fset 'yes-or-no-p 'y-or-n-p)
-
-;;}}}
-;;{{{  Performance
-
-(my/custom-set-variables
- '(gc-cons-threshold 50000000)
- '(message-log-max 10000)
- )
 
 ;;}}}
 
@@ -643,6 +633,20 @@ mouse-3: go to end") "]")))
   (setq tab-width 8))
 
 ;;}}}
+;;{{{  Ansi colors
+
+(my/custom-set-variables
+ '(ansi-color-names-vector
+   ["black"
+    "IndianRed1"
+    "medium spring green"
+    "khaki1" "dodgerblue1"
+    "maroon1"
+    "darkslategray1"
+    "white"])
+ )
+
+;;}}}
 ;;{{{  Extra color themes
 
 (my/custom-set-variables
@@ -1040,16 +1044,6 @@ This command is designed to be used whether you are already in Info or not."
 (add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
 
 ;;}}}
-;;{{{  emacsclient and server
-
-(my/custom-set-variables
- '(server-done-hook (quote (delete-frame)))
- '(server-window (quote switch-to-buffer-other-frame))
- )
-
-(server-start)
-
-;;}}}
 ;;{{{  Named shells
 
 (defun my/named-shell (BUFFER)
@@ -1173,6 +1167,8 @@ This command is designed to be used whether you are already in Info or not."
 
 ;;=== Programming ======================================================
 ;;{{{  Sanjay Dixit's am package
+
+(add-to-list 'load-path "~/emacs/nz")
 
 (autoload 'am-scan "am" nil t)
 
@@ -1369,6 +1365,26 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (my/custom-set-variables
  '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
+ )
+
+;;}}}
+
+;;=== Uncatergorized ===================================================
+;;{{{  emacsclient and server
+
+(my/custom-set-variables
+ '(server-done-hook (quote (delete-frame)))
+ '(server-window (quote switch-to-buffer-other-frame))
+ )
+
+(server-start)
+
+;;}}}
+;;{{{  Performance
+
+(my/custom-set-variables
+ '(gc-cons-threshold 50000000)
+ '(message-log-max 10000)
  )
 
 ;;}}}
