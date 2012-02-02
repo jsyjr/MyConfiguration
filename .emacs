@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-01-31 08:54:36 jyates"
+;; Time-stamp: "2012-02-02 08:13:50 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -50,11 +50,12 @@
 ;; sort lines
 ;; dvc, magit
 ;; e/vtags
+;; setnu?
 
 ;;}}}
 
 ;;=== Customization ====================================================
-;;{{{  Auditing
+;;{{{  Customization auditing framework
 
 (defvar my/custom-variables nil
  "List of customizations to be compared to those in the custom file.")
@@ -122,9 +123,10 @@
     (my/check-custom-list "faces" (cadr disk-lists) my/custom-faces)))
 
 ;;}}}
-;;{{{  Load customizations
+;;{{{  Actually load customizations
 
 (setq custom-file "~/emacs/custom-file")
+(add-to-list 'auto-mode-alist '("custom-file" . emacs-lisp-mode))
 (load custom-file)
 
 ;; Host specific initialization if it exists (my-rc-local-HOST.el[c])
@@ -332,6 +334,8 @@
 (my/custom-set-faces
  '(fixed-pitch ((t nil)))
  '(variable-pitch ((t (:height 0.9 :family "Sans Serif"))))
+ '(show-paren-match ((t (:background "light green" :foreground "black" :weight bold))))
+ '(show-paren-mismatch ((t (:background "firebrick" :foreground "white"))))
  )
 
 ;;}}}
@@ -688,7 +692,7 @@ mouse-3: go to end") "]")))
  )
 
 ;;}}}
-;;{{{  Whilte space hygine
+;;{{{  White space hygine
 
 (my/custom-set-variables
  '(indicate-empty-lines t)
@@ -1083,7 +1087,7 @@ This command is designed to be used whether you are already in Info or not."
 
 (my/custom-set-variables
  '(org-hide-leading-stars t)
- '(org-default-notes-file "~/org/captute.org")
+ '(org-default-notes-file "~/org/capture.org")
  '(org-modules
    '(org-docview                ; Links to doc-view buffers
      org-info                   ; Links to Info nodes
@@ -1380,14 +1384,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;}}}
 
 ;;=== Commented out ====================================================
-;;{{{  Old whiz-bang
-
-;;;; setnu (el-get)
-
-;; Provide support for numbered lines via M-x setnu-mode
-                                        ;(require 'setnu)
-
-;;}}}
 ;;{{{  Customizations
 
 ;; (my/custom-set-variables

@@ -1,0 +1,8 @@
+
+* Style notes
+* Work
+* Join performance
+* New zone maps
+* Distinct storage per transaction
+* Clean up
+* Jira
