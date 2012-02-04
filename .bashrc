@@ -79,7 +79,7 @@ fi
 #=====================================================================================================
 
 cleantmp() {
-    rm /tmp/cat* /tmp/*.tmp /tmp/*log /tmp/EMP* /tmp/emp* /tmp/EXT* /tmp/ext* /tmp/rrmgrStore* /tmp/*.out /tmp/xfermls* /tmp/spin_pid /tmp/xsl.* /tmp/stl_test.*
+    rm /tmp/*.out /tmp/*.tmp /tmp/cat* /tmp/*log /tmp/EMP* /tmp/emp* /tmp/EXT* /tmp/ext* /tmp/nzbacktrace.* /tmp/rrmgrStore* /tmp/spin_pid /tmp/stl_test.* /tmp/xalltypes.dat /tmp/xfermls* /tmp/xsl.*
 }
 
 #=====================================================================================================
@@ -89,9 +89,11 @@ nzcleantest () {
     if [ ! -d "src/amake" ]; then
         echo "Not in the root of a source tree."; return 1
     fi
+    cleantmp
 #   rm -rf \{ debug \| turbo \}/\{ *tests \| epsilon \| esi \| netget \| tpc_small \}/*
     rm -rf obj/debug/esi/* obj/debug/tests/* obj/debug/sqlldr_tests/* obj/debug/daves_tests/* obj/debug/epsilone/* obj/debug/netgen/* obj/debug/tpc_small/*
     rm -rf obj/turbo/esi/* obj/turbo/tests/* obj/turbo/sqlldr_tests/* obj/turbo/daves_tests/* obj/turbo/epsilone/* obj/turbo/netgen/* obj/turbo/tpc_small/*
+    rm -rf /tmp/amake
 }
 
 #=====================================================================================================
@@ -121,7 +123,7 @@ nzcleanbuild () {
     if [ ! -d "src/amake" ]; then
         echo "Not in the root of a source tree."; return 1
     fi
-    cleantmp
+    nzcleantest
     rm -rf log.[1-9]* data debug doxy gcov images obj/* simdata tmp turbo
     ( command cd src/linux_drivers \
            && rm -rf */*.o */*.ko */*.o */.*.cmd */.tmp_versions */*.mod.c )

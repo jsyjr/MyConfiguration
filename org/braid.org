@@ -1,3 +1,26 @@
 
 * What is Braid
-* Why Braid exists
+Braid is an intermediate language (IL) being designed for the Marlin project.
+It is responsible for spanning the gulf between the level of semantics captured
+in the Postgres node vocabulary and the level of semantics expected by the
+execution engine.  Braid draws upon concept common in dataflow languages and
+representations.
+
+* Language attributes
+** Pure value semantics
+** Explicit connections
+** Strongly typed edges
+** Strongly typed operators
+* A spectrum of operators
+Once the Postgres frontend completes its optimization and planning activities it
+delivers an execution plan in the form of tree of Postgres nodes decorated with
+expression trees.  Translating those trees to Braid requires values and
+operators whose semantics closely parallel Postgres'.  Thus Braid incorporates
+both the concepts of full blown tuples and simple scalar values.
+
+It is possible to imagine building an interpreter for any language
+representation with well defined composition semantics.  Nonetheless the higher
+and more abstract those semantics the greater the challenge of building that
+interpreter will be.  In addition high level semantics tend to hide important
+opportunities for optimization making it difficult to achieve acceptable
+efficiency.  
