@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-02-02 11:12:05 jyates"
+;; Time-stamp: "2012-02-06 10:30:46 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -25,6 +25,7 @@
 
 ;; Prerequisites:
 ;; - git, bzr, cvs, svn, hg, autoconf, makeinfo (from texinfo)
+;; - doxymacs requires that libxml2-dev be installed
 
 ;; Directories
 ;; ~/.emacs.d/auto-save-Confluence
@@ -48,9 +49,13 @@
 ;; occur
 ;; grep
 ;; sort lines
-;; dvc, magit
+;; dvc
 ;; e/vtags
 ;; setnu?
+
+;; (add-to-list 'compilation-error-regexp-alist
+;;             '("^\\(?:..\\[[ 0-9]+\\]+ \\)*\\([a-zA-Z0-9:\\/\\.-]+\.lp0\\)\(\\([0-9]+\\)\)"
+;;               1 2 nil))
 
 ;;}}}
 
@@ -350,7 +355,8 @@
 ;;{{{  Selection and highlighting
 
 (my/custom-set-faces
- '(highlight ((t (:background "CornflowerBlue"))))
+;'(highlight ((t (:background "CornflowerBlue"))))
+ '(highlight ((t (:background "#081040"))))
  '(highlight-beyond-fill-column-face ((t (:inverse-video t))))
  '(region ((t (:background "DarkSlateBlue"))))
  )
@@ -678,24 +684,6 @@ mouse-3: go to end") "]")))
 ;; \(fn REGEXP &optional NLINES)" t)
 
 ;;}}}
-;;{{{  Filling
-
-;; As distributed filladapt.el contains no autoload cookies
-(autoload 'turn-on-filladapt-mode "filladapt"
-  "Unconditionally turn on Filladapt mode in the current buffer.
-
-\(fn)" t)
-
-(eval-after-load "filladapt" '(diminish 'filladapt-mode "FA"))
-
-(my/custom-set-variables
- '(text-mode-hook
-   '(text-mode-hook-identify
-     turn-on-filladapt-mode
-     ))
- )
-
-;;}}}
 ;;{{{  White space hygine
 
 (my/custom-set-variables
@@ -827,6 +815,10 @@ convert it to readonly/view-mode."
 
 (add-to-list 'el-get-sources 'magit)
 (add-to-list 'el-get-sources 'magithub)
+
+(my/custom-set-variables
+ '(magit-diff-refine-hunk 'all)
+ )
 
 ;;}}}
 ;;{{{  dvc
@@ -1061,10 +1053,25 @@ This command is designed to be used whether you are already in Info or not."
                       :after folding-mode-add-find-file-hook))
 
 (my/custom-set-variables
- '(folding-mode-prefix-key "f")
+ '(folding-mode-prefix-key ",")       ; also changed for hideshow
  '(folding-advice-instantiate nil)      ; not advising M-g g
  '(folding-goto-key "\M-gf")            ; Restore M-g's prefix behavior
  )
+
+;;}}}
+;;{{{  hideshow...
+
+(add-to-list 'el-get-sources 'hideshowvis)
+
+(defun my/display-code-line-counts (ov)
+  (when (eq 'code (overlay-get ov 'hs))
+    (let ((str (format " %d " (count-lines (overlay-start ov)
+                                           (overlay-end ov)))))
+      (put-text-property 0 (length str) 'face 'glyphless-char str)
+      (overlay-put ov 'display str))))
+
+(eval-after-load "hideshow"
+  '(setq hs-set-up-overlay 'my/display-code-line-counts))
 
 ;;}}}
 ;;{{{  filladapt
@@ -1073,6 +1080,21 @@ This command is designed to be used whether you are already in Info or not."
 (add-to-list 'el-get-sources
              '(:name filladapt
                      :url "http://cc-mode.sourceforge.net/filladapt.el"))
+
+;; As distributed filladapt.el contains no autoload cookies
+(autoload 'turn-on-filladapt-mode "filladapt"
+  "Unconditionally turn on Filladapt mode in the current buffer.
+
+\(fn)" t)
+
+(eval-after-load "filladapt" '(diminish 'filladapt-mode "FA"))
+
+(my/custom-set-variables
+ '(text-mode-hook
+   '(text-mode-hook-identify
+     turn-on-filladapt-mode
+     ))
+ )
 
 ;;}}}
 
@@ -1223,7 +1245,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (eval-after-load "cc-mode"
   `(progn
-     (setq c-style-variables-are-local-p nil) ; when tweaking sytles
+;     (setq c-style-variables-are-local-p nil) ; when tweaking sytles
 
      (c-add-style
       "jsy"
@@ -1302,31 +1324,38 @@ Works with: arglist-cont, arglist-cont-nonempty."
          (substatement-open . 0)
          (template-args-cont c-lineup-template-args +)
          (topmost-intro . 0)
-         (topmost-intro-cont . +))))
+         (topmost-intro-cont . +))))))
 
-     (defun my/c-mode-common-hook ()
-       ""
-       ;; Semantic does a better job supporting which-func in mode-line
-       ;;(require 'semantic/imenu)
-       ;;(setq imenu-create-index-function 'semantic-create-imenu-index)
+(defun my/c-mode-common-hook ()
+  ""
+  (message "my/c-mode-common-hook")
 
-       (c-set-style "jsy")
+  ;; Semantic does a better job supporting which-func in mode-line
+  ;;(require 'semantic/imenu)
+  ;;(setq imenu-create-index-function 'semantic-create-imenu-index)
 
-       (turn-on-filladapt-mode)
-       (c-setup-filladapt)
+  (c-set-style "jsy")
 
-       (setq tab-width 4)
-       (setq comment-column 40)
-       (setq fill-column 75)
+  (hs-minor-mode)
+  (hideshowvis-enable)
 
-       (c-toggle-auto-hungry-state 1)
+  (turn-on-filladapt-mode)
+  (c-setup-filladapt)
 
-       ;;(define-key c-mode-base-map "\C-m" 'newline-and-indent)
-       ;;(define-key c-mode-base-map ")" 'jsy-c-electric-close-paren)
-       )))
+  (setq tab-width 4)
+  (setq comment-column 40)
+  (setq fill-column 75)
 
-(my/custom-set-variables
- '(c-mode-common-hook '(my/c-mode-common-hook))
+  (c-toggle-auto-hungry-state 1)
+
+  ;;(define-key c-mode-base-map "\C-m" 'newline-and-indent)
+  ;;(define-key c-mode-base-map ")" 'jsy-c-electric-close-paren)
+  )
+
+;; Cannot use the customization interface to establish this hook function
+;; because yasnippet clobbers it.
+(eval-after-load "cc-vars"
+  '(add-hook 'c-mode-common-hook 'my/c-mode-common-hook)
  )
 
 ;;}}}
@@ -1520,6 +1549,16 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
+
+(eval-after-load "hideshow" '(progn
+  (keydef "C-c , C-c"  hs-toggle-hiding)
+  (keydef "C-c , C-h"  hs-hide-block)
+  (keydef "C-c , C-l"  hs-hide-level)
+  (keydef "C-c , C-s"  hs-show-block)
+  (keydef "C-c , C-M-h" hs-hide-all)
+  (keydef "C-c , C-M-s" hs-show-all)
+  ))
+
 (keydef "C-c -"         replace-string)
 (keydef "C-c C--"       query-replace)
 (keydef "C-c ="         replace-regexp)
@@ -1567,7 +1606,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (keydef "M-g l"         ilocate-library-find-source)
 (keydef "M-g r"         jump-to-register)
 (keydef "M-g M-r"       jump-to-register)
-
 
 (keydef "M-["           align)
 
