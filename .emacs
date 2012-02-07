@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-02-06 10:30:46 jyates"
+;; Time-stamp: "2012-02-07 01:20:50 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -49,7 +49,6 @@
 ;; occur
 ;; grep
 ;; sort lines
-;; dvc
 ;; e/vtags
 ;; setnu?
 
@@ -307,7 +306,7 @@
  )
 
 ;;}}}
-;;{{{  Cursor
+;;{{{  Cursor and parenthesis matching
 
 (my/custom-set-variables
  '(blink-cursor-delay 0.1)
@@ -321,6 +320,8 @@
 
 (my/custom-set-faces
  '(cursor ((t (:background "gold"))))
+ '(show-paren-match ((t (:background "light green" :foreground "black" :weight bold))))
+ '(show-paren-mismatch ((t (:background "firebrick" :foreground "white"))))
  )
 
 ;;}}}
@@ -329,8 +330,6 @@
 (my/custom-set-faces
  '(fixed-pitch ((t nil)))
  '(variable-pitch ((t (:height 0.9 :family "Sans Serif"))))
- '(show-paren-match ((t (:background "light green" :foreground "black" :weight bold))))
- '(show-paren-mismatch ((t (:background "firebrick" :foreground "white"))))
  )
 
 ;;}}}
@@ -355,10 +354,20 @@
 ;;{{{  Selection and highlighting
 
 (my/custom-set-faces
-;'(highlight ((t (:background "CornflowerBlue"))))
- '(highlight ((t (:background "#081040"))))
+ '(highlight ((t (:background "#070c20"))))
  '(highlight-beyond-fill-column-face ((t (:inverse-video t))))
  '(region ((t (:background "DarkSlateBlue"))))
+ )
+
+;;}}}
+;;{{{  diff faces
+
+(my/custom-set-faces
+ '(diff-added ((t (:inherit diff-changed :foreground "DarkSeaGreen1"))))
+ '(diff-file-header ((t (:inherit diff-header :foreground "light goldenrod yellow" :weight bold))))
+ '(diff-header ((t (:background "gray22"))))
+ '(diff-refine-change ((t (:background "#1c3850"))))
+ '(diff-removed ((t (:inherit diff-changed :foreground "MistyRose1"))))
  )
 
 ;;}}}
@@ -1001,6 +1010,13 @@ This command is designed to be used whether you are already in Info or not."
           '(lambda ()
              (define-key ido-completion-map "/" 'ido-electric-slash)
              (define-key ido-completion-map "~" 'ido-electric-tilde)))
+
+;;}}}
+;;{{{  Spell checking
+
+(my/custom-set-variables
+ '(ispell-personal-dictionary "~/emacs/aspell.en.pws")
+ )
 
 ;;}}}
 ;;{{{  Recent files
