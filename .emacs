@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-02-07 01:20:50 jyates"
+;; Time-stamp: "2012-02-07 09:32:26 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -357,17 +357,6 @@
  '(highlight ((t (:background "#070c20"))))
  '(highlight-beyond-fill-column-face ((t (:inverse-video t))))
  '(region ((t (:background "DarkSlateBlue"))))
- )
-
-;;}}}
-;;{{{  diff faces
-
-(my/custom-set-faces
- '(diff-added ((t (:inherit diff-changed :foreground "DarkSeaGreen1"))))
- '(diff-file-header ((t (:inherit diff-header :foreground "light goldenrod yellow" :weight bold))))
- '(diff-header ((t (:background "gray22"))))
- '(diff-refine-change ((t (:background "#1c3850"))))
- '(diff-removed ((t (:inherit diff-changed :foreground "MistyRose1"))))
  )
 
 ;;}}}
@@ -835,6 +824,17 @@ convert it to readonly/view-mode."
 (add-to-list 'el-get-sources 'dvc)
 
 ;;}}}
+;;{{{  diff
+
+(my/custom-set-faces
+ '(diff-added ((t (:inherit diff-changed :foreground "DarkSeaGreen1"))))
+ '(diff-file-header ((t (:inherit diff-header :foreground "light goldenrod yellow" :weight bold))))
+ '(diff-header ((t (:background "gray22"))))
+ '(diff-refine-change ((t (:background "#1c3850"))))
+ '(diff-removed ((t (:inherit diff-changed :foreground "MistyRose1"))))
+ )
+
+;;}}}
 ;;{{{  ediff
 
 (my/custom-set-variables
@@ -844,6 +844,25 @@ convert it to readonly/view-mode."
  '(ediff-split-window-function 'split-window-horizontally)
  '(ediff-use-last-dir t)
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
+ )
+
+(my/custom-set-faces
+ '(ediff-current-diff-A ((t (:inherit highlight :foreground "DarkSeaGreen1"))))
+ '(ediff-current-diff-Ancestor ((t (:inherit highlight :foreground "yellow"))))
+ '(ediff-current-diff-B ((t (:inherit highlight :foreground "MistyRose1"))))
+ '(ediff-current-diff-C ((t (:inherit highlight :foreground "pale goldenrod"))))
+ '(ediff-even-diff-A ((t (:background "#300000"))))
+ '(ediff-even-diff-Ancestor ((t (:background "#300000"))))
+ '(ediff-even-diff-B ((t (:background "#300000"))))
+ '(ediff-even-diff-C ((t (:background "#300000"))))
+ '(ediff-fine-diff-A ((t (:inherit ediff-current-diff-A :background "#1c3850"))))
+ '(ediff-fine-diff-Ancestor ((t (:inherit ediff-current-diff-Ancestor :background "#1c3850"))))
+ '(ediff-fine-diff-B ((t (:inherit ediff-current-diff-B :background "#1c3850"))))
+ '(ediff-fine-diff-C ((t (:inherit ediff-current-diff-C :background "#1c3850"))))
+ '(ediff-odd-diff-A ((t (:background "#281400"))))
+ '(ediff-odd-diff-Ancestor ((t (:background "#281400"))))
+ '(ediff-odd-diff-B ((t (:background "#281400"))))
+ '(ediff-odd-diff-C ((t (:background "#281400"))))
  )
 
 ;;}}}
