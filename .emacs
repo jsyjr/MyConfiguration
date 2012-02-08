@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-02-07 09:32:26 jyates"
+;; Time-stamp: "2012-02-07 20:39:50 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -874,8 +874,7 @@ convert it to readonly/view-mode."
 ;;}}}
 ;;{{{  Applying patches
 
-(eval-when-compile
-  (require 'diff-mode))
+(eval-when-compile (require 'diff-mode))
 
 ;; make using patch mode more convenient
 (defun my/diff-advance-apply-next-hunk-and-recenter ()
@@ -893,7 +892,8 @@ convert it to readonly/view-mode."
 
 (add-hook 'diff-mode-hook
           (function (lambda ()
-                      (local-set-key "\C-c\C-c" 'my/diff-advance-apply-next-hunk-and-recenter))))
+                      (local-set-key "\C-c\C-c" 'my/diff-advance-apply-next-hunk-and-recenter)
+                      (local-set-key "\C-c\C-i" 'diff-goto-source)))) ; mnemonic: inspect
 
 ;;}}}
 
@@ -1026,9 +1026,9 @@ This command is designed to be used whether you are already in Info or not."
   (insert ?~))
 
 (add-hook 'ido-setup-hook
-          '(lambda ()
-             (define-key ido-completion-map "/" 'ido-electric-slash)
-             (define-key ido-completion-map "~" 'ido-electric-tilde)))
+          (function (lambda ()
+                      (define-key ido-completion-map "/" 'ido-electric-slash)
+                      (define-key ido-completion-map "~" 'ido-electric-tilde))))
 
 ;;}}}
 ;;{{{  Spell checking
@@ -1180,12 +1180,13 @@ This command is designed to be used whether you are already in Info or not."
        (add-hook 'confluence-mode-hook 'longlines-mode)
        (add-hook 'confluence-before-save-hook 'longlines-before-revert-hook)
        (add-hook 'confluence-before-revert-hook 'longlines-before-revert-hook)
-       (add-hook 'confluence-mode-hook '(lambda () (local-set-key "\C-j" 'confluence-newline-and-indent))))))
+       (add-hook 'confluence-mode-hook
+                 (function (lambda () (local-set-key "\C-j" 'confluence-newline-and-indent)))))))
 
 ;; setup confluence mode
+(eval-when-compile (require 'confluence))
 (add-hook 'confluence-mode-hook
-          '(lambda ()
-             (local-set-key "\C-cw" confluence-prefix-map)))
+          (function (lambda () (local-set-key "\C-cw" confluence-prefix-map))))
 
 (eval-after-load "longlines"
   '(progn
@@ -1212,13 +1213,13 @@ This command is designed to be used whether you are already in Info or not."
          (longlines-suspend)))
 
      (add-hook 'ediff-cleanup-hook
-               '(lambda ()
-                  (dolist (tmp-buf (list ediff-buffer-A
-                                         ediff-buffer-B
-                                         ediff-buffer-C))
-                    (if (buffer-live-p tmp-buf)
-                        (with-current-buffer tmp-buf
-                          (longlines-restore))))))))
+               (function (lambda ()
+                           (dolist (tmp-buf (list ediff-buffer-A
+                                                  ediff-buffer-B
+                                                  ediff-buffer-C))
+                             (if (buffer-live-p tmp-buf)
+                                 (with-current-buffer tmp-buf
+                                   (longlines-restore)))))))))
 
 ;;}}}
 
@@ -1240,8 +1241,7 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  C/C++ mode
 
-(eval-when-compile
-  (require 'cc-mode))
+(eval-when-compile (require 'cc-mode))
 
 ;; Treat .h and .imp files as C++ source
 (setq auto-mode-alist (append '(("\\.h\\'" . c++-mode)
@@ -1586,13 +1586,16 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
 (eval-after-load "hideshow" '(progn
-  (keydef "C-c , C-c"  hs-toggle-hiding)
-  (keydef "C-c , C-h"  hs-hide-block)
-  (keydef "C-c , C-l"  hs-hide-level)
-  (keydef "C-c , C-s"  hs-show-block)
+  (keydef "C-c , C-c"   hs-toggle-hiding)
+  (keydef "C-c , C-h"   hs-hide-block)
+  (keydef "C-c , C-l"   hs-hide-level)
+  (keydef "C-c , C-s"   hs-show-block)
   (keydef "C-c , C-M-h" hs-hide-all)
   (keydef "C-c , C-M-s" hs-show-all)
   ))
+
+(keydef "C-c , ,"       (set-selective-display (if selective-display nil 1)))
+
 
 (keydef "C-c -"         replace-string)
 (keydef "C-c C--"       query-replace)
