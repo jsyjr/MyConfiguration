@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-02-07 20:39:50 jyates"
+;; Time-stamp: "2012-02-08 14:42:57 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -55,6 +55,35 @@
 ;; (add-to-list 'compilation-error-regexp-alist
 ;;             '("^\\(?:..\\[[ 0-9]+\\]+ \\)*\\([a-zA-Z0-9:\\/\\.-]+\.lp0\\)\(\\([0-9]+\\)\)"
 ;;               1 2 nil))
+
+;;}}}
+
+;;=== Package management ===============================================
+;;{{{  el-get (setup path before loading customizations)
+
+(let ((entries (directory-files "~/.emacs.d/el-get" t)))
+  (dolist (path entries)
+    (if (file-directory-p path)
+        (add-to-list 'load-path path))))
+
+;; For keydef
+(add-to-list 'load-path "~/.emacs.d/el-get/emacs-goodies-el/elisp/emacs-goodies-el")
+
+;; Minimal bootstrap
+(unless (require 'el-get nil t)
+  (url-retrieve "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+                (lambda (s)
+                  (let (el-get-master-branch)
+                    (goto-char (point-max))
+                    (eval-print-last-sexp)))))
+
+(setq el-get-recipe-path '("~/.emacs.d/el-get/el-get/recipes/"))
+(setq el-get-sources '(el-get)) ; built incrementally via add-to-list
+
+
+
+(require 'inversion nil t) ; fix broken autoload in cedet/common/cedet-compat.el
+
 
 ;;}}}
 
@@ -141,37 +170,6 @@
                                (substring host 0 idx)
                              host))))
          nil t)
-
-;;}}}
-
-;;=== Package management ===============================================
-;;{{{  el-get (booststrap and init)
-
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-
-;; Minimal bootstrap
-(unless (require 'el-get nil t)
-  (url-retrieve
-   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
-   (lambda (s)
-     (goto-char (point-max))
-     (eval-print-last-sexp))))
-
-(setq el-get-recipe-path  '("~/.emacs.d/el-get/el-get/recipes/"))
-
-(require 'inversion nil t) ; fix broken autoload in cedet/common/cedet-compat.el
-
-(setq el-get-sources '(el-get)) ; built incrementally via add-to-list
-
-;;}}}
-;;{{{  Debian emacs-goodies package
-
-(add-to-list 'el-get-sources 'emacs-goodies-el
-             '(:name        emacs-goodies
-                            :description "A standard Debian collection"
-                            :type        cvs
-                            :url         ":pserver:anonymous@anonscm.debian.org:/pkg-goodies-el"
-                            :localname   "emacs-goodies-el"))
 
 ;;}}}
 
@@ -898,6 +896,16 @@ convert it to readonly/view-mode."
 ;;}}}
 
 ;;=== Utilities ========================================================
+;;{{{  Debian emacs-goodies grab bag
+
+(add-to-list 'el-get-sources 'emacs-goodies-el
+             '(:name        emacs-goodies
+                            :description "A standard Debian collection"
+                            :type        cvs
+                            :url         ":pserver:anonymous@anonscm.debian.org:/pkg-goodies-el"
+                            :localname   "emacs-goodies-el"))
+
+;;}}}
 ;;{{{  Help (apropos, info, etc)
 
 (add-to-list 'el-get-sources
@@ -1154,6 +1162,8 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  Confluence wiki
 
+(add-to-list 'el-get-sources 'xml-rpc) ; a dependency from emacswiki
+
 (add-to-list 'el-get-sources
              '(:name        confluence
                             :description "Interact with confluence wikis"
@@ -1184,6 +1194,7 @@ This command is designed to be used whether you are already in Info or not."
                  (function (lambda () (local-set-key "\C-j" 'confluence-newline-and-indent)))))))
 
 ;; setup confluence mode
+(eval-when-compile (require 'xml-rpc))
 (eval-when-compile (require 'confluence))
 (add-hook 'confluence-mode-hook
           (function (lambda () (local-set-key "\C-cw" confluence-prefix-map))))
@@ -1428,8 +1439,33 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;{{{  Cedet, semantic, etc
 
 (my/custom-set-variables
+ '(semantic-mode t)
  '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
  )
+
+;;}}}
+;;{{{  yasnippet
+
+(add-to-list 'el-get-sources
+             '(:name "yasnippet"
+                     :description "YASnippet is a template system for Emacs."
+                     :type git
+                     :url "https://github.com/capitaomorte/yasnippet"))
+
+(my/custom-set-variables
+ '(yas/global-mode t nil (yasnippet))
+ '(yas/snippet-dirs (quote ("~/emacs/yasnippets" "~/.emacs.d/el-get/yasnippet/snippets")) nil (yasnippet))
+ )
+
+
+;; Another note: The new 0.7 yasnippet.el messes things up with
+;; anything.el. You need to do this:
+;;
+;; Need to replace the following in anything-c-yasnippet.el:
+;;   yas/snippets/table-hash      -> yas/table-hash
+;;   yas/snippets/table-templates -> yas/table-templates
+;;
+;; (require 'anything-c-yasnippet)
 
 ;;}}}
 
@@ -1577,8 +1613,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 ;;}}}
 ;;{{{  Key bindings
-
-(add-to-list 'load-path "~/.emacs.d/el-get/emacs-goodies-el/elisp/emacs-goodies-el")
 
 (require 'keydef)       ; simpler key definitions, autoloads for free
 
