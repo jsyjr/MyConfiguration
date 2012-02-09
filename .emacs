@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-02-08 19:49:20 jyates"
+;; Time-stamp: "2012-02-09 01:35:15 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -16,6 +16,9 @@
 ;; Floor, Boston, MA 02110-1301, USA.
 
 ;;=== Notes ============================================================
+;;{{{  Goals
+
+;;}}}
 ;;{{{  Setup
 
 ;; Gnome system:  http://www.emacswiki.org/emacs/MovingTheCtrlKey#toc2
@@ -59,7 +62,7 @@
 ;;}}}
 
 ;;=== Package management ===============================================
-;;{{{  el-get (setup path before loading customizations)
+;;{{{  load-path
 
 (let ((entries (directory-files "~/.emacs.d/el-get" t)))
   (dolist (path entries)
@@ -68,6 +71,17 @@
 
 ;; For keydef
 (add-to-list 'load-path "~/.emacs.d/el-get/emacs-goodies-el/elisp/emacs-goodies-el")
+
+;;}}}
+;;{{{  el-get
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; CAVEAT: functions in packages acquired via el-get cannot be invoked
+;; until (el-get 'wait) has completed in the el-get epilog toward the
+;; bottom of this file.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Minimal bootstrap
 (unless (require 'el-get nil t)
@@ -79,8 +93,6 @@
 
 (setq el-get-recipe-path '("~/.emacs.d/el-get/el-get/recipes/"))
 (setq el-get-sources '(el-get)) ; built incrementally via add-to-list
-
-
 
 (require 'inversion nil t) ; fix broken autoload in cedet/common/cedet-compat.el
 
@@ -818,7 +830,7 @@ convert it to readonly/view-mode."
 ;;}}}
 ;;{{{  dvc
 
-(add-to-list 'el-get-sources 'dvc)
+;; (add-to-list 'el-get-sources 'dvc)
 
 ;;}}}
 ;;{{{  diff
@@ -1065,7 +1077,7 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  Update timestamps before saving files
 
-(add-hook 'before-save-hook 'time-stamp)
+;; (add-hook 'before-save-hook 'time-stamp)
 
 ;;}}}
 ;;{{{  Always byte compile after saving elisp
@@ -1092,7 +1104,8 @@ This command is designed to be used whether you are already in Info or not."
 ;;      my/XXX-mode-hippie-expand-try-functions-list)
 
 (defconst my/c-mode-hippie-expand-try-functions-list
-  '(;; try-expand-all-abbrevs
+  '(;; yas/hippie-try-expand
+    ;; try-expand-all-abbrevs
     try-expand-dabbrev
     try-expand-dabbrev-visible
     try-expand-dabbrev-all-buffers
@@ -1109,6 +1122,48 @@ This command is designed to be used whether you are already in Info or not."
     try-expand-dabbrev-all-buffers
     try-expand-dabbrev-from-kill
     ))
+
+;;}}}
+;;{{{  yasnippet
+
+(add-to-list 'el-get-sources
+             '(:name "yasnippet"
+                     :description "YASnippet is a template system for Emacs."
+                     :type git
+                     :url "https://github.com/capitaomorte/yasnippet"))
+
+(eval-when-compile (require 'yasnippet))
+(setq yas/snippet-dirs "~/emacs/yasnippet")
+;; (yasnippet)
+
+(add-to-list 'el-get-sources
+             '(:name "yas-jit"
+                     :description "Yasnippets loaded Just in Time for Use."
+                     :type http
+                     :url "https://github.com/mlf176f2/yas-jit.el.git"))
+
+(my/custom-set-variables
+ '(yas/jit-cache-snippets nil)
+ )
+
+(require 'yas-jit)
+(yas/jit-load)
+
+;; reload modified snippets
+;; (defun my/yasnippet-reload-on-save ()
+;;   (when (string-match "/yasnippet/" buffer-file-name)
+;;     (mapc 'yas/load-directory yas/snippet-dirs)))
+;; (add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
+
+
+;; Another note: The new 0.7 yasnippet.el messes things up with
+;; anything.el. You need to do this:
+;;
+;; Need to replace the following in anything-c-yasnippet.el:
+;;   yas/snippets/table-hash      -> yas/table-hash
+;;   yas/snippets/table-templates -> yas/table-templates
+;;
+;; (require 'anything-c-yasnippet)
 
 ;;}}}
 
@@ -1129,6 +1184,8 @@ This command is designed to be used whether you are already in Info or not."
 ;;{{{  hideshow...
 
 (add-to-list 'el-get-sources 'hideshowvis)
+
+(eval-when-compile (require 'hideshowvis))
 
 (defun my/display-code-line-counts (ov)
   (when (eq 'code (overlay-get ov 'hs))
@@ -1162,6 +1219,42 @@ This command is designed to be used whether you are already in Info or not."
      turn-on-filladapt-mode
      ))
  )
+
+;;}}}
+;;{{{  longlines
+
+(eval-after-load "longlines"
+  '(progn
+     (defvar longlines-mode-was-active nil)
+     (make-variable-buffer-local 'longlines-mode-was-active)
+
+     (defun longlines-suspend ()
+       (if longlines-mode
+           (progn
+             (setq longlines-mode-was-active t)
+             (longlines-mode 0))))
+
+     (defun longlines-restore ()
+       (if longlines-mode-was-active
+           (progn
+             (setq longlines-mode-was-active nil)
+             (longlines-mode 1))))
+
+     ;; longlines doesn't play well with ediff, so suspend it during diffs
+     (defadvice ediff-make-temp-file (before make-temp-file-suspend-ll
+                                             activate compile preactivate)
+       "Suspend longlines when running ediff."
+       (with-current-buffer (ad-get-arg 0)
+         (longlines-suspend)))
+
+     (add-hook 'ediff-cleanup-hook
+               (function (lambda ()
+                           (dolist (tmp-buf (list ediff-buffer-A
+                                                  ediff-buffer-B
+                                                  ediff-buffer-C))
+                             (if (buffer-live-p tmp-buf)
+                                 (with-current-buffer tmp-buf
+                                   (longlines-restore)))))))))
 
 ;;}}}
 
@@ -1207,6 +1300,12 @@ This command is designed to be used whether you are already in Info or not."
 
 (autoload 'confluence-get-page "confluence" nil t)
 
+;; setup confluence mode
+;;(eval-when-compile (require 'xml-rpc))
+;;(eval-when-compile (require 'confluence))
+;; (add-hook 'confluence-mode-hook
+;;           (function (lambda () (local-set-key "\C-cw" confluence-prefix-map))))
+
 (eval-after-load "confluence"
   '(progn
      (require 'longlines)
@@ -1215,46 +1314,9 @@ This command is designed to be used whether you are already in Info or not."
        (add-hook 'confluence-before-save-hook 'longlines-before-revert-hook)
        (add-hook 'confluence-before-revert-hook 'longlines-before-revert-hook)
        (add-hook 'confluence-mode-hook
-                 (function (lambda () (local-set-key "\C-j" 'confluence-newline-and-indent)))))))
-
-;; setup confluence mode
-(eval-when-compile (require 'xml-rpc))
-(eval-when-compile (require 'confluence))
-(add-hook 'confluence-mode-hook
-          (function (lambda () (local-set-key "\C-cw" confluence-prefix-map))))
-
-(eval-after-load "longlines"
-  '(progn
-     (defvar longlines-mode-was-active nil)
-     (make-variable-buffer-local 'longlines-mode-was-active)
-
-     (defun longlines-suspend ()
-       (if longlines-mode
-           (progn
-             (setq longlines-mode-was-active t)
-             (longlines-mode 0))))
-
-     (defun longlines-restore ()
-       (if longlines-mode-was-active
-           (progn
-             (setq longlines-mode-was-active nil)
-             (longlines-mode 1))))
-
-     ;; longlines doesn't play well with ediff, so suspend it during diffs
-     (defadvice ediff-make-temp-file (before make-temp-file-suspend-ll
-                                             activate compile preactivate)
-       "Suspend longlines when running ediff."
-       (with-current-buffer (ad-get-arg 0)
-         (longlines-suspend)))
-
-     (add-hook 'ediff-cleanup-hook
-               (function (lambda ()
-                           (dolist (tmp-buf (list ediff-buffer-A
-                                                  ediff-buffer-B
-                                                  ediff-buffer-C))
-                             (if (buffer-live-p tmp-buf)
-                                 (with-current-buffer tmp-buf
-                                   (longlines-restore)))))))))
+                 (function (lambda ()
+                             (local-set-key "\C-j" 'confluence-newline-and-indent)
+                             (local-set-key "\C-cw" confluence-prefix-map)))))))
 
 ;;}}}
 
@@ -1403,6 +1465,9 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;;(require 'semantic/imenu)
   ;;(setq imenu-create-index-function 'semantic-create-imenu-index)
 
+  ;; cc-mode uses abbrev-mode to implement electric keywords
+  (diminish 'abbrev-mode)
+
   (c-set-style "jsy")
 
   (hs-minor-mode)
@@ -1417,9 +1482,10 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
   (c-toggle-auto-hungry-state 1)
 
+  (yas/minor-mode)
+
   (set (make-local-variable 'hippie-expand-try-functions-list)
        my/c-mode-hippie-expand-try-functions-list)
-
 
   ;;(define-key c-mode-base-map "\C-m" 'newline-and-indent)
   ;;(define-key c-mode-base-map ")" 'jsy-c-electric-close-paren)
@@ -1474,36 +1540,10 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;}}}
 ;;{{{  Cedet, semantic, etc
 
-(my/custom-set-variables
- '(semantic-mode t)
- '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
- )
-
-;;}}}
-;;{{{  yasnippet
-
-(add-to-list 'el-get-sources
-             '(:name "yasnippet"
-                     :description "YASnippet is a template system for Emacs."
-                     :type git
-                     :url "https://github.com/capitaomorte/yasnippet"))
-
-(my/custom-set-variables
- '(yas/global-mode t nil (yasnippet))
- '(yas/snippet-dirs (quote ("~/emacs/yasnippet" "~/.emacs.d/el-get/yasnippet/snippets")) nil (yasnippet))
- )
-
-(mapc 'yas/load-directory yas/snippet-dirs)
-
-
-;; Another note: The new 0.7 yasnippet.el messes things up with
-;; anything.el. You need to do this:
-;;
-;; Need to replace the following in anything-c-yasnippet.el:
-;;   yas/snippets/table-hash      -> yas/table-hash
-;;   yas/snippets/table-templates -> yas/table-templates
-;;
-;; (require 'anything-c-yasnippet)
+;; (my/custom-set-variables
+;;  '(semantic-mode t)
+;;  '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
+;;  )
 
 ;;}}}
 
@@ -1530,10 +1570,10 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;=== el-get (epilog) ==================================================
 ;;{{{  Sync and update
 
-(el-get 'wait)
-
 ;; Use update all when first configuring a new machine or user
 ;; (el-get-update-all)
+
+(el-get 'wait)
 
 ;;}}}
 
@@ -1677,7 +1717,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (keydef "C-c c"         org-capture)
 (keydef "C-c l"         org-store-link)
 (keydef "C-c w f"       confluence-get-page) ; open page on confluence wiki
-
 
 
 ;; Additions to the help command
