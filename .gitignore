@@ -8,6 +8,7 @@
 /.*
 !/.emacs
 !/.gitignore
+!/.gitattributes
 
 # Hidden directories in the root of the home directory
 /.*/

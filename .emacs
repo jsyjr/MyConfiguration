@@ -1,4 +1,4 @@
-;; Time-stamp: "2012-02-08 14:42:57 jyates"
+;; Time-stamp: "2012-02-08 19:49:20 jyates"
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -83,7 +83,6 @@
 
 
 (require 'inversion nil t) ; fix broken autoload in cedet/common/cedet-compat.el
-
 
 ;;}}}
 
@@ -696,7 +695,7 @@ mouse-3: go to end") "]")))
 ;;}}}
 ;;{{{  Indent yanked text (cribbed from Alex Ott)
 
-(defvar my/yank-indent-modes
+(defconst my/yank-indent-modes
   '(c++-mode
     c-mode
     cperl-mode
@@ -921,7 +920,7 @@ convert it to readonly/view-mode."
  )
 
 ;; This is serach order so we hope that function names are unique
-(defvar my/elisp-manuals
+(defconst my/elisp-manuals
   '("cl"
     "ediff"
     "efs"
@@ -1085,6 +1084,31 @@ This command is designed to be used whether you are already in Info or not."
   "Create or switch to a running shell process in BUFFER."
   (interactive "BShell buffer: ")
   (shell BUFFER))
+
+;;}}}
+;;{{{  hippie-expand
+
+;; (set (make-local-variable 'hippie-expand-try-functions-list)
+;;      my/XXX-mode-hippie-expand-try-functions-list)
+
+(defconst my/c-mode-hippie-expand-try-functions-list
+  '(;; try-expand-all-abbrevs
+    try-expand-dabbrev
+    try-expand-dabbrev-visible
+    try-expand-dabbrev-all-buffers
+    try-expand-dabbrev-from-kill
+    insert-tab
+    ))
+
+(defconst my/shell-mode-hippie-expand-try-functions-list
+  '(try-complete-file-name
+    try-complete-file-name-partially
+    ;; try-expand-all-abbrevs
+    try-expand-dabbrev
+    try-expand-dabbrev-visible
+    try-expand-dabbrev-all-buffers
+    try-expand-dabbrev-from-kill
+    ))
 
 ;;}}}
 
@@ -1259,7 +1283,6 @@ This command is designed to be used whether you are already in Info or not."
                                 ("\\.imp\\'" . c++-mode))
 			      auto-mode-alist))
 
-
 ;; Closely parallels cc-align.el's c-lineup-arglist-operators
 (defun my/c-lineup-arglist-&&-or-|| (langelem)
   "Line up lines starting with && or ||  under the open paren.
@@ -1394,9 +1417,22 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
   (c-toggle-auto-hungry-state 1)
 
+  (set (make-local-variable 'hippie-expand-try-functions-list)
+       my/c-mode-hippie-expand-try-functions-list)
+
+
   ;;(define-key c-mode-base-map "\C-m" 'newline-and-indent)
   ;;(define-key c-mode-base-map ")" 'jsy-c-electric-close-paren)
   )
+
+(defun my/c-mode-hippie-exand ()
+  "Failing yas/expand try hippie-expand, devolving to insert-tab."
+  (hippie-expand nil))
+
+(my/custom-set-variables
+ '(c-tab-always-indent nil)
+ '(c-insert-tab-function 'my/c-mode-hippie-exand)
+ )
 
 ;; Cannot use the customization interface to establish this hook function
 ;; because yasnippet clobbers it.
@@ -1454,8 +1490,10 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (my/custom-set-variables
  '(yas/global-mode t nil (yasnippet))
- '(yas/snippet-dirs (quote ("~/emacs/yasnippets" "~/.emacs.d/el-get/yasnippet/snippets")) nil (yasnippet))
+ '(yas/snippet-dirs (quote ("~/emacs/yasnippet" "~/.emacs.d/el-get/yasnippet/snippets")) nil (yasnippet))
  )
+
+(mapc 'yas/load-directory yas/snippet-dirs)
 
 
 ;; Another note: The new 0.7 yasnippet.el messes things up with
@@ -1510,7 +1548,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 ;;  '(c-basic-offset 4)
 ;;  '(c-font-lock-extra-types (quote ("FILE" "\\sw+_[hpt]")))
-;;  '(c-tab-always-indent nil)
 
 ;;  '(comint-highlight-input nil)
 
