@@ -105,8 +105,14 @@
 (defvar my/custom-variables nil
  "List of customizations to be compared to those in the custom file.")
 
+(defvar saved/custom-variables nil
+  "List of customizations read from the custom file.")
+
 (defvar my/custom-faces nil
-  "List of customizations to be compared to those in the custom file.")
+  "List of face customizations to be compared to those in the custom file.")
+
+(defvar saved/custom-faces nil
+  "List of face customizations read from the custom file.")
 
 (defmacro my/custom-set-variables (&rest args)
   "Accumulate ARGS on 'my/custom-variables at compile-time."
@@ -155,22 +161,28 @@
 
 (defun my/check-custom-file ()
   "Audit customized variables and faces against the custom file."
-  (let ((disk-lists
-         (with-current-buffer (get-buffer-create "*Custom File*")
-           (insert-file-contents-literally custom-file )
-           (let ((lists (list (cdr (read (current-buffer)))
-                              (cdr (read (current-buffer))))))
-             (kill-buffer)
-             lists))))
-    (my/check-custom-list "variables" (car disk-lists) my/custom-variables)
-    (my/check-custom-list "faces" (cadr disk-lists) my/custom-faces)))
+    (my/check-custom-list "variables" saved/custom-variables my/custom-variables)
+    (my/check-custom-list "faces"     saved/custom-faces     my/custom-faces))
 
 ;;}}}
-;;{{{  Actually load customizations
+;;{{{  Apply customizations
 
 (setq custom-file "~/emacs/custom-file")
 (add-to-list 'auto-mode-alist '("custom-file" . emacs-lisp-mode))
-(load custom-file)
+
+
+(defun process-customization-list ()
+  "Evaluate the next form in the custom file; return the argument list"
+  (let ((form (read (current-buffer))))
+    (eval form)
+    (cdr form)))
+
+;; Read custom-file, save the customization lists and evaluate the forms.
+(with-current-buffer (get-buffer-create "*Custom File*")
+  (insert-file-contents-literally custom-file )
+  (setq saved/custom-variables (process-customization-list))
+  (setq saved/custom-faces (process-customization-list))
+  (kill-buffer))
 
 ;; Host specific initialization if it exists (my-rc-local-HOST.el[c])
 (require (intern (concat "my-rc-local-"
