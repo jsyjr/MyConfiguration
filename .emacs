@@ -1139,8 +1139,8 @@ This command is designed to be used whether you are already in Info or not."
 (add-to-list 'el-get-sources
              '(:name "yas-jit"
                      :description "Yasnippets loaded Just in Time for Use."
-                     :type http
-                     :url "https://github.com/mlf176f2/yas-jit.el.git"))
+                     :type git
+                     :url "git://github.com/mlf176f2/yas-jit.el.git"))
 
 (my/custom-set-variables
  '(yas/jit-cache-snippets nil)
