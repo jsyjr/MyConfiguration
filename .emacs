@@ -53,6 +53,7 @@
 ;; grep
 ;; sort lines
 ;; e/vtags
+;; gtags?
 ;; setnu?
 
 ;; (add-to-list 'compilation-error-regexp-alist
@@ -107,15 +108,13 @@
 (defvar my/custom-faces nil
   "List of customizations to be compared to those in the custom file.")
 
-(defun my/custom-set-variables (&rest args)
-  "Accumulate ARGS on 'my/custom-variables."
-  (dolist (entry args) (add-to-list
-                        'my/custom-variables entry)))
+(defmacro my/custom-set-variables (&rest args)
+  "Accumulate ARGS on 'my/custom-variables at compile-time."
+  `(mapc (lambda (x) (add-to-list 'my/custom-variables x)) (list ,@args)))
 
-(defun my/custom-set-faces (&rest args)
-  "Accumulate ARGS on 'my/custom-faces."
-  (dolist (entry args) (add-to-list
-                        'my/custom-faces entry)))
+(defmacro my/custom-set-faces (&rest args)
+  "Accumulate ARGS on 'my/custom-faces at compile-time."
+  `(mapc (lambda (x) (add-to-list 'my/custom-faces x)) (list ,@args)))
 
 (defun my/check-custom-list (kind custom local)
   "Write to *Custom KIND audit* an audit of CUSTOM versus LOCAL."
@@ -977,6 +976,9 @@ This command is designed to be used whether you are already in Info or not."
           (setq lst (cdr lst))))))
   (pop-to-buffer "*info*"))
 
+
+(autoload 'info-lookup-add-help "info-look" nil t)
+
 ;;}}}
 ;;{{{  Completion (ido, smex)
 
@@ -1500,11 +1502,18 @@ Works with: arglist-cont, arglist-cont-nonempty."
  '(c-insert-tab-function 'my/c-mode-hippie-exand)
  )
 
-;; Cannot use the customization interface to establish this hook function
-;; because yasnippet clobbers it.
 (eval-after-load "cc-vars"
-  '(add-hook 'c-mode-common-hook 'my/c-mode-common-hook)
- )
+  (progn
+    ;; Cannot use the customization interface to establish this hook
+    ;; function because yasnippet clobbers it.
+    '(add-hook 'c-mode-common-hook 'my/c-mode-common-hook)
+
+    (info-lookup-add-help
+     :mode 'c-mode
+     :regexp "[^][()'\" \t\n]+"
+     :ignore-case t
+     :doc-spec '(("(libc)Symbol Index" nil nil nil)))
+    ))
 
 ;;}}}
 ;;{{{  assembly language
