@@ -102,25 +102,20 @@
 ;;=== Customization ====================================================
 ;;{{{  Customization auditing framework
 
-(defvar my/custom-variables nil
- "List of customizations to be compared to those in the custom file.")
+(eval-when-compile (defvar my/accum-custom-variables nil
+  "Accumulate throughout this file a list of customized variables."))
 
-(defvar saved/custom-variables nil
-  "List of customizations read from the custom file.")
-
-(defvar my/custom-faces nil
-  "List of face customizations to be compared to those in the custom file.")
-
-(defvar saved/custom-faces nil
-  "List of face customizations read from the custom file.")
+(eval-when-compile (defvar my/accum-custom-faces nil
+  "Accumulate throughout this file a list of customized faces."))
 
 (defmacro my/custom-set-variables (&rest args)
   "Accumulate ARGS on 'my/custom-variables at compile-time."
-  `(mapc (lambda (x) (add-to-list 'my/custom-variables x)) (list ,@args)))
+  `(eval-when-compile (mapc (lambda (x) (add-to-list 'my/accum-custom-variables x)) (list ,@args))))
 
 (defmacro my/custom-set-faces (&rest args)
   "Accumulate ARGS on 'my/custom-faces at compile-time."
-  `(mapc (lambda (x) (add-to-list 'my/custom-faces x)) (list ,@args)))
+  `(eval-when-compile (mapc (lambda (x) (add-to-list 'my/accum-custom-faces x)) (list ,@args))))
+
 
 (defun my/check-custom-list (kind custom local)
   "Write to *Custom KIND audit* an audit of CUSTOM versus LOCAL."
@@ -159,20 +154,20 @@
       (goto-char (point-min))
       (pop-to-buffer (current-buffer)))))
 
-(defun my/check-custom-file ()
-  "Audit customized variables and faces against the custom file."
-    (my/check-custom-list "variables" saved/custom-variables my/custom-variables)
-    (my/check-custom-list "faces"     saved/custom-faces     my/custom-faces))
-
 ;;}}}
 ;;{{{  Apply customizations
 
 (setq custom-file "~/emacs/custom-file")
 (add-to-list 'auto-mode-alist '("custom-file" . emacs-lisp-mode))
 
+(defvar my/saved-custom-variables nil
+  "List of customizations read from the custom file.")
+
+(defvar my/saved-custom-faces nil
+  "List of face customizations read from the custom file.")
 
 (defun process-customization-list ()
-  "Evaluate the next form in the custom file; return the argument list"
+  "Evaluate the next form in *Custom File*; return the argument list"
   (let ((form (read (current-buffer))))
     (eval form)
     (cdr form)))
@@ -180,8 +175,8 @@
 ;; Read custom-file, save the customization lists and evaluate the forms.
 (with-current-buffer (get-buffer-create "*Custom File*")
   (insert-file-contents-literally custom-file )
-  (setq saved/custom-variables (process-customization-list))
-  (setq saved/custom-faces (process-customization-list))
+  (setq my/saved-custom-variables (process-customization-list))
+  (setq my/saved-custom-faces     (process-customization-list))
   (kill-buffer))
 
 ;; Host specific initialization if it exists (my-rc-local-HOST.el[c])
@@ -1707,7 +1702,31 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;=== Now that all packages have been processed ========================
 ;;{{{  Audit customizations
 
-(my/check-custom-file)
+
+(defvar my/custom-variables
+  (eval-when-compile (sort my/accum-custom-variables
+                           (lambda (a b)
+                             (string-lessp (car a) (car b)))))
+  "List of customizations to be compared to those in the custom file.")
+
+(defvar my/custom-faces
+  (eval-when-compile (sort my/accum-custom-faces
+                           (lambda (a b)
+                             (string-lessp (car a) (car b)))))
+  "List of face customizations to be compared to those in the custom file.")
+
+;; (message "my/custom-variables:\n\n%s\n\n" my/custom-variables)
+;; (message "my/custom-faces:\n\n%s\n\n"     my/custom-faces)
+
+;; Audit customized variables and faces against the custom file.
+(my/check-custom-list "variables" my/saved-custom-variables my/custom-variables)
+(my/check-custom-list "faces"     my/saved-custom-faces     my/custom-faces)
+
+(setq
+ my/saved-custom-variables nil
+ my/custom-variables       nil
+ my/saved-custom-faces     nil
+ my/custom-faces           nil)
 
 ;;}}}
 ;;{{{  Key bindings
