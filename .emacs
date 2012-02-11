@@ -18,6 +18,24 @@
 ;;=== Notes ============================================================
 ;;{{{  Goals
 
+;; Package sanity:
+
+;; Custome file sanity:
+
+;; Directory hygiene:
+;;
+;; Apart for this file (~/.emacs) all state which I maintain manually
+;; into my ~/emacs/ directory (e.g. custom-file, spelling dictionaries,
+;; templates I write/modify for yasnippet, packages I write or modify).
+;; maintain the contents of this directory in git and replicate to all
+;; sites where I use emacs.
+;;
+;; By contrast I reserve my ~/.emacs.d directory for cached state
+;; transparently managed by various packages (e.g. semanticdb, el-get,
+;; backup, auto-save, etc).  This is information that is either
+;; ephemeral or recreatable from the combination of my .emacs file and
+;; the contents of my ~/emacs/ directory.
+
 ;;}}}
 ;;{{{  Setup
 
@@ -191,11 +209,15 @@
 ;;}}}
 
 ;;=== Protection =======================================================
-;;{{{  Backup
+;;{{{  Auto-save and backup
 
 (my/custom-set-variables
+ '(auto-save-file-name-transforms
+   '(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'" "/tmp/\\2" t) ; tramp to /tmp
+     ("\\(.*\\)" "~/.emacs.d/auto-save/\\1" t))) ; everything else
+ '(auto-save-list-file-prefix "~/.emacs.d/auto-save-list/saves-")
  '(backup-by-copying t)
- '(backup-directory-alist (quote (("." . "~/.emacs.d/backup"))))
+ '(backup-directory-alist '(("." . "~/.emacs.d/backup")))
  '(delete-old-versions t)
  '(kept-old-versions 5)
  '(vc-make-backup-files t)
@@ -288,7 +310,7 @@
       (minibuffer . t)
       (vertical-scroll-bars . right)
       (icon-type)))
- '(indicate-buffer-boundaries (quote right)) ; graphics in fringe
+ '(indicate-buffer-boundaries 'right) ; graphics in fringe
  )
 
 (my/custom-set-faces
@@ -327,9 +349,9 @@
  '(blink-cursor-delay 0.1)
  '(cua-mode t nil (cua-base))
  '(cua-enable-cursor-indications t)
- '(cua-normal-cursor-color (quote (bar . "Orange")))
- '(cua-overwrite-cursor-color (quote (box . "HotPink1")))
- '(cua-read-only-cursor-color (quote (box . "SeaGreen1")))
+ '(cua-normal-cursor-color    '(bar . "Orange"))
+ '(cua-overwrite-cursor-color '(box . "HotPink1"))
+ '(cua-read-only-cursor-color '(box . "SeaGreen1"))
  '(x-stretch-cursor t)
  )
 
@@ -583,7 +605,7 @@ mouse-3: go to end") "]")))
 (require 'uniquify)
 
 (my/custom-set-variables
- '(uniquify-buffer-name-style (quote forward) nil (uniquify)) ; prefix '/'
+ '(uniquify-buffer-name-style 'forward nil (uniquify)) ; prefix '/'
  )
 
 ;;}}}
@@ -701,7 +723,7 @@ mouse-3: go to end") "]")))
 
 (my/custom-set-variables
  '(indicate-empty-lines t)
- '(require-final-newline (quote query))
+ '(require-final-newline 'query)
  '(show-trailing-whitespace t)
  '(whitespace-global-mode t)
  )
@@ -993,44 +1015,44 @@ This command is designed to be used whether you are already in Info or not."
 
 (my/custom-set-variables
  '(completion-ignored-extensions
-   (quote (".a"
-           ".aux"
-           ".bak"
-           ".bbl"
-           ".bin"
-           ".blg"
-           ".class"
-           ".cp"
-           ".cps"
-           ".dvi"
-           ".elc"
-           ".fas"
-           ".fmt"
-           ".fn"
-           ".fns"
-           ".glo"
-           ".idx"
-           ".ky"
-           ".kys"
-           ".lib"
-           ".ln"
-           ".lof"
-           ".log"
-           ".lot"
-           ".map"
-           ".o"
-           ".obj"
-           ".pg"
-           ".pgs"
-           ".pyc"
-           ".toc"
-           ".tp"
-           ".tps"
-           ".vr"
-           ".vrs"
-           ".x86f"
-           "~"
-           )))
+   '(".a"
+     ".aux"
+     ".bak"
+     ".bbl"
+     ".bin"
+     ".blg"
+     ".class"
+     ".cp"
+     ".cps"
+     ".dvi"
+     ".elc"
+     ".fas"
+     ".fmt"
+     ".fn"
+     ".fns"
+     ".glo"
+     ".idx"
+     ".ky"
+     ".kys"
+     ".lib"
+     ".ln"
+     ".lof"
+     ".log"
+     ".lot"
+     ".map"
+     ".o"
+     ".obj"
+     ".pg"
+     ".pgs"
+     ".pyc"
+     ".toc"
+     ".tp"
+     ".tps"
+     ".vr"
+     ".vrs"
+     ".x86f"
+     "~"
+     ))
  '(ido-mode 'both nil (ido))
  '(ido-save-directory-list-file "~/.emacs.d/ido.last")
  '(smex-save-file "~/.emacs.d/smex")
@@ -1113,7 +1135,7 @@ This command is designed to be used whether you are already in Info or not."
 ;;      my/XXX-mode-hippie-expand-try-functions-list)
 
 (defconst my/c-mode-hippie-expand-try-functions-list
-  '(;; yas/hippie-try-expand
+  '(yas/hippie-try-expand
     ;; try-expand-all-abbrevs
     try-expand-dabbrev
     try-expand-dabbrev-visible
@@ -1143,20 +1165,25 @@ This command is designed to be used whether you are already in Info or not."
 
 (eval-when-compile (require 'yasnippet))
 (setq yas/snippet-dirs "~/emacs/yasnippet")
-;; (yasnippet)
-
-(add-to-list 'el-get-sources
-             '(:name "yas-jit"
-                     :description "Yasnippets loaded Just in Time for Use."
-                     :type git
-                     :url "git://github.com/mlf176f2/yas-jit.el.git"))
 
 (my/custom-set-variables
- '(yas/jit-cache-snippets nil)
+ '(yas/fallback-behavior 'return-nil)
+ '(yas/trigger-key "C-M-~")
  )
 
-(require 'yas-jit)
-(yas/jit-load)
+
+;; (add-to-list 'el-get-sources
+;;              '(:name "yas-jit"
+;;                      :description "Yasnippets loaded Just in Time for Use."
+;;                      :type git
+;;                      :url "git://github.com/mlf176f2/yas-jit.el.git"))
+
+;; (my/custom-set-variables
+;;  '(yas/jit-cache-snippets nil)
+;;  )
+
+;; (require 'yas-jit)
+;; (yas/jit-load)
 
 ;; reload modified snippets
 ;; (defun my/yasnippet-reload-on-save ()
@@ -1491,6 +1518,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
   (c-toggle-auto-hungry-state 1)
 
+  (require 'yasnippet)
   (yas/minor-mode)
 
   (set (make-local-variable 'hippie-expand-try-functions-list)
@@ -1567,8 +1595,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;{{{  emacsclient and server
 
 (my/custom-set-variables
- '(server-done-hook (quote (delete-frame)))
- '(server-window (quote switch-to-buffer-other-frame))
+ '(server-done-hook '(delete-frame))
+ '(server-window 'switch-to-buffer-other-frame)
  )
 
 (server-start)
