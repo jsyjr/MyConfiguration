@@ -1,3 +1,5 @@
+;; John Yates's .emacs  -*- emacs-lisp -*-
+;;
 ;; Time-stamp: "2012-02-09 01:35:15 jyates"
 
 ;; This program is free software; you can redistribute it and/or
@@ -21,6 +23,9 @@
 ;; Package sanity:
 
 ;; Custome file sanity:
+;; - grouping
+;; - commentary
+;; - no repeating detault settings
 
 ;; Directory hygiene:
 ;;
@@ -36,6 +41,8 @@
 ;; ephemeral or recreatable from the combination of my .emacs file and
 ;; the contents of my ~/emacs/ directory.
 
+;; Speed:
+
 ;;}}}
 ;;{{{  Setup
 
@@ -49,15 +56,22 @@
 ;; - doxymacs requires that libxml2-dev be installed
 
 ;; Directories
-;; ~/.emacs.d/auto-save-Confluence
-;; ~/.emacs.d/backup
-;; ~/.emacs.d/semanticdb
+;; (make-directory "~/.emacs.d/autosave" t)
+;; (make-directory "~/.emacs.d/autosave-list" t)
+;; (make-directory "~/.emacs.d/auto-save-Confluence" t)
+;; (make-directory "~/.emacs.d/backup" t)
+;; (make-directory "~/.emacs.d/semanticdb" t)
+;; (make-directory "~/.emacs.d/smex" t)
+;; (make-directory "~/.emacs.d/srecode" t)
+;; (make-directory "~/.emacs.d/url" t)
 
 ;; - el-get-emacswiki-refresh (no separate subdirectory)
 ;; - el-get-install emacs-goodies-el, then byte recompile entire tree
 ;; - el-get-install every el-get-sources entry in this file
 
 ;; Check *Messages* for files being loaded as source
+
+;; profile:  emacs -Q -l ~/.emacs.d/el-get/profile-dotemacs/profile-dotemacs.el -f profile-dotemacs
 
 ;; Launcher: /usr/bin/emacs-snapshot --no-site-file -bg black -fg white -fn dina -mm --debug-init
 
@@ -214,10 +228,10 @@
 (my/custom-set-variables
  '(auto-save-file-name-transforms
    '(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'" "/tmp/\\2" t) ; tramp to /tmp
-     ("\\(.*\\)" "~/.emacs.d/auto-save/\\1" t))) ; everything else
- '(auto-save-list-file-prefix "~/.emacs.d/auto-save-list/saves-")
+     (".*" "~/.emacs.d/autosave/\\1" t))) ; everything else
+ '(auto-save-list-file-prefix "~/.emacs.d/autosave-list/saves-")
  '(backup-by-copying t)
- '(backup-directory-alist '(("." . "~/.emacs.d/backup")))
+ '(backup-directory-alist '((".*" . "/home/jyates/.emacs.d/backup/")))
  '(delete-old-versions t)
  '(kept-old-versions 5)
  '(vc-make-backup-files t)
@@ -679,13 +693,18 @@ mouse-3: go to end") "]")))
 (my/custom-set-variables
  '(ansi-color-names-vector
    ["black"
-    "IndianRed1"
-    "medium spring green"
-    "khaki1" "dodgerblue1"
-    "maroon1"
-    "darkslategray1"
+    "#ee9090"
+    "pale green"
+    "khaki"
+    "steelblue1"
+    "dark violet"
+    "DarkSlateGray1"
     "white"])
  )
+
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+(setenv "TERM ansi")
 
 ;;}}}
 ;;{{{  Extra color themes
@@ -867,8 +886,9 @@ convert it to readonly/view-mode."
  '(diff-added ((t (:inherit diff-changed :foreground "DarkSeaGreen1"))))
  '(diff-file-header ((t (:inherit diff-header :foreground "light goldenrod yellow" :weight bold))))
  '(diff-header ((t (:background "gray22"))))
+ '(diff-nonexistent ((t (:strike-through "red"))))
  '(diff-refine-change ((t (:background "#1c3850"))))
- '(diff-removed ((t (:inherit diff-changed :foreground "MistyRose1"))))
+ '(diff-removed ((t (:inherit diff-changed :foreground "pink"))))
  )
 
 ;;}}}
@@ -1121,12 +1141,114 @@ This command is designed to be used whether you are already in Info or not."
 (add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
 
 ;;}}}
-;;{{{  Named shells
+;;{{{  Named shells, comint, etc
 
 (defun my/named-shell (BUFFER)
   "Create or switch to a running shell process in BUFFER."
   (interactive "BShell buffer: ")
   (shell BUFFER))
+
+
+(my/custom-set-variables
+ '(tramp-default-method "ssh")          ; uses ControlMaster
+ '(comint-scroll-to-bottom-on-input t)  ; always insert at the bottom
+;; '(comint-scroll-to-bottom-on-output nil) ; [DEF] always add output at the bottom
+;; '(comint-scroll-show-maximum-output t) ; [DEF] scroll to show max output
+;; '(comint-completion-autolist t)      ; show completion list when ambiguous
+;; '(comint-eol-on-send t)              ; [DEF] see following defadvice
+ '(comint-input-ignoredups t)           ; no duplicates in command history
+;; '(comint-completion-addsuffix t)     ; [DEF] completion adds space/slash
+;; '(comint-buffer-maximum-size 20000)  ; max length of the buffer in lines
+;; '(comint-prompt-read-only nil)       ; [DEF] breaks shell-command if t
+ '(comint-get-old-input (lambda () "") t); submit as process input when <RET> typed
+                                        ; line above the current prompt
+ '(comint-input-ring-size 5000)         ; max shell history size
+ '(protect-buffer-bury-p nil)
+)
+
+(defadvice comint-send-input (around go-to-end-of-multiline activate)
+  "When I press enter, jump to the end of the *buffer*, instead of the end of
+the line, to capture multiline input. (This only has effect if
+`comint-eol-on-send' is non-nil."
+  (flet ((end-of-line () (end-of-buffer)))
+    ad-do-it))
+
+(defadvice comint-previous-matching-input
+  (around suppress-history-item-messages activate)
+  "Suppress the annoying 'History item : NNN' messages from shell history isearch.
+If this isn't enough, try the same thing with
+comint-replace-by-expanded-history-before-point."
+  (let ((old-message (symbol-function 'message)))
+    (unwind-protect
+        (progn (fset 'message 'ignore) ad-do-it)
+      (fset 'message old-message))))
+
+;; not sure why, but comint needs to be reloaded from the source (*not*
+;; compiled) elisp to make the above advise stick.
+;; (load "comint.el.gz")
+
+;; Use the transcript in lieu of a classic pager
+(setenv "PAGER" "cat")
+
+;; truncate buffers continuously
+;(add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
+
+(defun my/shell-output-read-only (text)
+  "Add to comint-output-filter-functions to make output read only."
+  (let ((inhibit-read-only t)
+        (output-end (process-mark (get-buffer-process (current-buffer)))))
+    (put-text-property comint-last-output-start output-end 'read-only t)))
+(add-hook 'comint-output-filter-functions 'my/shell-output-read-only)
+
+(defun my/fix-shell ()
+  "Sometimes a shell's input area goes read only.  Fix it."
+  (interactive)
+  (let ((inhibit-read-only t))
+    (comint-send-input)))
+
+
+;; The dirtrack package can be more reliable than shell-dirtrack-mode.
+;; This is because it depends on the working directory being advertised
+;; in the shell prompt.
+;;
+;; (defun my-dirtrack-mode ()
+;;   "Add to shell-mode-hook to use dirtrack mode in my shell buffers."
+;;   (shell-dirtrack-mode 0)
+;;   (set-variable 'dirtrack-list '(":\\([^ :>]*\\)> *$" 1 nil))
+;;   (dirtrack-mode 1))
+;; (add-hook 'shell-mode-hook 'my-dirtrack-mode)
+
+;; Consider for when shells dump largish amount into the transcript.
+;;
+;; (defun set-scroll-conservatively ()
+;;   "Add to shell-mode-hook to prevent jump-scrolling on newlines in shell buffers."
+;;   (set (make-local-variable 'scroll-conservatively) 10))
+;; (add-hook 'shell-mode-hook 'set-scroll-conservatively)
+
+
+;; make it harder to kill my shell buffers
+;; (require 'protbuf)
+;; (add-hook 'shell-mode-hook 'protect-process-buffer-from-kill-mode)
+
+;; (defun make-comint-directory-tracking-work-remotely ()
+;;   "Add this to comint-mode-hook to make directory tracking work
+;; while sshed into a remote host, e.g. for remote shell buffers
+;; started in tramp. (This is a bug fix backported from Emacs 24:
+;; http://comments.gmane.org/gmane.emacs.bugs/39082"
+;;   (set (make-local-variable 'comint-file-name-prefix)
+;;        (or (file-remote-p default-directory) "")))
+;; (add-hook 'comint-mode-hook 'make-comint-directory-tracking-work-remotely)
+
+(defvar my/comint-based-modes '(shell-mode gud-mode))
+
+(defun enter-again-if-enter ()
+  "Make the return key select the current item in minibuf and shell history isearch.
+An alternate approach would be after-advice on isearch-other-meta-char."
+  (when (and (not isearch-mode-end-hook-quit)
+             (equal (this-command-keys-vector) [13])) ; == return
+    (cond ((active-minibuffer-window) (minibuffer-complete-and-exit))
+          ((memq major-mode my/comint-based-modes) (comint-send-input)))))
+(add-hook 'isearch-mode-end-hook 'enter-again-if-enter)
 
 ;;}}}
 ;;{{{  hippie-expand
@@ -1372,6 +1494,22 @@ This command is designed to be used whether you are already in Info or not."
   t)
 
 ;;}}}
+;;{{{  Compilation and next exrror
+
+(my/custom-set-variables
+;; '(compile-command "/usr/bin/make -k")
+ '(compilation-scroll-output t)   ; follow compilation output
+;; '(compilation-skip-threshold 2); next-error should only stop at errors
+ '(next-error-hook 'next-error-recenter)
+ )
+
+(defun next-error-recenter ()
+  "Center error location in window."
+  (save-excursion
+    (pop-to-buffer next-error-last-buffer nil t)
+    (recenter)))
+
+;;}}}
 ;;{{{  C/C++ mode
 
 (eval-when-compile (require 'cc-mode))
@@ -1595,11 +1733,20 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;{{{  emacsclient and server
 
 (my/custom-set-variables
- '(server-done-hook '(delete-frame))
- '(server-window 'switch-to-buffer-other-frame)
+; '(server-done-hook '(delete-frame))
+; '(server-window 'switch-to-buffer-other-frame)
+ '(server-switch-hook 'my/pop-file-name-history) ; omit emacsclient temps
+;; '(server-kill-new-buffers t) ; [DEF] if client is waiting kill its NEW buffer
+;; '(server-raise-frame t)      ; [DEF]
+ '(display-buffer-reuse-frames t)
+ '(server-temp-file-regexp "^/tmp/\\|.*\\.tmp")
  )
 
 (server-start)
+
+(defun my/pop-file-name-history ()
+  "Pop most recent filename from the history."
+  (setq file-name-history (cdr file-name-history)))
 
 ;;}}}
 ;;{{{  Performance
@@ -1764,6 +1911,12 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
+(keydef "C-c C-k"       kill-compilation)
+;; python-mode steals C-c C-k for python-mark-block. steal it back.
+;(require 'python)
+;(define-key python-mode-map [(control c) (control k)] 'kill-compilation)
+
+
 (eval-after-load "hideshow" '(progn
   (keydef "C-c , C-c"   hs-toggle-hiding)
   (keydef "C-c , C-h"   hs-hide-block)
@@ -1875,8 +2028,9 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (keydef "M-<f11>"     gud-remove)
   ))
 
-(keydef "<f12>"         customize-apropos)
+(keydef "<f12>"         customize-option)
 (keydef "C-<f12>"       customize-group)
+(keydef "M-<f12>"       customize-apropos)
 
 
 (eval-after-load "bs" '(keydef (bs "<f1>")  bs-kill))
