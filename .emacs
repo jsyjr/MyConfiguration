@@ -1633,8 +1633,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (defun my/c-mode-common-hook ()
   ""
-  (message "my/c-mode-common-hook")
-
   ;; Semantic does a better job supporting which-func in mode-line
   ;;(require 'semantic/imenu)
   ;;(setq imenu-create-index-function 'semantic-create-imenu-index)
@@ -1679,7 +1677,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (progn
     ;; Cannot use the customization interface to establish this hook
     ;; function because yasnippet clobbers it.
-    '(add-hook 'c-mode-common-hook 'my/c-mode-common-hook)
+    (add-hook 'c-mode-common-hook 'my/c-mode-common-hook)
 
     (info-lookup-add-help
      :mode 'c-mode
