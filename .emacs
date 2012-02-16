@@ -845,7 +845,7 @@ convert it to readonly/view-mode."
 	((and (buffer-modified-p)
 	      (not (disk-file-modified-p)))
 	 (save-buffer)
-         (toggle-read-only 1)
+         (setq buffer-read-only t)
          (view-mode 1))
 	((and (buffer-modified-p)
 	      (disk-file-modified-p))
@@ -853,13 +853,13 @@ convert it to readonly/view-mode."
 	((and (not (buffer-modified-p))
 	      (disk-file-modified-p))
 	 (revert-buffer t t)
-         (toggle-read-only 1)
+         (setq buffer-read-only t)
          (view-mode 1))
         (buffer-read-only
          (view-mode -1)
-         (toggle-read-only -1))
+         (setq buffer-read-only nil))
 	(t
-         (toggle-read-only 1)
+         (setq buffer-read-only t)
          (view-mode 1))))
 
 ;;}}}
@@ -1145,7 +1145,7 @@ This command is designed to be used whether you are already in Info or not."
 
 (defun my/named-shell (BUFFER)
   "Create or switch to a running shell process in BUFFER."
-  (interactive "BShell buffer: ")
+  (interactive "BShell name: ")
   (shell BUFFER))
 
 
@@ -1166,7 +1166,7 @@ This command is designed to be used whether you are already in Info or not."
  '(protect-buffer-bury-p nil)
 )
 
-(defadvice comint-send-input (around go-to-end-of-multiline activate)
+(defadvice comint-send-input (around my/go-to-end-of-multiline activate)
   "When I press enter, jump to the end of the *buffer*, instead of the end of
 the line, to capture multiline input. (This only has effect if
 `comint-eol-on-send' is non-nil."
@@ -1174,7 +1174,7 @@ the line, to capture multiline input. (This only has effect if
     ad-do-it))
 
 (defadvice comint-previous-matching-input
-  (around suppress-history-item-messages activate)
+  (around my/suppress-history-item-messages activate)
   "Suppress the annoying 'History item : NNN' messages from shell history isearch.
 If this isn't enough, try the same thing with
 comint-replace-by-expanded-history-before-point."
