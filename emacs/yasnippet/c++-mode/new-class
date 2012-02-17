@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# contributor: jyates <john@yates-sheets.org>
+#
+# name: new-class
+# key:  .nc
+#
+# --
+class ${1: name}
+/// $0
+{
+public:
+
+//////////////////////////////////////////////////////////////////////////
+private:
+
+};
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

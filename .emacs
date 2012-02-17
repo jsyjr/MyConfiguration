@@ -1286,33 +1286,22 @@ An alternate approach would be after-advice on isearch-other-meta-char."
                      :url "https://github.com/capitaomorte/yasnippet"))
 
 (eval-when-compile (require 'yasnippet))
-(setq yas/snippet-dirs "~/emacs/yasnippet")
 
 (my/custom-set-variables
- '(yas/fallback-behavior 'return-nil)
- '(yas/trigger-key "C-M-~")
+ '(yas/trigger-key "C-M-~")           ;; TAB invokes hippie-expand
+ '(yas/fallback-behavior 'return-nil) ;; continue hippie-expand on failure
  )
 
-
-;; (add-to-list 'el-get-sources
-;;              '(:name "yas-jit"
-;;                      :description "Yasnippets loaded Just in Time for Use."
-;;                      :type git
-;;                      :url "git://github.com/mlf176f2/yas-jit.el.git"))
-
-;; (my/custom-set-variables
-;;  '(yas/jit-cache-snippets nil)
-;;  )
-
-;; (require 'yas-jit)
-;; (yas/jit-load)
-
-;; reload modified snippets
-;; (defun my/yasnippet-reload-on-save ()
-;;   (when (string-match "/yasnippet/" buffer-file-name)
-;;     (mapc 'yas/load-directory yas/snippet-dirs)))
-;; (add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
-
+(eval-after-load "yasnippet"
+  '(progn
+     (setq yas/snippet-dirs "~/emacs/yasnippet")
+     ;; reload modified snippets
+     (defun my/yasnippet-reload-on-save ()
+       (when (string-match "/emacs/yasnippet/" buffer-file-name)
+;;         (mapc 'yas/load-directory yas/snippet-dirs)))
+         (yas/reload-all))) ; no mapc with just a single directory
+     (add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
+     (yas/reload-all)))
 
 ;; Another note: The new 0.7 yasnippet.el messes things up with
 ;; anything.el. You need to do this:
@@ -1664,14 +1653,14 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;;(define-key c-mode-base-map ")" 'jsy-c-electric-close-paren)
   )
 
-(defun my/c-mode-hippie-exand ()
-  "Failing yas/expand try hippie-expand, devolving to insert-tab."
-  (hippie-expand nil))
-
 (my/custom-set-variables
  '(c-tab-always-indent nil)
- '(c-insert-tab-function 'my/c-mode-hippie-exand)
+ '(c-insert-tab-function 'my/c-insert-tab-function)
  )
+
+(defun my/c-insert-tab-function ()
+  "Try hippie-expand devolving ultimately to insert-tab."
+  (hippie-expand nil))
 
 (eval-after-load "cc-vars"
   (progn
@@ -1731,8 +1720,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;{{{  emacsclient and server
 
 (my/custom-set-variables
-; '(server-done-hook '(delete-frame))
-; '(server-window 'switch-to-buffer-other-frame)
+ '(server-done-hook '(delete-frame))
+ '(server-window 'switch-to-buffer-other-frame)
  '(server-switch-hook 'my/pop-file-name-history) ; omit emacsclient temps
 ;; '(server-kill-new-buffers t) ; [DEF] if client is waiting kill its NEW buffer
 ;; '(server-raise-frame t)      ; [DEF]
