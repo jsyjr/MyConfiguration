@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: jyates <john@yates-sheets.org>
+# key: namespace
+#
+# name: namespace
+# key:  !namespace
+# --
+namespace ${1: name} {
+$0
+};

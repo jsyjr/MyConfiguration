@@ -2,7 +2,7 @@
 # contributor: jyates <john@yates-sheets.org>
 #
 # name: new-header
-# key:  .nh
+# key:  !header
 #
 # --
 #ifndef `(upcase (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`_H

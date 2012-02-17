@@ -1516,7 +1516,7 @@ those cases to other line-up functions.  Example:
 
 if ( x < 10
   || at_limit (x,       <- my/c-lineup-arglist-&&-or-||
-                list)    <- my/c-lineup-arglist-&&-or-|| returns nil
+               list)    <- my/c-lineup-arglist-&&-or-|| returns nil
    )
 
 Since this function doesn't do anything for lines without && or
@@ -1539,15 +1539,15 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (eval-after-load "cc-mode"
   `(progn
-;     (setq c-style-variables-are-local-p nil) ; when tweaking sytles
+     (setq c-style-variables-are-local-p nil) ; when tweaking sytles
 
      (c-add-style
       "jsy"
-      '("gnu"
-        (c-echo-syntactic-information-p . t)
+      '((c-echo-syntactic-information-p . t)
         (c-basic-offset . 4)
+        (c-comment-only-line-offset 0 . 0)
         (c-offsets-alist
-         (access-label . 0)
+         (access-label . -)
          (annotation-top-cont . 0)
          (annotation-var-cont . +)
          (arglist-close . c-lineup-close-paren)
@@ -1592,7 +1592,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
          (inline-close . 0)
          (inline-open . 0)
          (inmodule . +)
-         (innamespace . 0)
+         (innamespace . [0])
          (knr-argdecl . 0)
          (knr-argdecl-intro . 5)
          (label . 0)
@@ -1618,7 +1618,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
          (substatement-open . 0)
          (template-args-cont c-lineup-template-args +)
          (topmost-intro . 0)
-         (topmost-intro-cont . +))))))
+         (topmost-intro-cont . +))))
+     ))
 
 (defun my/c-mode-common-hook ()
   ""
@@ -1626,7 +1627,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;;(require 'semantic/imenu)
   ;;(setq imenu-create-index-function 'semantic-create-imenu-index)
 
-  ;; cc-mode uses abbrev-mode to implement electric keywords
+  ;; cc-mode uses abbrev-mode to implement electHAric keywords
   (diminish 'abbrev-mode)
 
   (c-set-style "jsy")
