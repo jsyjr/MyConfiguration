@@ -21,6 +21,9 @@
 ;;{{{  Goals
 
 ;; Package sanity:
+;; - I fully concur with el-get author Dimitri Fontaine's sentiments.
+;;   I too want a single file specifying all the packages I use, whence
+;;   to obtain them and how they should be configured.
 
 ;; Custome file sanity:
 ;; - grouping
@@ -42,6 +45,22 @@
 ;; the contents of my ~/emacs/ directory.
 
 ;; Speed:
+;; - I strive to have all functionality either autoloaded or handled
+;;   via eval-after-load.  The few files that tolerate being loaded as
+;;   part of this .emacs are those that will truly be used immediately
+;;   (cua-base for blinking cursor).
+
+;;}}}
+;;{{{  Credits
+
+;; Everyone's .emacs rips off someone else's...
+
+;; It is too hard and too noisy to attribute ideas in the body of this
+;; file.  Here I simply list source from which I have either cribbed
+;; outright or else have drawn inspiration.
+;;
+;; Alex Ott:            https://github.com/alexott/emacs-configs
+;; Ryan Barrett:        http://snarfed.org/dotfiles/.emacs
 
 ;;}}}
 ;;{{{  Setup
@@ -49,11 +68,18 @@
 ;; Gnome system:  http://www.emacswiki.org/emacs/MovingTheCtrlKey#toc2
 ;;                I chose "Make Caps Lock an additional Ctrl"
 
-;; Remove older versions of emacs and emacs-goodies
-
 ;; Prerequisites:
 ;; - git, bzr, cvs, svn, hg, autoconf, makeinfo (from texinfo)
-;; - doxymacs requires that libxml2-dev be installed
+;; - doxymacs requires that libxml2-dev be installed (presently not used)
+
+;; Remove older versions of emacs and emacs-goodies-el
+;;
+;; To fetch an initial copy emacs-goodies-el from debian.org or to update:
+;;
+;; $ cd ~/.emacs-d
+;; $ cvs -d :pserver:anonymous@anonscm.debian.org:/cvs/pkg-goodies-el login
+;; [blank password]
+;; $ cvs -z3 -d :pserver:anonymous@anonscm.debian.org:/cvs/pkg-goodies-el checkout emacs-goodies-el/elisp/emacs-goodies-el
 
 ;; Directories
 ;; (make-directory "~/.emacs.d/autosave" t)
@@ -66,7 +92,6 @@
 ;; (make-directory "~/.emacs.d/url" t)
 
 ;; - el-get-emacswiki-refresh (no separate subdirectory)
-;; - el-get-install emacs-goodies-el, then byte recompile entire tree
 ;; - el-get-install every el-get-sources entry in this file
 
 ;; Check *Messages* for files being loaded as source
@@ -87,6 +112,9 @@
 ;; e/vtags
 ;; gtags?
 ;; setnu?
+;; defer which-func until we initialize a buffer in one of the following
+;;   modes: emacs-lisp-mode c-mode c++-mode  python-mode makefile-mode
+;;          sh-mode perl-mode or cperl-mode
 
 ;; (add-to-list 'compilation-error-regexp-alist
 ;;             '("^\\(?:..\\[[ 0-9]+\\]+ \\)*\\([a-zA-Z0-9:\\/\\.-]+\.lp0\\)\(\\([0-9]+\\)\)"
@@ -98,12 +126,9 @@
 ;;{{{  load-path
 
 (let ((entries (directory-files "~/.emacs.d/el-get" t)))
-  (dolist (path entries)
-    (if (file-directory-p path)
-        (add-to-list 'load-path path))))
-
-;; For keydef
-(add-to-list 'load-path "~/.emacs.d/el-get/emacs-goodies-el/elisp/emacs-goodies-el")
+  (mapc (lambda (path)
+          (when (file-directory-p path)
+            (add-to-list 'load-path path))) entries))
 
 ;;}}}
 ;;{{{  el-get
@@ -360,8 +385,9 @@
 ;;{{{  Cursor and parenthesis matching
 
 (my/custom-set-variables
- '(blink-cursor-delay 0.1)
+ '(blink-cursor-delay 0)
  '(cua-mode t nil (cua-base))
+ '(cua-enable-cua-keys nil)
  '(cua-enable-cursor-indications t)
  '(cua-normal-cursor-color    '(bar . "Orange"))
  '(cua-overwrite-cursor-color '(box . "HotPink1"))
@@ -373,6 +399,14 @@
  '(cursor ((t (:background "gold"))))
  '(show-paren-match ((t (:background "light green" :foreground "black" :weight bold))))
  '(show-paren-mismatch ((t (:background "firebrick" :foreground "white"))))
+ )
+
+;;}}}
+;;{{{  Highlight line
+
+(my/custom-set-variables
+ '(global-hl-line-mode t)
+ '(hl-line-sticky-flag nil)
  )
 
 ;;}}}
@@ -405,8 +439,8 @@
 ;;{{{  Selection and highlighting
 
 (my/custom-set-faces
- '(highlight ((t (:background "#070c20"))))
- '(highlight-beyond-fill-column-face ((t (:inverse-video t))))
+ '(highlight ((t (:background "#091830"))))
+; '(highlight-beyond-fill-column-face ((t (:inverse-video t))))
  '(region ((t (:background "DarkSlateBlue"))))
  )
 
@@ -588,17 +622,34 @@ mouse-3: Remove current window from display")))))
 ;;{{{  mode-line which-func
 
 (my/custom-set-variables
- '(which-func-format (quote ("[" (:propertize which-func-current local-map (keymap (mode-line keymap (mouse-3 . end-of-defun) (mouse-2 . #[nil "e\300=\203	 \301 \207~\207" [1 narrow-to-defun] 2 nil nil]) (mouse-1 . beginning-of-defun))) face which-func help-echo "Function (enclosing or preceding)
+ '(which-func-format
+   '("["
+     (:propertize which-func-current local-map
+                  (keymap
+                   (mode-line keymap
+                              (mouse-3 . end-of-defun)
+                              (mouse-2 . #[nil "e\300=\203	 \301 \207~\207"
+                                               [1 narrow-to-defun]
+                                               2 nil nil])
+                              (mouse-1 . beginning-of-defun)))
+                  face which-func help-echo
+"Function (enclosing or preceding)
 mouse-1: go to beginning
 mouse-2: narrow to function
-mouse-3: go to end") "]")))
+mouse-3: go to end")
+     "]"))
  '(which-function-mode t nil (which-func))
  )
 
 ;;}}}
 ;;{{{  emacs-goodies/diminish
 
-(add-to-list 'el-get-sources 'diminish)
+(add-to-list 'el-get-sources
+             '(:name diminish
+                     :type        http
+                     :description "Shrink or eliminate minor mode modeline display"
+                     :url         "file://localhost/home/jyates/.emacs.d/emacs-goodies-el/elisp/emacs-goodies-el/diminish.el"
+                     :features    (diminish)))
 
 ;; To diminish minor mode FOO:
 ;;
@@ -631,7 +682,8 @@ mouse-3: go to end") "]")))
                                (add-hook 'window-setup-hook
                                          'refresh-pretty-control-l)
                                (add-hook 'window-configuration-change-hook
-                                         'refresh-pretty-control-l))))
+                                         'refresh-pretty-control-l))
+                      :features (pp-c-l)))
 
 ;; Universally display ^L as a window-width horizontal rule
 (my/custom-set-variables
@@ -656,6 +708,7 @@ mouse-3: go to end") "]")))
  '(scalable-fonts-allowed t)            ; no restrictions (can be slow!)
  '(scroll-conservatively 1)             ; scroll window a line at a line
  '(show-paren-mode t)                   ; highlight matching parens
+ '(show-paren-delay 0)                  ;  and do it immediately
  '(tool-bar-mode nil)                   ; recover screen space, no toolbar
  '(truncate-lines t)                    ; no wrapped lines
  '(transient-mark-mode t)               ; hightlight region, etc.
@@ -724,12 +777,21 @@ mouse-3: go to end") "]")))
 ;;=== Searching and editing ============================================
 
 (my/custom-set-variables
- '(cua-enable-cua-keys nil)
- '(delete-selection-mode t)
- '(fill-column 74)
  '(kill-whole-line t)
  )
 
+;;{{{  Delete selection mode
+
+(defun my/turn-on-delete-selection-mode ()
+  (delete-selection-mode 1)
+  (remove-hook activate-mark-hook 'my/turn-on-delete-selection-mode)
+  )
+
+  (my/custom-set-variables
+   '(activate-mark-hook 'my/turn-on-delete-selection-mode)
+   )
+
+;;}}}
 ;;{{{  Occur
 
 ;; (autoload 'occur "replace"
@@ -955,25 +1017,26 @@ convert it to readonly/view-mode."
 ;;}}}
 
 ;;=== Utilities ========================================================
-;;{{{  Debian emacs-goodies grab bag
-
-(add-to-list 'el-get-sources 'emacs-goodies-el
-             '(:name        emacs-goodies
-                            :description "A standard Debian collection"
-                            :type        cvs
-                            :url         ":pserver:anonymous@anonscm.debian.org:/pkg-goodies-el"
-                            :localname   "emacs-goodies-el"))
-
-;;}}}
 ;;{{{  Help (apropos, info, etc)
 
 (add-to-list 'el-get-sources
-             '(:name        apropos-toc
-                            :description "XEmacs-ish hyper-apropos for GNUEmacs"
-                            :type        http
-                            :url         "http://www.cbrunzema.de/download/apropos-toc/apropos-toc.el"
-                            :localname   "apropos-toc.el"
-                            :features    (apropos-toc)))
+             '(:name apropos-toc
+                     :description "XEmacs-ish hyper-apropos for GNUEmacs"
+                     :type        http
+                     :url         "http://www.cbrunzema.de/download/apropos-toc/apropos-toc.el"
+                     :features    (apropos-toc)))
+
+(defvar my/apropos-toc-font-lock-keywords
+  (list
+   '("^\\(Function\\|Variable\\)s:" . font-lock-keyword-face))
+  "Additional expressions to highlight in Apropos TOC mode")
+
+(defadvice yank (after apropos-toc activate)
+  "Color 'Functions' & 'Variables'; position cursor correctly."
+  (make-local-variable 'font-lock-defaults)
+  (setq font-lock-defaults '(my/apropos-toc-font-lock-keywords nil t))
+  (goto-char (point-min)) (forward-line (1- 4)))
+
 
 (my/custom-set-variables
  '(apropos-do-all t)                    ; invert sense of prefix arg
@@ -1118,12 +1181,13 @@ This command is designed to be used whether you are already in Info or not."
 ;;{{{  ilocate-library
 
 (add-to-list 'el-get-sources
-             '(:name        ilocate-library
-                            :description "Interactive locate-library (or source) with completion"
-                            :type        emacsmirror
-                            :url         "https://github.com/emacsmirror/ilocate-library.git"
-                            :localname   "ilocate-library.el"
-                            :features    (ilocate-library)))
+             '(:name ilocate-library
+                     :description "Interactive locate-library (or source) with completion"
+                     :type        http
+                     :url         "file://localhost/home/jyates/clones/ilocate-library/ilocate-library.el"
+;;                   :type        emacsmirror
+;;                   :url         "https://github.com/emacsmirror/ilocate-library.git"
+                     :features    (ilocate-library)))
 
 ;;}}}
 ;;{{{  Update timestamps before saving files
@@ -1330,10 +1394,16 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;}}}
 ;;{{{  hideshow...
 
-(add-to-list 'el-get-sources 'hideshowvis)
+;; Only needed until emacs maintainers accept my two patches.
+(add-to-list 'el-get-sources
+             '(:name hideshow
+                     :type http
+                     :description "Selectively collapse/expand code/comment blocks"
+                     :url "file://localhost/home/jyates/clones/emacs/hideshow.el"
+                     ;;                   :url "file:/usr/share/emacs/24.0.93/lisp/progmodes/hideshow.el"
+                     :features (hideshow)))
 
-(eval-when-compile (require 'hideshowvis))
-
+;; Display the size of a collapsed function body
 (defun my/display-code-line-counts (ov)
   (when (eq 'code (overlay-get ov 'hs))
     (let ((str (format " %d " (count-lines (overlay-start ov)
@@ -1344,13 +1414,49 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (eval-after-load "hideshow"
   '(setq hs-set-up-overlay 'my/display-code-line-counts))
 
+;; My version corrects the order of save-excursion save-restriction sequence
+(add-to-list 'el-get-sources
+             '(:name hideshowvis
+;;                     :type emacswiki
+                     :type http
+                     :url "file://localhost/home/jyates/clones/emacswiki/hideshowvis.el"
+                     :description "Add fringe markers for hide/show foldable regions."
+                     :features (hideshowvis)))
+
+(eval-when-compile (require 'hideshowvis))
+
+;; (defun my/fringe-click-hs (event)
+;;   (interactive "e")
+;;   (mouse-set-point event)
+;;   (end-of-line)
+;;   (if (save-excursion
+;;         (end-of-line 1)
+;;         (or (hs-already-hidden-p)
+;;             (progn
+;;               (forward-char 1)
+;;               (hs-already-hidden-p))))
+;;       (hs-show-block)
+;;     (hs-hide-block)
+;;     (beginning-of-line)))
+
+;; (defvar my/fringe-click-hs-mode-map
+;;   (let ((keymap (make-sparse-keymap)))
+;;     (define-key keymap [left-fringe mouse-1]
+;;       'my/fringe-click-hs)
+;;     keymap)
+;;   "Keymap for interpretting mouse-1 on the left-fringe")
+
 ;;}}}
-;;{{{  filladapt
+;;{{{  auto-fill and filladapt
+
+;; Let filladapt's "FA" indicate that filling is active
+;(eval-after-load "fill" '(diminish 'auto-fill-mode))
 
 ;; Redirect to a patched version more captible with cc-mode
 (add-to-list 'el-get-sources
              '(:name filladapt
                      :url "http://cc-mode.sourceforge.net/filladapt.el"))
+
 
 ;; As distributed filladapt.el contains no autoload cookies
 (autoload 'turn-on-filladapt-mode "filladapt"
@@ -1360,11 +1466,15 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 (eval-after-load "filladapt" '(diminish 'filladapt-mode "FA"))
 
+(defun my/text-mode ()
+  (setq fill-column 80)
+  (text-mode-hook-identify)
+  (turn-on-auto-fill)
+  (turn-on-filladapt-mode)
+  )
+
 (my/custom-set-variables
- '(text-mode-hook
-   '(text-mode-hook-identify
-     turn-on-filladapt-mode
-     ))
+ '(text-mode-hook '(my/text-mode))
  )
 
 ;;}}}
@@ -1429,11 +1539,11 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (add-to-list 'el-get-sources 'xml-rpc) ; a dependency from emacswiki
 
 (add-to-list 'el-get-sources
-             '(:name        confluence
-                            :description "Interact with confluence wikis"
-                            :type        svn
-                            :url         "http://confluence-el.googlecode.com/svn/trunk/"
-                            :features    (ilocate-library)))
+             '(:name confluence
+                     :description "Interact with confluence wikis"
+                     :type        svn
+                     :url         "http://confluence-el.googlecode.com/svn/trunk/"
+                     :features    (ilocate-library)))
 
 (my/custom-set-variables
  '(confluence-url "http://wiki2.netezza.com:8080/rpc/xmlrpc")
@@ -1508,6 +1618,19 @@ An alternate approach would be after-advice on isearch-other-meta-char."
                                 ("\\.imp\\'" . c++-mode))
 			      auto-mode-alist))
 
+
+(defun my/c-public-private-boundary (langelem)
+  "Line up line of slashes preceding 'private:' at the left edge."
+  (save-excursion
+    (message "my/c-public-private-boundary: %s" langelem)
+    (back-to-indentation)
+    (if (and (looking-at "//////////*$")
+             (forward-line 1)
+             (looking-at "private:"))
+        [0]
+      nil)))
+
+
 ;; Closely parallels cc-align.el's c-lineup-arglist-operators
 (defun my/c-lineup-arglist-&&-or-|| (langelem)
   "Line up lines starting with && or ||  under the open paren.
@@ -1546,6 +1669,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
       '((c-echo-syntactic-information-p . t)
         (c-basic-offset . 4)
         (c-comment-only-line-offset 0 . 0)
+    ;;    (c-comment-prefix-regexp `('other. "//+<?\\|\\**"))
         (c-offsets-alist
          (access-label . -)
          (annotation-top-cont . 0)
@@ -1617,7 +1741,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
          (substatement-label . 0)
          (substatement-open . 0)
          (template-args-cont c-lineup-template-args +)
-         (topmost-intro . 0)
+         (topmost-intro my/c-public-private-boundary 0)
          (topmost-intro-cont . +))))
      ))
 
@@ -1627,25 +1751,31 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;;(require 'semantic/imenu)
   ;;(setq imenu-create-index-function 'semantic-create-imenu-index)
 
-  ;; cc-mode uses abbrev-mode to implement electHAric keywords
+  ;; cc-mode uses abbrev-mode to implement electric keywords
   (diminish 'abbrev-mode)
-
-  (c-set-style "jsy")
 
   (hs-minor-mode)
   (hideshowvis-enable)
 
-  (turn-on-filladapt-mode)
-  (c-setup-filladapt)
-
   (setq tab-width 4)
   (setq comment-column 40)
+
+  (c-set-style "jsy")
+  (add-to-list 'c-comment-prefix-regexp ' (other . "//+<?\\|\\**"))
+
+  (c-setup-paragraph-variables)
+
   (setq fill-column 75)
+
+  (turn-on-auto-fill)
+
+  (require 'filladapt)
+  (c-setup-filladapt)
+  (turn-on-filladapt-mode)
 
   (c-toggle-auto-hungry-state 1)
 
   (require 'yasnippet)
-  (yas/minor-mode)
 
   (set (make-local-variable 'hippie-expand-try-functions-list)
        my/c-mode-hippie-expand-try-functions-list)
@@ -1743,6 +1873,16 @@ Works with: arglist-cont, arglist-cont-nonempty."
  '(gc-cons-threshold 50000000)
  '(message-log-max 10000)
  )
+
+;;}}}
+;;{{{  keydef
+
+(add-to-list 'el-get-sources
+             '(:name keydef
+                     :type http
+                     :description "A simpler way to define keys, with kbd syntax"
+                     :url "file://localhost/home/jyates/.emacs.d/emacs-goodies-el/elisp/emacs-goodies-el/keydef.el"
+                     :features (keydef)))
 
 ;;}}}
 

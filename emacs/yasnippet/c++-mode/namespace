@@ -5,6 +5,6 @@
 # name: namespace
 # key:  !namespace
 # --
-namespace ${1: name} {
+namespace ${1:name} {
 $0
 };
