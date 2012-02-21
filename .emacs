@@ -51,9 +51,19 @@
 ;;   (cua-base for blinking cursor).
 
 ;;}}}
-;;{{{  Credits
+;;{{{  Sharing and credits
 
 ;; Everyone's .emacs rips off someone else's...
+
+;; There is a bit of a convention to prefix private code with some
+;; version of the user's name.  This might make sense if users copied
+;; code amongst .emacs files while preserving the original author's
+;; name.  In my experience this is not what happens.  Rather imported
+;; code gets resuffixed.  Yet the real goal is not so much to claim
+;; authorship as to avoid collidions in the emacs name space.  Hence I
+;; do not use my own name, only a "my/" prefix.  Anyone willing to
+;; adopt a similar convention could then easily crib any of my
+;; customizations.
 
 ;; It is too hard and too noisy to attribute ideas in the body of this
 ;; file.  Here I simply list source from which I have either cribbed
@@ -402,6 +412,14 @@
  )
 
 ;;}}}
+;;{{{  Basic faces
+
+(my/custom-set-faces
+ '(fixed-pitch ((t nil)))
+ '(variable-pitch ((t (:height 0.9 :family "Sans Serif"))))
+ )
+
+;;}}}
 ;;{{{  Highlight line
 
 (my/custom-set-variables
@@ -409,12 +427,8 @@
  '(hl-line-sticky-flag nil)
  )
 
-;;}}}
-;;{{{  Basic faces
-
 (my/custom-set-faces
- '(fixed-pitch ((t nil)))
- '(variable-pitch ((t (:height 0.9 :family "Sans Serif"))))
+ '(hl-line ((t (:underline "gray50"))))
  )
 
 ;;}}}
@@ -787,9 +801,9 @@ mouse-3: go to end")
   (remove-hook activate-mark-hook 'my/turn-on-delete-selection-mode)
   )
 
-  (my/custom-set-variables
-   '(activate-mark-hook 'my/turn-on-delete-selection-mode)
-   )
+(my/custom-set-variables
+ '(activate-mark-hook 'my/turn-on-delete-selection-mode t)
+ )
 
 ;;}}}
 ;;{{{  Occur
@@ -1400,7 +1414,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
                      :type http
                      :description "Selectively collapse/expand code/comment blocks"
                      :url "file://localhost/home/jyates/clones/emacs/hideshow.el"
-                     ;;                   :url "file:/usr/share/emacs/24.0.93/lisp/progmodes/hideshow.el"
+;;                   :url "file:/usr/share/emacs/24.0.93/lisp/progmodes/hideshow.el"
                      :features (hideshow)))
 
 ;; Display the size of a collapsed function body
