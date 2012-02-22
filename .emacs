@@ -1045,7 +1045,7 @@ convert it to readonly/view-mode."
    '("^\\(Function\\|Variable\\)s:" . font-lock-keyword-face))
   "Additional expressions to highlight in Apropos TOC mode")
 
-(defadvice yank (after apropos-toc activate)
+(defadvice my/customized-apropos-toc (after apropos-toc activate)
   "Color 'Functions' & 'Variables'; position cursor correctly."
   (make-local-variable 'font-lock-defaults)
   (setq font-lock-defaults '(my/apropos-toc-font-lock-keywords nil t))
@@ -1436,8 +1436,6 @@ An alternate approach would be after-advice on isearch-other-meta-char."
                      :url "file://localhost/home/jyates/clones/emacswiki/hideshowvis.el"
                      :description "Add fringe markers for hide/show foldable regions."
                      :features (hideshowvis)))
-
-(eval-when-compile (require 'hideshowvis))
 
 ;; (defun my/fringe-click-hs (event)
 ;;   (interactive "e")
@@ -2018,7 +2016,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 ;;=== Now that all packages have been processed ========================
 ;;{{{  Audit customizations
-
 
 (defvar my/custom-variables
   (eval-when-compile (sort my/accum-custom-variables
