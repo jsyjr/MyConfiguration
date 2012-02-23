@@ -769,10 +769,6 @@ mouse-3: go to end")
     "white"])
  )
 
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-
-(setenv "TERM ansi")
-
 ;;}}}
 ;;{{{  Extra color themes
 
@@ -1030,6 +1026,65 @@ convert it to readonly/view-mode."
 
 ;;}}}
 
+;;=== Abbreviation and expansion =======================================
+;;{{{  hippie-expand
+
+(defconst my/default-hippie-expand-functions
+  '(;; try-expand-all-abbrevs
+    try-expand-dabbrev
+    try-expand-dabbrev-visible
+    try-expand-dabbrev-all-buffers
+    try-expand-dabbrev-from-kill
+    insert-tab
+    ))
+
+(my/custom-set-variables
+ '(hippie-expand-try-functions-list 'my/default-hippie-expand-functions)
+ )
+
+(defconst my/shell-mode-hippie-expand-functions
+  `(try-complete-file-name
+    try-complete-file-name-partially
+    , my/default-hippie-expand-functions
+    ))
+
+(defun my/set-local-hippie-expand (list)
+  "Make local 'hippie-expand-try-functions-list' and set to LIST."
+  (set (make-local-variable 'hippie-expand-try-functions-list) list))
+
+;;}}}
+;;{{{  yasnippet
+
+(add-to-list 'el-get-sources
+             '(:name "yasnippet"
+                     :description "YASnippet is a template system for Emacs."
+                     :type git
+                     :url "https://github.com/capitaomorte/yasnippet"))
+
+(eval-when-compile (require 'yasnippet))
+
+(eval-after-load "yasnippet"
+  '(progn
+     (setq yas/snippet-dirs "~/emacs/yasnippet")
+     ;; reload modified snippets
+     (defun my/yasnippet-reload-on-save ()
+       (when (string-match "/emacs/yasnippet/" buffer-file-name)
+;;         (mapc 'yas/load-directory yas/snippet-dirs)))
+         (yas/reload-all))) ; no mapc with just a single directory
+     (add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
+     (yas/reload-all)))
+
+;; Another note: The new 0.7 yasnippet.el messes things up with
+;; anything.el. You need to do this:
+;;
+;; Need to replace the following in anything-c-yasnippet.el:
+;;   yas/snippets/table-hash      -> yas/table-hash
+;;   yas/snippets/table-templates -> yas/table-templates
+;;
+;; (require 'anything-c-yasnippet)
+
+;;}}}
+
 ;;=== Utilities ========================================================
 ;;{{{  Help (apropos, info, etc)
 
@@ -1219,13 +1274,7 @@ This command is designed to be used whether you are already in Info or not."
 (add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
 
 ;;}}}
-;;{{{  Named shells, comint, etc
-
-(defun my/named-shell (BUFFER)
-  "Create or switch to a running shell process in BUFFER."
-  (interactive "BShell name: ")
-  (shell BUFFER))
-
+;;{{{  Comint
 
 (my/custom-set-variables
  '(tramp-default-method "ssh")          ; uses ControlMaster
@@ -1241,21 +1290,17 @@ This command is designed to be used whether you are already in Info or not."
  '(comint-get-old-input (lambda () "") t); submit as process input when <RET> typed
                                         ; line above the current prompt
  '(comint-input-ring-size 5000)         ; max shell history size
- '(protect-buffer-bury-p nil)
+;; '(protect-buffer-bury-p nil)           ; revive if we setup protbuf
 )
 
 (defadvice comint-send-input (around my/go-to-end-of-multiline activate)
-  "When I press enter, jump to the end of the *buffer*, instead of the end of
-the line, to capture multiline input. (This only has effect if
-`comint-eol-on-send' is non-nil."
+  "To capture multiline input jump to end of buffer on [enter].
+(This has no effect if `comint-eol-on-send' is nil.)"
   (flet ((end-of-line () (end-of-buffer)))
     ad-do-it))
 
-(defadvice comint-previous-matching-input
-  (around my/suppress-history-item-messages activate)
-  "Suppress the annoying 'History item : NNN' messages from shell history isearch.
-If this isn't enough, try the same thing with
-comint-replace-by-expanded-history-before-point."
+(defadvice comint-previous-matching-input (around my/quiet-comint-history-isearch activate)
+  "Suppress annoying 'History item : NNN' messages from comint history isearch."
   (let ((old-message (symbol-function 'message)))
     (unwind-protect
         (progn (fset 'message 'ignore) ad-do-it)
@@ -1265,25 +1310,54 @@ comint-replace-by-expanded-history-before-point."
 ;; compiled) elisp to make the above advise stick.
 ;; (load "comint.el.gz")
 
-;; Use the transcript in lieu of a classic pager
-(setenv "PAGER" "cat")
-
-;; truncate buffers continuously
-;(add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
-
-(defun my/shell-output-read-only (text)
-  "Add to comint-output-filter-functions to make output read only."
+(defun my/comint-output-read-only (text)
+  "Add to comint-output-filter-functions to make output read-only."
   (let ((inhibit-read-only t)
         (output-end (process-mark (get-buffer-process (current-buffer)))))
     (put-text-property comint-last-output-start output-end 'read-only t)))
-(add-hook 'comint-output-filter-functions 'my/shell-output-read-only)
+(add-hook 'comint-output-filter-functions 'my/comint-output-read-only)
 
-(defun my/fix-shell ()
-  "Sometimes a shell's input area goes read only.  Fix it."
+(defun my/unblock-comint ()
+  "Sometimes comint's input area goes read only.  Fix it."
   (interactive)
   (let ((inhibit-read-only t))
     (comint-send-input)))
 
+
+
+(defvar my/comint-based-modes '(shell-mode gud-mode))
+
+(defun my/enter-again-if-enter ()
+  "Make the return key select the current item in minibuf and shell history isearch.
+An alternate approach would be after-advice on isearch-other-meta-char."
+  (when (and (not isearch-mode-end-hook-quit)
+             (equal (this-command-keys-vector) [13])) ; == return
+    (cond ((active-minibuffer-window) (minibuffer-complete-and-exit))
+          ((memq major-mode my/comint-based-modes) (comint-send-input)))))
+
+(my/custom-set-variables
+ '(isearch-mode-end-hook 'my/enter-again-if-enter t)
+ )
+
+;;}}}
+;;{{{  Shells (built upon comint-mode)
+
+(defun my/named-shell (BUFFER)
+  "Create or switch to a running shell process in BUFFER."
+  (interactive "BShell name: ")
+  (shell BUFFER))
+
+(setenv "TERM ansi")
+(setenv "PAGER" "cat")  ; Use the transcript in lieu of a classic pager
+
+(defun my/shell-mode-hook-function ()
+  (ansi-color-for-comint-mode-on)
+  (my/set-local-hippie-expand my/shell-mode-hippie-expand-functions)
+  )
+
+(my/custom-set-variables
+ '(shell-mode-hook 'my/shell-mode-hook-function)
+ )
 
 ;; The dirtrack package can be more reliable than shell-dirtrack-mode.
 ;; This is because it depends on the working directory being advertised
@@ -1316,79 +1390,6 @@ comint-replace-by-expanded-history-before-point."
 ;;   (set (make-local-variable 'comint-file-name-prefix)
 ;;        (or (file-remote-p default-directory) "")))
 ;; (add-hook 'comint-mode-hook 'make-comint-directory-tracking-work-remotely)
-
-(defvar my/comint-based-modes '(shell-mode gud-mode))
-
-(defun enter-again-if-enter ()
-  "Make the return key select the current item in minibuf and shell history isearch.
-An alternate approach would be after-advice on isearch-other-meta-char."
-  (when (and (not isearch-mode-end-hook-quit)
-             (equal (this-command-keys-vector) [13])) ; == return
-    (cond ((active-minibuffer-window) (minibuffer-complete-and-exit))
-          ((memq major-mode my/comint-based-modes) (comint-send-input)))))
-(add-hook 'isearch-mode-end-hook 'enter-again-if-enter)
-
-;;}}}
-;;{{{  hippie-expand
-
-;; (set (make-local-variable 'hippie-expand-try-functions-list)
-;;      my/XXX-mode-hippie-expand-try-functions-list)
-
-(defconst my/c-mode-hippie-expand-try-functions-list
-  '(yas/hippie-try-expand
-    ;; try-expand-all-abbrevs
-    try-expand-dabbrev
-    try-expand-dabbrev-visible
-    try-expand-dabbrev-all-buffers
-    try-expand-dabbrev-from-kill
-    insert-tab
-    ))
-
-(defconst my/shell-mode-hippie-expand-try-functions-list
-  '(try-complete-file-name
-    try-complete-file-name-partially
-    ;; try-expand-all-abbrevs
-    try-expand-dabbrev
-    try-expand-dabbrev-visible
-    try-expand-dabbrev-all-buffers
-    try-expand-dabbrev-from-kill
-    ))
-
-;;}}}
-;;{{{  yasnippet
-
-(add-to-list 'el-get-sources
-             '(:name "yasnippet"
-                     :description "YASnippet is a template system for Emacs."
-                     :type git
-                     :url "https://github.com/capitaomorte/yasnippet"))
-
-(eval-when-compile (require 'yasnippet))
-
-(my/custom-set-variables
- '(yas/trigger-key "C-M-~")           ;; TAB invokes hippie-expand
- '(yas/fallback-behavior 'return-nil) ;; continue hippie-expand on failure
- )
-
-(eval-after-load "yasnippet"
-  '(progn
-     (setq yas/snippet-dirs "~/emacs/yasnippet")
-     ;; reload modified snippets
-     (defun my/yasnippet-reload-on-save ()
-       (when (string-match "/emacs/yasnippet/" buffer-file-name)
-;;         (mapc 'yas/load-directory yas/snippet-dirs)))
-         (yas/reload-all))) ; no mapc with just a single directory
-     (add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
-     (yas/reload-all)))
-
-;; Another note: The new 0.7 yasnippet.el messes things up with
-;; anything.el. You need to do this:
-;;
-;; Need to replace the following in anything-c-yasnippet.el:
-;;   yas/snippets/table-hash      -> yas/table-hash
-;;   yas/snippets/table-templates -> yas/table-templates
-;;
-;; (require 'anything-c-yasnippet)
 
 ;;}}}
 
@@ -1757,6 +1758,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
          (topmost-intro-cont . +))))
      ))
 
+(eval-when-compile (require 'yasnippet))
+
 (defun my/c-mode-common-hook ()
   ""
   ;; Semantic does a better job supporting which-func in mode-line
@@ -1788,9 +1791,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (c-toggle-auto-hungry-state 1)
 
   (require 'yasnippet)
-
-  (set (make-local-variable 'hippie-expand-try-functions-list)
-       my/c-mode-hippie-expand-try-functions-list)
+  (yas/minor-mode-on)
 
   ;;(define-key c-mode-base-map "\C-m" 'newline-and-indent)
   ;;(define-key c-mode-base-map ")" 'jsy-c-electric-close-paren)
