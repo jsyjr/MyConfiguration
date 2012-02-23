@@ -1606,6 +1606,26 @@ An alternate approach would be after-advice on isearch-other-meta-char."
   t)
 
 ;;}}}
+;;{{{  Various ways of defining a project
+
+(add-to-list 'el-get-sources
+             '(:name "project"
+                     :description "Keep track of the current project."
+                     :type git
+                     :url "https://github.com/nex3/project-el.git"
+                     :features    (project)))
+
+;;}}}
+;;{{{  Find file in project
+
+(add-to-list 'el-get-sources
+             '(:name "find-file-in-project"
+                     :description "Find files in a project quickly."
+                     :type git
+                     :url "https://github.com/dburger/find-file-in-project.git"
+                     :features    (find-file-in-project)))
+
+;;}}}
 ;;{{{  Compilation and next exrror
 
 (my/custom-set-variables
