@@ -69,8 +69,9 @@
 ;; file.  Here I simply list source from which I have either cribbed
 ;; outright or else have drawn inspiration.
 ;;
-;; Alex Ott:            https://github.com/alexott/emacs-configs
-;; Ryan Barrett:        http://snarfed.org/dotfiles/.emacs
+;; Alex Ott             https://github.com/alexott/emacs-configs
+;; Ryan Barrett         http://snarfed.org/dotfiles/.emacs
+;; Mickey Petersen      mickey@masteringemacs.org
 
 ;;}}}
 ;;{{{  Setup
@@ -649,7 +650,7 @@ mouse-3: Remove current window from display")))))
                   face which-func help-echo
 "Function (enclosing or preceding)
 mouse-1: go to beginning
-mouse-2: narrow to function
+mouse-2: toggle function narrowing
 mouse-3: go to end")
      "]"))
  '(which-function-mode t nil (which-func))
