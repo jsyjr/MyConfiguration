@@ -124,7 +124,7 @@ nzcleanbuild () {
         echo "Not in the root of a source tree."; return 1
     fi
     nzcleantest
-    rm -rf log.[1-9]* data debug doxy gcov images obj/* simdata tmp turbo
+    rm -rf log.[1-9]* data debug doc doxy gcov images obj/* simdata tmp turbo
     ( command cd src/linux_drivers \
            && rm -rf */*.o */*.ko */*.o */.*.cmd */.tmp_versions */*.mod.c )
     nztags

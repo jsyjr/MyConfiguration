@@ -642,11 +642,11 @@ mouse-3: Remove current window from display")))))
      (:propertize which-func-current local-map
                   (keymap
                    (mode-line keymap
-                              (mouse-3 . end-of-defun)
+                              (mouse-1 . beginning-of-defun)
                               (mouse-2 . #[nil "e\300=\203	 \301 \207~\207"
                                                [1 narrow-to-defun]
                                                2 nil nil])
-                              (mouse-1 . beginning-of-defun)))
+                              (mouse-3 . end-of-defun)))
                   face which-func help-echo
 "Function (enclosing or preceding)
 mouse-1: go to beginning
@@ -1755,7 +1755,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
          (knr-argdecl-intro . 5)
          (label . 0)
          (lambda-intro-cont . +)
-         (member-init-cont . -)
+         (member-init-cont . 0)
          (member-init-intro . 0)
          (module-close . 0)
          (module-open . 0)
