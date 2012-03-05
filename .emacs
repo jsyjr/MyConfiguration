@@ -325,7 +325,7 @@
 
 (setq icon-title-format
       '((((winring-show-names
-	   (" " winring-name))))
+   (" " winring-name))))
         "Emacs:  %b"))
 
 ;;}}}
@@ -844,11 +844,11 @@ mouse-3: go to end")
       (let ((mark-even-if-inactive t))
         (indent-region (region-beginning) (region-end) nil))))
 
-(defadvice yank (after maybe-indent activate)
+(defadvice yank (after my/maybe-indent activate)
   "If mode in my/yank-indent-modes then indent yanked text (prefix arg inhibits)."
   (my/maybe-indent-yanked))
 
-(defadvice yank-pop (after maybe-indent activate)
+(defadvice yank-pop (after my/maybe-indent activate)
   "If mode in my/yank-indent-modes then indent yanked text (prefix arg inhibits)."
   (my/maybe-indent-yanked))
 
@@ -856,8 +856,9 @@ mouse-3: go to end")
 ;;{{{  Tabs
 
 (my/custom-set-variables
- '(indent-tabs-mode nil)                ; no hard tabs
- '(tab-always-indent 'complete)         ; tab when nothing to complete
+ '(indent-tabs-mode nil)        ; no hard tabs
+ '(tab-always-indent nil)       ; indent, complete else insert whitespace
+ '(tab-width 4)
  '(tab-stop-list '(  4   8  12  16  20  24  28  32  36  40
                          44  48  52  56  60  64  68  72  76  80
                          84  88  92  96 100 104 108 112 116 120
@@ -900,7 +901,7 @@ mouse-3: go to end")
 (defun disk-file-modified-p ()
   "Return non-nil if the visited file has been modified."
   (not (equal disk-access
-	      (disk-file-modification-time))))
+      (disk-file-modification-time))))
 
 (defun disk ()
   "Do the right thing with files.
@@ -914,18 +915,18 @@ to writable, dropping view-mode.  Otherwise buffer is writable so
 convert it to readonly/view-mode."
   (interactive)
   (cond ((not (buffer-file-name))
-	 (call-interactively 'view-file))
+ (call-interactively 'view-file))
 	((and (buffer-modified-p)
-	      (not (disk-file-modified-p)))
-	 (save-buffer)
+      (not (disk-file-modified-p)))
+ (save-buffer)
          (setq buffer-read-only t)
          (view-mode 1))
 	((and (buffer-modified-p)
-	      (disk-file-modified-p))
-	 (error "Buffer must be saved, but the file has also changed."))
+      (disk-file-modified-p))
+ (error "Buffer must be saved, but the file has also changed."))
 	((and (not (buffer-modified-p))
-	      (disk-file-modified-p))
-	 (revert-buffer t t)
+      (disk-file-modified-p))
+ (revert-buffer t t)
          (setq buffer-read-only t)
          (view-mode 1))
         (buffer-read-only
@@ -1028,32 +1029,6 @@ convert it to readonly/view-mode."
 ;;}}}
 
 ;;=== Abbreviation and expansion =======================================
-;;{{{  hippie-expand
-
-(defconst my/default-hippie-expand-functions
-  '(;; try-expand-all-abbrevs
-    try-expand-dabbrev
-    try-expand-dabbrev-visible
-    try-expand-dabbrev-all-buffers
-    try-expand-dabbrev-from-kill
-    insert-tab
-    ))
-
-(my/custom-set-variables
- '(hippie-expand-try-functions-list 'my/default-hippie-expand-functions)
- )
-
-(defconst my/shell-mode-hippie-expand-functions
-  `(try-complete-file-name
-    try-complete-file-name-partially
-    , my/default-hippie-expand-functions
-    ))
-
-(defun my/set-local-hippie-expand (list)
-  "Make local 'hippie-expand-try-functions-list' and set to LIST."
-  (set (make-local-variable 'hippie-expand-try-functions-list) list))
-
-;;}}}
 ;;{{{  yasnippet
 
 (add-to-list 'el-get-sources
@@ -1062,18 +1037,22 @@ convert it to readonly/view-mode."
                      :type git
                      :url "https://github.com/capitaomorte/yasnippet"))
 
-(eval-when-compile (require 'yasnippet))
+(require 'yasnippet)
 
-(eval-after-load "yasnippet"
-  '(progn
-     (setq yas/snippet-dirs "~/emacs/yasnippet")
-     ;; reload modified snippets
-     (defun my/yasnippet-reload-on-save ()
-       (when (string-match "/emacs/yasnippet/" buffer-file-name)
-;;         (mapc 'yas/load-directory yas/snippet-dirs)))
-         (yas/reload-all))) ; no mapc with just a single directory
-     (add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
-     (yas/reload-all)))
+(setq yas/snippet-dirs "~/emacs/yasnippet")
+(yas/global-mode 1)
+(add-hook 'yas/minor-mode-hook 'yas/reload-all)
+
+
+;; reload modified snippets
+(defun my/yasnippet-reload-on-save ()
+  "Reload the entire collection of snippets when one gets modified."
+  (if (eq major-mode 'snippet-mode)
+    ;;  (mapc 'yas/load-directory yas/snippet-dirs)))
+    (yas/reload-all))) ; no mapc with just a single directory root
+
+(add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
+
 
 ;; Another note: The new 0.7 yasnippet.el messes things up with
 ;; anything.el. You need to do this:
@@ -1083,6 +1062,78 @@ convert it to readonly/view-mode."
 ;;   yas/snippets/table-templates -> yas/table-templates
 ;;
 ;; (require 'anything-c-yasnippet)
+
+;;}}}
+;;{{{  auto-complete
+
+(add-to-list 'el-get-sources
+             '(:name auto-complete
+                     :post-init (lambda () nil)))
+
+(require 'auto-complete)
+;;(add-to-list 'ac-dictionary-directories (expand-file-name "dict" pdir))
+(require 'auto-complete-config)
+(add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
+(add-hook 'c-mode-common-hook 'my/ac-cc-mode-setup)
+(global-auto-complete-mode t)
+
+(setq-default ac-sources '(ac-source-abbrev
+                           ac-source-dictionary
+                           ac-source-words-in-same-mode-buffers))
+
+(defun my/ac-cc-mode-setup ()
+  (setq ac-sources (append '(ac-source-semantic
+                             ac-source-semantic-raw
+                             ac-source-yasnippet
+                             ;; ac-source-gtags ; no "using namespace XX;"
+                             ) ac-sources)))
+
+(my/custom-set-variables
+ '(ac-auto-start nil)
+ '(ac-auto-show-menu t)
+ '(ac-delay 0.5)
+ '(ac-trigger-key "TAB")
+ '(ac-use-menu-map t)
+ '(ac-comphist-file            "/home/jyates/.emacs.d/auto-complete/history.dat")
+ '(ac-dictionary-directories '("/home/jyates/emacs/auto-complete/mode-dicts"
+                               "/home/jyates/.emacs.d/el-get/auto-complete/dict"
+                               ))
+ '(ac-dictionary-files       '("/home/jyates/emacs/auto-complete/user-dict"
+                               ))
+ )
+
+(my/custom-set-faces
+ '(ac-candidate-face ((t (:background "LightCyan1" :foreground "black"))))
+ '(ac-selection-face ((t (:background "aquamarine1" :foreground "black"))))
+ '(ac-yasnippet-candidate-face ((t (:background "lavender blush" :foreground "black"))))
+ '(ac-yasnippet-selection-face ((t (:background "PeachPuff2" :foreground "black"))))
+ )
+
+;; In auto-complete.el:
+;;
+;; ac-define-source abbrev
+;; ac-define-source dictionary
+;; ac-define-source features
+;; ac-define-source filename
+;; ac-define-source files-in-current-dir
+;; ac-define-source functions
+;; ac-define-source symbols
+;; ac-define-source variables
+;; ac-define-source words-in-all-buffer
+;; ac-define-source words-in-buffer
+;; ac-define-source words-in-same-mode-buffers
+;;
+;; In auto-complete-config.el:
+;;
+;; ac-define-source css-property
+;; ac-define-source eclim
+;; ac-define-source ghc-mod
+;; ac-define-source gtags
+;; ac-define-source imenu
+;; ac-define-source semantic
+;; ac-define-source semantic-raw
+;; ac-define-source slime
+;; ac-define-source yasnippet
 
 ;;}}}
 
@@ -1101,7 +1152,7 @@ convert it to readonly/view-mode."
    '("^\\(Function\\|Variable\\)s:" . font-lock-keyword-face))
   "Additional expressions to highlight in Apropos TOC mode")
 
-(defadvice my/customized-apropos-toc (after apropos-toc activate)
+(defadvice apropos-toc (after my/customized-apropos-toc activate)
   "Color 'Functions' & 'Variables'; position cursor correctly."
   (make-local-variable 'font-lock-defaults)
   (setq font-lock-defaults '(my/apropos-toc-font-lock-keywords nil t))
@@ -1353,7 +1404,6 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 (defun my/shell-mode-hook-function ()
   (ansi-color-for-comint-mode-on)
-  (my/set-local-hippie-expand my/shell-mode-hippie-expand-functions)
   )
 
 (my/custom-set-variables
@@ -1463,9 +1513,6 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;}}}
 ;;{{{  auto-fill and filladapt
 
-;; Let filladapt's "FA" indicate that filling is active
-;(eval-after-load "fill" '(diminish 'auto-fill-mode))
-
 ;; Redirect to a patched version more captible with cc-mode
 (add-to-list 'el-get-sources
              '(:name filladapt
@@ -1480,11 +1527,19 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 (eval-after-load "filladapt" '(diminish 'filladapt-mode "FA"))
 
-(defun my/text-mode ()
-  (setq fill-column 80)
-  (text-mode-hook-identify)
+
+(defun my/turn-on-filling ()
+  (text-mode-hook-identify)  ; mark buffer for toggle-text-mode-auto-fill
   (turn-on-auto-fill)
+  ;; Typically filladapt's "FA" indicates that filling is active
+  (diminish 'auto-fill-function)
+  (require 'filladapt)
   (turn-on-filladapt-mode)
+  )
+
+(defun my/text-mode ()
+  (my/turn-on-filling)
+  (setq fill-column 80)
   )
 
 (my/custom-set-variables
@@ -1512,7 +1567,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
              (longlines-mode 1))))
 
      ;; longlines doesn't play well with ediff, so suspend it during diffs
-     (defadvice ediff-make-temp-file (before make-temp-file-suspend-ll
+     (defadvice ediff-make-temp-file (before my/make-temp-file-suspend-ll
                                              activate compile preactivate)
        "Suspend longlines when running ediff."
        (with-current-buffer (ad-get-arg 0)
@@ -1546,6 +1601,9 @@ An alternate approach would be after-advice on isearch-other-meta-char."
  '(org-mobile-directory "~/Dropbox/MobileOrg")
  '(org-mobile-files '(org-agenda-files "~/org"))
  )
+
+;; Interesting org-mode completion, integrate with auto-complete?
+;; http://www.emacswiki.org/emacs/download/completion-ui-more-sources.el
 
 ;;}}}
 ;;{{{  Confluence wiki
@@ -1650,13 +1708,12 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;; Treat .h and .imp files as C++ source
 (setq auto-mode-alist (append '(("\\.h\\'" . c++-mode)
                                 ("\\.imp\\'" . c++-mode))
-			      auto-mode-alist))
+      auto-mode-alist))
 
 
 (defun my/c-public-private-boundary (langelem)
   "Line up line of slashes preceding 'private:' at the left edge."
   (save-excursion
-    (message "my/c-public-private-boundary: %s" langelem)
     (back-to-indentation)
     (if (and (looking-at "//////////*$")
              (forward-line 1)
@@ -1664,6 +1721,22 @@ An alternate approach would be after-advice on isearch-other-meta-char."
         [0]
       nil)))
 
+;; Closely parallels cc-align.el's c-lineup-arglist-intro-after-paren
+(defun my/c-lineup-vertical-comma-list (langelem)
+  "Line up a line starting with a comma beneath open paren of
+the surrounding paren or brace block."
+  (save-excursion
+    (beginning-of-line)
+    (backward-up-list 1)
+    (skip-chars-forward " \t" (c-point 'eol))
+    (vector (current-column))))
+
+(defun my/c-lineup-arglist-open (langelem)
+  "Indent comment or arglist open parenthesis beneath topmost-intro."
+  (save-excursion
+    (beginning-of-line)
+    (skip-chars-forward " \t" (c-point 'eol))
+    (if (looking-at "//\\|(" ) '+ 0)))
 
 ;; Closely parallels cc-align.el's c-lineup-arglist-operators
 (defun my/c-lineup-arglist-&&-or-|| (langelem)
@@ -1677,7 +1750,7 @@ if ( x < 10
    )
 
 Since this function doesn't do anything for lines without && or
-|| typically want to use it together with some other line-up
+|| you typically want to use it together with some other line-up
 settings, e.g. as follows \(the arglist-close setting is just a
 suggestion to get a consistent style):
 
@@ -1703,12 +1776,20 @@ Works with: arglist-cont, arglist-cont-nonempty."
       '((c-echo-syntactic-information-p . t)
         (c-basic-offset . 4)
         (c-comment-only-line-offset 0 . 0)
-    ;;    (c-comment-prefix-regexp `('other. "//+<?\\|\\**"))
+        (c-auto-align-backslashes nil)
+        (c-cleanup-list
+         '(brace-else-brace
+           brace-elseif-brace
+           brace-catch-brace
+           empty-defun-braces
+           defun-close-semi
+           list-close-comma
+           scope-operator))
         (c-offsets-alist
          (access-label . -)
          (annotation-top-cont . 0)
          (annotation-var-cont . +)
-         (arglist-close . c-lineup-close-paren)
+         (arglist-close . my/c-lineup-vertical-comma-list)
          (arglist-cont c-lineup-gcc-asm-reg 0)
          (arglist-cont-nonempty my/c-lineup-arglist-&&-or-|| c-lineup-arglist-close-under-paren)
          (arglist-intro . c-lineup-arglist-intro-after-paren)
@@ -1716,7 +1797,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
          (block-open . 0)
          (brace-entry-open . 0)
          (brace-list-close . 0)
-         (brace-list-entry . 0)
+         (brace-list-entry my/c-lineup-vertical-comma-list)
          (brace-list-intro . +)
          (brace-list-open . +)
          (c . c-lineup-C-comments)
@@ -1737,7 +1818,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
          (else-clause . 0)
          (extern-lang-close . 0)
          (extern-lang-open . 0)
-         (friend . 0)
+         (friend . -)
          (func-decl-cont . +)
          (inclass . +)
          (incomposition . +)
@@ -1776,16 +1857,14 @@ Works with: arglist-cont, arglist-cont-nonempty."
          (substatement-open . 0)
          (template-args-cont c-lineup-template-args +)
          (topmost-intro my/c-public-private-boundary 0)
-         (topmost-intro-cont . +))))
+         (topmost-intro-cont . my/c-lineup-arglist-open))))
      ))
-
-(eval-when-compile (require 'yasnippet))
 
 (defun my/c-mode-common-hook ()
   ""
   ;; Semantic does a better job supporting which-func in mode-line
-  ;;(require 'semantic/imenu)
-  ;;(setq imenu-create-index-function 'semantic-create-imenu-index)
+  ;; (require 'semantic/imenu)
+  ;; (setq imenu-create-index-function 'semantic-create-imenu-index)
 
   ;; cc-mode uses abbrev-mode to implement electric keywords
   (diminish 'abbrev-mode)
@@ -1797,22 +1876,15 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (setq comment-column 40)
 
   (c-set-style "jsy")
+  ;; Doxygen end of line comments are introduced by "///<"
   (add-to-list 'c-comment-prefix-regexp ' (other . "//+<?\\|\\**"))
 
   (c-setup-paragraph-variables)
-
+  (my/turn-on-filling)
   (setq fill-column 75)
+  (c-setup-filladapt)  ; not really setup, more like post-configure
 
-  (turn-on-auto-fill)
-
-  (require 'filladapt)
-  (c-setup-filladapt)
-  (turn-on-filladapt-mode)
-
-  (c-toggle-auto-hungry-state 1)
-
-  (require 'yasnippet)
-  (yas/minor-mode-on)
+  (c-toggle-auto-hungry-state -1)
 
   ;;(define-key c-mode-base-map "\C-m" 'newline-and-indent)
   ;;(define-key c-mode-base-map ")" 'jsy-c-electric-close-paren)
@@ -1820,12 +1892,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (my/custom-set-variables
  '(c-tab-always-indent nil)
- '(c-insert-tab-function 'my/c-insert-tab-function)
+ ;; '(c-insert-tab-function 'my/c-insert-tab-function)
  )
-
-(defun my/c-insert-tab-function ()
-  "Try hippie-expand devolving ultimately to insert-tab."
-  (hippie-expand nil))
 
 (eval-after-load "cc-vars"
   (progn
@@ -1874,10 +1942,21 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;}}}
 ;;{{{  Cedet, semantic, etc
 
-;; (my/custom-set-variables
-;;  '(semantic-mode t)
-;;  '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
-;;  )
+(my/custom-set-variables
+ '(semantic-mode t)
+ '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
+ '(global-semantic-decoration-mode nil)
+ '(global-semantic-idle-scheduler-mode t)
+ '(global-semantic-idle-summary-mode t)
+ '(semantic-default-submodes '(global-semantic-idle-scheduler-mode
+                               global-semanticdb-minor-mode
+                               global-semantic-idle-summary-mode
+                               global-semantic-mru-bookmark-mode))
+ '(semantic-idle-scheduler-idle-time 0.5)
+ '(semantic-idle-summary-function 'semantic-format-tag-prototype)
+ '(semantic-idle-work-parse-neighboring-files-flag t)
+ '(semantic-idle-work-update-headers-flag t)
+ )
 
 ;;}}}
 

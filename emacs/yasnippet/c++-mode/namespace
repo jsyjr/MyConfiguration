@@ -3,7 +3,7 @@
 # key: namespace
 #
 # name: namespace
-# key:  !namespace
+# key:  ``namespace
 # --
 namespace ${1:name} {
 $0

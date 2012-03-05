@@ -167,9 +167,10 @@ ${HOME}/bin:\
 ../../../../../../../..:\
 ../../../../../../../../debug/bin:\
 ../../../../../../../../debug/bin/adm:\
-/opt/net/tools/bin:\
-/opt/bin:\
 /opt/accurev/bin:\
+
+#/opt/net/tools/bin:\
+#/opt/bin:\
 
 
 # Specify emacs as default editor(?):

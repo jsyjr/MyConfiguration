@@ -1,12 +1,11 @@
 # -*- mode: snippet -*-
 # contributor: jyates <john@yates-sheets.org>
 #
-# name: new-header
-# key:  ``header
+# name: new-implementation
+# key:  ``impl
 #
 # --
-#ifndef `(upcase (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`_H
-#define `(upcase (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`_H
+#include `(concat "\"" (file-name-nondirectory (file-name-sans-extension (buffer-file-name))) ".h\"")`
 
 //========================================================================
 ///\file: `(file-name-nondirectory (buffer-file-name))` - ${1:single line description}
@@ -15,5 +14,3 @@
 //========================================================================
 
 $0
-
-#endif // `(upcase (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`_H

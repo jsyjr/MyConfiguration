@@ -1,12 +1,11 @@
 # -*- mode: snippet -*-
 # contributor: jyates <john@yates-sheets.org>
 #
-# name: new-header
-# key:  ``header
+# name: new-gtest-unit-test
+# key:  ``gtest
 #
 # --
-#ifndef `(upcase (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`_H
-#define `(upcase (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`_H
+#include `(concat "\"" (substring (file-name-nondirectory (file-name-sans-extension (buffer-file-name))) 0 -3) ".h\"")`
 
 //========================================================================
 ///\file: `(file-name-nondirectory (buffer-file-name))` - ${1:single line description}
@@ -14,6 +13,6 @@
 // Copyright (c) `(nth 5 (decode-time))` IBM Corporation.  All rights reserved.
 //========================================================================
 
-$0
+#include "nzgtest.h"
 
-#endif // `(upcase (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`_H
+$0

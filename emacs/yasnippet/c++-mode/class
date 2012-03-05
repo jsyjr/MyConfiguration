@@ -2,7 +2,7 @@
 # contributor: jyates <john@yates-sheets.org>
 #
 # name: new-class
-# key:  !class
+# key:  ``class
 #
 # --
 class ${1:name}
