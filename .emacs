@@ -1711,6 +1711,11 @@ An alternate approach would be after-advice on isearch-other-meta-char."
       auto-mode-alist))
 
 
+(my/custom-set-variables
+ '(c-tab-always-indent nil)
+ ;; '(c-insert-tab-function 'my/c-insert-tab-function)
+ )
+
 (defun my/c-public-private-boundary (langelem)
   "Line up line of slashes preceding 'private:' at the left edge."
   (save-excursion
@@ -1785,6 +1790,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
            defun-close-semi
            list-close-comma
            scope-operator))
+        (c-doc-comment-style 'set-from-style)
         (c-offsets-alist
          (access-label . -)
          (annotation-top-cont . 0)
@@ -1890,11 +1896,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;;(define-key c-mode-base-map ")" 'jsy-c-electric-close-paren)
   )
 
-(my/custom-set-variables
- '(c-tab-always-indent nil)
- ;; '(c-insert-tab-function 'my/c-insert-tab-function)
- )
-
 (eval-after-load "cc-vars"
   (progn
     ;; Cannot use the customization interface to establish this hook
@@ -1946,16 +1947,9 @@ Works with: arglist-cont, arglist-cont-nonempty."
  '(semantic-mode t)
  '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
  '(global-semantic-decoration-mode nil)
- '(global-semantic-idle-scheduler-mode t)
- '(global-semantic-idle-summary-mode t)
- '(semantic-default-submodes '(global-semantic-idle-scheduler-mode
-                               global-semanticdb-minor-mode
-                               global-semantic-idle-summary-mode
+ '(global-semantic-idle-scheduler-mode nil)
+ '(semantic-default-submodes '(global-semanticdb-minor-mode
                                global-semantic-mru-bookmark-mode))
- '(semantic-idle-scheduler-idle-time 0.5)
- '(semantic-idle-summary-function 'semantic-format-tag-prototype)
- '(semantic-idle-work-parse-neighboring-files-flag t)
- '(semantic-idle-work-update-headers-flag t)
  )
 
 ;;}}}
