@@ -1736,7 +1736,7 @@ the surrounding paren or brace block."
     (skip-chars-forward " \t" (c-point 'eol))
     (vector (current-column))))
 
-(defun my/c-lineup-arglist-open (langelem)
+(defun my/c-lineup-topmost-intro-cont (langelem)
   "Indent comment or arglist open parenthesis beneath topmost-intro."
   (save-excursion
     (beginning-of-line)
@@ -1863,7 +1863,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
          (substatement-open . 0)
          (template-args-cont c-lineup-template-args +)
          (topmost-intro my/c-public-private-boundary 0)
-         (topmost-intro-cont . my/c-lineup-arglist-open))))
+         (topmost-intro-cont . my/c-lineup-topmost-intro-cont))))
      ))
 
 (defun my/c-mode-common-hook ()
@@ -1883,7 +1883,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
   (c-set-style "jsy")
   ;; Doxygen end of line comments are introduced by "///<"
-  (add-to-list 'c-comment-prefix-regexp ' (other . "//+<?\\|\\**"))
+  (add-to-list 'c-comment-prefix-regexp '(other . "//+<?\\|\\**"))
 
   (c-setup-paragraph-variables)
   (my/turn-on-filling)
