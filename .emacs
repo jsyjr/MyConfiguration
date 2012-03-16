@@ -321,6 +321,19 @@
 ;;}}}
 
 ;;=== Visuals ==========================================================
+;;{{{  Proportional fonts
+
+(mapc
+ (lambda (hook)
+   (add-hook hook (lambda () (variable-pitch-mode t))))
+ '(erc-mode-hook
+   edit-server-start-hook
+   markdown-mode-hook
+   twittering-mode
+   text-mode
+   ))
+
+;;}}}
 ;;{{{  Icon text when minimized
 
 (setq icon-title-format
@@ -1259,11 +1272,13 @@ This command is designed to be used whether you are already in Info or not."
      ))
  '(ido-mode 'both nil (ido))
  '(ido-save-directory-list-file "~/.emacs.d/ido.last")
+ '(ido-setup-hook 'my/ido-setup)
+ '(ido-minibuffer-setup-hook 'my/ido-minibuffer-setup)
  '(smex-save-file "~/.emacs.d/smex")
  )
 
 ;; from minibuf-electric-gnuemacs.el
-(defun ido-electric-slash ()
+(defun my/ido-electric-slash ()
   (interactive)
   (and (eq ?/ (preceding-char))
        ;; permit `//hostname/path/to/file'
@@ -1273,16 +1288,18 @@ This command is designed to be used whether you are already in Info or not."
        (delete-region (minibuffer-prompt-end) (point)))
   (insert ?/))
 
-(defun ido-electric-tilde ()
+(defun my/ido-electric-tilde ()
   (interactive)
   (if (eq ?/ (preceding-char))
       (delete-region (minibuffer-prompt-end) (point)))
   (insert ?~))
 
-(add-hook 'ido-setup-hook
-          (function (lambda ()
-                      (define-key ido-completion-map "/" 'ido-electric-slash)
-                      (define-key ido-completion-map "~" 'ido-electric-tilde))))
+(defun my/ido-setup ()
+  (define-key ido-completion-map "/" 'my/ido-electric-slash)
+  (define-key ido-completion-map "~" 'my/ido-electric-tilde))
+
+(defun my/ido-minibuffer-setup ()
+  (setq truncate-lines (default-value 'truncate-lines)))
 
 ;;}}}
 ;;{{{  Spell checking
