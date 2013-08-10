@@ -17,6 +17,9 @@
 ;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ;; Floor, Boston, MA 02110-1301, USA.
 
+;; Too many false alarms
+;; (setq debug-on-error t)
+
 ;;=== Notes ============================================================
 ;;{{{  Goals
 
@@ -33,10 +36,10 @@
 ;; Directory hygiene:
 ;;
 ;; Apart for this file (~/.emacs) all state which I maintain manually
-;; into my ~/emacs/ directory (e.g. custom-file, spelling dictionaries,
-;; templates I write/modify for yasnippet, packages I write or modify).
-;; maintain the contents of this directory in git and replicate to all
-;; sites where I use emacs.
+;; I place into my ~/emacs/ directory (e.g. custom-file, spelling
+;; dictionaries, templates I write/modify for yasnippet, packages I
+;; write or modify).  I then maintain the contents of that directory
+;; in git and replicate to all sites where I use emacs.
 ;;
 ;; By contrast I reserve my ~/.emacs.d directory for cached state
 ;; transparently managed by various packages (e.g. semanticdb, el-get,
@@ -55,18 +58,18 @@
 
 ;; Everyone's .emacs rips off someone else's...
 
-;; There is a bit of a convention to prefix private code with some
-;; version of the user's name.  This might make sense if users copied
-;; code amongst .emacs files while preserving the original author's
-;; name.  In my experience this is not what happens.  Rather imported
-;; code gets resuffixed.  Yet the real goal is not so much to claim
-;; authorship as to avoid collidions in the emacs name space.  Hence I
-;; do not use my own name, only a "my/" prefix.  Anyone willing to
-;; adopt a similar convention could then easily crib any of my
-;; customizations.
+;; In the emacs world there is a bit of a convention to prefix one's
+;; private code with some version of the one's name or initials.  This
+;; might make sense if users copied code amongst .emacs files while
+;; preserving the original author's name.  In my experience this is
+;; not what happens.  Rather imported code gets resuffixed.  Yet the
+;; real goal is not so much to claim authorship as to avoid collisions
+;; in the emacs name space.  Hence I do not use my own name, only a
+;; "my/" prefix.  Anyone willing to adopt a similar convention could
+;; then easily crib any of my customizations.
 
 ;; It is too hard and too noisy to attribute ideas in the body of this
-;; file.  Here I simply list source from which I have either cribbed
+;; file.  Here I simply list sources from which I have either cribbed
 ;; outright or else have drawn inspiration.
 ;;
 ;; Alex Ott             https://github.com/alexott/emacs-configs
@@ -87,21 +90,12 @@
 ;;
 ;; To fetch an initial copy emacs-goodies-el from debian.org or to update:
 ;;
-;; $ cd ~/.emacs-d
+;; $ cd ~/.emacs.d
 ;; $ cvs -d :pserver:anonymous@anonscm.debian.org:/cvs/pkg-goodies-el login
 ;; [blank password]
 ;; $ cvs -z3 -d :pserver:anonymous@anonscm.debian.org:/cvs/pkg-goodies-el checkout emacs-goodies-el/elisp/emacs-goodies-el
 
-;; Directories
-;; (make-directory "~/.emacs.d/autosave" t)
-;; (make-directory "~/.emacs.d/autosave-list" t)
-;; (make-directory "~/.emacs.d/auto-save-Confluence" t)
-;; (make-directory "~/.emacs.d/backup" t)
-;; (make-directory "~/.emacs.d/semanticdb" t)
-;; (make-directory "~/.emacs.d/smex" t)
-;; (make-directory "~/.emacs.d/srecode" t)
-;; (make-directory "~/.emacs.d/url" t)
-
+;; - uncomment (el-get-update-all t) below
 ;; - el-get-emacswiki-refresh (no separate subdirectory)
 ;; - el-get-install every el-get-sources entry in this file
 
@@ -134,11 +128,30 @@
 ;;}}}
 
 ;;=== Package management ===============================================
-;;{{{  load-path
+;;{{{  ensure necessary directories
 
-(let ((entries (directory-files "~/.emacs.d/el-get" t)))
+(setq el-get-dir "/home/jyates/.emacs.d/el-get/")
+
+(mapc (lambda (path)
+	(unless (file-accessible-directory-p path)
+	  (make-directory path t)))
+      `("~/.emacs.d/autosave"
+        "~/.emacs.d/autosave-list"
+        "~/.emacs.d/autosave-Confluence"
+        "~/.emacs.d/backup"
+        "~/.emacs.d/semanticdb"
+        "~/.emacs.d/srecode"
+        "~/.emacs.d/url"
+        ,el-get-dir
+	))
+;;}}}
+;;{{{  add installed packages to load-path
+
+(let ((entries (reverse (directory-files el-get-dir t))))
   (mapc (lambda (path)
-          (when (file-directory-p path)
+          (when (and (file-directory-p path)
+		     (/= ?. (aref path (1- (length path))))
+		     (not (memq path load-path)))
             (add-to-list 'load-path path))) entries))
 
 ;;}}}
@@ -147,21 +160,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; CAVEAT: functions in packages acquired via el-get cannot be invoked
-;; until (el-get 'wait) has completed in the el-get epilog toward the
+;; until (el-get 'sync) has completed in the el-get epilog toward the
 ;; bottom of this file.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(setq el-get-sources '(el-get)) ; built incrementally via add-to-list
+
 ;; Minimal bootstrap
-(unless (require 'el-get nil t)
+(unless (file-directory-p (concat el-get-dir "el-get"))
   (url-retrieve "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
                 (lambda (s)
-                  (let (el-get-master-branch)
-                    (goto-char (point-max))
-                    (eval-print-last-sexp)))))
+		    (goto-char (point-max))
+		    (eval-print-last-sexp)))
+  (el-get-elpa-build-local-recipes)
+  (add-to-list 'load-path (concat el-get-dir "el-get"))
+  )
 
-(setq el-get-recipe-path '("~/.emacs.d/el-get/el-get/recipes/"))
-(setq el-get-sources '(el-get)) ; built incrementally via add-to-list
+(require 'el-get)
+
+(defvar my/missing-el-get-packages nil)
+(defvar my/all-el-get-packages nil)
+(defun my/el-get-install (pkg)
+  "Ensure that PKG has actually been installed."
+  (princ el-get-sources)
+  (let ((path (concat el-get-dir pkg)))
+    (message "my/el-get-install: checking %s" path)
+    (add-to-list 'my/all-el-get-packages pkg)
+    (unless (file-directory-p path)
+      (add-to-list 'my/missing-el-get-packages pkg))))
 
 (require 'inversion nil t) ; fix broken autoload in cedet/common/cedet-compat.el
 
@@ -541,10 +568,6 @@ mouse-3: Remove current window from display")))))
 ;; Further learnings from Lennart Borgman's sml-modeline.el
 ;;   http://bazaar.launchpad.net/~nxhtml/nxhtml/main/annotate/head%3A/util/mode-line-pos.el
 
-(my/custom-set-variables
- '(mode-line-position '(:eval (my/position-widget)))
- )
-
 (defvar buffer-max-column-visited 1
   "Accumulate max column visited to prevent mode-line jitter.")
 (make-variable-buffer-local 'buffer-max-column-visited)
@@ -646,6 +669,10 @@ mouse-3: Remove current window from display")))))
                          :button (:toggle . column-number-mode))
                         "Control Line and Column Display Globally"))))))))
 
+(my/custom-set-variables
+ '(mode-line-position '(:eval (my/position-widget)) t)
+ )
+
 ;;}}}
 ;;{{{  mode-line which-func
 
@@ -672,12 +699,13 @@ mouse-3: go to end")
 ;;}}}
 ;;{{{  emacs-goodies/diminish
 
-(add-to-list 'el-get-sources
-             '(:name diminish
-                     :type        http
-                     :description "Shrink or eliminate minor mode modeline display"
-                     :url         "file://localhost/home/jyates/.emacs.d/emacs-goodies-el/elisp/emacs-goodies-el/diminish.el"
-                     :features    (diminish)))
+(add-to-list 'el-get-sources 'diminish)
+             ;; '(:name diminish
+             ;;         :description "Shrink or eliminate minor mode modeline display"
+             ;;         :type        http
+             ;;         :url         "file://localhost/home/jyates/.emacs.d/emacs-goodies-el/elisp/emacs-goodies-el/diminish.el"
+             ;;         :features    (diminish)))
+(my/el-get-install "diminish")
 
 ;; To diminish minor mode FOO:
 ;;
@@ -706,12 +734,16 @@ mouse-3: go to end")
 
 (add-to-list 'el-get-sources
              '(:name  pp-c-l
-                      :after (lambda ()
-                               (add-hook 'window-setup-hook
-                                         'refresh-pretty-control-l)
-                               (add-hook 'window-configuration-change-hook
-                                         'refresh-pretty-control-l))
-                      :features (pp-c-l)))
+                     :description "Display Control-l characters as a full-width rule"
+                     :type        http
+                     :url         "file://localhost/home/jyates/.emacs.d/emacs-goodies-el/elisp/emacs-goodies-el/pp-c-l.el"
+                     :after       (progn
+                                    (add-hook 'window-setup-hook
+                                              'refresh-pretty-control-l)
+                                    (add-hook 'window-configuration-change-hook
+                                              'refresh-pretty-control-l))
+                     :features    (pp-c-l)))
+(my/el-get-install "pp-c-l")
 
 ;; Universally display ^L as a window-width horizontal rule
 (my/custom-set-variables
@@ -954,8 +986,11 @@ convert it to readonly/view-mode."
 ;;=== VC, diff, merge, patch ===========================================
 ;;{{{  magit
 
-(add-to-list 'el-get-sources 'magit)
+;; (add-to-list 'el-get-sources 'magit)
+;; (my/el-get-install "magit")
+
 (add-to-list 'el-get-sources 'magithub)
+(my/el-get-install "magithub")
 
 (my/custom-set-variables
  '(magit-diff-refine-hunk 'all)
@@ -1044,62 +1079,57 @@ convert it to readonly/view-mode."
 ;;=== Abbreviation and expansion =======================================
 ;;{{{  yasnippet
 
-(add-to-list 'el-get-sources
-             '(:name "yasnippet"
-                     :description "YASnippet is a template system for Emacs."
-                     :type git
-                     :url "https://github.com/capitaomorte/yasnippet"))
+;; (add-to-list 'el-get-sources 'yasnippet)
+;; (my/el-get-install "yasnippet")
+;; (require 'yasnippet)
 
-(require 'yasnippet)
-
-(setq yas/snippet-dirs "~/emacs/yasnippet")
-(yas/global-mode 1)
-(add-hook 'yas/minor-mode-hook 'yas/reload-all)
+;; (setq yas/snippet-dirs "~/emacs/yasnippet")
+;; (yas/global-mode 1)
+;; (add-hook 'yas/minor-mode-hook 'yas/reload-all)
 
 
-;; reload modified snippets
-(defun my/yasnippet-reload-on-save ()
-  "Reload the entire collection of snippets when one gets modified."
-  (if (eq major-mode 'snippet-mode)
-    ;;  (mapc 'yas/load-directory yas/snippet-dirs)))
-    (yas/reload-all))) ; no mapc with just a single directory root
+;; ;; reload modified snippets
+;; (defun my/yasnippet-reload-on-save ()
+;;   "Reload the entire collection of snippets when one gets modified."
+;;   (if (eq major-mode 'snippet-mode)
+;;     ;;  (mapc 'yas/load-directory yas/snippet-dirs)))
+;;     (yas/reload-all))) ; no mapc with just a single directory root
 
-(add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
+;; (add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
 
 
-;; Another note: The new 0.7 yasnippet.el messes things up with
-;; anything.el. You need to do this:
-;;
-;; Need to replace the following in anything-c-yasnippet.el:
-;;   yas/snippets/table-hash      -> yas/table-hash
-;;   yas/snippets/table-templates -> yas/table-templates
-;;
-;; (require 'anything-c-yasnippet)
+;; ;; Another note: The new 0.7 yasnippet.el messes things up with
+;; ;; anything.el. You need to do this:
+;; ;;
+;; ;; Need to replace the following in anything-c-yasnippet.el:
+;; ;;   yas/snippets/table-hash      -> yas/table-hash
+;; ;;   yas/snippets/table-templates -> yas/table-templates
+;; ;;
+;; ;; (require 'anything-c-yasnippet)
 
 ;;}}}
 ;;{{{  auto-complete
 
-(add-to-list 'el-get-sources
-             '(:name auto-complete
-                     :post-init (lambda () nil)))
+(add-to-list 'el-get-sources 'auto-complete)
+(my/el-get-install "auto-complete")
+;; (require 'auto-complete)
 
-(require 'auto-complete)
-;;(add-to-list 'ac-dictionary-directories (expand-file-name "dict" pdir))
-(require 'auto-complete-config)
-(add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
-(add-hook 'c-mode-common-hook 'my/ac-cc-mode-setup)
-(global-auto-complete-mode t)
+;; ;;(add-to-list 'ac-dictionary-directories (expand-file-name "dict" pdir))
+;; (require 'auto-complete-config)
+;; (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
+;; (add-hook 'c-mode-common-hook 'my/ac-cc-mode-setup)
+;; (global-auto-complete-mode t)
 
-(setq-default ac-sources '(ac-source-abbrev
-                           ac-source-dictionary
-                           ac-source-words-in-same-mode-buffers))
+;; (setq-default ac-sources '(ac-source-abbrev
+;;                            ac-source-dictionary
+;;                            ac-source-words-in-same-mode-buffers))
 
-(defun my/ac-cc-mode-setup ()
-  (setq ac-sources (append '(ac-source-semantic
-                             ac-source-semantic-raw
-                             ac-source-yasnippet
-                             ;; ac-source-gtags ; no "using namespace XX;"
-                             ) ac-sources)))
+;; (defun my/ac-cc-mode-setup ()
+;;   (setq ac-sources (append '(ac-source-semantic
+;;                              ac-source-semantic-raw
+;;                              ac-source-yasnippet
+;;                              ;; ac-source-gtags ; no "using namespace XX;"
+;;                              ) ac-sources)))
 
 (my/custom-set-variables
  '(ac-auto-start nil)
@@ -1159,6 +1189,7 @@ convert it to readonly/view-mode."
                      :type        http
                      :url         "http://www.cbrunzema.de/download/apropos-toc/apropos-toc.el"
                      :features    (apropos-toc)))
+(my/el-get-install "apropos-toc")
 
 (defvar my/apropos-toc-font-lock-keywords
   (list
@@ -1229,6 +1260,7 @@ This command is designed to be used whether you are already in Info or not."
 ;;{{{  Completion (ido, smex)
 
 (add-to-list 'el-get-sources 'smex)
+(my/el-get-install "smex")
 
 (my/custom-set-variables
  '(completion-ignored-extensions
@@ -1274,7 +1306,7 @@ This command is designed to be used whether you are already in Info or not."
  '(ido-save-directory-list-file "~/.emacs.d/ido.last")
  '(ido-setup-hook 'my/ido-setup)
  '(ido-minibuffer-setup-hook 'my/ido-minibuffer-setup)
- '(smex-save-file "~/.emacs.d/smex")
+ '(smex-save-file "~/.emacs.d/smex.save")
  )
 
 ;; from minibuf-electric-gnuemacs.el
@@ -1318,14 +1350,18 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  ilocate-library
 
+;; My changes from https://github.com/emacsmirror/ilocate-library.git
+;;  - (require 'cl)
+;;  - support gzipped files (adjust regexps and doc strings)
+;;  - visit files in view mode
+
 (add-to-list 'el-get-sources
              '(:name ilocate-library
                      :description "Interactive locate-library (or source) with completion"
                      :type        http
                      :url         "file://localhost/home/jyates/clones/ilocate-library/ilocate-library.el"
-;;                   :type        emacsmirror
-;;                   :url         "https://github.com/emacsmirror/ilocate-library.git"
                      :features    (ilocate-library)))
+(my/el-get-install "ilocate-library")
 
 ;;}}}
 ;;{{{  Update timestamps before saving files
@@ -1365,7 +1401,7 @@ This command is designed to be used whether you are already in Info or not."
 (defadvice comint-send-input (around my/go-to-end-of-multiline activate)
   "To capture multiline input jump to end of buffer on [enter].
 (This has no effect if `comint-eol-on-send' is nil.)"
-  (flet ((end-of-line () (end-of-buffer)))
+  (cl-flet ((end-of-line () (goto-char (point-max))))
     ad-do-it))
 
 (defadvice comint-previous-matching-input (around my/quiet-comint-history-isearch activate)
@@ -1464,9 +1500,8 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;=== Minor modes ======================================================
 ;;{{{  folding
 
-(add-to-list 'el-get-sources
-             '(:name  folding
-                      :after folding-mode-add-find-file-hook))
+(add-to-list 'el-get-sources 'folding)
+(my/el-get-install "folding")
 
 (my/custom-set-variables
  '(folding-mode-prefix-key ",")       ; also changed for hideshow
@@ -1477,14 +1512,16 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;}}}
 ;;{{{  hideshow...
 
-;; Only needed until emacs maintainers accept my two patches.
-(add-to-list 'el-get-sources
-             '(:name hideshow
-                     :type http
-                     :description "Selectively collapse/expand code/comment blocks"
-                     :url "file://localhost/home/jyates/clones/emacs/hideshow.el"
-;;                   :url "file:/usr/share/emacs/24.0.93/lisp/progmodes/hideshow.el"
-                     :features (hideshow)))
+;; My version handles block comments in C++ better.
+;;
+;; (add-to-list 'el-get-sources
+;; 	     '(:name hideshow
+;; 		     :description "Minor mode cmds to selectively display code/comment blocks"
+;; 		     :type        http
+;; 		     :url         "file://localhost/home/jyates/clones/emacs/hideshow.el"
+;; 		     ))
+;; (my/el-get-install "hideshow")
+;; (require 'hideshow)
 
 ;; Display the size of a collapsed function body
 (defun my/display-code-line-counts (ov)
@@ -1500,11 +1537,12 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;; My version corrects the order of save-excursion save-restriction sequence
 (add-to-list 'el-get-sources
              '(:name hideshowvis
-;;                     :type emacswiki
-                     :type http
-                     :url "file://localhost/home/jyates/clones/emacswiki/hideshowvis.el"
                      :description "Add fringe markers for hide/show foldable regions."
-                     :features (hideshowvis)))
+                     ;; :type emacswiki
+                     :type        http
+                     :url         "file://localhost/home/jyates/clones/emacswiki/hideshowvis.el"
+                     :features    (hideshowvis)))
+(my/el-get-install "hideshowvis")
 
 ;; (defun my/fringe-click-hs (event)
 ;;   (interactive "e")
@@ -1534,6 +1572,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (add-to-list 'el-get-sources
              '(:name filladapt
                      :url "http://cc-mode.sourceforge.net/filladapt.el"))
+(my/el-get-install "filladapt")
 
 
 ;; As distributed filladapt.el contains no autoload cookies
@@ -1625,20 +1664,27 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;}}}
 ;;{{{  Confluence wiki
 
-(add-to-list 'el-get-sources 'xml-rpc) ; a dependency from emacswiki
+;; (add-to-list 'el-get-sources 
+;;              '(:name xml-rpc
+;; 		     :type     emacswiki
+;;                      :features (xml-rpc)))
+;; (my/el-get-install "xml-rpc")
+;; ;; (require 'xml-rpc)
 
-(add-to-list 'el-get-sources
-             '(:name confluence
-                     :description "Interact with confluence wikis"
-                     :type        svn
-                     :url         "http://confluence-el.googlecode.com/svn/trunk/"
-                     :features    (ilocate-library)))
+;; (add-to-list 'el-get-sources
+;;              '(:name confluence
+;;                      :description "Interact with confluence wikis"
+;;                      :type        svn
+;;                      :url         "http://confluence-el.googlecode.com/svn/trunk/"
+;; 		     :depends     (xml-rpc)
+;;                      :features    (confluence)))
+;; (my/el-get-install "confluence")
 
 (my/custom-set-variables
- '(confluence-url "http://wiki2.netezza.com:8080/rpc/xmlrpc")
+ '(confluence-url "http://wiki2.nzlab.ibm.com:8080/rpc/xmlrpc")
  '(confluence-save-credentials t)
  '(confluence-min-page-repeat-completion-length 1)
- '(confluence-auto-save-dir "~/.emacs.d/auto-save-Confluence")
+ '(confluence-auto-save-dir "~/.emacs.d/autosave-Confluence")
  )
 
 (my/custom-set-faces
@@ -1687,9 +1733,10 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (add-to-list 'el-get-sources
              '(:name "project"
                      :description "Keep track of the current project."
-                     :type git
-                     :url "https://github.com/nex3/project-el.git"
+                     :type        git
+                     :url         "https://github.com/nex3/project-el.git"
                      :features    (project)))
+(my/el-get-install "project")
 
 ;;}}}
 ;;{{{  Find file in project
@@ -1697,9 +1744,10 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (add-to-list 'el-get-sources
              '(:name "find-file-in-project"
                      :description "Find files in a project quickly."
-                     :type git
-                     :url "https://github.com/dburger/find-file-in-project.git"
+                     :type        git
+                     :url         "https://github.com/dburger/find-file-in-project.git"
                      :features    (find-file-in-project)))
+(my/el-get-install "find-file-in-project")
 
 ;;}}}
 ;;{{{  Compilation and next exrror
@@ -1935,6 +1983,10 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;}}}
 ;;{{{  GDB support
 
+(my/custom-set-variables
+ '(gdb-many-windows t)
+ )
+
 (eval-after-load "gud" '(progn
   (defun my/gud-cont-to-tbreak ()
     "Run to cursor"
@@ -2003,10 +2055,11 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (add-to-list 'el-get-sources
              '(:name keydef
-                     :type http
                      :description "A simpler way to define keys, with kbd syntax"
-                     :url "file://localhost/home/jyates/.emacs.d/emacs-goodies-el/elisp/emacs-goodies-el/keydef.el"
-                     :features (keydef)))
+                     :type        http
+                     :url         "file://localhost/home/jyates/emacs/keydef.el"
+                     :features    keydef))
+(my/el-get-install "keydef")
 
 ;;}}}
 
@@ -2014,9 +2067,21 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;{{{  Sync and update
 
 ;; Use update all when first configuring a new machine or user
-;; (el-get-update-all)
+;; (el-get-update-all t)
 
-(el-get 'wait)
+(message "========")
+(princ my/missing-el-get-packages)
+
+(mapc (lambda (pkg)
+	(progn
+	  (message "Install %s" pkg)
+	  (el-get-install pkg)))
+      my/missing-el-get-packages)
+
+;; (if my/missing-el-get-packages (el-get-update-all t))
+
+(message "========")
+(el-get 'sync my/all-el-get-packages)
 
 ;;}}}
 
@@ -2162,7 +2227,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
-(keydef "C-c C-k"       kill-compilation)
+;(keydef "C-c C-k"       kill-compilation)
+
 ;; python-mode steals C-c C-k for python-mark-block. steal it back.
 ;(require 'python)
 ;(define-key python-mode-map [(control c) (control k)] 'kill-compilation)
@@ -2240,8 +2306,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (keydef "M-s m"         multi-occur-in-matching-buffers)
 (keydef "M-s r"         rgrep)
 
-(keydef "M-x"           smex)
-(keydef "M-X"           smex-major-mode-commands)
+;; (keydef "M-x"           smex)
+;; (keydef "M-X"           smex-major-mode-commands)
 
 (keydef "<f1>"          bs-show)
 (keydef "C-<f1>"        my/named-shell)

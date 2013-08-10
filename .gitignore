@@ -16,5 +16,6 @@
 
 # Subdirectories of the home directory
 /*/
+!/.dinafont/
 !/emacs/
 !/org/

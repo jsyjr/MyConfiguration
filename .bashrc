@@ -2,6 +2,10 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+# Specify emacs as default editor(?):
+export EDITOR='/usr/local/emacs_trunk/bin/emacsclient'
+export ALTERNATE_EDITOR='/usr/local/emacs_trunk/bin/emacs'
+
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
@@ -34,6 +38,10 @@ esac
 
 # Comment in the above and uncomment this below for a color prompt
 #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+
+# Show current working directory in shell prompt
+#PS1='$PWD \$ '
+
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
@@ -134,8 +142,12 @@ nzcleanbuild () {
 
 PATH=\
 ${HOME}/bin:\
+${HOME}/perl5/bin:\
+/opt/eclipse/4.2.2:\
+/opt/accurev/bin:\
 /usr/local/sbin:\
 /usr/local/bin:\
+/usr/local/emacs_trunk/bin:\
 /usr/sbin:\
 /usr/bin:\
 /sbin:\
@@ -167,87 +179,8 @@ ${HOME}/bin:\
 ../../../../../../../..:\
 ../../../../../../../../debug/bin:\
 ../../../../../../../../debug/bin/adm:\
-/opt/accurev/bin:\
-
-#/opt/net/tools/bin:\
-#/opt/bin:\
-
-
-# Specify emacs as default editor(?):
-export EDITOR="/usr/bin/emacsclient -a /usr/bin/emacs -c '(raise-frame)'; /usr/bin/emacsclient"
-export ALTERNATE_EDITOR='/usr/bin/emacs'
-
-
-[ -f /opt/net/tools/etc/sh_accurev ] && . /opt/net/tools/etc/sh_accurev
-export AC_EDITOR_GUI=$EDITOR
 
 export CCACHE_DIR=/home/workspaces/$USER/ccache
 export AOS_CCACHE=ccache
 
-# DBOS security (we always run as a dbos super user)
-export NZ_DATABASE=DEV
-export NZ_USER=admin
-export NZ_PASSWORD=password
-
 export LOG_STDOUT=Y
-# export NO_MIRROR=Y
-
-export NZ_NO_SPS_RESTART=1
-export NZ_AUTOCREATE_DB=1
-export NZ_AUTO_FAILOVER=0
-export NZ_AUTO_REGEN=0
-export NZ_AUTO_RESET=0
-export NZ_BLAST_SUPPORT=0
-export NZ_CLOB_SUPPORT=0
-export NZ_DELETE_PLANS=1
-export NZ_MEMORY_MAX_MBYTES=512
-export NZ_MAXCONNECTIONS=20
-export NZ_WATCHDOG=0
-# export GENC_SPU_DEBUG=3
-
-# export NZ_DIAB_OPT="-O -Xinline=500 -Xrestart=0 -Xunroll=0"
-unset NZ_DIAB_OPT
-
-# This is where we checkout a Diab compiler license
-export LM_LICENSE_FILE=7789@milkyway
-
-
-alias workon='. $HOME/bin/workon.bsh'
-
-# GENC_LIST controls whether the machine code listings are left in ../data/plans
-# export GENC_LIST=Y
-alias gl='set | grep GENC_LIST'
-alias gly='export GENC_LIST=Y'
-alias gln='export GENC_LIST=N'
-
-# Show current working directory in shell prompt
-PS1='$PWD \$ '
-
-# Some helpful cvs command abbreviations:
-alias cvsstat='cvs -q status 2>/dev/null | grep Needs'
-alias cvswip='cvs -q status 2>/dev/null | grep Status: | egrep -v "Up-to-date|Patch|Checkout|Invalid"'
-alias cvsup='cvs -q update -Pd  2>/dev/null ; echo "remember to perform tags-jsy"'
-
-# Abbreviation for building amake:
-alias mam='pushd ~/nz/src/amake >/dev/null;rm /tmp/*.o;./amake.bsh LINUX;popd >/dev/null'
-
-export NUM_SPUS=1
-alias ns1='export NUM_SPUS=1;ss'
-alias ns3='export NUM_SPUS=3;ss'
-alias nzr='unset NZ_SIM;ns3'
-alias nzs='export NZ_SIM=Y;ns1'
-alias ss='env | egrep "NUM_SPU|NZ_SIM";env | grep FPGA'
-
-# GENC_SOURCE controls whether the codeN.cpp files are copied to genedN.cpp
-# export KEEP_SOURCE=N
-# alias ks='set | grep KEEP_SOURCE'
-# alias ksy='export KEEP_SOURCE=Y'
-# alias ksn='export KEEP_SOURCE=N'
-
-# export FPGA_PREP=Y
-unset FPGA_PREP
-# export REAL_FPGA=Y
-unset REAL_FPGA
-
-alias FPGA_OFF='export FPGA_PREP=N;export REAL_FPGA=N;cp ~/ForOthers/MarkO/fpga5.bit ~/nz/kit/sbin/fpga5.bin;ss'
-alias FPGA_ON='export FPGA_PREP=Y;export REAL_FPGA=Y;cp ~/nz/src/nde/firm/fpga5.bit  ~/nz/kit/sbin/fpga5.bin;ss'

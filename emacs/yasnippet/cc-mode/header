@@ -9,7 +9,7 @@
 #define `(upcase (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`_H
 
 //========================================================================
-///\file: `(file-name-nondirectory (buffer-file-name))` - ${1:single line description}
+///\file: `(file-name-nondirectory (buffer-file-name))` ${1:single line description}
 //
 // Copyright (c) `(nth 5 (decode-time))` IBM Corporation.  All rights reserved.
 //========================================================================

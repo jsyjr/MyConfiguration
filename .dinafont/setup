@@ -1,0 +1,26 @@
+### Dina font
+#
+# copy the Dina directory to /usr/share/fonts (root/root)
+
+# Fedora:
+#
+# Edit /etc/fonts/conf.d/25-no-bitmap-fedora.conf
+	<match target="font">
+		<test name="family" compare="eq">
+			<string>dina</string>
+		</test>
+		<edit name="embeddedbitmap" mode="assign">
+			<bool>false</bool>
+		</edit>
+	</match>
+
+
+# Ubuntu:
+#
+# cd /etc/fonts/conf.d
+# sudo rm 70-no-bitmaps.conf
+# sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
+#
+# sudo dpkg-reconfigure fontconfig-config
+# sudo dpkg-reconfigure fontconfig
+# fc-list | grep Dina
