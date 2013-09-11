@@ -2,12 +2,27 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-# Specify emacs as default editor(?):
-export EDITOR='/usr/local/emacs_trunk/bin/emacsclient'
-export ALTERNATE_EDITOR='/usr/local/emacs_trunk/bin/emacs'
+export CCACHE_DIR=/ccc
+
+PATH=\
+/usr/lib/ccache:\
+${HOME}/bin:\
+${HOME}/asd:\
+/usr/local/sbin:\
+/usr/local/bin:\
+/usr/sbin:\
+/usr/bin:\
+/sbin:\
+/bin:\
+.:\
+
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
+
+# Specify emacs as default editor(?):
+export EDITOR='/etc/alternatives/emacsclient'
+export ALTERNATE_EDITOR='/etc/alternatives/emacs'
 
 # don't put duplicate lines in the history. See bash(1) for more options
 export HISTCONTROL=ignoredups
@@ -27,20 +42,20 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
 fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-xterm-color)
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-    ;;
-*)
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-    ;;
-esac
+# case "$TERM" in
+# xterm-color)
+#     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+#     ;;
+# *)
+#     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+#     ;;
+# esac
 
 # Comment in the above and uncomment this below for a color prompt
 #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 # Show current working directory in shell prompt
-#PS1='$PWD \$ '
+PS1='\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 
 # If this is an xterm set the title to user@host:dir
@@ -107,21 +122,24 @@ nzcleantest () {
 #=====================================================================================================
 
 # Rebuild amake, refresh am.dmp and the tags file
-nztags () {
+sbtags () {
     if [ ! -d "src/amake" ]; then
         echo "Not in the root of a source tree."; return 1
     fi
-    ( command rm -rf acpp acproto amake am.dmp BROWSE obj/amake obj/caches/* tags TAGS \
+    ( command rm -rf data obj source rel tobj acpp acproto amake am.dmp src/build src/BROWSE src/tags src/TAGS \
            && cd src/amake \
-           && ./amake.bsh LINUX )
+           && ./amake.bsh LINUXPRE )
     rm -f acproto
     ./amake -cache >/dev/null
     ./amake -dumponly am.dmp
     emacsclient -e "(cd \"$(pwd)\")"
     emacsclient -e "(am-scan \"$(pwd)/am.dmp\")"
-    echo "$(pwd): am.dmp refreshed and reloaded, rebuilding TAGS"
-    ctags --excmd=pattern --fields=-k+aiKlmnSz --sort=foldcase --tag-relative --totals=yes -f tags \
-        --languages=+all,-HTML,-SQL --exclude=webclient --exclude=winclient --exclude=tests -R src
+    echo "$(pwd): am.dmp refreshed and reloaded; rebuilding tags file and TAGS symlink"
+    ( command cd src \
+           && ctags-exuberant -f tags --fields=-fKz+aiklmnsSt --totals -R . \
+           && ln -s tags TAGS )
+    # ctags-exuberant --excmd=pattern --fields=-f-K-z+aiklmnsSt --sort=foldcase --tag-relative --totals=yes -f tags \
+    #    --languages=+all,-HTML,-SQL --exclude=tests -R src
 }
 
 #=====================================================================================================
@@ -138,49 +156,5 @@ nzcleanbuild () {
     nztags
 }
 
-#=====================================================================================================
-
-PATH=\
-${HOME}/bin:\
-${HOME}/perl5/bin:\
-/opt/eclipse/4.2.2:\
-/opt/accurev/bin:\
-/usr/local/sbin:\
-/usr/local/bin:\
-/usr/local/emacs_trunk/bin:\
-/usr/sbin:\
-/usr/bin:\
-/sbin:\
-/bin:\
-.:\
-./debug/bin:\
-./debug/bin/adm:\
-..:\
-../debug/bin:\
-../debug/bin/adm:\
-../..:\
-../../debug/bin:\
-../../debug/bin/adm:\
-../../..:\
-../../../debug/bin:\
-../../../debug/bin/adm:\
-../../../..:\
-../../../../debug/bin:\
-../../../../debug/bin/adm:\
-../../../../..:\
-../../../../../debug/bin:\
-../../../../../debug/bin/adm:\
-../../../../../..:\
-../../../../../../debug/bin:\
-../../../../../../debug/bin/adm:\
-../../../../../../..:\
-../../../../../../../debug/bin:\
-../../../../../../../debug/bin/adm:\
-../../../../../../../..:\
-../../../../../../../../debug/bin:\
-../../../../../../../../debug/bin/adm:\
-
-export CCACHE_DIR=/home/workspaces/$USER/ccache
-export AOS_CCACHE=ccache
-
 export LOG_STDOUT=Y
+
