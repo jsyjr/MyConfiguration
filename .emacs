@@ -95,7 +95,7 @@
 ;; [blank password]
 ;; $ cvs -z3 -d :pserver:anonymous@anonscm.debian.org:/cvs/pkg-goodies-el checkout emacs-goodies-el/elisp/emacs-goodies-el
 
-;; - uncomment (el-get-update-all t) below
+;; - uncomment (el-get-update-all t) in section Sync and update (below)
 ;; - el-get-emacswiki-refresh (no separate subdirectory)
 ;; - el-get-install every el-get-sources entry in this file
 
@@ -183,14 +183,23 @@
 (defvar my/all-el-get-packages nil)
 (defun my/el-get-install (pkg)
   "Ensure that PKG has actually been installed."
-  (princ el-get-sources)
   (let ((path (concat el-get-dir pkg)))
-    (message "my/el-get-install: checking %s" path)
     (add-to-list 'my/all-el-get-packages pkg)
     (unless (file-directory-p path)
+      (message "Package '%s' currently is missing" path)
       (add-to-list 'my/missing-el-get-packages pkg))))
 
 (require 'inversion nil t) ; fix broken autoload in cedet/common/cedet-compat.el
+
+;;}}}
+;;{{{  melpa
+
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(when (< emacs-major-version 24)
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+(package-initialize)
 
 ;;}}}
 
@@ -393,10 +402,11 @@
       (background-color . "black")
       (font . "dina-13")
       (cursor-type . bar)
-      (width . 100)
-      (height . 60)
-      (top . 0)
-      (left . 0)
+      ;; (width . 100)
+      ;; (height . 60)
+      ;; (top . 0)
+      ;; (left . 0)
+      (fullscreen . maximized)
       (minibuffer . t)
       (vertical-scroll-bars . right)
       (icon-type)))
@@ -436,6 +446,7 @@
 ;;{{{  Cursor and parenthesis matching
 
 (my/custom-set-variables
+ '(blink-cursor-blinks 0)
  '(blink-cursor-delay 0)
  '(cua-mode t nil (cua-base))
  '(cua-enable-cua-keys nil)
@@ -451,6 +462,21 @@
  '(show-paren-match ((t (:background "light green" :foreground "black" :weight bold))))
  '(show-paren-mismatch ((t (:background "firebrick" :foreground "white"))))
  )
+
+(defun blink-cursor-start ()
+  "Timer function called from the timer `blink-cursor-idle-timer'.
+This starts the timer `blink-cursor-timer', which makes the cursor blink
+if appropriate.  It also arranges to cancel that timer when the next
+command starts, by installing a pre-command hook."
+  (when (null blink-cursor-timer)
+    ;; Set up the timer first, so that if this signals an error,
+    ;; blink-cursor-end is not added to pre-command-hook.
+    (setq blink-cursor-blinks-done 1)
+    (setq blink-cursor-timer
+	  (run-with-timer blink-cursor-interval blink-cursor-interval
+			  'blink-cursor-timer-function))
+    (add-hook 'pre-command-hook 'blink-cursor-end)
+    (internal-show-cursor nil t)))
 
 ;;}}}
 ;;{{{  Basic faces
@@ -697,14 +723,9 @@ mouse-3: go to end")
  )
 
 ;;}}}
-;;{{{  emacs-goodies/diminish
+;;{{{  diminish
 
 (add-to-list 'el-get-sources 'diminish)
-             ;; '(:name diminish
-             ;;         :description "Shrink or eliminate minor mode modeline display"
-             ;;         :type        http
-             ;;         :url         "file://localhost/home/jyates/.emacs.d/emacs-goodies-el/elisp/emacs-goodies-el/diminish.el"
-             ;;         :features    (diminish)))
 (my/el-get-install "diminish")
 
 ;; To diminish minor mode FOO:
@@ -735,8 +756,8 @@ mouse-3: go to end")
 (add-to-list 'el-get-sources
              '(:name  pp-c-l
                      :description "Display Control-l characters as a full-width rule"
-                     :type        http
-                     :url         "file://localhost/home/jyates/.emacs.d/emacs-goodies-el/elisp/emacs-goodies-el/pp-c-l.el"
+                     :type        emacswiki
+                     :website     "https://raw.github.com/emacsmirror/emacswiki.org/master/pp-c-l.el"
                      :after       (progn
                                     (add-hook 'window-setup-hook
                                               'refresh-pretty-control-l)
@@ -903,15 +924,14 @@ mouse-3: go to end")
 (my/custom-set-variables
  '(indent-tabs-mode nil)        ; no hard tabs
  '(tab-always-indent nil)       ; indent, complete else insert whitespace
- '(tab-width 4)
  '(tab-stop-list '(  4   8  12  16  20  24  28  32  36  40
-                         44  48  52  56  60  64  68  72  76  80
-                         84  88  92  96 100 104 108 112 116 120
-                         124 128 132 136 140 144 148 152 165 160
-                         164 168 172 176 180 184 188 192 196 200
-                         204 208 212 216 220 224 228 232 236 240
-                         244 248 252 265 260 264 268 272 276 280
-                         284 288 292 296 300 304 308 312 316 320))
+                    44  48  52  56  60  64  68  72  76  80
+                    84  88  92  96 100 104 108 112 116 120
+                   124 128 132 136 140 144 148 152 165 160
+                   164 168 172 176 180 184 188 192 196 200
+                   204 208 212 216 220 224 228 232 236 240
+                   244 248 252 265 260 264 268 272 276 280
+                   284 288 292 296 300 304 308 312 316 320))
  )
 
 (defun my/canonicalize-tab4 ()
@@ -984,13 +1004,46 @@ convert it to readonly/view-mode."
 ;;}}}
 
 ;;=== VC, diff, merge, patch ===========================================
-;;{{{  magit
+;;{{{  git and magit
 
-;; (add-to-list 'el-get-sources 'magit)
-;; (my/el-get-install "magit")
+(add-to-list 'el-get-sources
+             '(:name "git-modes"
+                     :description "Emacs modes for various Git-related files."
+                     :website     "https://github.com/magit/git-modes"
+                     :type        github
+                     :pkgname     "magit/git-modes"
+                     :features    (git-commit-mode git-rebase-mode gitconfig-mode gitignore-mode)))
+(my/el-get-install "git-modes")
 
-(add-to-list 'el-get-sources 'magithub)
-(my/el-get-install "magithub")
+(add-to-list 'el-get-sources
+             '(:name "magit"
+                     :description "It's Magit! An Emacs mode for Git."
+                     :website     "https://github.com/magit/magit"
+                     :type        github
+                     :pkgname     "magit/magit"
+                     :depends     (git-modes)
+                     :features    (magit)))
+(my/el-get-install "magit")
+
+(add-to-list 'el-get-sources
+             '(:name "magit-filenotify"
+                     :description "Refresh status buffer when git tree changes."
+                     :website     "https://github.com/magit/magit-filenotify"
+                     :type        github
+                     :pkgname     "magit/magit-filenotify"
+                     :depends     (magit)
+                     :features    (magit-filenotify)))
+(my/el-get-install "magit-filenotify")
+
+;; (add-to-list 'el-get-sources
+;;              '(:name "magithub"
+;;                      :description "Magit extensions for using GitHub."
+;;                      :type        git
+;;                      :url         "https://github.com/nex3/magithub.git"
+;;                      :depends     (magit)
+;;                      :features    (magithub)))
+;; (my/el-get-install "magithub")
+
 
 (my/custom-set-variables
  '(magit-diff-refine-hunk 'all)
@@ -1112,24 +1165,24 @@ convert it to readonly/view-mode."
 
 (add-to-list 'el-get-sources 'auto-complete)
 (my/el-get-install "auto-complete")
-;; (require 'auto-complete)
+(require 'auto-complete)
 
 ;; ;;(add-to-list 'ac-dictionary-directories (expand-file-name "dict" pdir))
 ;; (require 'auto-complete-config)
-;; (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
-;; (add-hook 'c-mode-common-hook 'my/ac-cc-mode-setup)
-;; (global-auto-complete-mode t)
+(add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
+(add-hook 'c-mode-common-hook 'my/ac-cc-mode-setup)
+(global-auto-complete-mode t)
 
-;; (setq-default ac-sources '(ac-source-abbrev
-;;                            ac-source-dictionary
-;;                            ac-source-words-in-same-mode-buffers))
+(setq-default ac-sources '(ac-source-abbrev
+                           ac-source-dictionary
+                           ac-source-words-in-same-mode-buffers))
 
-;; (defun my/ac-cc-mode-setup ()
-;;   (setq ac-sources (append '(ac-source-semantic
-;;                              ac-source-semantic-raw
-;;                              ac-source-yasnippet
-;;                              ;; ac-source-gtags ; no "using namespace XX;"
-;;                              ) ac-sources)))
+(defun my/ac-cc-mode-setup ()
+  (setq ac-sources (append '(ac-source-semantic
+                             ac-source-semantic-raw
+                             ac-source-yasnippet
+                             ;; ac-source-gtags ; no "using namespace XX;"
+                             ) ac-sources)))
 
 (my/custom-set-variables
  '(ac-auto-start nil)
@@ -1513,15 +1566,14 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;{{{  hideshow...
 
 ;; My version handles block comments in C++ better.
-;;
-;; (add-to-list 'el-get-sources
-;; 	     '(:name hideshow
-;; 		     :description "Minor mode cmds to selectively display code/comment blocks"
-;; 		     :type        http
-;; 		     :url         "file://localhost/home/jyates/clones/emacs/hideshow.el"
-;; 		     ))
-;; (my/el-get-install "hideshow")
-;; (require 'hideshow)
+(add-to-list 'el-get-sources
+	     '(:name hideshow
+		     :description "Minor mode cmds to selectively display code/comment blocks"
+		     :type        http
+		     :url         "file://localhost/home/jyates/clones/emacs/hideshow.el"
+		     ))
+(my/el-get-install "hideshow")
+(require 'hideshow)
 
 ;; Display the size of a collapsed function body
 (defun my/display-code-line-counts (ov)
@@ -1603,40 +1655,46 @@ An alternate approach would be after-advice on isearch-other-meta-char."
  )
 
 ;;}}}
-;;{{{  longlines
+;;{{{  visual-lines-mode
 
-(eval-after-load "longlines"
-  '(progn
-     (defvar longlines-mode-was-active nil)
-     (make-variable-buffer-local 'longlines-mode-was-active)
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
 
-     (defun longlines-suspend ()
-       (if longlines-mode
-           (progn
-             (setq longlines-mode-was-active t)
-             (longlines-mode 0))))
+(setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
 
-     (defun longlines-restore ()
-       (if longlines-mode-was-active
-           (progn
-             (setq longlines-mode-was-active nil)
-             (longlines-mode 1))))
-
-     ;; longlines doesn't play well with ediff, so suspend it during diffs
-     (defadvice ediff-make-temp-file (before my/make-temp-file-suspend-ll
-                                             activate compile preactivate)
-       "Suspend longlines when running ediff."
-       (with-current-buffer (ad-get-arg 0)
-         (longlines-suspend)))
-
-     (add-hook 'ediff-cleanup-hook
-               (function (lambda ()
-                           (dolist (tmp-buf (list ediff-buffer-A
-                                                  ediff-buffer-B
-                                                  ediff-buffer-C))
-                             (if (buffer-live-p tmp-buf)
-                                 (with-current-buffer tmp-buf
-                                   (longlines-restore)))))))))
+;; longlines has been deprecated
+;;
+;; (eval-after-load "longlines"
+;;   '(progn
+;;      (defvar longlines-mode-was-active nil)
+;;      (make-variable-buffer-local 'longlines-mode-was-active)
+;;
+;;      (defun longlines-suspend ()
+;;        (if longlines-mode
+;;            (progn
+;;              (setq longlines-mode-was-active t)
+;;              (longlines-mode 0))))
+;;
+;;      (defun longlines-restore ()
+;;        (if longlines-mode-was-active
+;;            (progn
+;;              (setq longlines-mode-was-active nil)
+;;              (longlines-mode 1))))
+;;
+;;      ;; longlines doesn't play well with ediff, so suspend it during diffs
+;;      (defadvice ediff-make-temp-file (before my/make-temp-file-suspend-ll
+;;                                              activate compile preactivate)
+;;        "Suspend longlines when running ediff."
+;;        (with-current-buffer (ad-get-arg 0)
+;;          (longlines-suspend)))
+;;
+;;      (add-hook 'ediff-cleanup-hook
+;;                (function (lambda ()
+;;                            (dolist (tmp-buf (list ediff-buffer-A
+;;                                                   ediff-buffer-B
+;;                                                   ediff-buffer-C))
+;;                              (if (buffer-live-p tmp-buf)
+;;                                  (with-current-buffer tmp-buf
+;;                                    (longlines-restore)))))))))
 
 ;;}}}
 
@@ -1662,55 +1720,6 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;; http://www.emacswiki.org/emacs/download/completion-ui-more-sources.el
 
 ;;}}}
-;;{{{  Confluence wiki
-
-;; (add-to-list 'el-get-sources 
-;;              '(:name xml-rpc
-;; 		     :type     emacswiki
-;;                      :features (xml-rpc)))
-;; (my/el-get-install "xml-rpc")
-;; ;; (require 'xml-rpc)
-
-;; (add-to-list 'el-get-sources
-;;              '(:name confluence
-;;                      :description "Interact with confluence wikis"
-;;                      :type        svn
-;;                      :url         "http://confluence-el.googlecode.com/svn/trunk/"
-;; 		     :depends     (xml-rpc)
-;;                      :features    (confluence)))
-;; (my/el-get-install "confluence")
-
-(my/custom-set-variables
- '(confluence-url "http://wiki2.nzlab.ibm.com:8080/rpc/xmlrpc")
- '(confluence-save-credentials t)
- '(confluence-min-page-repeat-completion-length 1)
- '(confluence-auto-save-dir "~/.emacs.d/autosave-Confluence")
- )
-
-(my/custom-set-faces
- '(confluence-panel-face ((t (:background "gray8"))))) ; subtle panels
-
-(autoload 'confluence-get-page "confluence" nil t)
-
-;; setup confluence mode
-;;(eval-when-compile (require 'xml-rpc))
-;;(eval-when-compile (require 'confluence))
-;; (add-hook 'confluence-mode-hook
-;;           (function (lambda () (local-set-key "\C-cw" confluence-prefix-map))))
-
-(eval-after-load "confluence"
-  '(progn
-     (require 'longlines)
-     (progn
-       (add-hook 'confluence-mode-hook 'longlines-mode)
-       (add-hook 'confluence-before-save-hook 'longlines-before-revert-hook)
-       (add-hook 'confluence-before-revert-hook 'longlines-before-revert-hook)
-       (add-hook 'confluence-mode-hook
-                 (function (lambda ()
-                             (local-set-key "\C-j" 'confluence-newline-and-indent)
-                             (local-set-key "\C-cw" confluence-prefix-map)))))))
-
-;;}}}
 
 ;;=== Programming ======================================================
 ;;{{{  Sanjay Dixit's am package
@@ -1733,8 +1742,9 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (add-to-list 'el-get-sources
              '(:name "project"
                      :description "Keep track of the current project."
-                     :type        git
-                     :url         "https://github.com/nex3/project-el.git"
+                     :website     "https://github.com/nex3/project-el"
+                     :type        github
+                     :pkgname     "nex3/project-el"
                      :features    (project)))
 (my/el-get-install "project")
 
@@ -1744,10 +1754,22 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (add-to-list 'el-get-sources
              '(:name "find-file-in-project"
                      :description "Find files in a project quickly."
-                     :type        git
-                     :url         "https://github.com/dburger/find-file-in-project.git"
+                     :website     "https://github.com/dburger/find-file-in-project"
+                     :type        github
+                     :pkgname     "dburger/find-file-in-project"
                      :features    (find-file-in-project)))
 (my/el-get-install "find-file-in-project")
+
+;;}}}
+;;{{{  Find a "tag" in a project
+
+(add-to-list 'el-get-sources
+             '(:name vtags
+                     :description "Edward Bishop's fork of emacs' etags"
+                     :type        http
+                     :url         "file://localhost/home/jyates/clones/vtags/vtags.el"
+                     :features    (vtags)))
+(my/el-get-install "vtags")
 
 ;;}}}
 ;;{{{  Compilation and next exrror
@@ -2069,7 +2091,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;; Use update all when first configuring a new machine or user
 ;; (el-get-update-all t)
 
-(message "========")
+(message "======== Install missing packages")
 (princ my/missing-el-get-packages)
 
 (mapc (lambda (pkg)
@@ -2080,8 +2102,15 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 ;; (if my/missing-el-get-packages (el-get-update-all t))
 
+(message "======== Load accumulated packagees")
+
+(mapc (lambda (pkg)
+        (progn
+          (message "Activating %s" pkg)
+          (el-get 'sync pkg)))
+      my/all-el-get-packages)
+
 (message "========")
-(el-get 'sync my/all-el-get-packages)
 
 ;;}}}
 
@@ -2224,7 +2253,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (require 'keydef)       ; simpler key definitions, autoloads for free
 
-
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
 ;(keydef "C-c C-k"       kill-compilation)
@@ -2232,7 +2260,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;; python-mode steals C-c C-k for python-mark-block. steal it back.
 ;(require 'python)
 ;(define-key python-mode-map [(control c) (control k)] 'kill-compilation)
-
 
 (eval-after-load "hideshow" '(progn
   (keydef "C-c , C-c"   hs-toggle-hiding)
@@ -2245,7 +2272,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (keydef "C-c , ,"       (set-selective-display (if selective-display nil 1)))
 
-
 (keydef "C-c -"         replace-string)
 (keydef "C-c C--"       query-replace)
 (keydef "C-c ="         replace-regexp)
@@ -2254,7 +2280,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (keydef "C-c 8"         my/set-buffer-local-tab-width-to-8)
 (keydef "C-c c"         org-capture)
 (keydef "C-c l"         org-store-link)
-(keydef "C-c w f"       confluence-get-page) ; open page on confluence wiki
 
 
 ;; Additions to the help command
@@ -2289,6 +2314,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;
 (keydef "M-g b"         bookmark-jump)
 (keydef "M-g M-b"       bookmark-jump)
+(keydef "M-g e"         el-get-find-recipe-file)
+(keydef "M-g M-e"       el-get-find-recipe-file)
 (keydef "M-g l"         ilocate-library-find-source)
 (keydef "M-g r"         jump-to-register)
 (keydef "M-g M-r"       jump-to-register)
@@ -2345,14 +2372,20 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (keydef "M-<f11>"     gud-remove)
   ))
 
+(keydef "C-."           vtags-find)
+(keydef "<kp-begin>"    vtags-point-to-placeholder)
+(keydef "<kp-right>"    vtags-next-placeholder)
+(keydef "<kp-left>"     vtags-prev-placeholder)
+
 (keydef "<f12>"         customize-option)
 (keydef "C-<f12>"       customize-group)
 (keydef "M-<f12>"       customize-apropos)
 
-
 (eval-after-load "bs" '(keydef (bs "<f1>")  bs-kill))
 
 ;;}}}
+
+(message "Completed .emacs")
 
 ;;======================================================================
 ;; Local Variables:

@@ -10,15 +10,16 @@
 
 PATH=\
 /usr/lib/ccache:\
+.:\
 ${HOME}/bin:\
 ${HOME}/asd:\
+/etc/alternatives:\
 /usr/local/sbin:\
 /usr/local/bin:\
 /usr/sbin:\
 /usr/bin:\
 /sbin:\
 /bin:\
-.:\
 
 # Specify emacs as default editor(?):
 export EDITOR='/etc/alternatives/emacsclient'

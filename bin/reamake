@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Stand alone script to rebuild amake
+# Currently hardwired to configure for LINUXPRE
+
+# verify working directory
+. ${0%${0##*/}}checkwd
+
+( cd src/amake \
+&& ./amake.bsh LINUXPRE )
+rm acproto

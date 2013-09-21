@@ -1,0 +1,2 @@
+:
+exec amake -o all -f run sp2b.valid $*

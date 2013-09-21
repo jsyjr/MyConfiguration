@@ -1,0 +1,5 @@
+cd
+svn co http://sparqlrepo/svn/asd/trunk asd
+cd asd/src/amake
+amake.bsh LINUXPRE
+ra checkin

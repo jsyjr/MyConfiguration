@@ -77,9 +77,9 @@ dump file")
 
 ;;; 
 (defvar am-skip-dir-list '("AOS/obj/caches/dbx_all/"
-;;                           "AOS/bin/"
-                           "AOS/lib/"
+;;                         "AOS/bin/"
                            "AOS/compilers/"
+                           "AOS/lib/"
                            "/usr/lib")
   "*Skip patterns for dirs.  Leading occurances of AOS are substituted with the
 value of am-aos-dir.  The value of am-aos-dir is gotten from the cache dump file.")
@@ -134,7 +134,7 @@ value of am-aos-dir.  The value of am-aos-dir is gotten from the cache dump file
 ;;; 
 (defun am-scan-internal (dumpfile)
   (setq am-files-alist nil)
-  (let (buf-name tmp-name file-name file-dir ext)
+  (let (buf-name tmp-name file-name file-dir ext source-pos)
     (setq buf-name "*amdump*")
     (get-buffer-create buf-name)
     (set-buffer (get-buffer buf-name))
@@ -178,8 +178,14 @@ value of am-aos-dir.  The value of am-aos-dir is gotten from the cache dump file
                                  (length file-name)))
             (if (and (not (member ext am-skip-ext-list))
                      (not (am-match-skip-dir file-dir)))
-                (setq am-files-alist
-                      (cons (cons file-name file-dir) am-files-alist)))))
+                (progn
+                  (setq source-pos (string-match "/source/" file-dir))
+                  (if source-pos
+                      (setq file-dir (concat (substring file-dir 0 source-pos)
+                                             "/src/"
+                                             (substring file-dir (+ source-pos 8)))))
+                  (setq am-files-alist
+                        (cons (cons file-name file-dir) am-files-alist))))))
       (end-of-line)
       (forward-line))
     (kill-buffer buf-name)))
@@ -267,12 +273,12 @@ value of am-aos-dir.  The value of am-aos-dir is gotten from the cache dump file
     (kill-buffer (buffer-name))))
 
 ;;;
-(defun prompt-netezza-filename (other-window-p)
+(defun prompt-project-filename (other-window-p)
   (let (filename the-list prompt-str)
     (setq the-list (append am-other-alist am-files-alist))
     (setq prompt-str (if other-window-p
-                         "Find Netezza file in other window: "
-                       "Find Netezza file: "))
+                         "Find project file in other window: "
+                       "Find project file: "))
     (setq filename
           (completing-read prompt-str the-list nil t nil
                            nil ;; am-find-file-history
@@ -284,7 +290,7 @@ value of am-aos-dir.  The value of am-aos-dir is gotten from the cache dump file
   (interactive)
   (let (filename the-list)
     (setq the-list (append am-other-alist am-files-alist))
-    (setq filename (prompt-netezza-filename other-window-p))
+    (setq filename (prompt-project-filename other-window-p))
     (if (> (length filename) 0)
         (am-find-file-internal filename other-window-p))))
 

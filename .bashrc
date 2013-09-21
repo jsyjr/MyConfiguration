@@ -2,27 +2,10 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-export CCACHE_DIR=/ccc
-
-PATH=\
-/usr/lib/ccache:\
-${HOME}/bin:\
-${HOME}/asd:\
-/usr/local/sbin:\
-/usr/local/bin:\
-/usr/sbin:\
-/usr/bin:\
-/sbin:\
-/bin:\
-.:\
 
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
-
-# Specify emacs as default editor(?):
-export EDITOR='/etc/alternatives/emacsclient'
-export ALTERNATE_EDITOR='/etc/alternatives/emacs'
 
 # don't put duplicate lines in the history. See bash(1) for more options
 export HISTCONTROL=ignoredups
@@ -126,7 +109,7 @@ sbtags () {
     if [ ! -d "src/amake" ]; then
         echo "Not in the root of a source tree."; return 1
     fi
-    ( command rm -rf data obj source rel tobj acpp acproto amake am.dmp src/build src/BROWSE src/tags src/TAGS \
+    ( command rm -rf data source rel cobj gobj obj tobj acpp acproto amake am.dmp src/build src/BROWSE src/tags src/TAGS \
            && cd src/amake \
            && ./amake.bsh LINUXPRE )
     rm -f acproto
@@ -158,3 +141,15 @@ nzcleanbuild () {
 
 export LOG_STDOUT=Y
 
+#=====================================================================================================
+
+build_emacs () {
+    (  cd ~/repos/emacs_trunk \
+    && bzr pull \
+    && configure --prefix=/usr/local/bin/emacs \
+    && make \
+    && ./src/emacs --version \
+    && echo "if all looks good then..." \
+    && echo "  rename /usr/local/bin/emacs" \
+    && echo "  sudo make install" )
+}

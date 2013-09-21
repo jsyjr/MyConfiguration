@@ -1,0 +1,3 @@
+#!/bin/sh
+git diff ab1d3c29ba6da934932565dd294a304702dd47fc -- $1 >/tmp/${1##*/}.diff
+emacsclient -a "" -F "((fullscreen . maximized))" -e "( find-file-read-only \"/tmp/${1##*/}.diff\" )"

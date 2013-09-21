@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# Stand alone script to remove all genreated artifacts, leaving a
+# pristine source tree.
+
+# verify working directory
+. ${0%${0##*/}}checkwd
+
+rm -rf \
+\
+data \
+source \
+rel \
+\
+obj \
+cobj \
+gobj \
+tobj \
+\
+acpp \
+acproto \
+amake \
+jmake \
+\
+am.dmp \
+BROWSE \
+tags \
+TAGS \
+\
+src/am.dmp \
+src/BROWSE \
+src/tags \
+src/TAGS \
