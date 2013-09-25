@@ -478,6 +478,15 @@ command starts, by installing a pre-command hook."
     (add-hook 'pre-command-hook 'blink-cursor-end)
     (internal-show-cursor nil t)))
 
+(defun paren-close-dwim ()
+  "Insert closing parenthesis from syntax table.
+Use a normal parenthesis if not inside any."
+  (interactive "*")
+  (insert (or (ignore-errors
+                (save-excursion (backward-up-list)
+                                (cdr (syntax-after (point)))))
+              ?\))))
+
 ;;}}}
 ;;{{{  Basic faces
 
@@ -1070,6 +1079,7 @@ convert it to readonly/view-mode."
 ;;{{{  ediff
 
 (my/custom-set-variables
+ '(ediff-cmp-program "~/bin/pdiff")  ; use my patience diff script
  '(ediff-keep-variants nil)
  '(ediff-make-buffers-readonly-at-startup t)
  '(ediff-merge-split-window-function 'split-window-vertically)
@@ -1132,23 +1142,33 @@ convert it to readonly/view-mode."
 ;;=== Abbreviation and expansion =======================================
 ;;{{{  yasnippet
 
-;; (add-to-list 'el-get-sources 'yasnippet)
-;; (my/el-get-install "yasnippet")
-;; (require 'yasnippet)
+(add-to-list 'el-get-sources 'yasnippet)
+(my/el-get-install "yasnippet")
+(require 'yasnippet)
 
-;; (setq yas/snippet-dirs "~/emacs/yasnippet")
-;; (yas/global-mode 1)
-;; (add-hook 'yas/minor-mode-hook 'yas/reload-all)
+(add-to-list 'el-get-sources 'dropdown-list)
+(my/el-get-install "dropdown-list")
+(require 'dropdown-list)
+
+(my/custom-set-variables
+ '(yas-global-mode t nil (yasnippet))
+ '(yas-snippet-dirs "~/emacs/yasnippet" nil (yasnippet)))
+
+(add-hook 'yas/minor-mode-hook 'yas-reload-all)
+
+;; reload modified snippets
+(defun my/yasnippet-reload-on-save ()
+  "Reload the entire collection of snippets when one gets modified."
+  (if (eq major-mode 'snippet-mode)
+    ;;  (mapc 'yas/load-directory yas/snippet-dirs)))
+    (yas-reload-all))) ; no mapc with just a single directory root
+
+(add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
 
 
-;; ;; reload modified snippets
-;; (defun my/yasnippet-reload-on-save ()
-;;   "Reload the entire collection of snippets when one gets modified."
-;;   (if (eq major-mode 'snippet-mode)
-;;     ;;  (mapc 'yas/load-directory yas/snippet-dirs)))
-;;     (yas/reload-all))) ; no mapc with just a single directory root
-
-;; (add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
+;;;; auto-mode-alist
+(add-to-list 'auto-mode-alist '("emacs/yasnippet/" . snippet-mode))
+(add-to-list 'auto-mode-alist '("emacs/yasnippet/.+\\.el$" . emacs-lisp-mode))
 
 
 ;; ;; Another note: The new 0.7 yasnippet.el messes things up with
@@ -2006,7 +2026,9 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;{{{  GDB support
 
 (my/custom-set-variables
+ '(gdb-create-source-file-list nil)
  '(gdb-many-windows t)
+ '(gdb-stack-buffer-addresses t)
  )
 
 (eval-after-load "gud" '(progn
