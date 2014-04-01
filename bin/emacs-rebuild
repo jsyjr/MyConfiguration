@@ -14,7 +14,11 @@ if [ ! -f "src/bitmaps/leftptr.xbm" ]; then
    echo "Working directory ( $(pwd) ) is not the root of an emacs source tree."; exit 1
 fi
 
-bzr pull
+if [ -d .bzr ] ; then
+  bzr pull
+elif [ -d .git ] ; then
+  git pull
+fi
 
 set +e
 make bootstrap
