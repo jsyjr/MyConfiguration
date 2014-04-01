@@ -5,7 +5,7 @@
 # key:  ``class
 #
 # --
-class ${1:name}
+class ${1:Name}
 /// $0
 {
 public:

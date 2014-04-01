@@ -8,7 +8,10 @@
 
 rm -rf \
 \
+all* \
+\
 data \
+doxy \
 source \
 rel \
 \
@@ -16,6 +19,8 @@ obj \
 cobj \
 gobj \
 tobj \
+
+rm -f \
 \
 acpp \
 acproto \

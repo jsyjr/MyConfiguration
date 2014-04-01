@@ -1,15 +1,18 @@
-[giggle]
-	main-window-maximized = true
-	main-window-geometry = 0x0+0+0
-	main-window-view = HistoryView
-	history-view-vpane-position = 412
-	file-view-vpane-position = 925
 [user]
-	name = John Yates
-	email = john.yates@sparqlcity.com
+	name = John S Yates Jr
+	email = john@yates-sheets.org
 [diff]
 	tool = emacs
+	algorithm = histogram
+	renames = copies
+	mnemonicprefix = true
 [difftool]
 	prompt = false
 [difftool "emacs"]
 	cmd = emacsclient -a \"\" -F \"((fullscreen . maximized))\" -e \"(ediff-files \\\"${REMOTE}\\\" \\\"${LOCAL}\\\")\"
+[merge]
+	log = true
+[push]
+	default = nothing
+[color]
+	ui = auto

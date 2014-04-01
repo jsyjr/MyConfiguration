@@ -1,0 +1,27 @@
+# -*- shell-script -*-
+$include /etc/inputrc
+
+#
+# variables
+#
+set editing-mode emacs
+set bell-style none
+set completion-ignore-case On
+set show-all-if-ambiguous On
+set completion-query-items 999999
+set page-completions Off
+
+#
+# keybindings
+#
+C-SPACE: set-mark
+C-w:     kill-region
+"\ew":   copy-region-as-kill
+"\e/":   menu-complete
+
+# C-left and C-right skip words
+"\eOc": forward-word
+"\eOd": backward-word
+
+# for the record, under rxvt, C-lots of other characters generates keycodes
+# starting with Esc-O, which sometimes crashes readline apps.

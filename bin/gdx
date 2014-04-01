@@ -1,2 +1,0 @@
-:
-exec gdb sbx `cat /tmp/spinpid`

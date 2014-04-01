@@ -1,0 +1,2 @@
+#!/bin/sh
+exec firefox -app /home/jyates/repos/conkeror/application.ini 2>/dev/null >&2 &

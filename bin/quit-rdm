@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Tell server to shut down.
+/home/jyates/repos/rtags/bin/rc --quit-rdm

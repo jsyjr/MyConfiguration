@@ -1,2 +1,0 @@
-:
-exec amake all -f run -DCOMP sp2b.loaded $* -src

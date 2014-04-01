@@ -8,25 +8,18 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
 
-PATH=\
-/usr/lib/ccache:\
-.:\
-${HOME}/bin:\
-${HOME}/asd:\
-/etc/alternatives:\
-/usr/local/sbin:\
-/usr/local/bin:\
-/usr/sbin:\
-/usr/bin:\
-/sbin:\
-/bin:\
+
+ulimit -s 65532
+ulimit -n 1024
 
 # Specify emacs as default editor(?):
 export EDITOR='/etc/alternatives/emacsclient'
 export ALTERNATE_EDITOR='/etc/alternatives/emacs'
 
 export CCACHE_DIR=/ccc
-
+export CCACHE_TEMPDIR=/tmp
+export CCACHE_LOGFILE=/tmp/ccache.log
+export CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
@@ -36,7 +29,7 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
+# set PATH
+if [ -f "$HOME/.my_path" ] ; then
+    . "$HOME/.my_path"
 fi

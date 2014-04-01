@@ -1,0 +1,170 @@
+# -*- shell-script -*-
+
+# set the official command prefix to C-~ (tilde), *not* C-a!
+escape ^~~
+
+# ...however, i'll use F1 instead
+bindkey -k k1 command
+
+# F2 enters copy mode
+bindkey -k k2 copy
+
+# pgup enters copy mode and scroll up a full page
+# ...nevermind, this interferes with using pgup in other apps like less
+#bindkey -k kP eval copy "stuff \033[5"
+
+# F1 C-d *doesn't* detach
+bind ^D
+
+# change the binding for 'other'. (it's F1 F1 by default.)
+bind ^~
+bind ^o other
+
+# C-g, C-c, backspace quit command mode
+bind ^g fit
+bind ^c fit
+bind ^? fit
+
+bind s eval "select snarfed" fit
+bind m eval "select music" fit
+bind v eval "select vpn" fit
+
+# don't pause for each screen message
+msgminwait 0
+msgwait 0
+
+# no flow control, e.g. ^S and ^Q
+defflow off
+
+# don't tell me when bells happen in other windows
+vbell off
+bell_msg ""
+
+# advertise hardstatus support
+termcapinfo  * '' 'hs:ts=\E_:fs=\E\\:ds=\E_\E\\'
+
+# 256 color support, from ~sledbetter/.screenrc at work
+#termcapinfo rxvt 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm:hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
+#termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm:hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
+
+defscrollback 32768
+
+setenv DISPLAY :0.0
+
+
+#################
+# copy mode stuff
+#################
+
+# emacs keybindings for navigation in copy mode
+markkeys ^B=Y:^F=V:h=^B:l=^F:0=^A:$=^E
+
+# C-g and other keys quit copy mode. Esc does nothing.
+markkeys \033=\015=^G=^D=h=j=k=l=H=M=L=G=g=c=v=a=x=b=e=B=E=w
+markkeys @=\033
+
+# special hack for C-e, since it should go *past* the last char.
+# (-m means this is for copy mode only.)
+bindkey -m ^e stuff "\$^f"
+
+# page up and page down
+bindkey -m -k kP stuff Y
+bindkey -m -k kN stuff V
+
+# C-space sets mark. markkeys does it in screen 4.0 and higher, but 3.9x
+# needs the bindkey command. (note the ^@ escape sequence for C-space.)
+markkeys ' '=^@
+# bindkey -m ^@ stuff ' '
+
+# fruitless attempt to make C-space do the right thing in i-search too
+# bindkey -m ^@ eval "stuff \033" "stuff ^@" 
+
+# copy word under point. (disabled since it overrode typing w in isearch :P)
+# markkeys W=w
+
+# control arrows move by words. (set B, e, and w to F keys so that i can use
+# them to move by words, but they themselves still quit copy mode.)
+markkeys B=[:E=]:b={:e=}:w=>
+bindkey -m ^[Od stuff {  #"[[}"
+bindkey -m ^[Oc stuff ]  #"}]^f"
+
+# M-w copies region, W escapes out of i-search and copies word. afterward,
+# synchronize the paste buffer with the X selection.
+bindkey -m \033w eval "stuff ' '" writebuf "exec sh -c 'xsel -i < /tmp/screen-exchange'"
+
+# evidently only C-g, Esc, and C-space break out of i-search. so, use
+# C-space, because with my setup, it doesn't break out of copy mode too.
+# markkeys "^ =^u"
+bindkey -m W eval "stuff \033W" writebuf "exec sh -c 'xsel -i < /tmp/screen-exchange'"
+
+# extract the first URL on this line and open it in firefox
+# STATE: firefox+egrep cmd works in shell but not here. bad quoting?
+# bindkey -m U eval "stuff y" "stuff ' '" writebuf \
+#   "exec sh -c 'echo http://asdf.com | xargs firefox -new-tab'"
+# # [^ ]
+# \"http[^\\ ]+\"
+# egrep -o .+ /tmp/screen-exchange
+
+# make search case-insensitive
+ignorecase on
+
+
+##########
+# auto-fit
+##########
+bindkey a eval "stuff a" fit
+bindkey b eval "stuff b" fit
+bindkey c eval "stuff c" fit
+bindkey d eval "stuff d" fit
+bindkey e eval "stuff e" fit
+bindkey f eval "stuff f" fit
+bindkey g eval "stuff g" fit
+bindkey h eval "stuff h" fit
+bindkey i eval "stuff i" fit
+bindkey j eval "stuff j" fit
+bindkey k eval "stuff k" fit
+bindkey l eval "stuff l" fit
+# not m; it interferes with F1-m to switch to the music window
+# bindkey m eval "stuff m" fit
+bindkey n eval "stuff n" fit
+bindkey o eval "stuff o" fit
+bindkey p eval "stuff p" fit
+bindkey q eval "stuff q" fit
+bindkey r eval "stuff r" fit
+# not s; it interferes with F1-s to switch to the screen window
+# bindkey s eval "stuff s" fit
+bindkey t eval "stuff t" fit
+bindkey u eval "stuff u" fit
+# not v; it interferes with F1-v to switch to the vpn window
+# bindkey v eval "stuff v" fit
+bindkey w eval "stuff w" fit
+bindkey x eval "stuff x" fit
+bindkey y eval "stuff y" fit
+bindkey z eval "stuff z" fit
+# not 0...3; they interfere with F1-0...3 to switch windows
+# bindkey 0 eval "stuff 0" fit
+# bindkey 1 eval "stuff 1" fit
+# bindkey 2 eval "stuff 2" fit
+# bindkey 3 eval "stuff 3" fit
+bindkey 4 eval "stuff 4" fit
+bindkey 5 eval "stuff 5" fit
+bindkey 6 eval "stuff 6" fit
+bindkey 7 eval "stuff 7" fit
+bindkey 8 eval "stuff 8" fit
+bindkey 9 eval "stuff 9" fit
+
+###############
+# session setup
+###############
+screen
+screen
+screen
+screen
+screen -t snarfed tcsh -c 'ssh snarfed.org; tcsh'
+screen -t music
+screen -t vpn
+
+select 0
+
+fit
+

@@ -1,2 +1,0 @@
-cd ~/asd/src/
-emacs */*.cpp */*.hpp */*.amk */*.y */*.l */*.dat /tmp/sp2b.50k.n3 ~/asd/*/*.cpp ~/asd/*/*.hpp */*.rq ~/asd/test/sp2b/50k/*.rq */*.sh */*.bsh */*.ctl */*.html

@@ -1,2 +1,0 @@
-:
-isbx -c "set plan_nprint to 'true'" -f $*

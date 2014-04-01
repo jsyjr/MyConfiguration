@@ -17,6 +17,12 @@
 ;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ;; Floor, Boston, MA 02110-1301, USA.
 
+(defconst copyright-owner "John S Yates Jr")
+(put 'copyright-owner 'safe-local-variable 'stringp)
+
+(electric-indent-mode -1)
+
+
 ;; Too many false alarms
 ;; (setq debug-on-error t)
 
@@ -137,15 +143,19 @@
 	  (make-directory path t)))
       `("~/.emacs.d/autosave"
         "~/.emacs.d/autosave-list"
-        "~/.emacs.d/autosave-Confluence"
         "~/.emacs.d/backup"
         "~/.emacs.d/semanticdb"
         "~/.emacs.d/srecode"
         "~/.emacs.d/url"
         ,el-get-dir
 	))
+
 ;;}}}
 ;;{{{  add installed packages to load-path
+
+; Various packages reference c-common-mode-hook.  Update load-path
+; early to ensure that we pick up the latest cc-mode sources.
+(add-to-list 'load-path "~/repos/cc-mode")
 
 (let ((entries (reverse (directory-files el-get-dir t))))
   (mapc (lambda (path)
@@ -197,9 +207,23 @@
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives
+             '("sc"    . "http://joseito.republika.pl/sunrise-commander/") t)
 (when (< emacs-major-version 24)
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
 (package-initialize)
+
+;;}}}
+;;{{{  John Wiegley's use-package
+
+(add-to-list 'el-get-sources
+             '(:name "use-package"
+                     :description "A use-package declaration for simplifying your .emacs."
+                     :website     "https://github.com/jwiegley/use-package"
+                     :type        github
+                     :pkgname     "jwiegley/use-package"
+                     :features    (use-package bind-key)))
+(my/el-get-install "use-package")
 
 ;;}}}
 
@@ -357,6 +381,9 @@
 ;;}}}
 
 ;;=== Visuals ==========================================================
+;;
+;; 'xrdb ~/.Xresources' kills menubar, toolbar & vertical scrollbars.
+;;
 ;;{{{  Proportional fonts
 
 (mapc
@@ -408,7 +435,8 @@
       ;; (left . 0)
       (fullscreen . maximized)
       (minibuffer . t)
-      (vertical-scroll-bars . right)
+      ;; Replaced by 'Emacs.verticalScrollBars: off' in ~/.Xresources
+      ;; (vertical-scroll-bars . right)
       (icon-type)))
  '(indicate-buffer-boundaries 'right) ; graphics in fringe
  )
@@ -420,9 +448,11 @@
 ;;}}}
 ;;{{{  Menu bar
 
-(my/custom-set-variables
- '(menu-bar-mode nil)
- )
+;; Replaced by 'Emacs.menuBar: off' in ~/.Xresources
+;;
+;; (my/custom-set-variables
+;;  '(menu-bar-mode nil)
+;;  )
 
 ;;}}}
 ;;{{{  Minibuffer
@@ -731,6 +761,10 @@ mouse-3: go to end")
  '(which-function-mode t nil (which-func))
  )
 
+(my/custom-set-faces
+ '(which-func ((t (:foreground "dark blue" :weight bold))))
+ )
+
 ;;}}}
 ;;{{{  diminish
 
@@ -748,7 +782,7 @@ mouse-3: go to end")
 ;;  "Display BAR-mode in mode line as \"X\"."
 ;;  (setq mode-name "X"))
 ;;
-;; (eval-after-load "FOO" '(add-hook 'FOO-mode-hook "X"))
+;; (eval-after-load "BAR" '(add-hook 'my/dimish-BAR-mode))
 
 ;;}}}
 ;;{{{  Uniquify buffer names
@@ -765,8 +799,9 @@ mouse-3: go to end")
 (add-to-list 'el-get-sources
              '(:name  pp-c-l
                      :description "Display Control-l characters as a full-width rule"
-                     :type        emacswiki
-                     :website     "https://raw.github.com/emacsmirror/emacswiki.org/master/pp-c-l.el"
+                     :website     "https://github.com/emacsmirror/pp-c-l"
+                     :type        github
+                     :pkgname     "emacsmirror/pp-c-l"
                      :after       (progn
                                     (add-hook 'window-setup-hook
                                               'refresh-pretty-control-l)
@@ -799,7 +834,8 @@ mouse-3: go to end")
  '(scroll-conservatively 1)             ; scroll window a line at a line
  '(show-paren-mode t)                   ; highlight matching parens
  '(show-paren-delay 0)                  ;  and do it immediately
- '(tool-bar-mode nil)                   ; recover screen space, no toolbar
+; Replaced by 'Emacs.toolBar: off' in ~/.Xresources
+;'(tool-bar-mode nil)                   ; recover screen space, no toolbar
  '(truncate-lines t)                    ; no wrapped lines
  '(transient-mark-mode t)               ; hightlight region, etc.
  '(use-dialog-box nil)                  ; dialog boxes are also for wimps
@@ -860,11 +896,42 @@ mouse-3: go to end")
 
 ;;}}}
 
-;;=== Searching and editing ============================================
+;;=== Moving, searching and editing ====================================
 
 (my/custom-set-variables
  '(kill-whole-line t)
  )
+
+;;{{{
+
+;; (defun smarter-move-beginning-of-line (arg)
+;;   "Move point back beginning of line or of indentation.
+
+;; Move point to the beginning of the line.  If point is already
+;; there, move to the first non-whitespace character on this line.
+;; Effectively toggle between the beginning of the line and the
+;; first non-whitespace character.
+
+;; If ARG is not nil or 1, move forward ARG - 1 lines first.  If
+;; point reaches the beginning or end of the buffer, stop there."
+;;   (interactive "^p")
+;;   (setq arg (or arg 1))
+
+;;   ;; Move lines first
+;;   (when (/= arg 1)
+;;     (let ((line-move-visual nil))
+;;       (forward-line (1- arg))))
+
+;;   (let ((orig-point (point)))
+;;     (move-beginning-of-line 1)
+;;     (when (= orig-point (point))
+;;       (back-to-indentation))))
+
+;; remap C-a to `smarter-move-beginning-of-line'
+;; (global-set-key [remap move-beginning-of-line]
+;;                 'smarter-move-beginning-of-line)
+
+;;}}}
 
 ;;{{{  Delete selection mode
 
@@ -886,7 +953,7 @@ mouse-3: go to end")
 ;; \(fn REGEXP &optional NLINES)" t)
 
 ;;}}}
-;;{{{  White space hygine
+;;{{{  White space hygiene
 
 (my/custom-set-variables
  '(indicate-empty-lines t)
@@ -902,30 +969,30 @@ mouse-3: go to end")
 ;;}}}
 ;;{{{  Indent yanked text (cribbed from Alex Ott)
 
-(defconst my/yank-indent-modes
-  '(c++-mode
-    c-mode
-    cperl-mode
-    emacs-lisp-mode
-    lisp-interaction-mode
-    lisp-mode
-    sql-mode
-    tcl-mode)
-  "List of major modes in which to indent yanked (or yank-popped) text.")
+;; (defconst my/yank-indent-modes
+;;   '(c++-mode
+;;     c-mode
+;;     cperl-mode
+;;     emacs-lisp-mode
+;;     lisp-interaction-mode
+;;     lisp-mode
+;;     sql-mode
+;;     tcl-mode)
+;;   "List of major modes in which to indent yanked (or yank-popped) text.")
 
-(defun my/maybe-indent-yanked ()
-  "If mode in my/yank-indent-modes then indent yanked text (prefix arg inhibits)."
-  (if (member major-mode my/yank-indent-modes)
-      (let ((mark-even-if-inactive t))
-        (indent-region (region-beginning) (region-end) nil))))
+;; (defun my/maybe-indent-yanked ()
+;;   "If mode in my/yank-indent-modes then indent yanked text (prefix arg inhibits)."
+;;   (if (member major-mode my/yank-indent-modes)
+;;       (let ((mark-even-if-inactive t))
+;;         (indent-region (region-beginning) (region-end) nil))))
 
-(defadvice yank (after my/maybe-indent activate)
-  "If mode in my/yank-indent-modes then indent yanked text (prefix arg inhibits)."
-  (my/maybe-indent-yanked))
+;; (defadvice yank (after my/maybe-indent activate)
+;;   "If mode in my/yank-indent-modes then indent yanked text (prefix arg inhibits)."
+;;   (my/maybe-indent-yanked))
 
-(defadvice yank-pop (after my/maybe-indent activate)
-  "If mode in my/yank-indent-modes then indent yanked text (prefix arg inhibits)."
-  (my/maybe-indent-yanked))
+;; (defadvice yank-pop (after my/maybe-indent activate)
+;;   "If mode in my/yank-indent-modes then indent yanked text (prefix arg inhibits)."
+;;   (my/maybe-indent-yanked))
 
 ;;}}}
 ;;{{{  Tabs
@@ -1079,7 +1146,8 @@ convert it to readonly/view-mode."
 ;;{{{  ediff
 
 (my/custom-set-variables
- '(ediff-cmp-program "~/bin/pdiff")  ; use my patience diff script
+ '(ediff-cmp-program "git")
+ '(ediff-cmp-options '("diff --no-index --histogram"))
  '(ediff-keep-variants nil)
  '(ediff-make-buffers-readonly-at-startup t)
  '(ediff-merge-split-window-function 'split-window-vertically)
@@ -1140,58 +1208,20 @@ convert it to readonly/view-mode."
 ;;}}}
 
 ;;=== Abbreviation and expansion =======================================
-;;{{{  yasnippet
-
-(add-to-list 'el-get-sources 'yasnippet)
-(my/el-get-install "yasnippet")
-(require 'yasnippet)
-
-(add-to-list 'el-get-sources 'dropdown-list)
-(my/el-get-install "dropdown-list")
-(require 'dropdown-list)
-
-(my/custom-set-variables
- '(yas-global-mode t nil (yasnippet))
- '(yas-snippet-dirs "~/emacs/yasnippet" nil (yasnippet)))
-
-(add-hook 'yas/minor-mode-hook 'yas-reload-all)
-
-;; reload modified snippets
-(defun my/yasnippet-reload-on-save ()
-  "Reload the entire collection of snippets when one gets modified."
-  (if (eq major-mode 'snippet-mode)
-    ;;  (mapc 'yas/load-directory yas/snippet-dirs)))
-    (yas-reload-all))) ; no mapc with just a single directory root
-
-(add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
-
-
-;;;; auto-mode-alist
-(add-to-list 'auto-mode-alist '("emacs/yasnippet/" . snippet-mode))
-(add-to-list 'auto-mode-alist '("emacs/yasnippet/.+\\.el$" . emacs-lisp-mode))
-
-
-;; ;; Another note: The new 0.7 yasnippet.el messes things up with
-;; ;; anything.el. You need to do this:
-;; ;;
-;; ;; Need to replace the following in anything-c-yasnippet.el:
-;; ;;   yas/snippets/table-hash      -> yas/table-hash
-;; ;;   yas/snippets/table-templates -> yas/table-templates
-;; ;;
-;; ;; (require 'anything-c-yasnippet)
-
-;;}}}
 ;;{{{  auto-complete
 
 (add-to-list 'el-get-sources 'auto-complete)
 (my/el-get-install "auto-complete")
-(require 'auto-complete)
+
+(my/custom-set-variables
+ '(global-auto-complete-mode t))
+
+;; (eval-after-load "auto-complete" '(diminish 'auto-complete-mode))
 
 ;; ;;(add-to-list 'ac-dictionary-directories (expand-file-name "dict" pdir))
 ;; (require 'auto-complete-config)
 (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
 (add-hook 'c-mode-common-hook 'my/ac-cc-mode-setup)
-(global-auto-complete-mode t)
 
 (setq-default ac-sources '(ac-source-abbrev
                            ac-source-dictionary
@@ -1200,7 +1230,7 @@ convert it to readonly/view-mode."
 (defun my/ac-cc-mode-setup ()
   (setq ac-sources (append '(ac-source-semantic
                              ac-source-semantic-raw
-                             ac-source-yasnippet
+                             ;; ac-source-yasnippet
                              ;; ac-source-gtags ; no "using namespace XX;"
                              ) ac-sources)))
 
@@ -1252,6 +1282,47 @@ convert it to readonly/view-mode."
 ;; ac-define-source yasnippet
 
 ;;}}}
+;;{{{  yasnippet
+
+(add-to-list 'el-get-sources 'yasnippet)
+(my/el-get-install "yasnippet")
+(require 'yasnippet)
+
+(add-to-list 'el-get-sources 'dropdown-list)
+(my/el-get-install "dropdown-list")
+(require 'dropdown-list)
+
+(my/custom-set-variables
+ '(yas-global-mode t nil (yasnippet))
+ '(yas-snippet-dirs "~/emacs/yasnippet" nil (yasnippet)))
+
+(add-hook 'yas/minor-mode-hook 'yas-reload-all)
+
+;; reload modified snippets
+(defun my/yasnippet-reload-on-save ()
+  "Reload the entire collection of snippets when one gets modified."
+  (if (eq major-mode 'snippet-mode)
+      ;;  (mapc 'yas/load-directory yas/snippet-dirs)))
+      (yas-reload-all))) ; no mapc with just a single directory root
+
+(add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
+
+
+;;;; auto-mode-alist
+(add-to-list 'auto-mode-alist '("emacs/yasnippet/" . snippet-mode))
+(add-to-list 'auto-mode-alist '("emacs/yasnippet/.+\\.el$" . emacs-lisp-mode))
+
+
+;; ;; Another note: The new 0.7 yasnippet.el messes things up with
+;; ;; anything.el. You need to do this:
+;; ;;
+;; ;; Need to replace the following in anything-c-yasnippet.el:
+;; ;;   yas/snippets/table-hash      -> yas/table-hash
+;; ;;   yas/snippets/table-templates -> yas/table-templates
+;; ;;
+;; ;; (require 'anything-c-yasnippet)
+
+;;}}}
 
 ;;=== Utilities ========================================================
 ;;{{{  Help (apropos, info, etc)
@@ -1298,8 +1369,10 @@ convert it to readonly/view-mode."
 
 \(fn FILENAME NODENAME &optional NO-GOING-BACK)" t)
 
+(autoload 'info-lookup-add-help "info-look" nil t)
+
 (defun my/elisp-function-reference (func)
-  "Look up an Emacs Lisp function in the Elisp manual in the Info system.
+  "Look up an elisp function in Info's Elisp manual.
 This command is designed to be used whether you are already in Info or not."
   (interactive (let ((fn (function-called-at-point))
                      (enable-recursive-minibuffers t)
@@ -1326,11 +1399,65 @@ This command is designed to be used whether you are already in Info or not."
           (setq lst (cdr lst))))))
   (pop-to-buffer "*info*"))
 
+(defun my/elisp-find-symbol-definition (name)
+  "Jump to the definition of the elisp symbol at point."
+  (interactive (list (thing-at-point 'symbol)))
+  (cond (name
+         (let ((symbol (intern-soft name))
+               (search (lambda (fun sym)
+                         (let* ((r (save-excursion (funcall fun sym)))
+                                (buffer (car r))
+                                (point (cdr r)))
+                           (cond ((not point)
+                                  (error "Found no definition for %s in %s"
+                                         name buffer))
+                                 (t
+                                  (switch-to-buffer buffer)
+                                  (goto-char point)
+                                  (recenter 1)))))))
+           (cond ((fboundp symbol)
+                  (elisp-push-point-marker)
+                  (funcall search 'find-function-noselect symbol))
+                 ((boundp symbol)
+                  (elisp-push-point-marker)
+                  (funcall search 'find-variable-noselect symbol))
+                 (t
+                  (message "Symbol not bound: %S" symbol)))))
+        (t (message "No symbol at point"))))
 
-(autoload 'info-lookup-add-help "info-look" nil t)
+
 
 ;;}}}
-;;{{{  Completion (ido, smex)
+;;{{{  Browsing and completion (ee, helm, ido, smex)
+
+;; (add-to-list 'el-get-sources
+;;              '(:name "ee"
+;;                      :description "Juri Lenkov's Extensible Emacs relational information manager."
+;;                      :type        git
+;;                      :url         "git://git.sv.gnu.org/ee.git"
+;;                      :features    (ee)))
+;; (my/el-get-install "ee")
+;; (require 'ee-autoloads)
+
+(add-to-list 'el-get-sources 'helm)
+(my/el-get-install "helm")
+
+;; Repair helm "angry salad"
+(my/custom-set-faces
+ '(helm-buffer-not-saved ((t (:foreground "plum1"))))
+ '(helm-buffer-process ((t (:foreground "DarkSeaGreen1"))))
+ '(helm-buffer-size ((t (:foreground "gray66"))))
+ '(helm-ff-directory ((t (:inherit dired-directory))))
+ '(helm-ff-executable ((t (:foreground "DarkSeaGreen1"))))
+ '(helm-ff-file ((t nil)))
+ '(helm-ff-invalid-symlink ((t (:inherit dired-warning))))
+ '(helm-ff-symlink ((t (:inherit dired-symlink))))
+ '(header-line ((t (:inherit mode-line-inactive :box nil :weight bold))))
+ '(helm-header ((t (:background "gray50" :foreground "black"))))
+ '(helm-match ((t (:background "#1c3850"))))
+ '(helm-selection ((t (:background "gray15"))))
+ '(helm-source-header ((t (:inherit default :foreground "RosyBrown4" :underline t :weight bold)))))
+
 
 (add-to-list 'el-get-sources 'smex)
 (my/el-get-install "smex")
@@ -1414,6 +1541,16 @@ This command is designed to be used whether you are already in Info or not."
  )
 
 ;;}}}
+;;{{{  Directoris (ls, dired)
+
+(my/custom-set-variables
+ '(dired-listing-switches "-agGh --group-directories-first")
+ '(list-directory-verbose-switches "-l --group-directories-first")
+ '(ls-lisp-dirs-first t)
+ '(ls-lisp-ignore-case t)
+ )
+
+;;}}}
 ;;{{{  Recent files
 
 (my/custom-set-variables
@@ -1427,12 +1564,14 @@ This command is designed to be used whether you are already in Info or not."
 ;;  - (require 'cl)
 ;;  - support gzipped files (adjust regexps and doc strings)
 ;;  - visit files in view mode
+;;
+;; ~/emacs/patched/ilocate-library--support-.gz-visit-files-in-view-mode.patch
 
 (add-to-list 'el-get-sources
              '(:name ilocate-library
                      :description "Interactive locate-library (or source) with completion"
                      :type        http
-                     :url         "file://localhost/home/jyates/clones/ilocate-library/ilocate-library.el"
+                     :url         "file://localhost/home/jyates/emacs/patched/ilocate-library.el"
                      :features    (ilocate-library)))
 (my/el-get-install "ilocate-library")
 
@@ -1583,15 +1722,17 @@ An alternate approach would be after-advice on isearch-other-meta-char."
  )
 
 ;;}}}
-;;{{{  hideshow...
+;;{{{  hideshow
 
 ;; My version handles block comments in C++ better.
+;; ~/emacs/patched/hideshow--better-handling-of-c++-comments.patch
+
 (add-to-list 'el-get-sources
 	     '(:name hideshow
 		     :description "Minor mode cmds to selectively display code/comment blocks"
 		     :type        http
-		     :url         "file://localhost/home/jyates/clones/emacs/hideshow.el"
-		     ))
+		     :url         "file://localhost/home/jyates/emacs/patched/hideshow.el"
+		     :features    (hideshow)))
 (my/el-get-install "hideshow")
 (require 'hideshow)
 
@@ -1606,13 +1747,13 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (eval-after-load "hideshow"
   '(setq hs-set-up-overlay 'my/display-code-line-counts))
 
-;; My version corrects the order of save-excursion save-restriction sequence
+;; My edits to correct the order of save-excursion save-restriction sequence
+;; have been incorporated into the version at emacswiki.org.
 (add-to-list 'el-get-sources
              '(:name hideshowvis
                      :description "Add fringe markers for hide/show foldable regions."
-                     ;; :type emacswiki
-                     :type        http
-                     :url         "file://localhost/home/jyates/clones/emacswiki/hideshowvis.el"
+                     :type        emacswiki
+                     :url         "http://www.emacswiki.org/emacs/download/hideshowvis.el"
                      :features    (hideshowvis)))
 (my/el-get-install "hideshowvis")
 
@@ -1637,13 +1778,38 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;     keymap)
 ;;   "Keymap for interpretting mouse-1 on the left-fringe")
 
+(defvar hs1-regexp
+  "\\(\n[[:blank:]]*///\\|///<\\).*$"
+  "List of regular expressions of blocks to be hidden.")
+
+(define-minor-mode hs1-mode
+  "Hide/show predefined blocks."
+  :lighter " hs1"
+  (if hs1-mode
+      (let (ol)
+    (save-excursion
+      (goto-char (point-min))
+      (while (search-forward-regexp hs1-regexp nil 'noErr)
+        (when (eq (syntax-ppss-context (syntax-ppss (match-end 1))) 'comment)
+          (setq ol (make-overlay (match-beginning 0) (match-end 0)))
+          (overlay-put ol 'hs1 t)
+          (overlay-put ol 'invisible t)
+          ))))
+    (remove-overlays (point-min) (point-max) 'hs1 t)
+    ))
+
+(add-hook 'c++-mode-hook '(lambda () (local-set-key (kbd "M-s M-s") 'hs1-mode)))
+
 ;;}}}
 ;;{{{  auto-fill and filladapt
 
 ;; Redirect to a patched version more captible with cc-mode
 (add-to-list 'el-get-sources
              '(:name filladapt
-                     :url "http://cc-mode.sourceforge.net/filladapt.el"))
+                     :description "Adaptively set fill-prefix and overload filling functions"
+                     :type        http
+                     :url         "http://cc-mode.sourceforge.net/filladapt.el"
+                     :features    (filladapt)))
 (my/el-get-install "filladapt")
 
 
@@ -1653,7 +1819,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 \(fn)" t)
 
-(eval-after-load "filladapt" '(diminish 'filladapt-mode "FA"))
+(eval-after-load "filladapt" '(diminish 'filladapt-mode "f"))
 
 
 (defun my/turn-on-filling ()
@@ -1757,18 +1923,6 @@ An alternate approach would be after-advice on isearch-other-meta-char."
   t)
 
 ;;}}}
-;;{{{  Various ways of defining a project
-
-(add-to-list 'el-get-sources
-             '(:name "project"
-                     :description "Keep track of the current project."
-                     :website     "https://github.com/nex3/project-el"
-                     :type        github
-                     :pkgname     "nex3/project-el"
-                     :features    (project)))
-(my/el-get-install "project")
-
-;;}}}
 ;;{{{  Find file in project
 
 (add-to-list 'el-get-sources
@@ -1787,9 +1941,27 @@ An alternate approach would be after-advice on isearch-other-meta-char."
              '(:name vtags
                      :description "Edward Bishop's fork of emacs' etags"
                      :type        http
-                     :url         "file://localhost/home/jyates/clones/vtags/vtags.el"
+                     :url         "file://localhost/home/jyates/emacs/vtags/vtags.el"
                      :features    (vtags)))
 (my/el-get-install "vtags")
+
+;; (add-to-list 'el-get-sources
+;;              '(:name rtags
+;;                      :description "A C/C++ client/server indexer based on clang."
+;;                      :type        github
+;;                      :pkgname     "Andersbakken/rtags"
+;;                      :url         "https://github.com/Andersbakken/rtags"
+;;                      :features    (rtags)))
+;; (my/el-get-install "rtags")
+;;
+;; (require 'rtags)
+;; (rtags-enable-standard-keybindings)
+;;
+;; (call-process-shell-command "/home/jyates/bin/start-rdm" nil nil)
+;;
+;; (defun my/quit-rdm ()
+;;   (call-process-shell-command "/home/jyates/bin/quit-rdm" nil nil))
+;; (add-hook 'kill-emacs-hook 'my/quit-rdm)
 
 ;;}}}
 ;;{{{  Compilation and next exrror
@@ -1810,10 +1982,19 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;}}}
 ;;{{{  C/C++ mode
 
+;; After applying patch, make sure you recompile first cc-langs.el, then
+;; cc-engine.el and cc-mode.el.  (You can do this by M-x byte-compile-file
+;; <CR;; <file-name;; in Emacs).  These files are in a directory something
+;; like /usr/local/src/emacs/lisp/progmodes.  You might have to reinstall
+;; the newly compiled files to your installed directory.  Reload CC Mode
+;; (e.g. by restarting Emacs) in order to test the patch.  Please confirm to
+;; me that it solves the problem (or else tell me what it doesn't solve).
+
 (eval-when-compile (require 'cc-mode))
 
 ;; Treat .h and .imp files as C++ source
-(setq auto-mode-alist (append '(("\\.h\\'" . c++-mode)
+(setq auto-mode-alist (append '(("\\.gt\\'" . c++-mode)
+                                ("\\.h\\'" . c++-mode)
                                 ("\\.imp\\'" . c++-mode))
       auto-mode-alist))
 
@@ -1844,11 +2025,20 @@ the surrounding paren or brace block."
     (vector (current-column))))
 
 (defun my/c-lineup-topmost-intro-cont (langelem)
-  "Indent comment or arglist open parenthesis beneath topmost-intro."
+  "Indent comment or arglist open parenthesis beneath topmost-intro.
+Comments documenting scopes (class, struct, union, namespace) receive
+no indentation as these are typically fair size chunks of text.  By
+contrast comments documenting functions get ident"
   (save-excursion
     (beginning-of-line)
     (skip-chars-forward " \t" (c-point 'eol))
-    (if (looking-at "//\\|(" ) '+ 0)))
+    (cond
+     ((looking-at "(" ) '+)
+     ((looking-at "//" )
+      (forward-line -1)
+      (skip-chars-forward " \t" (c-point 'eol))
+      (if (looking-at "(class\\|struct\\|union\\|namespace)[^[:alnum:]_]" ) 0 '+))
+     (t 0))))
 
 ;; Closely parallels cc-align.el's c-lineup-arglist-operators
 (defun my/c-lineup-arglist-&&-or-|| (langelem)
@@ -1888,7 +2078,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
       '((c-echo-syntactic-information-p . t)
         (c-basic-offset . 4)
         (c-comment-only-line-offset 0 . 0)
-        (c-auto-align-backslashes nil)
+        ;(c-auto-align-backslashes nil)
         (c-cleanup-list
          '(brace-else-brace
            brace-elseif-brace
@@ -2057,17 +2247,139 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;{{{  Cedet, semantic, etc
 
 (my/custom-set-variables
+ '(global-ede-mode t)
  '(semantic-mode t)
- '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
  '(global-semantic-decoration-mode nil)
  '(global-semantic-idle-scheduler-mode nil)
+ '(semantic-complete-inline-analyzer-displayor-class 'semantic-displayor-tooltip)
+ '(semantic-completion-displayor-format-tag-function 'semantic-format-tag-prototype)
  '(semantic-default-submodes '(global-semanticdb-minor-mode
                                global-semantic-mru-bookmark-mode))
+ '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
+ '(semanticdb-project-roots '("~/asd" "~/asd.upstream"))
  )
+
+;; (ede-cpp-root-project "asd"
+;;                       :file "asd.instance"
+;;                       :include-path '( "/amake"
+;;                                        "/comm"
+;;                                        "/ctrl"
+;;                                        "/error"
+;;                                        "/funcs"
+;;                                        "/httpd"
+;;                                        "/parse"
+;;                                        "/pginc"
+;;                                        "/parsenodes"
+;;                                        "/sync"
+;;                                        "/sys"
+;;                                        "/sysmgr"
+;;                                        "/systables"
+;;                                        "/unittest"
+;;                                        "/utils" )
+;;                       :system-include-path '( "/usr/include"
+;;                                               "/usr/include/c++/4.7/" ))
+
+(require 'ede)
+(require 'ede/generic)
+
+;;; GIT
+(defclass ede-generic-git-project (ede-generic-project)
+  ((buildfile :initform ".git")
+   )
+  "Generic Project for a git tree.")
+
+(defmethod ede-generic-setup-configuration ((proj ede-generic-git-project) config)
+  "Setup a configuration for a git tree."
+  (oset config debug-command "gdb ")
+  )
+
+(ede-generic-new-autoloader "generic-git" "Git"
+                            ".git" 'ede-generic-git-project)
+
+;; (defvar ede-amake-project-list nil
+;;   "List of projects created by option `ede-amake-project'.")
+
+;; (defun ede-amake-file-existing (dir)
+;;   "Find an amake project in the list of amake projects.
+;; DIR is the directory to search from."
+;;   (let ((projs ede-amake-project-list)
+;; 	(ans nil))
+;;     (while (and projs (not ans))
+;;       (let ((root (ede-project-root-directory (car projs))))
+;; 	(when (string-match (concat "^" (regexp-quote root)) dir)
+;; 	  (setq ans (car projs))))
+;;       (setq projs (cdr projs)))
+;;     ans))
+
+;; (defun ede-amake-project-root (&optional dir)
+;;   "Get the root directory for DIR."
+;;   (when (not dir) (setq dir default-directory))
+;;   (message "0 - dir=    %s" dir)
+;;   (let ((case-fold-search t)
+;; 	(proj (ede-amake-file-existing dir)))
+;;     (if proj
+;; 	(ede-up-directory (file-name-directory
+;; 			   (oref proj :file)))
+;;       ;; No pre-existing project.  Let's take a wild-guess if we have
+;;       ;; an Amake project here.
+;;       (when (string-match "src/" dir)
+;;         (progn
+;;           (message "1 - matched"))
+;; 	(let ((base (substring dir 0 (match-end 0))))
+;;           (progn
+;;             (message "2 - base=   %s" base)
+;;             (message "3 - expand= %s" (expand-file-name "amake/amake.bsh" base))
+;;             (message "4 - exists= %s" (file-exists-p (expand-file-name "amake/amake.bsh" base))))))
+
+;;       (when (string-match "src/" dir)
+;; 	(let ((base (substring dir 0 (match-end 0))))
+;; 	  (when (file-exists-p (expand-file-name "amake/amake.bsh" base))
+;;             base))))))
+
+;; (defclass ede-amake-project (ede-project eieio-instance-tracker)
+;;   ((tracking-symbol :initform 'ede-amake-project-list)
+;;    )
+;;   "Project Type for the amake source code."
+;;   :method-invocation-order :depth-first)
+
+;; (defun ede-amake-load (dir &optional rootproj)
+;;   "Return an amake project object if there is a match.
+;; Return nil if there isn't one.
+;; Argument DIR is the directory it is created for.
+;; ROOTPROJ is nil, since there is only one project."
+;;   (or (ede-amake-file-existing dir)
+;;       ;; Doesn't already exist, so let's make one.
+;;       (let ((proj (ede-amake-project
+;; 		   "amake"
+;; 		   :name "amake/amake.bsh"
+;; 		   :directory (file-name-as-directory dir)
+;; 		   :file (expand-file-name "amake/amake.bsh"
+;; 					   dir))))
+;; 	(ede-add-project-to-global-list proj))
+;;       ))
+
+;; (ede-add-project-autoload
+;;  (ede-project-autoload "amake"
+;; 		       :name "AMAKE ROOT"
+;; 		       :file 'ede/amake
+;; 		       :proj-file 'ede-amake-project-root
+;; 		       :proj-root-dirmatch "src/"
+;; 		       :proj-root 'ede-amake-project-root
+;; 		       :load-type 'ede-amake-load
+;; 		       :class-sym 'ede-amake-project
+;; 		       :new-p nil
+;; 		       :safe-p t)
+;;  'unique)
 
 ;;}}}
 
 ;;=== Uncatergorized ===================================================
+;;{{{  email
+
+(my/custom-set-variables
+ '(send-mail-function 'mailclient-send-it))
+
+;;}}}
 ;;{{{  emacsclient and server
 
 (my/custom-set-variables
@@ -2100,8 +2412,9 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (add-to-list 'el-get-sources
              '(:name keydef
                      :description "A simpler way to define keys, with kbd syntax"
-                     :type        http
-                     :url         "file://localhost/home/jyates/emacs/keydef.el"
+                     :type        github
+                     :pkgname     "emacsmirror/keydef"
+                     :url         "https://github.com/emacsmirror/keydef"
                      :features    keydef))
 (my/el-get-install "keydef")
 
@@ -2149,8 +2462,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;  '(c-font-lock-extra-types (quote ("FILE" "\\sw+_[hpt]")))
 
 ;;  '(comint-highlight-input nil)
-
-;;  '(dired-listing-switches "-alFv")
 
 ;;  '(dvc-prefix-key [(control c) 100])
 ;;  '(dvc-tips-enabled nil)
@@ -2330,17 +2641,15 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 
 ;; Additions to binding.el's goto-map; prior bindings:
-;;  g   goto-line
-;;  n   next-error
-;;  p   previous-error
+;;  (M-) g   goto-line
+;;  (M-) n   next-error
+;;  (M-) p   previous-error
 ;;
 (keydef "M-g b"         bookmark-jump)
-(keydef "M-g M-b"       bookmark-jump)
 (keydef "M-g e"         el-get-find-recipe-file)
-(keydef "M-g M-e"       el-get-find-recipe-file)
 (keydef "M-g l"         ilocate-library-find-source)
 (keydef "M-g r"         jump-to-register)
-(keydef "M-g M-r"       jump-to-register)
+(keydef "M-g s"         my/elisp-find-symbol-definition)
 
 (keydef "M-["           align)
 
@@ -2376,6 +2685,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ))
 
 (keydef   "C-<f7>"      compile)
+(keydef   "S-<f7>"      kill-compilation)
 
 (eval-after-load "gud" '(progn
   (keydef   "<f8>"      my/gud-regs)       ; show registers
@@ -2416,4 +2726,5 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;; End:
 
 ;;---------------------------------------------------------------------
+
 ;; Experimental trash... do not commit if there is anything here!

@@ -1,0 +1,40 @@
+#!/bin/dash
+
+# investigate: make MAKEINFO="makeinfo --force"
+#
+# Also:
+# The --without-makeinfo flag doesn't work for me too,
+# I have to change MAKEINFO=yes to MAKEINFO=no in the
+# Makefile to compile without docs.
+
+
+set -e
+
+if [ ! -f "src/bitmaps/leftptr.xbm" ]; then
+   echo "Working directory ( $(pwd) ) is not the root of an emacs source tree."; exit 1
+fi
+
+bzr pull
+
+set +e
+make bootstrap
+find -name "*.elc" -exec rm {} \;
+set -e
+
+CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs_trunk --enable-link-time-optimization
+
+make -j -k
+make
+make -j doc
+
+echo
+echo "Build is complete; performing very simple invocation"
+echo
+echo
+${0%${0##*/}}src/emacs --version
+echo
+echo Starting emacs
+echo
+${0%${0##*/}}src/emacs &
+echo
+echo

@@ -180,6 +180,8 @@ value of am-aos-dir.  The value of am-aos-dir is gotten from the cache dump file
                      (not (am-match-skip-dir file-dir)))
                 (progn
                   (setq source-pos (string-match "/source/" file-dir))
+                  (if (not source-pos)
+                      (setq source-pos (string-match "/allsrc/" file-dir)))
                   (if source-pos
                       (setq file-dir (concat (substring file-dir 0 source-pos)
                                              "/src/"

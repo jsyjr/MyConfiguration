@@ -80,6 +80,10 @@ if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 
+# set PATH
+if [ -f "$HOME/.my_path" ] ; then
+    . "$HOME/.my_path"
+fi
 
 
 #=====================================================================================================

@@ -5,8 +5,8 @@
 ;; Author: Michael John Downes <mjd@ams.org>
 ;; Created: 2001/01/18
 ;; Keywords: convenience lisp customization keyboard keys
-;; Version: 1.16
-;; $Revision: 1.1.1.1 $ $Date: 2003-04-04 20:16:06 $
+;; Version: 1.15
+;; $Revision: 1.15 $ $Date: 2001-11-28 15:22:58-05 $
 
 ;; This program was placed in the public domain on 2001/01/18 by the
 ;; Author. The program is distributed in the hope that it will be
@@ -316,9 +316,7 @@ the name of the mode-map that goes with the given mode."
             (setq map (quote esc-map)))))
      (t
       (if (vectorp seq)
-          (error
-"keydef: '%s' vector form disallowed here, use kbd syntax instead."
-           (prin1-to-string seq))
+          (error "keydef: '%s' vector form disallowed here, use kbd syntax instead." (prin1-to-string seq))
         (error "keydef: Invalid key sequence '%s'" (prin1-to-string seq)))))
     (if (not (null cmd))
         (let ((token (car cmd)))

@@ -1,0 +1,48 @@
+# -*- python -*-
+# Amit uses these modules all the time... (hi amit! :P)
+import sys, os, time
+
+
+# Set up tab completion and command history
+_histfile="%s/.python-history" % os.environ["HOME"]
+
+try:
+    import readline
+except ImportError:
+    pass
+else:
+    # Tab completion for readline
+    import rlcompleter
+    readline.parse_and_bind("tab: complete")
+
+    # History for readline
+    if hasattr(readline, 'read_history_file'):
+        import  atexit
+        try: open(_histfile)
+        except IOError: open(_histfile, 'w+') # Ensure it exists
+        print "  Read", len(open(_histfile).readlines()), "lines of history"
+        readline.read_history_file(_histfile)
+
+        def write_history_file(histfile=_histfile):
+          import readline
+          readline.write_history_file(histfile)
+        atexit.register(write_history_file)
+del _histfile
+
+
+# From Randall Hopper <aa8vb@yahoo.com>
+if os.environ.get('TERM') in [ 'xterm', 'vt100' ]:
+    # Set up a colored prompt
+    sys.ps1 = '\001\033[0;1;31m\002>>> \001\033[0m\002'
+    sys.ps2 = '\001\033[0;32m\002... \001\033[0m\002'
+
+
+# Pretty-print the command prompt for more readable dicts and lists.
+from pprint import pprint
+import __builtin__
+def myhook(value, show=pprint, bltin=__builtin__):
+    if value is not None:
+        bltin._ = value
+        show(value)
+sys.displayhook = myhook
+del __builtin__

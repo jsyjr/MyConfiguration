@@ -3,7 +3,9 @@
 *.elc
 *~
 %*
+am.dmp
 tags
+BROWSE
 TAGS
 
 # Hidden files in the root of the home directory
@@ -23,5 +25,6 @@ TAGS
 /*/
 !/bin/
 !/.dinafont/
+!/dot-files/
 !/emacs/
 !/org/

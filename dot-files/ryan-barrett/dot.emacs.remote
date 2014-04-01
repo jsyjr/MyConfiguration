@@ -1,0 +1,35 @@
+;; -*- emacs-lisp -*-
+
+;; my remote setup sets P4DIFF to tdiff, which is good for shells, but not for
+;; emacs' p4 vc-mode.
+(setenv "P4DIFF" "")
+
+;; if emacs is running on a remote X display, synchronizing emacs' kill ring
+;; with the X selection and clipboard is way slow. this turns that off.
+
+(setq interprogram-cut-function nil)
+(setq interprogram-paste-function nil)
+
+; this turns them back on:
+(setq interprogram-cut-function 'x-select-text)
+(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+
+;; ...however, whenever i explicitly cut, copy, or paste, i *do* want to
+;; synchronize with X. this adds hooks to do that.
+(global-set-key [(meta w)] 'kill-ring-save)
+(global-set-key [(f1) (meta w)]
+  (lambda () (interactive)
+    (let ((interprogram-cut-function 'x-select-text))
+      (kill-ring-save (region-beginning) (region-end)))))
+
+(global-set-key [(control w)] 'kill-region)
+(global-set-key [(f1) (control w)]
+  (lambda () (interactive)
+    (let ((interprogram-cut-function 'x-select-text))
+      (kill-region (region-beginning) (region-end)))))
+
+(global-set-key [(control y)] 'yank)
+(global-set-key [(f1) (control y)]
+  (lambda () (interactive)
+    (let ((interprogram-paste-function 'x-cut-buffer-or-selection-value))
+      (yank))))
