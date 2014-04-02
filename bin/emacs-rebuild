@@ -27,9 +27,9 @@ set -e
 
 CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs_trunk --enable-link-time-optimization
 
-make -j -k
-make
-make -j doc
+CFLAGS='-march=corei7 -O3' make -j8 -k
+CFLAGS='-march=corei7 -O3' make
+make -j8 doc
 
 echo
 echo "Build is complete; performing very simple invocation"
