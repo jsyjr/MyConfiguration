@@ -25,7 +25,7 @@ make bootstrap
 find -name "*.elc" -exec rm {} \;
 set -e
 
-CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs_trunk --enable-link-time-optimization
+CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs --enable-link-time-optimization
 
 CFLAGS='-march=corei7 -O3' make -j8 -k
 CFLAGS='-march=corei7 -O3' make
