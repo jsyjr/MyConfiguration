@@ -1,0 +1,72 @@
+#!/bin/dash
+
+# Install a bunch of dependencies
+#
+sudo apt-get install \
+  autoconf \
+  automake \
+  autotools-dev \
+  bzr \
+  flex \
+  git \
+  graphviz \
+  libXpm-dev \
+  libdbus-1-dev \
+  libgconf2-dev \
+  libgif-dev \
+  libgnutls-dev \
+  libgpm-dev \
+  libgtk2.0-dev \
+  libjpeg-dev \
+  libm17n-dev \
+  libmagick++-dev \
+  libotf-dev \
+  librsvg2-dev \
+  libtiff5-dev \
+  libtinfo-dev \
+  libx11-dev \
+  libxml2-dev \
+  mercurial \
+  network-manager-openconnect-gnome \
+  texinfo \
+
+
+# Download my configuration and install it in my home directory
+#
+cd ~
+git clone https://github.com/jsyjr/MyConfiguration.git
+mv ~/MyConfiguration/{*,.[a-z]*} ~
+rm -r ~/MyConfiguration
+
+# Install the Dina bitmapped font
+#
+sudo cp -r ~/.dinafont/dina /usr/share/fonts/X11/dina
+cd /etc/fonts/conf.d
+sudo rm 70-no-bitmaps.conf
+sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
+sudo dpkg-reconfigure fontconfig-config
+sudo dpkg-reconfigure fontconfig
+fc-list | grep Dina
+
+# Create a directory for projects to be cloned
+#
+mkdir ~/repos
+
+# Download and build emacs
+#
+cd ~/repos
+git clone git://git.savannah.gnu.org/emacs.git
+cd emacs
+./autogen.sh
+./configure --enable-link-time-optimization
+~/bin/emacs-rebuild
+
+# Download and build doxygen
+#
+cd ~/repos
+git clone https://github.com/doxygen/doxygen.git
+cd doxygen
+./configure
+sed -i -e 's/-O2/-march=corei7 -O3/' src/Makefile.* libmd5/Makefile.* qtools/Makefile.*
+make -j8
+# make install
