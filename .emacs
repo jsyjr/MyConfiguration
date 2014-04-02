@@ -385,6 +385,7 @@
 ;; For faster startup (becasue of fewer interactions with xserver) use
 ;; 'xrdb ~/.Xresources' to kill menubar, toolbar & vertical scrollbars.
 ;;
+;; Emacs.fullscreen: maximized
 ;; Emacs.background: black
 ;; Emacs.menuBar: off
 ;; Emacs.toolBar: off
