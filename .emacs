@@ -382,7 +382,13 @@
 
 ;;=== Visuals ==========================================================
 ;;
-;; 'xrdb ~/.Xresources' kills menubar, toolbar & vertical scrollbars.
+;; For faster startup (becasue of fewer interactions with xserver) use
+;; 'xrdb ~/.Xresources' to kill menubar, toolbar & vertical scrollbars.
+;;
+;; Emacs.background: black
+;; Emacs.menuBar: off
+;; Emacs.toolBar: off
+;; Emacs.verticalScrollBars: off
 ;;
 ;;{{{  Proportional fonts
 
