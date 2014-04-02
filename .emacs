@@ -217,7 +217,7 @@
 ;;{{{  John Wiegley's use-package
 
 (add-to-list 'el-get-sources
-             '(:name "use-package"
+             '(:name use-package
                      :description "A use-package declaration for simplifying your .emacs."
                      :website     "https://github.com/jwiegley/use-package"
                      :type        github
@@ -1083,7 +1083,7 @@ convert it to readonly/view-mode."
 ;;{{{  git and magit
 
 (add-to-list 'el-get-sources
-             '(:name "git-modes"
+             '(:name git-modes
                      :description "Emacs modes for various Git-related files."
                      :website     "https://github.com/magit/git-modes"
                      :type        github
@@ -1092,7 +1092,7 @@ convert it to readonly/view-mode."
 (my/el-get-install "git-modes")
 
 (add-to-list 'el-get-sources
-             '(:name "magit"
+             '(:name magit
                      :description "It's Magit! An Emacs mode for Git."
                      :website     "https://github.com/magit/magit"
                      :type        github
@@ -1102,7 +1102,7 @@ convert it to readonly/view-mode."
 (my/el-get-install "magit")
 
 (add-to-list 'el-get-sources
-             '(:name "magit-filenotify"
+             '(:name magit-filenotify
                      :description "Refresh status buffer when git tree changes."
                      :website     "https://github.com/magit/magit-filenotify"
                      :type        github
@@ -1428,16 +1428,7 @@ This command is designed to be used whether you are already in Info or not."
 
 
 ;;}}}
-;;{{{  Browsing and completion (ee, helm, ido, smex)
-
-;; (add-to-list 'el-get-sources
-;;              '(:name "ee"
-;;                      :description "Juri Lenkov's Extensible Emacs relational information manager."
-;;                      :type        git
-;;                      :url         "git://git.sv.gnu.org/ee.git"
-;;                      :features    (ee)))
-;; (my/el-get-install "ee")
-;; (require 'ee-autoloads)
+;;{{{  Browsing and completion (helm, ido, smex)
 
 (add-to-list 'el-get-sources 'helm)
 (my/el-get-install "helm")
@@ -1712,7 +1703,14 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;=== Minor modes ======================================================
 ;;{{{  folding
 
-(add-to-list 'el-get-sources 'folding)
+(add-to-list 'el-get-sources
+             '(:name folding
+                     :description "A folding-editor-like minor mode."
+                     :website     "https://github.com/emacsmirror/folding"
+                     :type        github
+                     :pkgname     "emacsmirror/folding"
+                     :features (folding folding-isearch)
+                     :post-init (folding-mode-add-find-file-hook)))
 (my/el-get-install "folding")
 
 (my/custom-set-variables
@@ -1926,7 +1924,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;{{{  Find file in project
 
 (add-to-list 'el-get-sources
-             '(:name "find-file-in-project"
+             '(:name find-file-in-project
                      :description "Find files in a project quickly."
                      :website     "https://github.com/dburger/find-file-in-project"
                      :type        github
