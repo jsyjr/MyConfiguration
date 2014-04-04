@@ -35,10 +35,10 @@ echo
 echo "Build is complete; performing very simple invocation"
 echo
 echo
-${0%${0##*/}}src/emacs --version
+./src/emacs --version
 echo
 echo Starting emacs
 echo
-${0%${0##*/}}src/emacs &
+./src/emacs &
 echo
 echo
