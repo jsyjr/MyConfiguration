@@ -6,9 +6,16 @@ sudo apt-get install \
   autoconf \
   automake \
   autotools-dev \
+  bsd-mailx \
   bzr \
+  ccache \
+  clang \
+  curl \
+  doxygen-latex \
+  emacs \
   flex \
   git \
+  gparted \
   graphviz \
   libXpm-dev \
   libdbus-1-dev \
@@ -17,6 +24,7 @@ sudo apt-get install \
   libgnutls-dev \
   libgpm-dev \
   libgtk2.0-dev \
+  libjna-java \
   libjpeg-dev \
   libm17n-dev \
   libmagick++-dev \
@@ -26,9 +34,11 @@ sudo apt-get install \
   libtinfo-dev \
   libx11-dev \
   libxml2-dev \
+  llvm \
   mercurial \
   network-manager-openconnect-gnome \
   texinfo \
+  unison-all-gtk \
 
 
 # Download my configuration and install it in my home directory
@@ -58,7 +68,6 @@ cd ~/repos
 git clone git://git.savannah.gnu.org/emacs.git
 cd emacs
 ./autogen.sh
-./configure --enable-link-time-optimization
 ~/bin/emacs-rebuild
 
 # Download and build doxygen
