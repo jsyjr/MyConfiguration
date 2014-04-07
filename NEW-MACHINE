@@ -6,6 +6,7 @@ sudo apt-get install \
   autoconf \
   automake \
   autotools-dev \
+  bison \
   bsd-mailx \
   bzr \
   ccache \
@@ -16,6 +17,7 @@ sudo apt-get install \
   flex \
   fonts-dejavu \
   git \
+  global \
   gparted \
   graphviz \
   libXpm-dev \
@@ -49,7 +51,7 @@ sudo apt-get install \
 cd ~
 git clone https://github.com/jsyjr/MyConfiguration.git
 mv ~/MyConfiguration/{*,.[a-z]*} ~
-rm -r ~/MyConfiguration
+rm -r ~/MyConfiguration ~/Documents ~/Music ~/Public ~/Templates ~/Videos ~/examples.desktop
 
 # Install the Dina bitmapped font
 #
@@ -96,7 +98,8 @@ cd emacs
 #
 cd ~/repos
 git clone https://github.com/doxygen/doxygen.git
-!/bin/rebuild-doxygen
+cd doxygen
+~/bin/rebuild-doxygen
 make -j8
 # make install
 
