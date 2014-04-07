@@ -6,27 +6,22 @@ if [ ! -f "st.info" ]; then
    echo "Working directory ( $(pwd) ) is not the root of an st source tree."; exit 1
 fi
 
-make clean
-git reset --hard
-git pull
-make clean
+wget http://st.suckless.org/patches/st-no-bold-colors.diff   # st.c
+wget http://st.suckless.org/patches/st-solarized-light.diff  # config.def.h
+wget http://st.suckless.org/patches/st-solarized-dark.diff   # config.def.h
 
-wget http://st.suckless.org/patches/st-no-bold-colors.diff
-git apply st-no-bold-colors.diff
-rm -r st-no-bold-colors.diff
+makeSt() {
+  git reset --hard
+  git pull
+  make clean
+  git apply st-no-bold-colors.diff
+  git apply st-solarized-$1.diff
+  cp config.def.h config.h
+  CFLAGS='-march=corei7' make
+  cp st ~/bin/st-$1
+}
 
-wget http://st.suckless.org/patches/st-solarized-light.diff
-git checkout config.def.h
-git apply st-solarized-light.diff
-rm -f st-solarized-light.diff
-cp config.def.h config.h
-CFLAGS='-march=corei7' make
-cp st ~/bin/st-light
+makeSt light
+makeSt dark
 
-wget http://st.suckless.org/patches/st-solarized-dark.diff
-git checkout config.def.h
-git apply st-solarized-dark.diff
-rm -f st-solarized-dark.diff
-cp config.def.h config.h
-CFLAGS='-march=corei7' make
-cp st ~/bin/st-dark
+rm -f *.diff

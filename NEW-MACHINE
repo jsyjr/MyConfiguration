@@ -14,6 +14,7 @@ sudo apt-get install \
   doxygen-latex \
   emacs \
   flex \
+  fonts-dejavu \
   git \
   gparted \
   graphviz \
@@ -38,7 +39,9 @@ sudo apt-get install \
   mercurial \
   network-manager-openconnect-gnome \
   texinfo \
+  texlive-fonts-extra \
   unison-all-gtk \
+
 
 
 # Download my configuration and install it in my home directory
@@ -50,17 +53,36 @@ rm -r ~/MyConfiguration
 
 # Install the Dina bitmapped font
 #
-sudo cp -r ~/.dinafont/dina /usr/share/fonts/X11/dina
+sudo mkdir -p /usr/local/share/fonts/dina
+sudo cp -r ~/.dinafont/dina /usr/local/share/fonts/dina
 cd /etc/fonts/conf.d
 sudo rm 70-no-bitmaps.conf
 sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
+
+cd /tmp
+wget http://sourceforge.net/projects/sourcecodepro.adobe/files/SourceCodePro_FontsOnly-1.017.zip
+unzip SourceCodePro_FontsOnly-1.017.zip
+sudo mkdir -p /usr/local/share/fonts/SourceCodePro
+sudo cp /tmp/SourceCodePro_FontsOnly-1.017/OTF/* /usr/local/share/fonts/SourceCodePro
+rm -rf /tmp/SourceCodePro*
+
 sudo dpkg-reconfigure fontconfig-config
 sudo dpkg-reconfigure fontconfig
+sudo fc-cache
 fc-list | grep Dina
+fc-list | grep Source
+
 
 # Create a directory for projects to be cloned
 #
 mkdir ~/repos
+
+# Download and build suckless st (st-light, st-dark)
+#
+cd ~/repos
+git clone http://git.suckless.org/st
+cd st
+~/bin/rebuild-st
 
 # Download and build emacs
 #
@@ -68,14 +90,12 @@ cd ~/repos
 git clone git://git.savannah.gnu.org/emacs.git
 cd emacs
 ./autogen.sh
-~/bin/emacs-rebuild
+~/bin/rebuild-emacs
 
 # Download and build doxygen
 #
 cd ~/repos
 git clone https://github.com/doxygen/doxygen.git
-cd doxygen
-./configure
-sed -i -e 's/-O2/-march=corei7 -O3/' src/Makefile.* libmd5/Makefile.* qtools/Makefile.*
+!/bin/rebuild-doxygen
 make -j8
 # make install
