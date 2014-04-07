@@ -45,6 +45,8 @@ sudo apt-get install \
   unison-all-gtk \
 
 
+sudo chmod a+w /ccc
+sudo mkdir -p /net/whs/homes
 
 # Download my configuration and install it in my home directory
 #
@@ -93,6 +95,7 @@ git clone git://git.savannah.gnu.org/emacs.git
 cd emacs
 ./autogen.sh
 ~/bin/rebuild-emacs
+xrdb ~/.Xresources
 
 # Download and build doxygen
 #
@@ -111,43 +114,43 @@ cat >/tmp/fstab <<EOF
 # device; this may be used with UUID= as a more robust way to name devices
 # that works even if disks are added and removed. See fstab(5).
 #
-# <file system> <mount point>   <type>  <options>     <dump>  <pass>
+# <file system>                         <mount point>  <type>   <options>               <dump> <pass>
 #
 # /dev/sda
 #
 # /boot was on /dev/sda1 during installation
-UUID=3f89a355-e048-41a2-851c-4f8bf93656b2 /boot       ext4    relatime,nodiratime          0 2
+UUID=45383228-f8db-46aa-ab8a-248f219a4878   /boot       ext4    relatime,nodiratime          0 2
 # /var was on /dev/sda2 during installation
-UUID=ca8cd480-6274-4516-ba47-3ad386d88378 /var        ext4    relatime,nodiratime          0 2
+UUID=bc626005-2d72-4ad9-b92c-57190da8de8f   /var        ext4    relatime,nodiratime          0 2
 # swap was on /dev/sda3 during installation
-UUID=5edf0681-dbe7-4334-b2da-17e278304fc1 none        swap    sw                           0 0
+UUID=5edf0681-dbe7-4334-b2da-17e278304fc1   none        swap    sw                           0 0
 # /bulk was on /dev/sda4 during installation
-UUID=25b6d702-21a9-41db-aee9-e2d6cd75b147 /bulk       ext4    relatime,nodiratime          0 2
+UUID=ee510215-f3a4-4894-9e66-623b2c0a760c   /bulk       ext4    relatime,nodiratime          0 2
 #
 # /dev/sdb
 #
 # / was on /dev/sdb1 during installation
-UUID=2d075636-d6f1-4828-a0b6-96c7e3cc26f2 /           ext4    relatime,nodiratime,discard  0 1
-# /home was on /dev/sdb2 during installation
-UUID=896753e1-318f-433d-bb31-fabce07e3abc /home       ext4    relatime,nodiratime,discard  0 2
+UUID=2b529276-47f7-4c04-bc6e-c68692a2787d   /           ext4    relatime,nodiratime,discard  0 1
+# /ccache was on /dev/sdb2 during installation
+UUID=32f76819-6490-4814-9d66-484a734cc403   /ccc        ext4    async,data=writeback,barrier=0,nouser_xattr,noacl,journal_async_commit,delalloc,max_batch_time=50000,noauto_da_alloc,dioread_nolock,noatime,nodiratime,discard   0 2
 # /spare0 was on /dev/sdb3 during installation
-UUID=51ee6896-79ae-4c84-8c26-0746a2a55c5b /spare0     ext4    noatime,nodiratime,discard   0 2
+UUID=f0c73aca-c916-4391-b498-9b0f57020c8a   /spare0     ext4    noatime,nodiratime,discard   0 2
 #
 # /dev/sdc
 #
-# /ccc was on /dev/sdc1 during installation
-UUID=f71486dd-54af-423c-826b-297cee3bc549 /ccc        ext4    async,data=writeback,barrier=0,nouser_xattr,noacl,journal_async_commit,delalloc,max_batch_time=50000,noauto_da_alloc,dioread_nolock,noatime,nodiratime,discard   0 2
+# /home was on /dev/sdc1 during installation
+UUID=7fa16b1f-e6f2-47a3-901c-5781b4782480   /home       ext4    relatime,nodiratime,discard  0 2
 # /ssd-cache was on /dev/sdc2 during installation
-UUID=4693e1df-0f61-4239-8fc5-39f8df2fe7e9 /ssd-cache  ext4    relatime,nodiratime,discard  0 2
+UUID=cdc593d1-ad42-48db-a44e-43b959bc10b5   /ssd-cache  ext4    relatime,nodiratime,discard  0 2
 # /spare1 was on /dev/sdc3 during installation
-UUID=646e538c-e58a-4dad-be70-2886f75bcd34 /spare1     ext4    noatime,nodiratime,discard   0 2
+UUID=b67dae08-d68d-4062-b6b9-905aa92a85b7   /spare1     ext4    noatime,nodiratime,discard   0 2
 #
 # TMPFS
 #
-none                                      /tmp        tmpfs   noatime,nodiratime           0 0
-none                                      /var/tmp    tmpfs   relatime,nodiratime          0 0
+none                                      /tmp        tmpfs   noatime,nodiratime             0 0
+none                                      /var/tmp    tmpfs   relatime,nodiratime            0 0
 #
-# Network mounts
+# Network mounts  [ paren eFy wed jSy ]
 #
-//10.1.1.2/homes   /net/whs/homes  cifs   defaults,username=Dad,password=paren eFy wed jSy 0 2
+//10.1.1.2/homes   /net/whs/homes  cifs   defaults,username=Dad,password=paren eFy wed jSy   0 2
 EOF
