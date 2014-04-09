@@ -369,7 +369,20 @@
    ;;
    ;; Add elements to this list to avoid being queried when visiting
    ;; file with Local Variables: sections.
-   '((folded-file . t)
+   '((eval ignore-errors "Write-contents-functions is a buffer-local alternative to before-save-hook"
+           (add-hook
+            (quote write-contents-functions)
+            (lambda nil
+              (delete-trailing-whitespace)
+              nil))
+           (require
+            (quote whitespace))
+           "Sometimes the mode needs to be toggled off and on."
+           (whitespace-mode 0)
+           (whitespace-mode 1))
+     (whitespace-line-column . 80)
+     (whitespace-style face trailing lines-tail)
+     (folded-file . t)
      (folding-mode . t)
      )))
 
@@ -896,10 +909,28 @@ mouse-3: go to end")
  )
 
 ;;}}}
-;;{{{  Other stuff
+;;{{{  Auto-modes and other stuff
+
+;; Recognize .bsh and .dsh as shell scripts
+(setq auto-mode-alist (cons '("\\.[bd]sh\\'" . sh-mode) auto-mode-alist))
 
 ;; Display Windows extended glyphs (instead of things like \223)
 (standard-display-8bit 128 255)
+
+;;}}}
+;;{{{  Popwin and guide-key
+
+(add-to-list 'el-get-sources 'popwin)
+(my/el-get-install "popwin")
+
+(add-to-list 'el-get-sources
+             '(:name guide-key
+                     :description "Guide the following key bindings automatically and dynamically"
+                     :website     "https://github.com/kbkbkbkb1/guide-key.git"
+                     :type        github
+                     :pkgname     "kbkbkbkb1/guide-key"
+                     :features    (guide-key)))
+(my/el-get-install "guide-key")
 
 ;;}}}
 
@@ -1432,8 +1463,6 @@ This command is designed to be used whether you are already in Info or not."
                   (message "Symbol not bound: %S" symbol)))))
         (t (message "No symbol at point"))))
 
-
-
 ;;}}}
 ;;{{{  Browsing and completion (helm, ido, smex)
 
@@ -1662,15 +1691,11 @@ An alternate approach would be after-advice on isearch-other-meta-char."
   (interactive "BShell name: ")
   (shell BUFFER))
 
-(setenv "TERM ansi")
+(setenv "TERM eterm-color")
 (setenv "PAGER" "cat")  ; Use the transcript in lieu of a classic pager
 
-(defun my/shell-mode-hook-function ()
-  (ansi-color-for-comint-mode-on)
-  )
-
 (my/custom-set-variables
- '(shell-mode-hook 'my/shell-mode-hook-function)
+ '(shell-mode-hook 'ansi-color-for-comint-mode-on)
  )
 
 ;; The dirtrack package can be more reliable than shell-dirtrack-mode.

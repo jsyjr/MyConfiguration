@@ -164,7 +164,23 @@ mouse-3: Remove current window from display")))))
  '(pretty-control-l-mode t)
  '(recentf-save-file "~/.emacs.d/recentf")
  '(require-final-newline (quote query))
- '(safe-local-variable-values (quote ((folded-file . t) (folding-mode . t))))
+ '(safe-local-variable-values
+   (quote
+    ((eval ignore-errors "Write-contents-functions is a buffer-local alternative to before-save-hook"
+           (add-hook
+            (quote write-contents-functions)
+            (lambda nil
+              (delete-trailing-whitespace)
+              nil))
+           (require
+            (quote whitespace))
+           "Sometimes the mode needs to be toggled off and on."
+           (whitespace-mode 0)
+           (whitespace-mode 1))
+     (whitespace-line-column . 80)
+     (whitespace-style face trailing lines-tail)
+     (folded-file . t)
+     (folding-mode . t))))
  '(scalable-fonts-allowed t)
  '(scroll-conservatively 1)
  '(semantic-complete-inline-analyzer-displayor-class (quote semantic-displayor-tooltip))
@@ -180,7 +196,7 @@ mouse-3: Remove current window from display")))))
  '(server-switch-hook (quote my/pop-file-name-history))
  '(server-temp-file-regexp "^/tmp/\\|.*\\.tmp")
  '(server-window (quote switch-to-buffer-other-frame))
- '(shell-mode-hook (quote my/shell-mode-hook-function))
+ '(shell-mode-hook (quote ansi-color-for-comint-mode-on))
  '(show-paren-delay 0)
  '(show-paren-mode t)
  '(show-trailing-whitespace t)
