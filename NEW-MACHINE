@@ -7,20 +7,22 @@ sudo apt-get install \
   automake \
   autotools-dev \
   bison \
-  bsd-mailx \
   bzr \
   ccache \
   clang \
   curl \
   doxygen-latex \
   emacs \
+  exuberant-ctags \
   flex \
   fonts-dejavu \
   git \
   global \
   gparted \
   graphviz \
+  heirloom-mailx \
   libXpm-dev \
+  libboost-all-dev \
   libdbus-1-dev \
   libgconf2-dev \
   libgif-dev \
@@ -39,6 +41,7 @@ sudo apt-get install \
   libxml2-dev \
   llvm \
   mercurial \
+  msmtp \
   network-manager-openconnect-gnome \
   texinfo \
   texlive-fonts-extra \
@@ -46,6 +49,7 @@ sudo apt-get install \
 
 
 sudo chmod a+w /ccc
+CCACHE_DIR=/ccc ccache -F0 -M0
 sudo mkdir -p /net/whs/homes
 
 # Download my configuration and install it in my home directory
@@ -96,6 +100,26 @@ cd emacs
 ./autogen.sh
 ~/bin/rebuild-emacs
 xrdb ~/.Xresources
+# sudo make install
+# sudo update-alternatives \
+#  --install /usr/bin/emacs                                                 emacs              /usr/local/emacs/bin/emacs 1 \
+#  --slave   /usr/share/icons/hicolor/128x128/apps/emacs.png                emacs-128x128.png  /usr/local/emacs/share/icons/hicolor/128x128/apps/emacs.png \
+#  --slave   /usr/share/icons/hicolor/16x16/apps/emacs.png                  emacs-16x16.png    /usr/local/emacs/share/icons/hicolor/16x16/apps/emacs.png \
+#  --slave   /usr/share/icons/hicolor/24x24/apps/emacs.png                  emacs-24x24.png    /usr/local/emacs/share/icons/hicolor/24x24/apps/emacs.png \
+#  --slave   /usr/share/icons/hicolor/32x32/apps/emacs.png                  emacs-32x32.png    /usr/local/emacs/share/icons/hicolor/32x32/apps/emacs.png \
+#  --slave   /usr/share/icons/hicolor/48x48/apps/emacs.png                  emacs-48x48.png    /usr/local/emacs/share/icons/hicolor/48x48/apps/emacs.png \
+#  --slave   /usr/share/icons/hicolor/scalable/mimetypes/emacs-document.svg emacs-document.svg /usr/local/emacs/share/icons/hicolor/scalable/mimetypes/emacs-document.svg \
+#  --slave   /usr/share/man/man1/emacs.1.gz                                 emacs.1.gz         /usr/local/emacs/share/man/man1/emacs.1.gz \
+#  --slave   /usr/share/icons/hicolor/scalable/apps/emacs.svg               emacs.svg          /usr/local/emacs/share/icons/hicolor/scalable/apps/emacs.svg \
+#
+# sudo update-alternatives \
+#  --install /usr/bin/emacsclient                                           emacsclient        /usr/local/emacs/bin/emacsclient 1 \
+#  --slave   /usr/share/man/man1/emacsclient.1.gz                           emacsclient.1.gz   /usr/local/emacs/share/man/man1/emacsclient.1.gz \
+#
+# sudo update-alternatives \
+#  --install /usr/bin/ebrowse                                               ebrowse            /usr/local/emacs/bin/ebrowse 1 \
+#  --slave   /usr/share/man/man1/ebrowse.1.gz                               ebrowse.1.gz       /usr/local/emacs/share/man/man1/ebrowse.1.gz \
+
 
 # Download and build doxygen
 #
@@ -104,8 +128,28 @@ git clone https://github.com/doxygen/doxygen.git
 cd doxygen
 ~/bin/rebuild-doxygen
 make -j8
-# make install
+# sudo make install
 
+cat >~/.mailrc <<EOF
+set from="john.yatess@sparqlcity.com"
+set sendmail="/usr/bin/msmtp"
+set message-sendmail-extra-arguments="-a gmail"
+EOF
+
+cat >~/.msmtp <<EOF
+account gmail
+host smtp.gmail.com
+port 587
+tls on
+tls_trust_file /usr/share/ca-certificates/mozilla/Equifax_Secure_CA.crt
+auth on
+
+user john.yates@sparqlcity.com
+from john.yates@sparqlcity.com
+password ********
+
+account default: gmail
+EOF
 
 cat >/tmp/fstab <<EOF
 # /etc/fstab: static file system information.
@@ -125,14 +169,14 @@ UUID=bc626005-2d72-4ad9-b92c-57190da8de8f   /var        ext4    relatime,nodirat
 # swap was on /dev/sda3 during installation
 UUID=5edf0681-dbe7-4334-b2da-17e278304fc1   none        swap    sw                           0 0
 # /bulk was on /dev/sda4 during installation
-UUID=ee510215-f3a4-4894-9e66-623b2c0a760c   /bulk       ext4    relatime,nodiratime          0 2
+UUID=ee510215-f3a4-4894-9e66-623b2c0a760c   /bulk       ext4    async,data=writeback,barrier=0,nouser_xattr,noacl,journal_async_commit,delalloc,max_batch_time=50000,noauto_da_alloc,dioread_nolock,noatime,nodiratime,discard  0 2
 #
 # /dev/sdb
 #
 # / was on /dev/sdb1 during installation
 UUID=2b529276-47f7-4c04-bc6e-c68692a2787d   /           ext4    relatime,nodiratime,discard  0 1
 # /ccache was on /dev/sdb2 during installation
-UUID=32f76819-6490-4814-9d66-484a734cc403   /ccc        ext4    async,data=writeback,barrier=0,nouser_xattr,noacl,journal_async_commit,delalloc,max_batch_time=50000,noauto_da_alloc,dioread_nolock,noatime,nodiratime,discard   0 2
+UUID=32f76819-6490-4814-9d66-484a734cc403   /ccc        ext4    async,data=writeback,barrier=0,nouser_xattr,noacl,journal_async_commit,delalloc,max_batch_time=50000,noauto_da_alloc,dioread_nolock,noatime,nodiratime,discard  0 2
 # /spare0 was on /dev/sdb3 during installation
 UUID=f0c73aca-c916-4391-b498-9b0f57020c8a   /spare0     ext4    noatime,nodiratime,discard   0 2
 #
