@@ -9,7 +9,7 @@
 [difftool]
 	prompt = false
 [difftool "emacs"]
-	cmd = emacsclient -a \"\" -F \"((fullscreen . maximized))\" -e \"(ediff-files \\\"${REMOTE}\\\" \\\"${LOCAL}\\\")\"
+	cmd = emacsclient -cqa \"\" -F \"((fullscreen . maximized))\" -e \"(ediff-files \\\"${REMOTE}\\\" \\\"${LOCAL}\\\")\"
 [merge]
 	log = true
 [push]
