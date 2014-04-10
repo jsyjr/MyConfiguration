@@ -20,9 +20,6 @@
 (defconst copyright-owner "John S Yates Jr")
 (put 'copyright-owner 'safe-local-variable 'stringp)
 
-(electric-indent-mode -1)
-
-
 ;; Too many false alarms
 ;; (setq debug-on-error t)
 
@@ -369,7 +366,9 @@
    ;;
    ;; Add elements to this list to avoid being queried when visiting
    ;; file with Local Variables: sections.
-   '((eval ignore-errors "Write-contents-functions is a buffer-local alternative to before-save-hook"
+   '((eval add-to-list 'auto-mode-alist
+         '("\\.cgr\\'" . c++-mode))
+     (eval ignore-errors "Write-contents-functions is a buffer-local alternative to before-save-hook"
            (add-hook
             (quote write-contents-functions)
             (lambda nil
@@ -394,7 +393,8 @@
 ;;}}}
 
 ;;=== Visuals ==========================================================
-;;
+;;{{{  Xresources
+
 ;; For faster startup (becasue of fewer interactions with xserver) use
 ;; 'xrdb ~/.Xresources' to kill menubar, toolbar & vertical scrollbars.
 ;;
@@ -403,7 +403,8 @@
 ;; Emacs.menuBar: off
 ;; Emacs.toolBar: off
 ;; Emacs.verticalScrollBars: off
-;;
+
+;;}}}
 ;;{{{  Proportional fonts
 
 (mapc
@@ -2106,7 +2107,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
      (c-add-style
       "jsy"
       '((c-echo-syntactic-information-p . t)
-        (c-basic-offset . 4)
+        (c-basic-offset . 2)
         (c-comment-only-line-offset 0 . 0)
         ;(c-auto-align-backslashes nil)
         (c-cleanup-list

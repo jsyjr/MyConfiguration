@@ -166,7 +166,11 @@ mouse-3: Remove current window from display")))))
  '(require-final-newline (quote query))
  '(safe-local-variable-values
    (quote
-    ((eval ignore-errors "Write-contents-functions is a buffer-local alternative to before-save-hook"
+    ((eval add-to-list
+           (quote auto-mode-alist)
+           (quote
+            ("\\.cgr\\'" . c++-mode)))
+     (eval ignore-errors "Write-contents-functions is a buffer-local alternative to before-save-hook"
            (add-hook
             (quote write-contents-functions)
             (lambda nil
