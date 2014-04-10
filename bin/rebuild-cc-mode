@@ -1,0 +1,11 @@
+#!/bin/dash
+
+set -e
+
+if [ ! -f "admin/filladapt-orig.el" ]; then
+   echo "Working directory ( $(pwd) ) is not the root of a cc-mode source tree."; exit 1
+fi
+
+hg pull
+~/repos/emacs/src/emacs --batch --eval '(batch-byte-recompile-directory 0)' .
+

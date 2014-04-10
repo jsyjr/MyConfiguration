@@ -120,6 +120,12 @@ xrdb ~/.Xresources
 #  --install /usr/bin/ebrowse                                               ebrowse            /usr/local/emacs/bin/ebrowse 1 \
 #  --slave   /usr/share/man/man1/ebrowse.1.gz                               ebrowse.1.gz       /usr/local/emacs/share/man/man1/ebrowse.1.gz \
 
+# Download and build the latest version of cc-mode
+#
+cd ~/repos
+hg clone http://hg.code.sf.net/p/cc-mode/cc-mode cc-mode
+cd cc-mode
+~/bin/rebuild-cc-mode
 
 # Download and build doxygen
 #
