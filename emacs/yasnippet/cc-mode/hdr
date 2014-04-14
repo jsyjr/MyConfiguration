@@ -5,15 +5,11 @@
 # key:  ``header
 #
 # --
-#ifndef _`(replace-regexp-in-string "[.]" "_" (file-name-nondirectory (buffer-file-name)))`_
-#define _`(replace-regexp-in-string "[.]" "_" (file-name-nondirectory (buffer-file-name)))`_
-
 //========================================================================
 ///\file: `(file-name-nondirectory (buffer-file-name))` ${1:single line file description}
 //
 // Copyright (c) `(nth 5 (decode-time))` `copyright-owner`.  All rights reserved.
 //========================================================================
+#pragma once
 
 $0
-
-#endif // _`(replace-regexp-in-string "[.]" "_" (file-name-nondirectory (buffer-file-name)))`_
