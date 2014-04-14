@@ -61,8 +61,8 @@ rm -r ~/MyConfiguration ~/Documents ~/Music ~/Public ~/Templates ~/Videos ~/exam
 
 # Install the Dina bitmapped font
 #
-sudo mkdir -p /usr/local/share/fonts/dina
-sudo cp -r ~/.dinafont/dina /usr/local/share/fonts/dina
+sudo mkdir -p /usr/local/share/fonts
+sudo cp -r ~/.dinafont/dina /usr/local/share/fonts
 cd /etc/fonts/conf.d
 sudo rm 70-no-bitmaps.conf
 sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
