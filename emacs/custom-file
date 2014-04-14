@@ -5,13 +5,12 @@
  ;; If there is more than one, they won't work right.
  '(ac-auto-show-menu t)
  '(ac-auto-start nil)
- '(ac-comphist-file "/home/jyates/.emacs.d/auto-complete/history.dat")
+ '(ac-comphist-file "~/.emacs.d/auto-complete/history.dat")
  '(ac-delay 0.5)
  '(ac-dictionary-directories
    (quote
-    ("/home/jyates/emacs/auto-complete/mode-dicts" "/home/jyates/.emacs.d/el-get/auto-complete/dict")))
- '(ac-dictionary-files (quote ("/home/jyates/emacs/auto-complete/user-dict")))
- '(ac-trigger-key "TAB")
+    ("~/emacs/auto-complete/mode-dicts" "~/.emacs.d/el-get/auto-complete/dict")))
+ '(ac-dictionary-files (quote ("~/emacs/auto-complete/user-dict")))
  '(ac-use-menu-map t)
  '(activate-mark-hook (quote my/turn-on-delete-selection-mode) t)
  '(ansi-color-names-vector
@@ -76,7 +75,7 @@
  '(gdb-create-source-file-list nil)
  '(gdb-many-windows t)
  '(gdb-stack-buffer-addresses t)
- '(global-auto-complete-mode t)
+ '(global-auto-complete-mode t nil (auto-complete))
  '(global-ede-mode t)
  '(global-font-lock-mode t)
  '(global-hl-line-mode t)
@@ -160,8 +159,8 @@ mouse-3: Remove current window from display")))))
  '(org-modules
    (quote
     (org-docview org-info org-habit org-inlinetask org-protocol org-mouse)))
- '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)))
- '(pretty-control-l-mode t)
+ '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)) nil (pp-c-l))
+ '(pretty-control-l-mode t nil (pp-c-l))
  '(recentf-save-file "~/.emacs.d/recentf")
  '(require-final-newline (quote query))
  '(safe-local-variable-values

@@ -820,9 +820,8 @@ mouse-3: go to end")
 (add-to-list 'el-get-sources
              '(:name  pp-c-l
                      :description "Display Control-l characters as a full-width rule"
-                     :website     "https://github.com/emacsmirror/pp-c-l"
-                     :type        github
-                     :pkgname     "emacsmirror/pp-c-l"
+                     :website     "http://www.emacswiki.org/emacs/download/pp-c-l.el"
+                     :type        emacswiki
                      :after       (progn
                                     (add-hook 'window-setup-hook
                                               'refresh-pretty-control-l)
@@ -833,8 +832,8 @@ mouse-3: go to end")
 
 ;; Universally display ^L as a window-width horizontal rule
 (my/custom-set-variables
- '(pretty-control-l-mode t)
- '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)))
+ '(pretty-control-l-mode t nil (pp-c-l))
+ '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)) nil (pp-c-l))
 ;;'(pp^L-^L-string-pre "")               ; eliminate preceding blank line
  )
 
@@ -941,7 +940,7 @@ mouse-3: go to end")
  '(kill-whole-line t)
  )
 
-;;{{{
+;;{{{  smarter-move-beginning-of-line
 
 ;; (defun smarter-move-beginning-of-line (arg)
 ;;   "Move point back beginning of line or of indentation.
@@ -971,7 +970,6 @@ mouse-3: go to end")
 ;;                 'smarter-move-beginning-of-line)
 
 ;;}}}
-
 ;;{{{  Delete selection mode
 
 (defun my/turn-on-delete-selection-mode ()
@@ -1247,43 +1245,94 @@ convert it to readonly/view-mode."
 ;;}}}
 
 ;;=== Abbreviation and expansion =======================================
+;;{{{  yasnippet
+
+(add-to-list 'el-get-sources 'yasnippet)
+(my/el-get-install "yasnippet")
+
+(my/custom-set-variables
+ '(yas-global-mode t nil (yasnippet))
+ '(yas-snippet-dirs "~/emacs/yasnippet" nil (yasnippet)))
+
+(add-hook 'yas/minor-mode-hook 'yas-reload-all)
+
+;; reload modified snippets
+(defun my/yasnippet-reload-on-save ()
+  "Reload the entire collection of snippets when one gets modified."
+  (if (eq major-mode 'snippet-mode)
+      ;;  (mapc 'yas/load-directory yas/snippet-dirs)))
+      (yas-reload-all))) ; no mapc with just a single directory root
+
+(add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
+
+;;;; auto-mode-alist
+(add-to-list 'auto-mode-alist '("emacs/yasnippet/" . snippet-mode))
+(add-to-list 'auto-mode-alist '("emacs/yasnippet/.+\\.el$" . emacs-lisp-mode))
+
+
+;; ;; Another note: The new 0.7 yasnippet.el messes things up with
+;; ;; anything.el. You need to do this:
+;; ;;
+;; ;; Need to replace the following in anything-c-yasnippet.el:
+;; ;;   yas/snippets/table-hash      -> yas/table-hash
+;; ;;   yas/snippets/table-templates -> yas/table-templates
+;; ;;
+;; ;; (require 'anything-c-yasnippet)
+
+;;}}}
 ;;{{{  auto-complete
 
-(add-to-list 'el-get-sources 'auto-complete)
+;; http://truongtx.me/2013/01/06/config-yasnippet-and-autocomplete-on-emacs
+;; suggests that auto-complete needs to be activated _after_ yasnippet.
+
+;; Not autoloaded in current sources
+;; (autoload 'ac-set-trigger-key "auto-complete"
+;;   "Set `ac-trigger-key' to `KEY'. It is recommemded to use this function instead of calling `setq'.
+
+;; \(fn KEY)" t)
+
+
+(add-to-list 'el-get-sources
+             '(:name auto-complete
+                     :website     "https://github.com/auto-complete/auto-complete"
+                     :description "The most intelligent auto-completion extension."
+                     :type        github
+                     :pkgname     "auto-complete/auto-complete"
+                     :after       (progn
+                                    (setq-default ac-sources '(ac-source-abbrev
+                                                               ac-source-dictionary
+                                                               ac-source-words-in-same-mode-buffers))
+
+                                    (defun my/ac-cc-mode-setup ()
+                                      (setq ac-sources (append '(ac-source-yasnippet
+                                                                 ac-source-semantic
+                                                                 ac-source-semantic-raw
+                                                                 ;; ac-source-gtags ; no "using namespace XX;"
+                                                                 ) ac-sources))
+                                      (setq ac-source-yasnippet nil)
+                                      )
+
+                                    (add-hook 'c-mode-common-hook 'my/ac-cc-mode-setup)
+                                    (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
+
+                                    (ac-set-trigger-key "TAB")
+                                    (ac-set-trigger-key "<tab>"))
+                     :depends (yasnippet popup fuzzy)))
+
 (my/el-get-install "auto-complete")
+(require 'auto-complete)
 
 (my/custom-set-variables
- '(global-auto-complete-mode t))
-
-;; (eval-after-load "auto-complete" '(diminish 'auto-complete-mode))
-
-;; ;;(add-to-list 'ac-dictionary-directories (expand-file-name "dict" pdir))
-;; (require 'auto-complete-config)
-(add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
-(add-hook 'c-mode-common-hook 'my/ac-cc-mode-setup)
-
-(setq-default ac-sources '(ac-source-abbrev
-                           ac-source-dictionary
-                           ac-source-words-in-same-mode-buffers))
-
-(defun my/ac-cc-mode-setup ()
-  (setq ac-sources (append '(ac-source-semantic
-                             ac-source-semantic-raw
-                             ;; ac-source-yasnippet
-                             ;; ac-source-gtags ; no "using namespace XX;"
-                             ) ac-sources)))
-
-(my/custom-set-variables
+ '(global-auto-complete-mode t nil (auto-complete))
  '(ac-auto-start nil)
  '(ac-auto-show-menu t)
  '(ac-delay 0.5)
- '(ac-trigger-key "TAB")
  '(ac-use-menu-map t)
- '(ac-comphist-file            "/home/jyates/.emacs.d/auto-complete/history.dat")
- '(ac-dictionary-directories '("/home/jyates/emacs/auto-complete/mode-dicts"
-                               "/home/jyates/.emacs.d/el-get/auto-complete/dict"
+ '(ac-comphist-file            "~/.emacs.d/auto-complete/history.dat")
+ '(ac-dictionary-directories '("~/emacs/auto-complete/mode-dicts"
+                               "~/.emacs.d/el-get/auto-complete/dict"
                                ))
- '(ac-dictionary-files       '("/home/jyates/emacs/auto-complete/user-dict"
+ '(ac-dictionary-files       '("~/emacs/auto-complete/user-dict"
                                ))
  )
 
@@ -1319,47 +1368,6 @@ convert it to readonly/view-mode."
 ;; ac-define-source semantic-raw
 ;; ac-define-source slime
 ;; ac-define-source yasnippet
-
-;;}}}
-;;{{{  yasnippet
-
-(add-to-list 'el-get-sources 'yasnippet)
-(my/el-get-install "yasnippet")
-(require 'yasnippet)
-
-(add-to-list 'el-get-sources 'dropdown-list)
-(my/el-get-install "dropdown-list")
-(require 'dropdown-list)
-
-(my/custom-set-variables
- '(yas-global-mode t nil (yasnippet))
- '(yas-snippet-dirs "~/emacs/yasnippet" nil (yasnippet)))
-
-(add-hook 'yas/minor-mode-hook 'yas-reload-all)
-
-;; reload modified snippets
-(defun my/yasnippet-reload-on-save ()
-  "Reload the entire collection of snippets when one gets modified."
-  (if (eq major-mode 'snippet-mode)
-      ;;  (mapc 'yas/load-directory yas/snippet-dirs)))
-      (yas-reload-all))) ; no mapc with just a single directory root
-
-(add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
-
-
-;;;; auto-mode-alist
-(add-to-list 'auto-mode-alist '("emacs/yasnippet/" . snippet-mode))
-(add-to-list 'auto-mode-alist '("emacs/yasnippet/.+\\.el$" . emacs-lisp-mode))
-
-
-;; ;; Another note: The new 0.7 yasnippet.el messes things up with
-;; ;; anything.el. You need to do this:
-;; ;;
-;; ;; Need to replace the following in anything-c-yasnippet.el:
-;; ;;   yas/snippets/table-hash      -> yas/table-hash
-;; ;;   yas/snippets/table-templates -> yas/table-templates
-;; ;;
-;; ;; (require 'anything-c-yasnippet)
 
 ;;}}}
 
@@ -2444,8 +2452,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
              '(:name keydef
                      :description "A simpler way to define keys, with kbd syntax"
                      :type        github
-                     :pkgname     "emacsmirror/keydef"
-                     :url         "https://github.com/emacsmirror/keydef"
+                     :pkgname     "jschaf/keydef"
+                     :url         "https://github.com/jschaf/keydef"
                      :features    keydef))
 (my/el-get-install "keydef")
 
