@@ -10,6 +10,14 @@ wget http://st.suckless.org/patches/st-no-bold-colors.diff   # st.c
 wget http://st.suckless.org/patches/st-solarized-light.diff  # config.def.h
 wget http://st.suckless.org/patches/st-solarized-dark.diff   # config.def.h
 
+sed -i.bak \
+    -e 's/#073642/#262626/g' \
+    -e 's/#eee8d5/#dcdcdc/g' \
+    -e 's/#002b36/#000000/g' \
+    -e 's/#fdf6e3/#fdfdfd/g' \
+    st-solarized-light.diff st-solarized-dark.diff
+
+
 makeSt() {
   git reset --hard
   git pull
@@ -17,6 +25,12 @@ makeSt() {
   git apply st-no-bold-colors.diff
   git apply st-solarized-$1.diff
   cp config.def.h config.h
+  sed -i.bak \
+      -e 's/Liberation Mono/Dina/g' \
+      -e 's/:pixelsize=12/:pixelsize=13/g' \
+      -e 's/:antialias=false/:antialias=false/g' \
+      -e 's/:autohint=false/:autohint=false/g' \
+    config.h
   CFLAGS='-march=corei7' make
   cp st ~/bin/st-$1
 }
@@ -24,4 +38,4 @@ makeSt() {
 makeSt light
 makeSt dark
 
-rm -f *.diff
+rm -f *.diff *.bak
