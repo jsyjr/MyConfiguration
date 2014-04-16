@@ -1,9 +1,8 @@
 # -*- mode: snippet -*-
-# name: jyates <john@yates-sheets.org>
-# key: namespace
+# contributor: jyates <john@yates-sheets.org>
 #
 # name: namespace
-# key:  ``namespace
+# key:  ``ns
 # --
 namespace ${1:name} {
 

@@ -1,8 +1,8 @@
 # -*- mode: snippet -*-
 # contributor: jyates <john@yates-sheets.org>
 #
-# name: new-gtest-unit-test
-# key:  ``gtest
+# name: new test
+# key:  ``gt
 #
 # --
 #include `"\""``(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`.h$1`"\""`

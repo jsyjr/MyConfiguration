@@ -1263,7 +1263,8 @@ convert it to readonly/view-mode."
       ;;  (mapc 'yas/load-directory yas/snippet-dirs)))
       (yas-reload-all))) ; no mapc with just a single directory root
 
-(add-hook 'after-save-hook 'my/yasnippet-reload-on-save)
+(eval-after-load "yasnippet"
+    '(add-hook 'after-save-hook 'my/yasnippet-reload-on-save))
 
 ;;;; auto-mode-alist
 (add-to-list 'auto-mode-alist '("emacs/yasnippet/" . snippet-mode))
@@ -2081,7 +2082,7 @@ contrast comments documenting functions get ident"
 
 ;; Closely parallels cc-align.el's c-lineup-arglist-operators
 (defun my/c-lineup-arglist-&&-or-|| (langelem)
-  "Line up lines starting with && or ||  under the open paren.
+  "Line up lines starting with && or || under the open paren.
 Return nil on lines that start with neither && nor ||, to leave
 those cases to other line-up functions.  Example:
 
@@ -2178,7 +2179,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
          (knr-argdecl-intro . 5)
          (label . 0)
          (lambda-intro-cont . +)
-         (member-init-cont . 0)
+         (member-init-cont . c-lineup-multi-inher)
          (member-init-intro . 0)
          (module-close . 0)
          (module-open . 0)

@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# contributor: jyates <john@yates-sheets.org>
+#
+# name: new enum
+# key:  ``enum
+#
+# --
+enum ${1:Name}
+/// $0
+{
+};
