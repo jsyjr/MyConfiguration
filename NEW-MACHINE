@@ -21,6 +21,7 @@ sudo apt-get install \
   gparted \
   graphviz \
   heirloom-mailx \
+  hugepages \
   libXpm-dev \
   libboost-all-dev \
   libdbus-1-dev \
