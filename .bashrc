@@ -119,7 +119,6 @@ sbtags () {
     rm -f acproto
     ./amake -cache >/dev/null
     ./amake -dumponly am.dmp
-    emacsclient -e "(cd \"$(pwd)\")"
     emacsclient -e "(am-scan \"$(pwd)/am.dmp\")"
     echo "$(pwd): am.dmp refreshed and reloaded; rebuilding tags file and TAGS symlink"
     ( command cd src \
