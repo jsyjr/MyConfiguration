@@ -874,7 +874,7 @@ mouse-3: go to end")
  )
 
 ;;}}}
-;;{{{  Tab width
+;;{{{  Width to use for hard tabs
 
 (defun my/set-buffer-local-tab-width-to-4 ()
   "Make display engine's tab-width buffer local and set it to 4."
