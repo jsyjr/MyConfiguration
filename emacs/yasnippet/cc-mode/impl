@@ -5,12 +5,15 @@
 # key:  ``impl
 #
 # --
-#include `"\""``(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`.h$1`"\""`
+#include `"\""``(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`.hpp`"\""`
 
 //========================================================================
-///\file: `(file-name-nondirectory (buffer-file-name))` ${2:single line file description}
+// Copyright (c) `(nth 5 (decode-time))` `copyright-owner`,  All rights reserved.
 //
-// Copyright (c) `(nth 5 (decode-time))` `copyright-owner`  All rights reserved.
+///\\impl{ ${1:`
+     (let ((case-fold-search nil))
+          (replace-regexp-in-string "^\\([a-z]+\\)" "\\&::"
+            (file-name-base (buffer-file-name))))`} }
 //========================================================================
 
 $0

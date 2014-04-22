@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# contributor: jyates <john@yates-sheets.org>
+#
+# name: more doxygen details
+# key:  ``more
+#
+# --
+///\\${1:$$(yas-choose-value '("class" "enum" "struct" "union"))}{ ${2:`
+     (let ((case-fold-search nil))
+          (replace-regexp-in-string "^\\([a-z]+\\)" ""
+            (file-name-base (buffer-file-name))))`}, `
+     (file-name-base (buffer-file-name))`.hpp }
+///
+///\\par ${3:Overview}
+///
+/// $0
