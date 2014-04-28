@@ -69,10 +69,11 @@ sudo rm 70-no-bitmaps.conf
 sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
 
 cd /tmp
-wget http://sourceforge.net/projects/sourcecodepro.adobe/files/SourceCodePro_FontsOnly-1.017.zip
-unzip SourceCodePro_FontsOnly-1.017.zip
+wget http://sourceforge.net/projects/sourcecodepro.adobe/files/latest/download -O SourceCodePro.zip
+unzip SourceCodePro.zip
+rm -f SourceCodePro.zip
 sudo mkdir -p /usr/local/share/fonts/SourceCodePro
-sudo cp /tmp/SourceCodePro_FontsOnly-1.017/OTF/* /usr/local/share/fonts/SourceCodePro
+sudo cp /tmp/SourceCodePro*/OTF/* /usr/local/share/fonts/SourceCodePro
 rm -rf /tmp/SourceCodePro*
 
 sudo dpkg-reconfigure fontconfig-config
