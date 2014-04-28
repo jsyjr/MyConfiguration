@@ -8,6 +8,14 @@ tags
 BROWSE
 TAGS
 
+# In my setup ~/asd is a symbolic link to ~/wrk/asd
+asd
+
+# Files in ~/bin
+doxygen*
+st-dark
+st-light
+
 # Hidden files in the root of the home directory
 /.*
 !/.bashrc
