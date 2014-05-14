@@ -6,7 +6,7 @@ sudo apt-get install \
   autoconf \
   automake \
   autotools-dev \
-  bison \
+  build-essential \
   bzr \
   ccache \
   clang \
@@ -43,27 +43,42 @@ sudo apt-get install \
   llvm \
   mercurial \
   msmtp \
+  m4 \
   network-manager-openconnect-gnome \
+  pepperflashplugin-nonfree \
   texinfo \
   texlive-fonts-extra \
   unison-all-gtk \
+  zlib1g-dev \
 
+
+# Install an older bison (2.7)
+#
+cd /tmp
+wget http://ftp.gnu.org/gnu/bison/bison-2.7.tar.xz
+tar xJf bison-2.7.tar.xz
+cd bison-2.7
+./configure
+make
+sudo make install
+cd /tmp
+rm -rf bison-2.7*
 
 sudo chmod a+w /ccc
 CCACHE_DIR=/ccc ccache -F0 -M0
-sudo mkdir -p /net/whs/homes
 
 # Download my configuration and install it in my home directory
 #
 cd ~
+rm -rf ~/MyConfiguration ~/Documents ~/Music ~/Public ~/Templates ~/Videos ~/examples.desktop
 git clone https://github.com/jsyjr/MyConfiguration.git
 mv ~/MyConfiguration/{*,.[a-z]*} ~
-rm -r ~/MyConfiguration ~/Documents ~/Music ~/Public ~/Templates ~/Videos ~/examples.desktop
+rm -rf ~/MyConfiguration
 
 # Install the Dina bitmapped font
 #
-sudo mkdir -p /usr/local/share/fonts
-sudo cp -r ~/.dinafont/dina /usr/local/share/fonts
+sudo mkdir -p /usr/local/share/fonts/Dina
+sudo cp ~/.dinafont/dina/* /usr/local/share/fonts/Dina
 cd /etc/fonts/conf.d
 sudo rm 70-no-bitmaps.conf
 sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
@@ -71,25 +86,33 @@ sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
 cd /tmp
 wget http://sourceforge.net/projects/sourcecodepro.adobe/files/latest/download -O SourceCodePro.zip
 unzip SourceCodePro.zip
-rm -f SourceCodePro.zip
 sudo mkdir -p /usr/local/share/fonts/SourceCodePro
-sudo cp /tmp/SourceCodePro*/OTF/* /usr/local/share/fonts/SourceCodePro
+sudo cp /tmp/SourceCodePro*/WOFF/OTF/* /usr/local/share/fonts/SourceCodePro
 rm -rf /tmp/SourceCodePro*
+
+cd /tmp
+http://www.cosmix.org/software/files/DroidSansMonoSlashed.zip
+unzip DroidSansMonoSlashed.zip
+sudo mkdir -p /usr/local/share/fonts/DroidSansMonoSlashed
+sudo cp DroidSansMonoSlashed.ttf /usr/local/share/fonts/DroidSansMonoSlashed/DroidSansMonoSlashed.ttf
+rm -rf /tmp/DroidSansMonoSlashed*
 
 sudo dpkg-reconfigure fontconfig-config
 sudo dpkg-reconfigure fontconfig
 sudo fc-cache
 fc-list | grep Dina
+fc-list | grep Slashed
 fc-list | grep Source
 
 
 # Create a directory for projects to be cloned
 #
-mkdir ~/repos
+mkdir -p ~/repos
 
 # Download and build suckless st (st-light, st-dark)
 #
 cd ~/repos
+rm -rf ~/repos/st
 git clone http://git.suckless.org/st
 cd st
 ~/bin/rebuild-st
@@ -97,11 +120,13 @@ cd st
 # Download and build emacs
 #
 cd ~/repos
+rm -rf ~/repos/emacs
 git clone git://git.savannah.gnu.org/emacs.git
 cd emacs
 ./autogen.sh
 ~/bin/rebuild-emacs
 xrdb ~/.Xresources
+
 # sudo make install
 # sudo update-alternatives \
 #  --install /usr/bin/emacs                                                 emacs              /usr/local/emacs/bin/emacs 1 \
@@ -125,6 +150,7 @@ xrdb ~/.Xresources
 # Download and build the latest version of cc-mode
 #
 cd ~/repos
+rm -rf ~/repos/cc-mode
 hg clone http://hg.code.sf.net/p/cc-mode/cc-mode cc-mode
 cd cc-mode
 ~/bin/rebuild-cc-mode
@@ -132,6 +158,7 @@ cd cc-mode
 # Download and build doxygen
 #
 cd ~/repos
+rm -rf ~/repos/doxygen
 git clone https://github.com/doxygen/doxygen.git
 cd doxygen
 ~/bin/rebuild-doxygen
@@ -158,6 +185,8 @@ password ********
 
 account default: gmail
 EOF
+
+sudo mkdir -p /net/whs/homes
 
 cat >/tmp/fstab <<EOF
 # /etc/fstab: static file system information.
