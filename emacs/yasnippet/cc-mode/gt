@@ -16,6 +16,6 @@
             (file-name-base (buffer-file-name))))`} }
 //========================================================================
 
-#include "gtest.h"
+#include <gtest.h>
 
 $0
