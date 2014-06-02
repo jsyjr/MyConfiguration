@@ -48,8 +48,17 @@ sudo apt-get install \
   pepperflashplugin-nonfree \
   texinfo \
   texlive-fonts-extra \
+  thin-provisioning-tools \
   unison-all-gtk \
   zlib1g-dev \
+
+# We need to provide dmsetup access to the thin-provisioning libraries
+#
+if ! grep -q dm-thin-pool </etc/modules ; then
+  cp /etc/modules >/tmp/modules.$$
+  echo dm-thin-pool >>/tmp/modules.$$
+  sudo /tmp/modules.$$ >/etc/modules
+fi
 
 
 # Install an older bison (2.7)
@@ -77,26 +86,35 @@ rm -rf ~/MyConfiguration
 
 # Install the Dina bitmapped font
 #
+sudo rm    -f /usr/local/share/fonts/Dina
 sudo mkdir -p /usr/local/share/fonts/Dina
 sudo cp ~/.dinafont/dina/* /usr/local/share/fonts/Dina
 cd /etc/fonts/conf.d
-sudo rm 70-no-bitmaps.conf
+sudo rm -f 70-no-bitmaps.conf 70-yes-bitmaps.conf
 sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
 
+# Install Adobe's SourceCode Pro monospaced font
+#
+sudo rm    -f /usr/local/share/fonts/SourceCodePro
+sudo mkdir -p /usr/local/share/fonts/SourceCodePro
 cd /tmp
 wget http://sourceforge.net/projects/sourcecodepro.adobe/files/latest/download -O SourceCodePro.zip
 unzip SourceCodePro.zip
-sudo mkdir -p /usr/local/share/fonts/SourceCodePro
 sudo cp /tmp/SourceCodePro*/WOFF/OTF/* /usr/local/share/fonts/SourceCodePro
 rm -rf /tmp/SourceCodePro*
 
+# Install the Droid Sana Mono (slashed zero) bitmapped font
+#
 cd /tmp
-http://www.cosmix.org/software/files/DroidSansMonoSlashed.zip
-unzip DroidSansMonoSlashed.zip
+sudo rm    -r /usr/local/share/fonts/DroidSansMonoSlashed
 sudo mkdir -p /usr/local/share/fonts/DroidSansMonoSlashed
+wget http://www.cosmix.org/software/files/DroidSansMonoSlashed.zip
+unzip DroidSansMonoSlashed.zip
 sudo cp DroidSansMonoSlashed.ttf /usr/local/share/fonts/DroidSansMonoSlashed/DroidSansMonoSlashed.ttf
 rm -rf /tmp/DroidSansMonoSlashed*
 
+# Update system font databases and caches
+#
 sudo dpkg-reconfigure fontconfig-config
 sudo dpkg-reconfigure fontconfig
 sudo fc-cache
@@ -235,3 +253,4 @@ none                                      /var/tmp    tmpfs   relatime,nodiratim
 #
 //10.1.1.2/homes   /net/whs/homes  cifs   defaults,username=Dad,password=paren eFy wed jSy   0 2
 EOF
+
