@@ -280,7 +280,7 @@
       (pop-to-buffer (current-buffer)))))
 
 ;;}}}
-;;{{{  Apply customizations
+;;{{{  Load customizations
 
 (setq custom-file "~/emacs/custom-file")
 (add-to-list 'auto-mode-alist '("custom-file" . emacs-lisp-mode))
