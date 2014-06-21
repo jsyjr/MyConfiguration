@@ -31,14 +31,14 @@
 ;;   I too want a single file specifying all the packages I use, whence
 ;;   to obtain them and how they should be configured.
 
-;; Custome file sanity:
+;; Custom file sanity:
 ;; - grouping
 ;; - commentary
 ;; - no repeating detault settings
 
 ;; Directory hygiene:
 ;;
-;; Apart for this file (~/.emacs) all state which I maintain manually
+;; Apart for this file (~/.emacs) all state that I maintain manually
 ;; I place into my ~/emacs/ directory (e.g. custom-file, spelling
 ;; dictionaries, templates I write/modify for yasnippet, packages I
 ;; write or modify).  I then maintain the contents of that directory
@@ -50,11 +50,10 @@
 ;; ephemeral or recreatable from the combination of my .emacs file and
 ;; the contents of my ~/emacs/ directory.
 
-;; Speed:
-;; - I strive to have all functionality either autoloaded or handled
-;;   via eval-after-load.  The few files that tolerate being loaded as
-;;   part of this .emacs are those that will truly be used immediately
-;;   (cua-base for blinking cursor).
+;; Speed: - I strive to have all functionality either autoloaded or
+;; handled via eval-after-load.  The few files that I tolerate being
+;; loaded as part of this .emacs are those that will truly be used
+;; immediately (cua-base for blinking cursor).
 
 ;;}}}
 ;;{{{  Sharing and credits
@@ -65,7 +64,7 @@
 ;; private code with some version of the one's name or initials.  This
 ;; might make sense if users copied code amongst .emacs files while
 ;; preserving the original author's name.  In my experience this is
-;; not what happens.  Rather imported code gets resuffixed.  Yet the
+;; not what happens.  Rather imported code gets reprefixed.  Yet the
 ;; real goal is not so much to claim authorship as to avoid collisions
 ;; in the emacs name space.  Hence I do not use my own name, only a
 ;; "my/" prefix.  Anyone willing to adopt a similar convention could
@@ -78,6 +77,7 @@
 ;; Alex Ott             https://github.com/alexott/emacs-configs
 ;; Ryan Barrett         http://snarfed.org/dotfiles/.emacs
 ;; Mickey Petersen      mickey@masteringemacs.org
+;; Mark Shroyer         http://markshroyer.com/tag/linux/
 
 ;;}}}
 ;;{{{  Setup
@@ -2262,6 +2262,9 @@ Works with: arglist-cont, arglist-cont-nonempty."
  )
 
 (eval-after-load "gud" '(progn
+  ; Assume that the *gud- input window is selected
+  (set-window-dedicated-p (selected-window) t)
+
   (defun my/gud-cont-to-tbreak ()
     "Run to cursor"
     (interactive)
@@ -2281,6 +2284,70 @@ Works with: arglist-cont, arglist-cont-nonempty."
     "Display function key bindings in tabular format."
     (interactive)
     (gud-call "my/keys"))
+
+  ;; From http://markshroyer.com/2012/11/emacs-gdb-keyboard-navigation/
+
+  ;; For the consistency of gdb-select-window's calling convention...
+  (defun gdb-comint-buffer-name ()
+    (buffer-name gud-comint-buffer))
+  (defun gdb-source-buffer-name ()
+    (buffer-name (window-buffer gdb-source-window)))
+
+  (defun gdb-select-window (header)
+    "Switch directly to the specified GDB window.
+Moves the cursor to the requested window, switching between
+`gdb-many-windows' \"tabs\" if necessary in order to get there.
+
+Recognized window header names are: 'comint, 'locals, 'registers,
+'stack, 'breakpoints, 'threads, and 'source."
+
+    (interactive "Sheader: ")
+
+    (let* ((header-alternate (case header
+                               ('locals      'registers)
+                               ('registers   'locals)
+                               ('breakpoints 'threads)
+                               ('threads     'breakpoints)))
+           (buffer (intern (concat "gdb-" (symbol-name header) "-buffer")))
+           (buffer-names (mapcar (lambda (header)
+                                   (funcall (intern (concat "gdb-"
+                                                            (symbol-name header)
+                                                            "-buffer-name"))))
+                                 (if (null header-alternate)
+                                     (list header)
+                                   (list header header-alternate))))
+           (window (if (eql header 'source)
+                       gdb-source-window
+                     (or (get-buffer-window (car buffer-names))
+                         (when (not (null (cadr buffer-names)))
+                           (get-buffer-window (cadr buffer-names)))))))
+
+      (when (not (null window))
+        (let ((was-dedicated (window-dedicated-p window)))
+          (select-window window)
+          (set-window-dedicated-p window nil)
+          (when (member header '(locals registers breakpoints threads))
+            (switch-to-buffer (gdb-get-buffer-create buffer))
+            (setq header-line-format (gdb-set-header buffer)))
+          (set-window-dedicated-p window was-dedicated))
+        t)))
+
+  ;; Use global keybindings for the window selection functions so that they
+  ;; work from the source window too...
+  (mapcar (lambda (setting)
+            (lexical-let ((key    (car setting))
+                          (header (cdr setting)))
+              (global-set-key (concat "\M-g" key) #'(lambda ()
+                                                          (interactive)
+                                                          (gdb-select-window header)))))
+          '(("B" . breakpoints)
+            ("F" . stack)
+            ("G" . comint)
+            ("I" . input/output)
+            ("L" . locals)
+            ("R" . registers)
+            ("S" . source)
+            ("T" . threads)))
   ))
 
 ;;}}}
@@ -2690,6 +2757,17 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (keydef "M-g l"         ilocate-library-find-source)
 (keydef "M-g r"         jump-to-register)
 (keydef "M-g s"         my/elisp-find-symbol-definition)
+;;
+;; GUD navigation claims the capital letters:
+;; "M-g B"      *breakpoints
+;; "M-g F"      *stack (Frames)
+;; "M-g G"      *gud-
+;; "M-g I"      *input/output
+;; "M-g L"      *locals
+;; "M-g R"      *registers
+;; "M-g S"      <source>
+;; "M-g T"      *threads
+
 
 (keydef "M-["           align)
 

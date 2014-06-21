@@ -12,6 +12,8 @@
 ulimit -s 65532
 ulimit -n 1024
 
+export XDG_CONFIG_HOME="$HOME/.config"
+
 # Specify emacs as default editor(?):
 export EDITOR='/etc/alternatives/emacsclient'
 export ALTERNATE_EDITOR='/etc/alternatives/emacs'
