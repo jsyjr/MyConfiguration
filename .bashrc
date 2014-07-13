@@ -123,7 +123,7 @@ sbtags () {
     echo "$(pwd): am.dmp refreshed and reloaded; rebuilding tags file and TAGS symlink"
     ( command cd src \
            && ctags-exuberant -f tags --excmd=pattern --tag-relative --fields=-fKz+aiklmnsSt --sort=foldcase --totals --exclude=tests -R . \
-           && ln -s tags TAGS )
+           && ctags-exuberant -f TAGS -e --exclude=tests -R . )
     # ctags-exuberant --excmd=pattern --fields=-f-K-z+aiklmnsSt --sort=foldcase --tag-relative --totals=yes -f tags \
     #    --languages=+all,-HTML,-SQL --exclude=tests -R src
 }

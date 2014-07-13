@@ -7,29 +7,32 @@
 # I have to change MAKEINFO=yes to MAKEINFO=no in the
 # Makefile to compile without docs.
 
-
 set -e
 
 if [ ! -f "src/bitmaps/leftptr.xbm" ]; then
    echo "Working directory ( $(pwd) ) is not the root of an emacs source tree."; exit 1
 fi
 
-if [ -d .bzr ] ; then
-  bzr pull
-elif [ -d .git ] ; then
-  git pull
-fi
-
 set +e
-make bootstrap
 find -name "*.elc" -exec rm {} \;
 set -e
 
-CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs --enable-link-time-optimization
+if [ -d .bzr ] ; then
+  bzr pull
+elif [ -d .git ] ; then
+  git reset --hard
+  git pull
+fi
 
+
+set +e
+CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs --enable-link-time-optimization
 CFLAGS='-march=corei7 -O3' make -j8 -k
+set -e
 CFLAGS='-march=corei7 -O3' make
-make -j8 doc
+
+make -j8 -k doc
+make doc
 
 echo
 echo "Build is complete; performing very simple invocation"

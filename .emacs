@@ -199,7 +199,7 @@
 (require 'inversion nil t) ; fix broken autoload in cedet/common/cedet-compat.el
 
 ;;}}}
-;;{{{  melpa
+;;{{{  package repositories (elpa, melpa, sc, etc)
 
 (require 'package)
 (add-to-list 'package-archives
@@ -257,21 +257,21 @@
             (cond
              ((not rentry)
               (cond ((not (equal cval (get csym 'standard-value)))
-                     (insert "\n--- MISSING ---\nSaved:\n")
+                     (insert "\n--- MISSING ---\nSaved to custom-file:\n")
                      (pp (car centry)))))
              (t
               (while (not (equal rentry (car remaining)))
-                (insert "\n--- UNKNOWN (not saved?) ---\nInit:\n")
+                (insert "\n--- UNKNOWN (not saved to custom-file?) ---\nSpecified in .emacs:\n")
                 (pp (car remaining))
                 (setq remaining (cdr remaining)))
               (cond
                ((not (equal cval (cdr rentry)))
-                (insert "\n--- CONFLICT ---\nSaved:\n")
+                (insert "\n--- CONFLICT ---\nSaved to custom-file:\n")
                 (pp (car centry))
-                (insert "\nInit:\n")
+                (insert "\nSpecified in .emacs:\n")
                 (pp rentry))
                ((equal cval (get csym 'standard-value))
-                (insert "\n--- REDUNDANT (matches default) ---\nInit:\n")
+                (insert "\n--- REDUNDANT (matches default) ---\nIn both .emacs and custom-file:\n")
                 (pp rentry)))
               (setq remaining (cdr remaining))))))))
     (if (>= 2 (point-max))
@@ -544,6 +544,8 @@ Use a normal parenthesis if not inside any."
 (my/custom-set-faces
  '(fixed-pitch ((t nil)))
  '(variable-pitch ((t (:height 0.9 :family "Sans Serif"))))
+ '(widget-field ((t (:background "dim gray"))))
+ '(widget-single-line-field ((t (:inherit widget-field))))
  )
 
 ;;}}}
@@ -832,8 +834,10 @@ mouse-3: go to end")
 
 ;; Universally display ^L as a window-width horizontal rule
 (my/custom-set-variables
- '(pretty-control-l-mode t nil (pp-c-l))
- '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)) nil (pp-c-l))
+;'(pretty-control-l-mode t nil (pp-c-l))
+ '(pretty-control-l-mode t)
+;'(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)) nil (pp-c-l))
+ '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)))
 ;;'(pp^L-^L-string-pre "")               ; eliminate preceding blank line
  )
 
@@ -1324,7 +1328,8 @@ convert it to readonly/view-mode."
 (require 'auto-complete)
 
 (my/custom-set-variables
- '(global-auto-complete-mode t nil (auto-complete))
+;'(global-auto-complete-mode t nil (auto-complete))
+ '(global-auto-complete-mode t)
  '(ac-auto-start nil)
  '(ac-auto-show-menu t)
  '(ac-delay 0.5)
@@ -1338,10 +1343,12 @@ convert it to readonly/view-mode."
  )
 
 (my/custom-set-faces
- '(ac-candidate-face ((t (:background "LightCyan1" :foreground "black"))))
- '(ac-selection-face ((t (:background "aquamarine1" :foreground "black"))))
+ '(ac-candidate-face           ((t (:background "LightCyan1"     :foreground "black"))))
+ '(ac-selection-face           ((t (:background "aquamarine1"    :foreground "black"))))
  '(ac-yasnippet-candidate-face ((t (:background "lavender blush" :foreground "black"))))
- '(ac-yasnippet-selection-face ((t (:background "PeachPuff2" :foreground "black"))))
+ '(ac-yasnippet-selection-face ((t (:background "PeachPuff2"     :foreground "black"))))
+ '(popup-isearch-match         ((t (:inherit match))))
+
  )
 
 ;; In auto-complete.el:
@@ -2259,11 +2266,13 @@ Works with: arglist-cont, arglist-cont-nonempty."
  '(gdb-create-source-file-list nil)
  '(gdb-many-windows t)
  '(gdb-stack-buffer-addresses t)
+ '(gud-tooltip-mode t)
  )
 
 (eval-after-load "gud" '(progn
-  ; Assume that the *gud- input window is selected
-  (set-window-dedicated-p (selected-window) t)
+  ;; Assume that the *gud- input window is selected
+  (add-hook 'gud-mode-hook
+    (lambda () (set-window-dedicated-p (selected-window) t)))
 
   (defun my/gud-cont-to-tbreak ()
     "Run to cursor"
@@ -2275,15 +2284,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
     (interactive)
     (gud-stepi 1)(gud-call "x/i $pc"))
 
-  (defun my/gud-regs ()
-    "Display register in tabular format."
-    (interactive)
-    (gud-call "regs"))
-
-  (defun my/gud-keys ()
-    "Display function key bindings in tabular format."
-    (interactive)
-    (gud-call "my/keys"))
 
   ;; From http://markshroyer.com/2012/11/emacs-gdb-keyboard-navigation/
 
@@ -2341,6 +2341,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
                                                           (interactive)
                                                           (gdb-select-window header)))))
           '(("B" . breakpoints)
+            ("D" . disassembly)
             ("F" . stack)
             ("G" . comint)
             ("I" . input/output)
@@ -2348,7 +2349,68 @@ Recognized window header names are: 'comint, 'locals, 'registers,
             ("R" . registers)
             ("S" . source)
             ("T" . threads)))
-  ))
+
+;; Make sure the file named TRUE-FILE is in a buffer that appears on the screen
+;; and that its line LINE is visible.
+;; Put the overlay-arrow on the line LINE in that buffer.
+;; Most of the trickiness in here comes from wanting to preserve the current
+;; region-restriction if that's possible.  We use an explicit display-buffer
+;; to get around the fact that this is called inside a save-excursion.
+
+(defadvice gud-display-line (around my/gud-display-line activate)
+  (let* ((last-nonmenu-event t)	 ; Prevent use of dialog box for questions.
+	 (buffer
+	  (with-current-buffer gud-comint-buffer
+	    (gud-find-file true-file)))
+         ;;================
+	 ;; (window (and buffer
+	 ;;              (or (get-buffer-window buffer)
+	 ;;        	  (display-buffer buffer))))
+         ;;================
+         (window (and buffer
+                      (or (if (eq gud-minor-mode 'gdbmi)
+                              (unless (gdb-display-source-buffer buffer)
+                                (gdb-display-buffer buffer nil 'visible)))
+                          (get-buffer-window buffer)
+                          (display-buffer buffer))))
+         ;;================
+	 (pos))
+    (when buffer
+      (with-current-buffer buffer
+	(unless (or (verify-visited-file-modtime buffer) gud-keep-buffer)
+	  (if (yes-or-no-p
+	       (format "File %s changed on disk.  Reread from disk? "
+		       (buffer-name)))
+	      (revert-buffer t t)
+	    (setq gud-keep-buffer t)))
+	(save-restriction
+	  (widen)
+	  (goto-char (point-min))
+	  (forward-line (1- line))
+	  (setq pos (point))
+	  (or gud-overlay-arrow-position
+	      (setq gud-overlay-arrow-position (make-marker)))
+	  (set-marker gud-overlay-arrow-position (point) (current-buffer))
+	  ;; If they turned on hl-line, move the hl-line highlight to
+	  ;; the arrow's line.
+	  (when (featurep 'hl-line)
+	    (cond
+	     (global-hl-line-mode
+	      (global-hl-line-highlight))
+	     ((and hl-line-mode hl-line-sticky-flag)
+	      (hl-line-highlight)))))
+	(cond ((or (< pos (point-min)) (> pos (point-max)))
+	       (widen)
+	       (goto-char pos))))
+      (when window
+	(set-window-point window gud-overlay-arrow-position)
+	(if (eq gud-minor-mode 'gdbmi)
+	    (setq gdb-source-window window))))))
+
+(defadvice gud-setup-windows (after my/dedicate-gud-comint-buffer activate)
+  (set-window-dedicated-p (selected-window) t))
+
+))
 
 ;;}}}
 ;;{{{  Cedet, semantic, etc
@@ -2477,6 +2539,91 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;; 		       :new-p nil
 ;; 		       :safe-p t)
 ;;  'unique)
+
+;;}}}
+;;{{{  ECB
+
+(require 'ecb)
+
+(my/custom-set-variables
+ '(ecb-options-version "2.40")
+ ;; Visual layout
+ '(ecb-maximize-ecb-window-after-selection t)
+ '(ecb-layout-name "left-jsy1")
+ '(ecb-windows-width 0.25)
+ ;; Mode line labeling
+ '(ecb-mode-line-prefixes
+   '((ecb-directories-buffer-name . "Directories")
+     (ecb-sources-buffer-name . "Files")
+     (ecb-methods-buffer-name . "Members")
+     (ecb-history-buffer-name . "Buffers (LRU)")
+     (ecb-analyse-buffer-name . "Analysis")
+     (ecb-symboldef-buffer-name . "Symbol definition")))
+ '(ecb-mode-line-data
+   '((ecb-directories-buffer-name . sel-dir)
+     (ecb-sources-buffer-name . sel-source)
+     (ecb-methods-buffer-name)
+     (ecb-analyse-buffer-name)
+     (ecb-history-buffer-name)
+     (ecb-symboldef-buffer-name)))
+ ;; Buffer history is simply an LRU list
+ '(ecb-history-make-buckets 'never)
+ '(ecb-history-sort-method nil)
+ ;; Compile window
+ '(ecb-compile-window-width 'edit-window)
+ '(ecb-compile-window-height 6)
+ '(ecb-compilation-buffer-names
+   '(("*Calculator*")
+     ("*vc*")
+     ("*vc-diff*")
+     ("*Apropos*")
+     ("*Occur*")
+     ("*shell*")
+     ("\\*[cC]ompilation.*\\*" . t)
+     ("\\*i?grep.*\\*" . t)
+     ("*JDEE Compile Server*")
+     ("*Help*")
+     ("*Completions*")
+     ("*Backtrace*")
+     ("*Compile-log*")
+     ("*bsh*")
+     ("*Messages*")
+     ("\\*[mM]agit: .*\\*")))
+ ;; UI options
+ '(ecb-tip-of-the-day nil)
+ '(ecb-display-image-icons-for-semantic-tags nil)
+ '(ecb-primary-secondary-mouse-buttons 'mouse-1--C-mouse-1)
+ '(ecb-scroll-other-window-scrolls-compile-window t)
+ '(ecb-tree-incremental-search 'substring)
+ '(ecb-tree-make-parent-node-sticky nil)
+ '(ecb-vc-enable-support nil)
+ ;; Handling of files
+ '(ecb-source-path
+   '(("/home/jyates/asd/src" "SBX")))
+ '(ecb-process-non-semantic-files nil)
+ )
+
+(my/custom-set-faces
+ '(ecb-default-general-face   ((t (:inherit default      :height 110 :family "DroidSansMonoSlashed"))))
+ '(ecb-default-highlight-face ((t (:inherit widget-field :height 110 :family "DroidSansMonoSlashed"))))
+ '(ecb-mode-line-win-nr-face  ((t nil)))
+ '(ecb-mode-line-prefix-face  ((t (:foreground "medium blue" :weight bold))))
+ '(ecb-mode-line-data-face    ((t nil)))
+ '(ecb-analyse-face           ((t (:inherit ecb-default-highlight-face))))
+ '(ecb-directory-face         ((t (:inherit ecb-default-highlight-face))))
+ '(ecb-history-face           ((t (:inherit ecb-default-highlight-face))))
+ '(ecb-method-face            ((t (:inherit ecb-default-highlight-face))))
+ '(ecb-source-face            ((t (:inherit ecb-default-highlight-face))))
+ '(ecb-tag-header-face        ((t (:underline "dark orange"))))
+ )
+
+
+;; (add-hook 'ecb-activate-hook
+;;           (lambda ()
+;;             (let ((compwin-buffer (ecb-get-compile-window-buffer)))
+;;             (if (not (and compwin-buffer
+;;                           (ecb-compilation-buffer-p compwin-buffer)))
+;;                 (ecb-toggle-compile-window -1)))))
 
 ;;}}}
 
@@ -2759,14 +2906,15 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (keydef "M-g s"         my/elisp-find-symbol-definition)
 ;;
 ;; GUD navigation claims the capital letters:
-;; "M-g B"      *breakpoints
-;; "M-g F"      *stack (Frames)
-;; "M-g G"      *gud-
-;; "M-g I"      *input/output
-;; "M-g L"      *locals
-;; "M-g R"      *registers
-;; "M-g S"      <source>
-;; "M-g T"      *threads
+;;  "M-g B"     *breakpoints
+;;  "M-g D"     *disassembly
+;;  "M-g F"     *stack (Frames)
+;;  "M-g G"     *gud-
+;;  "M-g I"     *input/output
+;;  "M-g L"     *locals
+;;  "M-g R"     *registers
+;;  "M-g S"     <source>
+;;  "M-g T"     *threads
 
 
 (keydef "M-["           align)
@@ -2806,11 +2954,8 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (keydef   "S-<f7>"      kill-compilation)
 
 (eval-after-load "gud" '(progn
-  (keydef   "<f8>"      my/gud-regs)       ; show registers
-  (keydef "C-<f8>"      my/gud-keys)       ; show key bindings
-
   (keydef   "<f9>"      gud-step)          ; MS step into
-  (keydef "C-<f9>"      my/gud-stepi)
+  (keydef "C-<f9>"      gud-stepi)
   (keydef "M-<f9>"      gud-down)
 
   (keydef   "<f10>"     gud-next)          ; MS step over

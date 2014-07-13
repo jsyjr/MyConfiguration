@@ -101,8 +101,14 @@ sudo make install
 cd /tmp
 rm -rf bison-2.7*
 
+CCACHE_DIR=/ccc
+CCACHE_LOGFILE=/tmp/ccache.log
+CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
+CCACHE_TEMPDIR=/tmp
+
+sudo mkdir /ccc
 sudo chmod a+w /ccc
-CCACHE_DIR=/ccc ccache -F0 -M0
+ccache -F0 -M0
 
 # Download my configuration and install it in my home directory
 #
