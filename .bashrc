@@ -85,11 +85,13 @@ if [ -f "$HOME/.my_path" ] ; then
     . "$HOME/.my_path"
 fi
 
+alias pss='ps afx | grep sbx'
+alias pure='~/asd/src/tools/sbxstop.sh; src/ctools/clean; mam ; rm -rf data/log/* data/trace/* code clu_code; pss'
 
 #=====================================================================================================
 
 cleantmp() {
-    rm /tmp/*.out /tmp/*.tmp /tmp/cat* /tmp/*log /tmp/EMP* /tmp/emp* /tmp/EXT* /tmp/ext* /tmp/nzbacktrace.* /tmp/rrmgrStore* /tmp/spin_pid /tmp/stl_test.* /tmp/xalltypes.dat /tmp/xfermls* /tmp/xsl.*
+    rm -f /tmp/tmp* /tmp/*.n3 /tmp/*.ttl /tmp/*.so /tmp/*quad* /tmp/*.out /tmp/*.tmp /tmp/cat* /tmp/*log /tmp/EMP* /tmp/emp* /tmp/EXT* /tmp/ext* /tmp/nzbacktrace.* /tmp/rrmgrStore* /tmp/spin_pid /tmp/stl_test.* /tmp/xalltypes.dat /tmp/xfermls* /tmp/xsl.*
 }
 
 #=====================================================================================================
@@ -108,8 +110,8 @@ nzcleantest () {
 
 #=====================================================================================================
 
-# Rebuild amake, refresh am.dmp and the tags file
-sbtags () {
+# re-make amake and refresh am.dmp
+mam () {
     if [ ! -d "src/amake" ]; then
         echo "Not in the root of a source tree."; return 1
     fi
@@ -118,12 +120,18 @@ sbtags () {
            && ./amake.bsh LINUXPRE )
     rm -f acproto
     ./amake -cache >/dev/null
-    ./amake -dumponly am.dmp
-    emacsclient -e "(am-scan \"$(pwd)/am.dmp\")"
-    echo "$(pwd): am.dmp refreshed and reloaded; rebuilding tags file and TAGS symlink"
+    ./amake -emacs >/dev/null
+}
+
+#=====================================================================================================
+
+# Re-make amake, refresh am.dmp and the tags file
+SBTAGS_EXCLUDE="--exclude=gui --exclude=guitest --exclude=idocs --exclude=sbtest --exclude=tests --exclude=tickit"
+sbtags () {
+    mam
     ( command cd src \
-           && ctags-exuberant -f tags --excmd=pattern --tag-relative --fields=-fKz+aiklmnsSt --sort=foldcase --totals --exclude=tests -R . \
-           && ctags-exuberant -f TAGS -e --exclude=tests -R . )
+           && ctags-exuberant -f tags --excmd=pattern --tag-relative --fields=-afkKz+msSt --sort=foldcase --totals ${SBTAGS_EXCLUDE} -R . \
+           && ctags-exuberant -f TAGS -e ${SBTAGS_EXCLUDE} -R . )
     # ctags-exuberant --excmd=pattern --fields=-f-K-z+aiklmnsSt --sort=foldcase --tag-relative --totals=yes -f tags \
     #    --languages=+all,-HTML,-SQL --exclude=tests -R src
 }
@@ -143,16 +151,3 @@ nzcleanbuild () {
 }
 
 export LOG_STDOUT=Y
-
-#=====================================================================================================
-
-build_emacs () {
-    (  cd ~/repos/emacs_trunk \
-    && bzr pull \
-    && configure --prefix=/usr/local/bin/emacs \
-    && make \
-    && ./src/emacs --version \
-    && echo "if all looks good then..." \
-    && echo "  rename /usr/local/bin/emacs" \
-    && echo "  sudo make install" )
-}

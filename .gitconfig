@@ -1,18 +1,21 @@
 [user]
-	name = John S Yates Jr
+	name = John S. Yates, Jr.\n\n
 	email = john@yates-sheets.org
 [diff]
-	tool = emacs
 	algorithm = histogram
 	renames = copies
 	mnemonicprefix = true
-[difftool]
-	prompt = false
+	tool = emacs
 [difftool "emacs"]
 	cmd = emacsclient -cqa \"\" -F \"((fullscreen . maximized))\" -e \"(ediff-files \\\"${REMOTE}\\\" \\\"${LOCAL}\\\")\"
+	prompt = false
 [merge]
 	log = true
 [push]
 	default = nothing
 [color]
 	ui = auto
+[alias]
+	pfo = pull --ff-only
+	undo = reset HEAD~1
+	strip = reset HEAD~1 --hard

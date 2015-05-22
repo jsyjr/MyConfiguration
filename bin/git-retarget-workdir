@@ -1,0 +1,24 @@
+#!/bin/sh
+
+TARGET="$1"
+
+if [ -z "${TARGET}"        ]; then echo "usage: $(basename $0) path-to-local-repo"                ; exit 1; fi
+if [ ! -e ".git"           ]; then echo "cwd '$(pwd)' is not the root of a git workspace"         ; exit 1; fi
+if [ ! -e "${TARGET}/.git" ]; then echo "local-rep '${TARGET}' is not the root of a git workspace"; exit 1; fi
+
+relink() {
+    rm .git/$1
+    ln -sf ${TARGET}/.git/$1 .git/$1
+}
+
+relink config
+relink hooks
+relink info
+relink objects
+relink packed-refs
+relink refs
+relink remotes
+relink rr-cache
+relink svn
+
+relink logs/refs

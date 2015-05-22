@@ -7,6 +7,12 @@ if [ ! -f "st.info" ]; then
 fi
 
 wget http://st.suckless.org/patches/st-no-bold-colors.diff   # st.c
+
+sed -i.bak \
+    -e 's/if(BETWEEN(base.fg, 0, 7))/if(BETWEEN(base.fg, 0, 7) \&\& !(base.mode \& ATTR_FAINT))/g' \
+    -e 's/-3164,7 +3164,7/-3224,7 +3224,7/g' \
+    st-no-bold-colors.diff
+
 wget http://st.suckless.org/patches/st-solarized-light.diff  # config.def.h
 wget http://st.suckless.org/patches/st-solarized-dark.diff   # config.def.h
 

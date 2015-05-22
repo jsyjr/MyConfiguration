@@ -1,27 +1,25 @@
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
 ;; John Yates's .emacs  -*- emacs-lisp -*-
-;;
-;; Time-stamp: "2012-02-09 01:35:15 jyates"
 
 ;; This program is free software; you can redistribute it and/or
-;; modify it under the terms of the GNU General Public License as
-;; published by the Free Software Foundation; either version 3, or
-;; (at your option) any later version.
+;; modify it as you will.  I place it in the public domain.  I do
+;; not need to credited in anyway.
 ;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
-;; Floor, Boston, MA 02110-1301, USA.
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 (defconst copyright-owner "John S Yates Jr")
 (put 'copyright-owner 'safe-local-variable 'stringp)
 
 ;; Too many false alarms
 ;; (setq debug-on-error t)
+;; (setq debug-on-error nil)
 
 ;;=== Notes ============================================================
 ;;{{{  Goals
@@ -173,6 +171,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq el-get-sources '(el-get)) ; built incrementally via add-to-list
+(setq el-get-git-shallow-clone t)
 
 ;; Minimal bootstrap
 (unless (file-directory-p (concat el-get-dir "el-get"))
@@ -195,20 +194,6 @@
     (unless (file-directory-p path)
       (message "Package '%s' currently is missing" path)
       (add-to-list 'my/missing-el-get-packages pkg))))
-
-(require 'inversion nil t) ; fix broken autoload in cedet/common/cedet-compat.el
-
-;;}}}
-;;{{{  package repositories (elpa, melpa, sc, etc)
-
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(add-to-list 'package-archives
-             '("sc"    . "http://joseito.republika.pl/sunrise-commander/") t)
-(when (< emacs-major-version 24)
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-(package-initialize)
 
 ;;}}}
 ;;{{{  John Wiegley's use-package
@@ -368,6 +353,8 @@
    ;; file with Local Variables: sections.
    '((eval add-to-list 'auto-mode-alist
          '("\\.cgr\\'" . c++-mode))
+     (eval add-to-list 'auto-mode-alist
+         '("\\.inc\\'" . c++-mode))
      (eval ignore-errors "Write-contents-functions is a buffer-local alternative to before-save-hook"
            (add-hook
             (quote write-contents-functions)
@@ -380,7 +367,7 @@
            (whitespace-mode 0)
            (whitespace-mode 1))
      (whitespace-line-column . 80)
-     (whitespace-style face trailing lines-tail)
+     (whitespace-style face tabs trailing lines-tail)
      (folded-file . t)
      (folding-mode . t)
      )))
@@ -463,8 +450,10 @@
  )
 
 (my/custom-set-faces
- '(fringe ((((class color) (background dark)) (:background "grey15"))))
+ '(fringe ((((class color) (background dark)) (:background "gray15"))))
  )
+
+(horizontal-scroll-bar-mode -1)
 
 ;;}}}
 ;;{{{  Menu bar
@@ -475,7 +464,7 @@
 ;;  '(menu-bar-mode nil)
 ;;  )
 
-;;}}}
+;;}}}glvc
 ;;{{{  Minibuffer
 
 (my/custom-set-variables
@@ -486,8 +475,8 @@
      (top - 0)
      (left . 0)
      (user-position . t)
-     (name . "Emacs minibuffer    (CTRL + click to show/hide other Emacs frames)")))
- )
+     ;; (name . "Emacs minibuffer    (CTRL + click to show/hide other Emacs frames)")
+     )))
 
 (my/custom-set-faces
  '(minibuffer-prompt ((t (:foreground "orange" :weight bold))))
@@ -543,8 +532,9 @@ Use a normal parenthesis if not inside any."
 
 (my/custom-set-faces
  '(fixed-pitch ((t nil)))
- '(variable-pitch ((t (:height 0.9 :family "Sans Serif"))))
- '(widget-field ((t (:background "dim gray"))))
+ '(variable-pitch           ((t (:height 0.9 :family "Sans Serif"))))
+ '(widget-documentation     ((t (:inherit font-lock-comment-face))))
+ '(widget-field             ((t (:background "gray20"))))
  '(widget-single-line-field ((t (:inherit widget-field))))
  )
 
@@ -591,10 +581,10 @@ Use a normal parenthesis if not inside any."
 ;;{{{  mode-line basics
 
 (my/custom-set-faces
- '(mode-line ((t (:background "tan2" :foreground "black" :box (:line-width -1 :style released-button) :height 1.2))))
+ '(mode-line           ((t (:background "tan2" :foreground "black" :box (:line-width -1 :style released-button) :height 1.2))))
  '(mode-line-buffer-id ((t (:weight bold))))
  '(mode-line-highlight ((t (:background "wheat2" :box (:line-width -1 :style released-button)))))
- '(mode-line-inactive ((default (:inherit mode-line)) (((class color) (min-colors 88) (background dark)) (:background "grey70"))))
+ '(mode-line-inactive  ((t (:inherit mode-line :background "gray65"))))
  )
 
 (my/custom-set-variables
@@ -822,14 +812,11 @@ mouse-3: go to end")
 (add-to-list 'el-get-sources
              '(:name  pp-c-l
                      :description "Display Control-l characters as a full-width rule"
-                     :website     "http://www.emacswiki.org/emacs/download/pp-c-l.el"
-                     :type        emacswiki
                      :after       (progn
                                     (add-hook 'window-setup-hook
                                               'refresh-pretty-control-l)
                                     (add-hook 'window-configuration-change-hook
-                                              'refresh-pretty-control-l))
-                     :features    (pp-c-l)))
+                                              'refresh-pretty-control-l))))
 (my/el-get-install "pp-c-l")
 
 ;; Universally display ^L as a window-width horizontal rule
@@ -922,19 +909,38 @@ mouse-3: go to end")
 (standard-display-8bit 128 255)
 
 ;;}}}
+;;{{{  Window splitting
+
+(my/custom-set-variables
+ '(split-height-threshold nil)
+ )
+
+;; Cribbed from http://www.emacswiki.org/emacs/HorizontalSplitting
+
+(defun split-horizontally-for-temp-buffers ()
+  "Split the window horizontally for temp buffers."
+  (when (and (one-window-p t)
+     	     (not (active-minibuffer-window)))
+    (split-window-horizontally)))
+
+; (add-hook 'temp-buffer-setup-hook 'split-horizontally-for-temp-buffers)
+
+;;}}}
 ;;{{{  Popwin and guide-key
 
-(add-to-list 'el-get-sources 'popwin)
-(my/el-get-install "popwin")
+;; Popwin really screws up ECB's completion buffer handling
+;; (add-to-list 'el-get-sources 'popwin)
+;; (my/el-get-install "popwin")
 
-(add-to-list 'el-get-sources
-             '(:name guide-key
-                     :description "Guide the following key bindings automatically and dynamically"
-                     :website     "https://github.com/kbkbkbkb1/guide-key.git"
-                     :type        github
-                     :pkgname     "kbkbkbkb1/guide-key"
-                     :features    (guide-key)))
-(my/el-get-install "guide-key")
+
+;; (add-to-list 'el-get-sources
+;;              '(:name guide-key
+;;                      :description "Guide the following key bindings automatically and dynamically"
+;;                      :website     "https://github.com/kbkbkbkb1/guide-key.git"
+;;                      :type        github
+;;                      :pkgname     "kbkbkbkb1/guide-key"
+;;                      :features    (guide-key)))
+;; (my/el-get-install "guide-key")
 
 ;;}}}
 
@@ -944,34 +950,79 @@ mouse-3: go to end")
  '(kill-whole-line t)
  )
 
-;;{{{  smarter-move-beginning-of-line
+;;{{{  smarter move-beginning-of-line, move-end-of-line
 
-;; (defun smarter-move-beginning-of-line (arg)
-;;   "Move point back beginning of line or of indentation.
+(defun my/move-beginning-or-indentation (arg)
+  "Move point back to beginning of line or of indentation.
 
-;; Move point to the beginning of the line.  If point is already
-;; there, move to the first non-whitespace character on this line.
-;; Effectively toggle between the beginning of the line and the
-;; first non-whitespace character.
+Move point to the beginning of the line.  If point is already
+there, move to the first non-whitespace character on this line.
+Effectively toggle between the beginning of the line and the
+first non-whitespace character.
 
-;; If ARG is not nil or 1, move forward ARG - 1 lines first.  If
-;; point reaches the beginning or end of the buffer, stop there."
-;;   (interactive "^p")
-;;   (setq arg (or arg 1))
+If ARG is not nil or 1, move forward ARG - 1 lines first.  If
+point reaches the beginning or end of the buffer, stop there."
+  (interactive "^p")
+  (setq arg (or arg 1))
 
-;;   ;; Move lines first
-;;   (when (/= arg 1)
-;;     (let ((line-move-visual nil))
-;;       (forward-line (1- arg))))
+  ;;; Move lines first
+  (when (/= arg 1)
+    (let ((line-move-visual nil))
+      (forward-line (1- arg))))
 
-;;   (let ((orig-point (point)))
-;;     (move-beginning-of-line 1)
-;;     (when (= orig-point (point))
-;;       (back-to-indentation))))
+  (let ((orig-point (point)))
+    (move-beginning-of-line 1)
+    (when (= orig-point (point))
+      (back-to-indentation))))
 
-;; remap C-a to `smarter-move-beginning-of-line'
-;; (global-set-key [remap move-beginning-of-line]
-;;                 'smarter-move-beginning-of-line)
+(substitute-key-definition
+   'move-beginning-of-line 'my/move-beginning-or-indentation global-map)
+
+(defun my/move-end-comment-or-code (arg)
+  "Move point to end of line, start of comment or end of code.
+
+Move point to the end of the line.  If point is already there,
+move to the start of any trailing comment or to the end of code.
+If point is not at end of line but is within a comment then move
+to end of code.  Finally if point is at the end of code move to
+the end of the line.  Effectively cycle through end of line,
+start of any trailing comment and end of code.
+
+If ARG is not nil or 1, move forward ARG - 1 lines first.  If
+point reaches the beginning or end of the buffer, stop there."
+  (interactive "^p")
+  (setq arg (or arg 1))
+
+  ;;; Move lines first
+  (when (/= arg 1)
+    (let ((line-move-visual nil))
+      (forward-line (1- arg))))
+
+  (let ((start (point))
+        (bol (line-beginning-position))
+        (code nil)
+        (comment nil)
+        (eol (line-end-position)))
+    (goto-char eol)
+    (skip-chars-backward " \t")
+    (when (/= bol (point))
+      (goto-char (if (setq comment
+                           (if comment-start-skip
+                               (comment-search-backward bol t)))
+                     comment
+                   eol))
+      (skip-chars-backward " \t")
+      (when (/= bol (point))
+        (setq code (point))))
+    (goto-char (cond
+                ((and (eq start eol    ) comment) comment)
+                ((and (eq start eol    ) code   ) code   )
+                ((and (eq start comment) code   ) code   )
+                (     (eq start code   )          eol    )
+                (t                                eol    )))))
+
+(substitute-key-definition
+   'move-end-of-line 'my/move-end-comment-or-code global-map)
 
 ;;}}}
 ;;{{{  Delete selection mode
@@ -986,16 +1037,36 @@ mouse-3: go to end")
  )
 
 ;;}}}
-;;{{{  Occur
-
-;; (autoload 'occur "replace"
-;;   "Show all lines in the current buffer containing a match for REGEXP.
-;;
-;; \(fn REGEXP &optional NLINES)" t)
-
-;;}}}
 ;;{{{  White space hygiene
 
+;; Electic indentation creates trailing whitespace.  These hook
+;; functions cleanup only modified lines.
+(defvar my/modified-line nil)
+
+(defun my/modified-line-note (beg end old-len)
+  (let ((bol (line-beginning-position)))
+    (if (/= (point) bol)
+        (setq-local my/modified-line bol))))
+
+(defun my/modified-line-cleanup-after-leaving ()
+  (when my/modified-line
+    (when (not buffer-read-only)
+      (save-excursion
+        (beginning-of-line 1)
+        (when (/= (point) my/modified-line)
+          (goto-char my/modified-line)
+          (end-of-line)
+          (while (memq (char-before) '(?\  ?\t))
+            (delete-char -1)))))
+    (setq-local my/modified-line nil)))
+
+(defun my/modified-line-first-change ()
+  (add-hook 'post-command-hook 'my/modified-line-cleanup-after-leaving t))
+
+(add-hook 'after-change-functions 'my/modified-line-note)
+(add-hook 'first-change-hook 'my/modified-line-first-change)
+
+;; Other bits of hygiene
 (my/custom-set-variables
  '(indicate-empty-lines t)
  '(require-final-newline 'query)
@@ -1119,68 +1190,114 @@ convert it to readonly/view-mode."
          (view-mode 1))))
 
 ;;}}}
+;;{{{  Iedit
+
+(add-to-list 'el-get-sources
+             '(:name iedit
+                     :description "Edit multiple regions with the same content simultaneously."
+                     :type        github
+                     :pkgname     "victorhge/iedit"
+                     :features iedit))
+(my/el-get-install "iedit")
+
+;;}}}
 
 ;;=== VC, diff, merge, patch ===========================================
 ;;{{{  git and magit
 
-(add-to-list 'el-get-sources
-             '(:name git-modes
-                     :description "Emacs modes for various Git-related files."
-                     :website     "https://github.com/magit/git-modes"
-                     :type        github
-                     :pkgname     "magit/git-modes"
-                     :features    (git-commit-mode git-rebase-mode gitconfig-mode gitignore-mode)))
-(my/el-get-install "git-modes")
+;; (add-to-list 'el-get-sources
+;;              '(:name git-modes
+;;                      :branch      "master"
+;;                      :features    (git-commit-mode git-rebase-mode gitconfig-mode gitignore-mode)))
+;; (my/el-get-install "git-modes")
 
 (add-to-list 'el-get-sources
              '(:name magit
                      :description "It's Magit! An Emacs mode for Git."
-                     :website     "https://github.com/magit/magit"
+                     :website     "https://github.com/magit/magit#readme"
                      :type        github
                      :pkgname     "magit/magit"
-                     :depends     (git-modes)
-                     :features    (magit)))
+;;                   :branch      "master"))
+                     :branch      "next"
+                     :depends     dash
+;;                   :load-path   ""
+                     :compile     "magit.*\.el\\'"
+;;                     :build       nil ;; `(("make" "lisp"))
+;;                   :info
+                     ))
 (my/el-get-install "magit")
 
-(add-to-list 'el-get-sources
-             '(:name magit-filenotify
-                     :description "Refresh status buffer when git tree changes."
-                     :website     "https://github.com/magit/magit-filenotify"
-                     :type        github
-                     :pkgname     "magit/magit-filenotify"
-                     :depends     (magit)
-                     :features    (magit-filenotify)))
-(my/el-get-install "magit-filenotify")
-
-;; (add-to-list 'el-get-sources
-;;              '(:name "magithub"
-;;                      :description "Magit extensions for using GitHub."
-;;                      :type        git
-;;                      :url         "https://github.com/nex3/magithub.git"
-;;                      :depends     (magit)
-;;                      :features    (magithub)))
-;; (my/el-get-install "magithub")
-
+(add-to-list 'el-get-sources 'git-timemachine)
+(my/el-get-install "git-timemachine")
 
 (my/custom-set-variables
- '(magit-diff-refine-hunk 'all)
+ '(git-commit-setup-hook
+   '(git-commit-save-message
+     magit-revert-buffers
+     git-commit-save-message
+     git-commit-setup-changelog-support
+     git-commit-turn-on-auto-fill
+     git-commit-propertize-diff
+     with-editor-usage-message))
+ '(magit-backup-mode nil)
+;'(magit-diff-refine-hunk t)
+ '(magit-emacsclient-executable "/etc/alternatives/emacsclient")
+ '(magit-repository-directories
+   '("~/asd"
+     "~/repos/awesome"
+     "~/repos/doxygen"
+     "~/repos/st"))
+ '(magit-repository-directories-depth 0)
+ '(magit-save-repository-buffers nil))
+
+(my/custom-set-faces
+ '(magit-item-highlight             ((t (                                 :background "gray9"        ))))
+
+ '(magit-blame-heading              ((t (                                 :background "gray20"       ))))
+ '(magit-branch-local               ((t (:foreground "LightSkyBlue1"      :underline t               ))))
+ '(magit-branch-remote              ((t (:inherit magit-branch-local      :foreground "DarkSeaGreen2"))))
+ '(magit-diff-added                 ((t (:inherit diff-added                                         ))))
+ '(magit-diff-added-highlight       ((t (:inherit diff-refine-added                                  ))))
+ '(magit-diff-context               ((t (:inherit magit-dimmed                                       ))))
+ '(magit-diff-context-highlight     ((t (:inherit magit-diff-context      :background "grey10"       ))))
+ '(magit-diff-file-heading          ((t (:inherit magit-diff-hunk-heading :foreground "LightSkyBlue1"))))
+ '(magit-diff-file-heading-highlight((t (:inherit (magit-diff-hunk-heading-highlight magit-diff-file-heading)))))
+ '(magit-diff-hunk-heading          ((t (                                 :background "grey15"       ))))
+ '(magit-diff-hunk-heading-highlight((t (:inherit magit-section-highlight :weight bold               ))))
+ '(magit-diff-removed               ((t (:inherit diff-removed                                       ))))
+ '(magit-diff-removed-highlight     ((t (:inherit diff-refine-removed                                ))))
+ '(magit-diffstat-added             ((t (:inherit magit-diff-added                                   ))))
+ '(magit-diffstat-removed           ((t (:inherit magit-diff-removed                                 ))))
+ '(magit-dimmed                     ((t (:foreground "gray70"                                        ))))
+ '(magit-hash                       ((t (:foreground "thistle1"                                      ))))
+ '(magit-log-head-label-tags        ((t (:foreground "black"              :background "wheat2" :box 1))))
+ '(magit-section-heading            ((t (:foreground "SteelBlue1"         :weight bold               ))))
+ '(magit-tag                        ((t (:foreground "LightGoldenrod2"    :weight bold               ))))
  )
 
-;;}}}
-;;{{{  dvc
-
-;; (add-to-list 'el-get-sources 'dvc)
+(defun my/magit-status ()
+  "Switch to (or create) the magit status buffer for current context"
+  (interactive)
+  (let ((dir (locate-dominating-file "." ".git")))
+    (if (not dir)
+        (error "Directory not within a git workspace (%s)" default-directory)
+      (let ((mbuf (get-buffer (concat "*magit: " (file-name-as-directory (substring dir 0 -1)) "*"))))
+        (if mbuf
+            (switch-to-buffer mbuf)
+          (magit-status dir))))))
 
 ;;}}}
 ;;{{{  diff
 
 (my/custom-set-faces
- '(diff-added ((t (:inherit diff-changed :foreground "DarkSeaGreen1"))))
- '(diff-file-header ((t (:inherit diff-header :foreground "light goldenrod yellow" :weight bold))))
- '(diff-header ((t (:background "gray22"))))
- '(diff-nonexistent ((t (:strike-through "red"))))
- '(diff-refine-change ((t (:background "#1c3850"))))
- '(diff-removed ((t (:inherit diff-changed :foreground "pink"))))
+ '(diff-added          ((t (:inherit diff-changed :foreground "#c8ffe0"))))
+ '(diff-file-header    ((t (:inherit diff-header  :foreground "light goldenrod yellow" :weight bold))))
+ '(diff-header         ((t (:background "gray15"                       ))))
+ '(diff-nonexistent    ((t (:strike-through "red"                      ))))
+ '(diff-refine-added   ((t (:inherit diff-added   :background "#001800"))))
+ '(diff-refine-change  ((t (                      :background "#1c3850"))) t)
+ '(diff-refine-removed ((t (:inherit diff-removed :background "#200000"))))
+ '(diff-removed        ((t (:inherit diff-changed :foreground "#ffd0e0"))))
  )
 
 ;;}}}
@@ -1188,10 +1305,9 @@ convert it to readonly/view-mode."
 
 (my/custom-set-variables
  '(ediff-cmp-program "git")
- '(ediff-cmp-options '("diff --no-index --histogram"))
+ '(ediff-cmp-options '("diff --histogram"))
  '(ediff-keep-variants nil)
  '(ediff-make-buffers-readonly-at-startup t)
- '(ediff-merge-split-window-function 'split-window-vertically)
  '(ediff-split-window-function 'split-window-horizontally)
  '(ediff-use-last-dir t)
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
@@ -1220,7 +1336,17 @@ convert it to readonly/view-mode."
 ;;{{{  smerge
 
 (my/custom-set-variables
+ '(smerge-auto-leave nil)
  '(smerge-command-prefix ""))
+
+(my/custom-set-faces
+ '(smerge-base            ((t (:inherit ediff-even-diff-A))))
+ '(smerge-mine            ((t (:inherit ediff-even-diff-A))))
+ '(smerge-other           ((t (:inherit ediff-odd-diff-a))))
+ '(smerge-refined-added   ((t (:inherit ediff-current-diff-A))))
+ '(smerge-refined-changed ((t (:inherit ediff-current-diff-C))))
+ '(smerge-refined-removed ((t (:inherit ediff-current-diff-B))))
+ )
 
 ;;}}}
 ;;{{{  Applying patches
@@ -1251,12 +1377,11 @@ convert it to readonly/view-mode."
 ;;=== Abbreviation and expansion =======================================
 ;;{{{  yasnippet
 
-(add-to-list 'el-get-sources 'yasnippet)
 (my/el-get-install "yasnippet")
 
 (my/custom-set-variables
- '(yas-global-mode t nil (yasnippet))
- '(yas-snippet-dirs "~/emacs/yasnippet" nil (yasnippet)))
+ '(yas-global-mode t                       nil (yasnippet))
+ '(yas-snippet-dirs '("~/emacs/yasnippet") nil (yasnippet)))
 
 (add-hook 'yas/minor-mode-hook 'yas-reload-all)
 
@@ -1299,10 +1424,6 @@ convert it to readonly/view-mode."
 
 (add-to-list 'el-get-sources
              '(:name auto-complete
-                     :website     "https://github.com/auto-complete/auto-complete"
-                     :description "The most intelligent auto-completion extension."
-                     :type        github
-                     :pkgname     "auto-complete/auto-complete"
                      :after       (progn
                                     (setq-default ac-sources '(ac-source-abbrev
                                                                ac-source-dictionary
@@ -1310,12 +1431,12 @@ convert it to readonly/view-mode."
 
                                     (defun my/ac-cc-mode-setup ()
                                       (setq ac-sources (append '(ac-source-yasnippet
-                                                                 ac-source-semantic
-                                                                 ac-source-semantic-raw
+                                                                 ac-source-c-headers)
+                                                                 ;; ac-source-semantic
+                                                                 ;; ac-source-semantic-raw
                                                                  ;; ac-source-gtags ; no "using namespace XX;"
-                                                                 ) ac-sources))
-                                      (setq ac-source-yasnippet nil)
-                                      )
+                                                                 ) ac-sources)
+                                      (setq ac-source-yasnippet nil))
 
                                     (add-hook 'c-mode-common-hook 'my/ac-cc-mode-setup)
                                     (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
@@ -1327,6 +1448,15 @@ convert it to readonly/view-mode."
 (my/el-get-install "auto-complete")
 (require 'auto-complete)
 
+;; (add-to-list 'el-get-sources
+;;              (:name auto-complete-c-headers
+;;                     :website "https://github.com/mooz/auto-complete-c-headers"
+;;                     :description "An auto-complete source for C/C++ header files."
+;;                     :type github
+;;                     :pkgname "mooz/auto-complete-c-headers"
+;;                     :depends auto-complete))
+
+
 (my/custom-set-variables
 ;'(global-auto-complete-mode t nil (auto-complete))
  '(global-auto-complete-mode t)
@@ -1336,7 +1466,6 @@ convert it to readonly/view-mode."
  '(ac-use-menu-map t)
  '(ac-comphist-file            "~/.emacs.d/auto-complete/history.dat")
  '(ac-dictionary-directories '("~/emacs/auto-complete/mode-dicts"
-                               "~/.emacs.d/el-get/auto-complete/dict"
                                ))
  '(ac-dictionary-files       '("~/emacs/auto-complete/user-dict"
                                ))
@@ -1480,6 +1609,9 @@ This command is designed to be used whether you are already in Info or not."
                   (message "Symbol not bound: %S" symbol)))))
         (t (message "No symbol at point"))))
 
+(my/custom-set-faces
+ '(info-header-xref ((t (:foreground "LightSalmon4")))))
+
 ;;}}}
 ;;{{{  Browsing and completion (helm, ido, smex)
 
@@ -1503,8 +1635,8 @@ This command is designed to be used whether you are already in Info or not."
  '(helm-source-header ((t (:inherit default :foreground "RosyBrown4" :underline t :weight bold)))))
 
 
-(add-to-list 'el-get-sources 'smex)
-(my/el-get-install "smex")
+;; (add-to-list 'el-get-sources 'smex)
+;; (my/el-get-install "smex")
 
 (my/custom-set-variables
  '(completion-ignored-extensions
@@ -1564,15 +1696,15 @@ This command is designed to be used whether you are already in Info or not."
        (delete-region (minibuffer-prompt-end) (point)))
   (insert ?/))
 
+(defun my/ido-setup ()
+  (define-key ido-completion-map "/" 'my/ido-electric-slash)
+  (define-key ido-completion-map "~" 'my/ido-electric-tilde))
+
 (defun my/ido-electric-tilde ()
   (interactive)
   (if (eq ?/ (preceding-char))
       (delete-region (minibuffer-prompt-end) (point)))
   (insert ?~))
-
-(defun my/ido-setup ()
-  (define-key ido-completion-map "/" 'my/ido-electric-slash)
-  (define-key ido-completion-map "~" 'my/ido-electric-tilde))
 
 (defun my/ido-minibuffer-setup ()
   (setq truncate-lines (default-value 'truncate-lines)))
@@ -1620,9 +1752,12 @@ This command is designed to be used whether you are already in Info or not."
 (my/el-get-install "ilocate-library")
 
 ;;}}}
-;;{{{  Update timestamps before saving files
+;;{{{  Update copyright and timestamp before saving files
 
-;; (add-hook 'before-save-hook 'time-stamp)
+(my/custom-set-variables
+ '(before-save-hook '(copyright-update
+                      time-stamp
+                      my/modified-line-cleanup-after-leaving)))
 
 ;;}}}
 ;;{{{  Always byte compile after saving elisp
@@ -1752,14 +1887,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;=== Minor modes ======================================================
 ;;{{{  folding
 
-(add-to-list 'el-get-sources
-             '(:name folding
-                     :description "A folding-editor-like minor mode."
-                     :website     "https://github.com/emacsmirror/folding"
-                     :type        github
-                     :pkgname     "emacsmirror/folding"
-                     :features (folding folding-isearch)
-                     :post-init (folding-mode-add-find-file-hook)))
+(add-to-list 'el-get-sources 'folding)
 (my/el-get-install "folding")
 
 (my/custom-set-variables
@@ -1774,14 +1902,14 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;; My version handles block comments in C++ better.
 ;; ~/emacs/patched/hideshow--better-handling-of-c++-comments.patch
 
-(add-to-list 'el-get-sources
-	     '(:name hideshow
-		     :description "Minor mode cmds to selectively display code/comment blocks"
-		     :type        http
-		     :url         "file://localhost/home/jyates/emacs/patched/hideshow.el"
-		     :features    (hideshow)))
-(my/el-get-install "hideshow")
-(require 'hideshow)
+;; (add-to-list 'el-get-sources
+;; 	     '(:name hideshow
+;; 		     :description "Minor mode cmds to selectively display code/comment blocks"
+;; 		     :type        http
+;; 		     :url         "file://localhost/home/jyates/emacs/patched/hideshow.el"
+;; 		     :features    (hideshow)))
+;; (my/el-get-install "hideshow")
+;; (require 'hideshow)
 
 ;; Display the size of a collapsed function body
 (defun my/display-code-line-counts (ov)
@@ -1959,26 +2087,48 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 (add-to-list 'load-path "~/emacs/nz")
 
-(autoload 'am-scan "am" nil t)
+(autoload 'am-force-recache "am"
+  "Run 'amake -cache' and reload files lists"
+  t)
 
 (autoload 'am-find-file "am"
-  "Find file known to amake."
+  "Find a file known to amake."
   t)
 
 (autoload 'am-find-file-other-window "am"
-  "Find file known to amake, open it in another window."
+  "Find a file known to amake, open it in another window."
+  t)
+
+(autoload 'am-grep "am"
+  "Run amake -pgrep, with user-specified args, collecting output in *grep*.
+While the scan runs asynchronously, you can use \\[next-error] (M-x next-error),
+or \\<grep-mode-map>\\[compile-goto-error] in the *grep* \
+buffer, to go to the lines where the scan found
+matches.  To kill the scan job before it finishes, type \\[kill-compilation].
+
+This command uses a special history list for its COMMAND-ARGS, so you
+can easily repeat an earlier amake -pgrep command."
+  t)
+
+(autoload 'am-grep-tag "am"
+  "Run amake -pgrep for the tag at cursor, collecting output in *grep*.
+While the scan runs asynchronously, you can use \\[next-error] (M-x next-error),
+or \\<grep-mode-map>\\[compile-goto-error] in the *grep* \
+buffer, to go to the lines where the scan found
+matches.  To kill the scan job before it finishes, type \\[kill-compilation].
+
+This command uses a special history list for its COMMAND-ARGS, so you
+can easily repeat an earlier amake -pgrep command."
+  t)
+
+(autoload 'grep-tag-default "grep"
+  "Return tag under cursor (if such exists)."
   t)
 
 ;;}}}
 ;;{{{  Find file in project
 
-(add-to-list 'el-get-sources
-             '(:name find-file-in-project
-                     :description "Find files in a project quickly."
-                     :website     "https://github.com/dburger/find-file-in-project"
-                     :type        github
-                     :pkgname     "dburger/find-file-in-project"
-                     :features    (find-file-in-project)))
+(add-to-list 'el-get-sources 'find-file-in-project)
 (my/el-get-install "find-file-in-project")
 
 ;;}}}
@@ -2016,15 +2166,19 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (my/custom-set-variables
 ;; '(compile-command "/usr/bin/make -k")
  '(compilation-scroll-output t)   ; follow compilation output
-;; '(compilation-skip-threshold 2); next-error should only stop at errors
- '(next-error-hook 'next-error-recenter)
+;; '(compilation-skip-threshold 2); next-errormpil should only stop at errors
+ '(next-error-hook 'compile-goto-error)
+ '(next-error-recenter '(4))
  )
 
-(defun next-error-recenter ()
-  "Center error location in window."
-  (save-excursion
-    (pop-to-buffer next-error-last-buffer nil t)
-    (recenter)))
+;; Fix next error so that it does not visit every file in the include stack
+;; leading up the the error site.  Lifted directly from stackoverflow
+;; how-can-i-skip-in-file-included-from-in-emacs-c-compilation-mode
+(eval-after-load "compile"
+  '(setf (nth 5 (assoc 'gcc-include compilation-error-regexp-alist-alist)) 0))
+
+(eval-after-load "yasnippet"
+  '(add-hook 'after-save-hook 'my/yasnippet-reload-on-save))
 
 ;;}}}
 ;;{{{  C/C++ mode
@@ -2039,7 +2193,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 (eval-when-compile (require 'cc-mode))
 
-;; Treat .h and .imp files as C++ source
+;; Treat .gt, .h and .imp files as C++ source
 (setq auto-mode-alist (append '(("\\.gt\\'" . c++-mode)
                                 ("\\.h\\'" . c++-mode)
                                 ("\\.imp\\'" . c++-mode))
@@ -2066,7 +2220,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
   "Line up a line starting with a comma beneath open paren of
 the surrounding paren or brace block."
   (save-excursion
-    (beginning-of-line)
+    (beginning-of-line 1)
     (backward-up-list 1)
     (skip-chars-forward " \t" (c-point 'eol))
     (vector (current-column))))
@@ -2077,7 +2231,7 @@ Comments documenting scopes (class, struct, union, namespace) receive
 no indentation as these are typically fair size chunks of text.  By
 contrast comments documenting functions get ident"
   (save-excursion
-    (beginning-of-line)
+    (beginning-of-line 1)
     (skip-chars-forward " \t" (c-point 'eol))
     (cond
      ((looking-at "(" ) '+)
@@ -2340,12 +2494,14 @@ Recognized window header names are: 'comint, 'locals, 'registers,
               (global-set-key (concat "\M-g" key) #'(lambda ()
                                                           (interactive)
                                                           (gdb-select-window header)))))
-          '(("B" . breakpoints)
+          '(("A" . disassembly)         ; assembly language
+            ("B" . breakpoints)
             ("D" . disassembly)
             ("F" . stack)
             ("G" . comint)
-            ("I" . input/output)
+            ("I" . disassembly)         ; instructions
             ("L" . locals)
+            ("O" . input/output)
             ("R" . registers)
             ("S" . source)
             ("T" . threads)))
@@ -2413,20 +2569,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ))
 
 ;;}}}
-;;{{{  Cedet, semantic, etc
-
-(my/custom-set-variables
- '(global-ede-mode t)
- '(semantic-mode t)
- '(global-semantic-decoration-mode nil)
- '(global-semantic-idle-scheduler-mode nil)
- '(semantic-complete-inline-analyzer-displayor-class 'semantic-displayor-tooltip)
- '(semantic-completion-displayor-format-tag-function 'semantic-format-tag-prototype)
- '(semantic-default-submodes '(global-semanticdb-minor-mode
-                               global-semantic-mru-bookmark-mode))
- '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
- '(semanticdb-project-roots '("~/asd" "~/asd.upstream"))
- )
+;;{{{  Cedet: ede
 
 ;; (ede-cpp-root-project "asd"
 ;;                       :file "asd.instance"
@@ -2448,22 +2591,26 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;;                       :system-include-path '( "/usr/include"
 ;;                                               "/usr/include/c++/4.7/" ))
 
-(require 'ede)
-(require 'ede/generic)
+;; (require 'ede)
+;; (require 'ede/generic)
 
-;;; GIT
-(defclass ede-generic-git-project (ede-generic-project)
-  ((buildfile :initform ".git")
-   )
-  "Generic Project for a git tree.")
+;; (my/custom-set-variables
+;;  '(global-ede-mode t)
+;;  )
 
-(defmethod ede-generic-setup-configuration ((proj ede-generic-git-project) config)
-  "Setup a configuration for a git tree."
-  (oset config debug-command "gdb ")
-  )
+;; ;;; GIT
+;; (defclass ede-generic-git-project (ede-generic-project)
+;;   ((buildfile :initform ".git")
+;;    )
+;;   "Generic Project for a git tree.")
 
-(ede-generic-new-autoloader "generic-git" "Git"
-                            ".git" 'ede-generic-git-project)
+;; (defmethod ede-generic-setup-configuration ((proj ede-generic-git-project) config)
+;;   "Setup a configuration for a git tree."
+;;   (oset config debug-command "gdb ")
+;;   )
+
+;; (ede-generic-new-autoloader "generic-git" "Git"
+;;                             ".git" 'ede-generic-git-project)
 
 ;; (defvar ede-amake-project-list nil
 ;;   "List of projects created by option `ede-amake-project'.")
@@ -2541,54 +2688,147 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;;  'unique)
 
 ;;}}}
+;;{{{  Cedet: semantic
+
+;; (my/custom-set-variables
+;;  '(semantic-mode t)
+;;  '(global-semantic-decoration-mode nil)
+;;  '(global-semantic-idle-scheduler-mode nil)
+;;  '(semantic-complete-inline-analyzer-displayor-class 'semantic-displayor-tooltip)
+;;  '(semantic-completion-displayor-format-tag-function 'semantic-format-tag-prototype)
+;;  '(semantic-default-submodes '(global-semanticdb-minor-mode
+;;                                global-semantic-mru-bookmark-mode))
+;;  '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
+;;  '(semanticdb-project-roots '("~/asd" "~/asd.upstream"))
+;;  )
+
+;;}}}
 ;;{{{  ECB
 
-(require 'ecb)
+(defun my/ecb-compile-window-dwim ()
+  "If selected window is compile window cycle it else go there."
+  (interactive)
+  (if ecb-minor-mode
+      (progn
+        (raise-frame ecb-frame)
+        (select-frame ecb-frame)
+        (if (ecb-point-in-compile-window)
+            (ecb-cycle-through-compilation-buffers)
+          (if (equal 'hidden (ecb-compile-window-state))
+              (ecb-toggle-compile-window -1))
+          (select-window ecb-compile-window)))))
+
+(defun my/ecb-activate-hook ()
+  "ECB activation hook."
+  ;; (popwin-mode -1) ;; Popwin conflicts with ECB.
+  ;; (ido-mode nil)
+  (ecb-eshell-auto-activate-hook)
+  (substitute-key-definition
+   'ecb-cycle-through-compilation-buffers 'my/ecb-compile-window-dwim ecb-mode-map))
+
+(defun my/ecb-deactivate-hook ()
+  "ECB deactivation hook."
+  ;; (popwin-mode t)
+  ;; (ido-mode 'both)
+  ;; http://stackoverflow.com/questions/9389679/how-to-unload-a-mode-e-g-unload-ecb-to-restore-winner-el-functionality
+  (ecb-disable-advices 'ecb-winman-not-supported-function-advices t))
+
+
+(defun am-grep-tag (command-args)
+  "Run amake -pgrep for the tag at cursor, collecting output in *grep*.
+While the scan runs asynchronously, you can use \\[next-error] (M-x next-error),
+or \\<grep-mode-map>\\[compile-goto-error] in the *grep* \
+buffer, to go to the lines where the scan found
+matches.  To kill the scan job before it finishes, type \\[kill-compilation].
+
+This command uses a special history list for its COMMAND-ARGS, so you
+can easily repeat an earlier amake -pgrep command."
+  (interactive
+   (list (read-shell-command "Run amake -pgrep (like this): "
+                             (am-grep-command-wth-tag)
+                             'am-grep-history
+                             nil)))
+  (am-grep-execute command-args))
+
+
+(defvar my/ecb-run-gdb-history nil
+  "*Amake Find File history")
+
+(defun my/ecb-run-gdb (file)
+  "Deactivate ECB, prompt for an image and invoke GDB."
+  (interactive
+   (list (read-shell-command "GDB on: " my/ecb-run-gdb-history 'my/ecb-run-gdb-history)))
+  (if (boundp 'ecb-mode-map)
+      (ecb-deactivate))
+  (gdb (concat "gdb -i=mi " file))
+  )
+
 
 (my/custom-set-variables
  '(ecb-options-version "2.40")
+ ;; Activation / deactivation
+ '(ecb-activate-hook
+   '(my/ecb-activate-hook))
+ '(ecb-deactivate-hook
+   '(my/ecb-deactivate-hook))
  ;; Visual layout
  '(ecb-maximize-ecb-window-after-selection t)
  '(ecb-layout-name "left-jsy1")
- '(ecb-windows-width 0.25)
+ '(ecb-windows-width 0.15)
  ;; Mode line labeling
  '(ecb-mode-line-prefixes
    '((ecb-directories-buffer-name . "Directories")
-     (ecb-sources-buffer-name . "Files")
-     (ecb-methods-buffer-name . "Members")
-     (ecb-history-buffer-name . "Buffers (LRU)")
-     (ecb-analyse-buffer-name . "Analysis")
-     (ecb-symboldef-buffer-name . "Symbol definition")))
+     (ecb-sources-buffer-name     . "Files")
+     (ecb-methods-buffer-name     . "Members")
+     (ecb-history-buffer-name     . "Buffers (LRU)")
+     (ecb-analyse-buffer-name     . "Analysis")
+     (ecb-symboldef-buffer-name   . "Symbol definition")
+     ))
  '(ecb-mode-line-data
    '((ecb-directories-buffer-name . sel-dir)
      (ecb-sources-buffer-name . sel-source)
      (ecb-methods-buffer-name)
-     (ecb-analyse-buffer-name)
      (ecb-history-buffer-name)
-     (ecb-symboldef-buffer-name)))
+     (ecb-analyse-buffer-name)
+     (ecb-symboldef-buffer-name)
+     ))
  ;; Buffer history is simply an LRU list
  '(ecb-history-make-buckets 'never)
+ '(ecb-history-menu-sorter nil)
  '(ecb-history-sort-method nil)
  ;; Compile window
- '(ecb-compile-window-width 'edit-window)
- '(ecb-compile-window-height 6)
+ '(ecb-compilation-major-modes
+   '(compilation-mode
+     dired-mode
+     git-commit-mode
+     magit-mode
+     completion-list-mode
+     comint-mode))
  '(ecb-compilation-buffer-names
-   '(("*Calculator*")
-     ("*vc*")
-     ("*vc-diff*")
-     ("*Apropos*")
-     ("*Occur*")
-     ("*shell*")
+   '(("\\*vc.*\\*" . t)
+     ("\\*Vtags-.*\\*" . t)
      ("\\*[cC]ompilation.*\\*" . t)
      ("\\*i?grep.*\\*" . t)
-     ("*JDEE Compile Server*")
-     ("*Help*")
-     ("*Completions*")
+     ("\\*[mM]agit.*\\*" . t)
+     ("*Apropos*")
      ("*Backtrace*")
+     ("*buffer-selection*")
+     ("*apropos-toc*")
+     ("*Calculator*")
+     ("*Choices*")
+     ("COMMIT_EDITMSG")
      ("*Compile-log*")
-     ("*bsh*")
+     ("*Completions*")
+     ("*Help*")
+     ("*Ido Completions*")
      ("*Messages*")
-     ("\\*[mM]agit: .*\\*")))
+     ("*Occur*")
+     ))
+ '(ecb-compile-window-width 'edit-window)
+ '(ecb-compile-window-height 10)
+ '(ecb-compile-window-temporally-enlarge 'both)
+ '(ecb-enlarged-compilation-window-max-height 0.6)
+
  ;; UI options
  '(ecb-tip-of-the-day nil)
  '(ecb-display-image-icons-for-semantic-tags nil)
@@ -2597,9 +2837,18 @@ Recognized window header names are: 'comint, 'locals, 'registers,
  '(ecb-tree-incremental-search 'substring)
  '(ecb-tree-make-parent-node-sticky nil)
  '(ecb-vc-enable-support nil)
+ 
  ;; Handling of files
  '(ecb-source-path
-   '(("/home/jyates/asd/src" "SBX")))
+   '(("/home/jyates/asd/src/as" "AS")
+     ("/home/jyates/asd/src/dp" "DP")
+     ("/home/jyates/asd/src/gt" "GT")
+     ("/home/jyates/asd/src/my" "MY")
+     ("/home/jyates/asd/src/qx" "QX")
+     ("/home/jyates/asd/src/ts" "TS")
+     ("/home/jyates/asd/src/ug" "UG")
+     ("/home/jyates/asd/src" "SBX")
+     ("/" "/")))
  '(ecb-process-non-semantic-files nil)
  )
 
@@ -2617,14 +2866,6 @@ Recognized window header names are: 'comint, 'locals, 'registers,
  '(ecb-tag-header-face        ((t (:underline "dark orange"))))
  )
 
-
-;; (add-hook 'ecb-activate-hook
-;;           (lambda ()
-;;             (let ((compwin-buffer (ecb-get-compile-window-buffer)))
-;;             (if (not (and compwin-buffer
-;;                           (ecb-compilation-buffer-p compwin-buffer)))
-;;                 (ecb-toggle-compile-window -1)))))
-
 ;;}}}
 
 ;;=== Uncatergorized ===================================================
@@ -2636,14 +2877,17 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;;}}}
 ;;{{{  emacsclient and server
 
+;; Support the Chrome Browser's Edit with Emacs extension
+(add-to-list 'el-get-sources 'edit-server)
+(my/el-get-install "edit-server")
+
+
 (my/custom-set-variables
- '(server-done-hook '(delete-frame))
- '(server-window 'switch-to-buffer-other-frame)
- '(server-switch-hook 'my/pop-file-name-history) ; omit emacsclient temps
-;; '(server-kill-new-buffers t) ; [DEF] if client is waiting kill its NEW buffer
-;; '(server-raise-frame t)      ; [DEF]
  '(display-buffer-reuse-frames t)
+ '(server-switch-hook
+   '(my/pop-file-name-history))
  '(server-temp-file-regexp "^/tmp/\\|.*\\.tmp")
+ '(server-window 'pop-to-buffer)
  )
 
 (server-start)
@@ -2663,13 +2907,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;;}}}
 ;;{{{  keydef
 
-(add-to-list 'el-get-sources
-             '(:name keydef
-                     :description "A simpler way to define keys, with kbd syntax"
-                     :type        github
-                     :pkgname     "jschaf/keydef"
-                     :url         "https://github.com/jschaf/keydef"
-                     :features    keydef))
+(add-to-list 'el-get-sources 'keydef)
 (my/el-get-install "keydef")
 
 ;;}}}
@@ -2842,7 +3080,13 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
-;(keydef "C-c C-k"       kill-compilation)
+(keydef "C-c C-k"       kill-compilation)
+
+;; easy ECB activation and deactivation
+(keydef "C-c b" ecb-activate)
+(keydef "C-c d" ecb-deactivate)
+(keydef "C-c D" my/ecb-run-gdb)
+
 
 ;; python-mode steals C-c C-k for python-mark-block. steal it back.
 ;(require 'python)
@@ -2890,9 +3134,33 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;; `C-x E')
 (keydef "C-x E"         apply-macro-to-region-lines)
 
-(keydef "C-x ,"         am-find-file)
-(keydef "C-x 4 ,"       am-find-file-other-window)
 
+;; amake supported find-file, grep and
+(keydef "C-, f"         am-find-file)
+(keydef "C-, 4 f"       am-find-file-other-window)
+(keydef "C-, g"         am-grep)
+(keydef "C-, r"         am-force-recache)
+(keydef "C-, ."         am-grep-tag)
+
+(keydef "C-x , f"       am-find-file)
+(keydef "C-x , 4 f"     am-find-file-other-window)
+(keydef "C-x , g"       am-grep)
+(keydef "C-x , r"       am-force-recache)
+(keydef "C-x , ."       am-grep-tag)
+
+
+;; GUD navigation claims the capital letters in the "goto" map:
+;;  "M-g A"     *disassembly            ; assembly language
+;;  "M-g B"     *breakpoints
+;;  "M-g D"     *disassembly
+;;  "M-g F"     *stack (Frames)
+;;  "M-g G"     *gud-
+;;  "M-g I"     *disassembly            ; instructions
+;;  "M-g L"     *locals
+;;  "M-g O"     *input/output
+;;  "M-g R"     *registers
+;;  "M-g S"     <source>
+;;  "M-g T"     *threads
 
 ;; Additions to binding.el's goto-map; prior bindings:
 ;;  (M-) g   goto-line
@@ -2902,20 +3170,9 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (keydef "M-g b"         bookmark-jump)
 (keydef "M-g e"         el-get-find-recipe-file)
 (keydef "M-g l"         ilocate-library-find-source)
+(keydef "M-g m"         my/magit-status)
 (keydef "M-g r"         jump-to-register)
 (keydef "M-g s"         my/elisp-find-symbol-definition)
-;;
-;; GUD navigation claims the capital letters:
-;;  "M-g B"     *breakpoints
-;;  "M-g D"     *disassembly
-;;  "M-g F"     *stack (Frames)
-;;  "M-g G"     *gud-
-;;  "M-g I"     *input/output
-;;  "M-g L"     *locals
-;;  "M-g R"     *registers
-;;  "M-g S"     <source>
-;;  "M-g T"     *threads
-
 
 (keydef "M-["           align)
 
@@ -2947,7 +3204,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (eval-after-load "gud" '(progn
   (keydef   "<f5>"      gud-cont)          ; MS go / continue
   (keydef "C-<f5>"      my/gud-cont-to-tbreak) ; MS run to cursor
-  (keydef "M-<f5>"      gud-run)           ; restart
+  (keydef "S-<f5>"      gud-run)           ; restart
   ))
 
 (keydef   "C-<f7>"      compile)
@@ -2956,15 +3213,15 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (eval-after-load "gud" '(progn
   (keydef   "<f9>"      gud-step)          ; MS step into
   (keydef "C-<f9>"      gud-stepi)
-  (keydef "M-<f9>"      gud-down)
+  (keydef "S-<f9>"      gud-down)
 
   (keydef   "<f10>"     gud-next)          ; MS step over
   (keydef "C-<f10>"     gud-finish)        ; MS step out
-  (keydef "M-<f10>"     gud-up)
+  (keydef "S-<f10>"     gud-up)
 
   (keydef   "<f11>"     gud-break)
   (keydef "C-<f11>"     gud-tbreak)
-  (keydef "M-<f11>"     gud-remove)
+  (keydef "S-<f11>"     gud-remove)
   ))
 
 (keydef "C-."           vtags-find)
@@ -2976,7 +3233,9 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (keydef "C-<f12>"       customize-group)
 (keydef "M-<f12>"       customize-apropos)
 
-(eval-after-load "bs" '(keydef (bs "<f1>")  bs-kill))
+(eval-after-load "bs"  '(keydef (bs "<f1>") (if (bound-and-true-p ecb-minor-mode)
+                                                (quit-window t)
+                                              (bs-kill))))
 
 ;;}}}
 

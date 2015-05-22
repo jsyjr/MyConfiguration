@@ -1,5 +1,6 @@
 #!/bin/dash
 
+# VPN login: "Legacy default"  john.yates wireless
 
 # Install a bunch of dependencies
 #
@@ -10,6 +11,7 @@ sudo apt-get install \
   autoconf \
   automake \
   autotools-dev \
+  bleachbit \
   build-essential \
   bzr \
   ccache \
@@ -17,6 +19,7 @@ sudo apt-get install \
   cmake \
   curl \
   doxygen-latex \
+  dwarfdump \
   emacs \
   exuberant-ctags \
   flex \
@@ -31,6 +34,7 @@ sudo apt-get install \
   libXpm-dev \
   libboost-all-dev \
   libdbus-1-dev \
+  libdw-dev \
   libexpat1-dev \
   libgconf2-dev \
   libgif-dev \
@@ -48,7 +52,9 @@ sudo apt-get install \
   libx11-dev \
   libxml2-dev \
   llvm \
+  menu \
   mercurial \
+  mscgen \
   msmtp \
   m4 \
   network-manager-openconnect-gnome \
@@ -56,29 +62,16 @@ sudo apt-get install \
   pepperflashplugin-nonfree \
   texinfo \
   texlive-fonts-extra \
+  texlive-latex-base \
   thin-provisioning-tools \
   unison-all-gtk \
+  unity-tweak-tool \
   zlib1g-dev \
-\
-  asciidoc \
-  ldoc \
-  liblua5.1-0-dev \
-  libstartup-notification0-dev \
-  libxcb-cursor-dev \
-  libxcb-icccm4-dev \
-  libxcb-keysyms1-dev \
-  libxcb-util0-dev \
-  libxcb-xinerama0-dev \
-  libxcb-xtest0-dev \
-  libxdg-basedir-dev \
-  lua-lgi \
 
-git clone
-cd ~/repos/awesome
-....
-sudo make install
-sudo 
 
+# enable generalized debugging
+#
+sudo sed -i -e 's/kernel.yama.ptrace_scope = 0/kernel.yama.ptrace_scope = 1' /etc/sysctl.d/10-ptrace.conf
 
 # We need to provide dmsetup access to the thin-provisioning libraries
 #
@@ -101,14 +94,21 @@ sudo make install
 cd /tmp
 rm -rf bison-2.7*
 
-CCACHE_DIR=/ccc
-CCACHE_LOGFILE=/tmp/ccache.log
-CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
-CCACHE_TEMPDIR=/tmp
 
-sudo mkdir /ccc
+# Setup CCache
+#
+cat >>~/.profile <<EOF
+export CCACHE_DIR=/ccc
+export CCACHE_LOGFILE=/tmp/ccache.log
+export CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
+export CCACHE_TEMPDIR=/tmp
+EOF
+source ~/.profile
+sudo mkdir -p /ccc
 sudo chmod a+w /ccc
 ccache -F0 -M0
+
+
 
 # Download my configuration and install it in my home directory
 #
@@ -117,6 +117,7 @@ rm -rf ~/MyConfiguration ~/Documents ~/Music ~/Public ~/Templates ~/Videos ~/exa
 git clone https://github.com/jsyjr/MyConfiguration.git
 mv ~/MyConfiguration/{*,.[a-z]*} ~
 rm -rf ~/MyConfiguration
+
 
 # Install the Dina bitmapped font
 #
@@ -168,7 +169,7 @@ fc-list | grep Slashed
 fc-list | grep Source
 
 
-# Create a directory for projects to be cloned
+# Create a directory for projects to be cloned from the net
 #
 mkdir -p ~/repos
 
@@ -227,6 +228,30 @@ cd doxygen
 ~/bin/rebuild-doxygen
 make -j8
 # sudo make install
+
+# Download and build awesome window manager
+#
+sudo apt-get install \
+  asciidoc \
+  lua-ldoc \
+  liblua5.1-dev \
+  libstartup-notification0-dev \
+  libxcb-cursor-dev \
+  libxcb-icccm4-dev \
+  libxcb-keysyms1-dev \
+  libxcb-util0-dev \
+  libxcb-xinerama0-dev \
+  libxcb-xtest0-dev \
+  libxdg-basedir-dev \
+  lua5.1 \
+  lua-lgi \
+
+cd ~/repos
+rm -rf ~/repos/awesome
+git clone https://github.com/awesomeWM/awesome.git
+cd ~/repos/awesome
+~/bin/rebuild-awesome
+
 
 cat >~/.mailrc <<EOF
 set from="john.yatess@sparqlcity.com"
@@ -298,4 +323,3 @@ none                                      /var/tmp    tmpfs   relatime,nodiratim
 #
 //10.1.1.2/homes   /net/whs/homes  cifs   defaults,username=Dad,password=paren eFy wed jSy   0 2
 EOF
-

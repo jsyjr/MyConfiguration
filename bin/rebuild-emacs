@@ -14,7 +14,8 @@ if [ ! -f "src/bitmaps/leftptr.xbm" ]; then
 fi
 
 set +e
-find -name "*.elc" -exec rm {} \;
+make extraclean
+make maintainer-clean
 set -e
 
 if [ -d .bzr ] ; then
@@ -24,14 +25,14 @@ elif [ -d .git ] ; then
   git pull
 fi
 
-
 set +e
-CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs --enable-link-time-optimization
-CFLAGS='-march=corei7 -O3' make -j8 -k
+# CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs --enable-link-time-optimization
+CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs
 set -e
-CFLAGS='-march=corei7 -O3' make
+CFLAGS='-march=corei7 -O3' make -j8
+# CFLAGS='-march=corei7 -O3' make
 
-make -j8 -k doc
+# make -j8 -k doc
 make doc
 
 echo

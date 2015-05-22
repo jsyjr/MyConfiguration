@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# Delete the previous deployment
+cd ${SFROOT}/bootstrap/lxc
+./start.sh destroy
+cd ${SFROOT}
+
+# Clean previous fetched roles
+sudo rm -Rf /var/lib/sf/roles
+
+# Be sure we have a clean copy of the desired tag
+git checkout ${TAG}
+git clean -fx
+
+# Fetch pre-built roles
+./fetch_roles.sh trees
+
+# Start the build role. Actually this will just un-archive the fetched roles
+# and should not perform a build because the local git tree has not changed (this
+# is a tag)
+SF_SKIP_FETCHBASES=1 ./build_roles.sh
+
+# Start the deployment
+cd ${SFROOT}/bootstraps/lxc/
+./start.sh init
+
+# Follow the deployement
+ssh-keygen -f "${HOME}/.ssh/known_hosts" -R 192.168.134.49
+ssh root@192.168.134.49 tailf /var/log/sf-bootstrap.log
+
+# At this step it should work
+# Final log line is:
+#
+#   ssh -p22 root@jenkins.tests.dom 'sleep 2700; service puppet start'
+
+# Confirm http access
+curl 192.168.134.54 | grep -i software

@@ -1,19 +1,19 @@
+# ctools version of PATH:
+#  .:~/bin:${PATH}:/sbin:~/asd:~/asd/rel/bin:~/asd/drel/bin:~/asd/src/ctools
+
 PATH=\
 /usr/lib/ccache\
-:.\
 :${HOME}/bin\
-:${HOME}/repos/rtags/bin\
-:${HOME}/asd\
-:${HOME}/asd/drel/bin\
-:${HOME}/asd/src/ctools\
-:${HOME}/asd/trunk\
-:${HOME}/asd/trunk/drel/bin\
-:${HOME}/asd/trunk/src/ctools\
 :/etc/alternatives\
 :/usr/local/sbin\
-:/usr/local/bin\
 :/usr/sbin\
-:/usr/bin\
 :/sbin\
+:/usr/local/bin\
+:/usr/bin\
 :/bin\
-:\
+:.\
+:./rel/bin\
+:./drel/bin\
+:./crel/bin\
+:./src/ctools\
+:./src/tools\
