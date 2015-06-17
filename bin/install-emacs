@@ -1,0 +1,33 @@
+#!/bin/dash
+
+if [ ! -f "src/bitmaps/leftptr.xbm" ]; then
+   echo "Working directory ( $(pwd) ) is not the root of an emacs source tree."; exit 1
+fi
+
+sudo make install
+sudo update-alternatives \
+ --install /usr/bin/emacs                                                 emacs              /usr/local/emacs/bin/emacs 1000 \
+ --slave   /usr/share/icons/hicolor/128x128/apps/emacs.png                emacs-128x128.png  /usr/local/emacs/share/icons/hicolor/128x128/apps/emacs.png \
+ --slave   /usr/share/icons/hicolor/16x16/apps/emacs.png                  emacs-16x16.png    /usr/local/emacs/share/icons/hicolor/16x16/apps/emacs.png \
+ --slave   /usr/share/icons/hicolor/24x24/apps/emacs.png                  emacs-24x24.png    /usr/local/emacs/share/icons/hicolor/24x24/apps/emacs.png \
+ --slave   /usr/share/icons/hicolor/32x32/apps/emacs.png                  emacs-32x32.png    /usr/local/emacs/share/icons/hicolor/32x32/apps/emacs.png \
+ --slave   /usr/share/icons/hicolor/48x48/apps/emacs.png                  emacs-48x48.png    /usr/local/emacs/share/icons/hicolor/48x48/apps/emacs.png \
+ --slave   /usr/share/icons/hicolor/scalable/mimetypes/emacs-document.svg emacs-document.svg /usr/local/emacs/share/icons/hicolor/scalable/mimetypes/emacs-document.svg \
+ --slave   /usr/share/man/man1/emacs.1.gz                                 emacs.1.gz         /usr/local/emacs/share/man/man1/emacs.1.gz \
+ --slave   /usr/share/icons/hicolor/scalable/apps/emacs.svg               emacs.svg          /usr/local/emacs/share/icons/hicolor/scalable/apps/emacs.svg \
+#
+sudo update-alternatives --auto emacs
+
+
+sudo update-alternatives \
+ --install /usr/bin/emacsclient                                           emacsclient        /usr/local/emacs/bin/emacsclient 1000 \
+ --slave   /usr/share/man/man1/emacsclient.1.gz                           emacsclient.1.gz   /usr/local/emacs/share/man/man1/emacsclient.1.gz \
+#
+sudo update-alternatives --auto emacsclient
+
+
+sudo update-alternatives \
+ --install /usr/bin/ebrowse                                               ebrowse            /usr/local/emacs/bin/ebrowse 1000 \
+ --slave   /usr/share/man/man1/ebrowse.1.gz                               ebrowse.1.gz       /usr/local/emacs/share/man/man1/ebrowse.1.gz \
+#
+sudo update-alternatives --auto ebrowse

@@ -1275,6 +1275,11 @@ convert it to readonly/view-mode."
  '(magit-tag                        ((t (:foreground "LightGoldenrod2"    :weight bold               ))))
  )
 
+(add-hook 'magit-mode-hook
+          (lambda ()
+            (magit-define-popup-action 'magit-ediff-popup ?S "Show staged"   'magit-ediff-show-staged)
+            (magit-define-popup-action 'magit-ediff-popup ?U "Show unstaged" 'magit-ediff-show-unstaged)))
+
 (defun my/magit-status ()
   "Switch to (or create) the magit status buffer for current context"
   (interactive)

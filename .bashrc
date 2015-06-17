@@ -2,7 +2,11 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+alias qmake='sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
+alias mw='mw -using Bstateflow'
+alias sbs='mw -using Bstateflow sbs'
 
+. /sandbox/savadhan/sbtools/_bash_functions
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -80,10 +84,10 @@ if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 
-# set PATH
-if [ -f "$HOME/.my_path" ] ; then
-    . "$HOME/.my_path"
-fi
+# # set PATH
+# if [ -f "$HOME/.my_path" ] ; then
+#     . "$HOME/.my_path"
+# fi
 
 alias pss='ps afx | grep sbx'
 alias pure='~/asd/src/tools/sbxstop.sh; src/ctools/clean; mam ; rm -rf data/log/* data/trace/* code clu_code; pss'

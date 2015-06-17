@@ -11,6 +11,7 @@ sudo apt-get install \
   autoconf \
   automake \
   autotools-dev \
+  awesome \
   bleachbit \
   build-essential \
   bzr \
@@ -18,6 +19,7 @@ sudo apt-get install \
   clang \
   cmake \
   curl \
+  devscripts \
   doxygen-latex \
   dwarfdump \
   emacs \
@@ -47,7 +49,6 @@ sudo apt-get install \
   libmagick++-dev \
   libotf-dev \
   librsvg2-dev \
-  libtiff5-dev \
   libtinfo-dev \
   libx11-dev \
   libxml2-dev \
@@ -58,20 +59,17 @@ sudo apt-get install \
   msmtp \
   m4 \
   network-manager-openconnect-gnome \
-  oracle-java8-installer \
-  pepperflashplugin-nonfree \
   texinfo \
   texlive-fonts-extra \
   texlive-latex-base \
-  thin-provisioning-tools \
+  ttf-mscorefonts-installer \
   unison-all-gtk \
-  unity-tweak-tool \
   zlib1g-dev \
 
 
 # enable generalized debugging
 #
-sudo sed -i -e 's/kernel.yama.ptrace_scope = 0/kernel.yama.ptrace_scope = 1' /etc/sysctl.d/10-ptrace.conf
+sudo sed -i -e 's/kernel.yama.ptrace_scope = 0/kernel.yama.ptrace_scope = 1/' /etc/sysctl.d/10-ptrace.conf
 
 # We need to provide dmsetup access to the thin-provisioning libraries
 #
@@ -108,6 +106,26 @@ sudo mkdir -p /ccc
 sudo chmod a+w /ccc
 ccache -F0 -M0
 
+# Install latest git:
+#
+#  Ubuntu:
+#
+sudo add-apt-repository ppa:git-core/ppa
+sudo apt-get update
+sudo apt-get install git
+#
+#  Debian: http://superuser.com/questions/644586/how-to-upgrade-to-latest-git-on-debian-7
+#
+mkdir ~/devel && cd $_
+dget http://ftp.de.debian.org/debian/pool/main/g/git/git_2.1.4-2.1.dsc
+dpkg-source -x git_2.1.4-2.1.dsc
+cd git-2.1.4
+dpkg-checkbuilddeps
+dch --bpo
+# comment out body of ^test: target
+dpkg-buildpackage -uc -us -b  # takes a long time to run tests
+dpkg -i 
+
 
 
 # Download my configuration and install it in my home directory
@@ -115,39 +133,57 @@ ccache -F0 -M0
 cd ~
 rm -rf ~/MyConfiguration ~/Documents ~/Music ~/Public ~/Templates ~/Videos ~/examples.desktop
 git clone https://github.com/jsyjr/MyConfiguration.git
-mv ~/MyConfiguration/{*,.[a-z]*} ~
+mv ~/MyConfiguration/{*,.[a-zA-Z0-9]*} ~
 rm -rf ~/MyConfiguration
 
 
-# Install the Dina bitmapped font
-#
-sudo rm    -f /usr/local/share/fonts/Dina
-sudo mkdir -p /usr/local/share/fonts/Dina
-sudo cp ~/.dinafont/dina/* /usr/local/share/fonts/Dina
-cd /etc/fonts/conf.d
-sudo rm -f 70-no-bitmaps.conf 70-yes-bitmaps.conf
-sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
-
-# Install Adobe's proportionall SourceSans and SourceSerifPro as well
+# Install Adobe's proportional SourceSans and SourceSerifPro as well
 # as its monospaced SourceCodePro fonts
 #
 sudo rm   -rf /usr/local/share/fonts/Source* /tmp/Source* /tmp/source-*
 sudo mkdir -p /usr/local/share/fonts/SourceCodePro /usr/local/share/fonts/SourceSans /usr/local/share/fonts/SourceSefirPro
 cd /tmp
 
-wget http://sourceforge.net/projects/sourcecodepro.adobe/files/latest/download -O SourceCodePro.zip
+wget https://github.com/adobe-fonts/source-code-pro/archive/1.017R.zip -O SourceCodePro.zip
 unzip SourceCodePro.zip
 sudo cp /tmp/SourceCodePro*/WOFF/OTF/* /usr/local/share/fonts/SourceCodePro
 
-wget http://sourceforge.net/projects/sourcesans.adobe/files/latest/download -O SourceSans.zip
+wget https://github.com/adobe-fonts/source-sans-pro/archive/2.010R-ro/1.065R-it.zip -O SourceSans.zip
 unzip SourceSans.zip
 sudo cp /tmp/SourceSans*/WOFF/OTF/* /usr/local/share/fonts/SourceSans
 
-wget http://sourceforge.net/projects/sourceserifpro.adobe/files/latest/download -O SourceSerifPro.zip
+wget https://github.com/adobe-fonts/source-serif-pro/archive/1.017R.zip -O SourceSerifPro.zip
 unzip SourceSerifPro.zip
 sudo cp /tmp/source-serif-pro*/WOFF/OTF/* /usr/local/share/fonts/SourceSerifPro
 
 sudo rm   -rf /tmp/Source* /tmp/source-*
+
+
+# Turn on bitmap fonts but exclude X11's crummy Helvetica
+#
+cd /etc/fonts/conf.d
+sudo rm -f 70-no-bitmaps.conf 70-yes-bitmaps.conf
+sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
+
+cd /etc/fonts/conf.avail
+sudo cat >70-yes-bitmaps.conf <<EOF
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+<!-- Reject X11 bitmap Helvetica fonts -->
+ <selectfont>
+  <rejectfont>
+   <glob>/usr/share/fonts/X11/*/helv*.pcf.gz</glob>
+  </rejectfont>
+ </selectfont>
+</fontconfig>
+EOF
+
+# Install the Dina bitmapped font
+#
+sudo rm    -f /usr/local/share/fonts/Dina
+sudo mkdir -p /usr/local/share/fonts/Dina
+sudo cp ~/.dinafont/dina/* /usr/local/share/fonts/Dina
 
 # Install the Droid Sana Mono (slashed zero) bitmapped font
 #
@@ -250,29 +286,9 @@ cd ~/repos
 rm -rf ~/repos/awesome
 git clone https://github.com/awesomeWM/awesome.git
 cd ~/repos/awesome
-~/bin/rebuild-awesome
 
+# follow: https://awesome.naquadah.org/wiki/Awesome-3-git-debian
 
-cat >~/.mailrc <<EOF
-set from="john.yatess@sparqlcity.com"
-set sendmail="/usr/bin/msmtp"
-set message-sendmail-extra-arguments="-a gmail"
-EOF
-
-cat >~/.msmtp <<EOF
-account gmail
-host smtp.gmail.com
-port 587
-tls on
-tls_trust_file /usr/share/ca-certificates/mozilla/Equifax_Secure_CA.crt
-auth on
-
-user john.yates@sparqlcity.com
-from john.yates@sparqlcity.com
-password ********
-
-account default: gmail
-EOF
 
 sudo mkdir -p /net/whs/homes
 
