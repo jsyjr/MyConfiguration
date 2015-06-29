@@ -1,5 +1,6 @@
 Emacs.fullscreen: maximized
 Emacs.background: black
+Emacs.foreground: white
 Emacs.menuBar: off
 Emacs.toolBar: off
 Emacs.horizontalScrollBars: off
