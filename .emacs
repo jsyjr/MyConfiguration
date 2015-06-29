@@ -1,10 +1,10 @@
+;; John Yates's .emacs  -*- emacs-lisp -*-
+
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
 (package-initialize)
-
-;; John Yates's .emacs  -*- emacs-lisp -*-
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it as you will.  I place it in the public domain.  I do
@@ -16,6 +16,15 @@
 
 (defconst copyright-owner "John S Yates Jr")
 (put 'copyright-owner 'safe-local-variable 'stringp)
+
+;; The Mathworks setup if very paternalistic and presumes to setup
+;; many customizations that conflict with my habits.  Load this file
+;; early so that later I can override it.
+;; (if (file-exists-p "/hub/share/sbtools/emacs_setup.el")
+;;     (let (save-version emacs-major-version)
+;;       (setq emacs-major-version 24)
+;;       (load-file "/hub/share/sbtools/emacs_setup.el")
+;;       (setq emacs-major-version save-version)))
 
 ;; Too many false alarms
 ;; (setq debug-on-error t)
@@ -142,6 +151,7 @@
         "~/.emacs.d/semanticdb"
         "~/.emacs.d/srecode"
         "~/.emacs.d/url"
+        "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools"
         ,el-get-dir
 	))
 
@@ -1274,6 +1284,11 @@ convert it to readonly/view-mode."
  '(magit-section-heading            ((t (:foreground "SteelBlue1"         :weight bold               ))))
  '(magit-tag                        ((t (:foreground "LightGoldenrod2"    :weight bold               ))))
  )
+
+(add-hook 'magit-mode-hook
+          (lambda ()
+            (magit-define-popup-action 'magit-ediff-popup ?S "Show staged"   'magit-ediff-show-staged)
+            (magit-define-popup-action 'magit-ediff-popup ?U "Show unstaged" 'magit-ediff-show-unstaged)))
 
 (defun my/magit-status ()
   "Switch to (or create) the magit status buffer for current context"
@@ -2865,6 +2880,25 @@ can easily repeat an earlier amake -pgrep command."
  '(ecb-source-face            ((t (:inherit ecb-default-highlight-face))))
  '(ecb-tag-header-face        ((t (:underline "dark orange"))))
  )
+
+;;}}}
+;;{{{  Matlab
+
+;; (add-to-list 'el-get-sources
+;;              '(:name matlab-emacs
+;;                      :description "It's Magit! An Emacs mode for Git."
+;;                      :website     "https://github.com/magit/magit#readme"
+;;                      :type        github
+;;                      :pkgname     "magit/magit"
+;; ;;                   :branch      "master"))
+;;                      :branch      "next"
+;;                      :depends     dash
+;; ;;                   :load-path   ""
+;;                      :compile     "magit.*\.el\\'"
+;; ;;                     :build       nil ;; `(("make" "lisp"))
+;; ;;                   :info
+;;                      ))
+;; (my/el-get-install "magit")
 
 ;;}}}
 
