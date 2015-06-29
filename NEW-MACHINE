@@ -78,6 +78,10 @@ sudo apt-get install \
 #  Ubuntu:
 #
 sudo sed -i -e 's/kernel.yama.ptrace_scope = 0/kernel.yama.ptrace_scope = 1/' /etc/sysctl.d/10-ptrace.conf
+
+# We need to provide dmsetup access to the thin-provisioning libraries
+#
+sudo sed -i -e 's/kernel.yama.ptrace_scope = 0/kernel.yama.ptrace_scope = 1/' /etc/sysctl.d/10-ptrace.conf
 #
 #  Debian
 #
@@ -161,6 +165,33 @@ unzip SourceSerifPro.zip
 sudo cp /tmp/source-serif*/TTF/* /usr/local/share/fonts/SourceSerifPro
 
 rm   -rf /tmp/Source* /tmp/source-*
+
+
+# Turn on bitmap fonts but exclude X11's crummy Helvetica
+#
+cd /etc/fonts/conf.d
+sudo rm -f 70-no-bitmaps.conf 70-yes-bitmaps.conf
+sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
+
+cd /etc/fonts/conf.avail
+sudo cat >70-yes-bitmaps.conf <<EOF
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+<!-- Reject X11 bitmap Helvetica fonts -->
+ <selectfont>
+  <rejectfont>
+   <glob>/usr/share/fonts/X11/*/helv*.pcf.gz</glob>
+  </rejectfont>
+ </selectfont>
+</fontconfig>
+EOF
+
+# Install the Dina bitmapped font
+#
+sudo rm    -f /usr/local/share/fonts/Dina
+sudo mkdir -p /usr/local/share/fonts/Dina
+sudo cp ~/.dinafont/dina/* /usr/local/share/fonts/Dina
 
 
 # Turn on bitmap fonts but exclude X11's crummy Helvetica
