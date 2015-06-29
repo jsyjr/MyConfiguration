@@ -1,0 +1,28 @@
+#!/bin/dash
+
+MATHWORKS=1
+[ -d /mathworks ] && MATHWORKS=0
+
+SUFFIX=""
+[ ${MATHWORKS} -eq 0 ] && SUFFIX=".mine"
+
+doFile() {
+  # Name within ~/.config
+  FILE=$1
+
+  # Choose the symlink name
+  SYMLINK=${FILE}${SUFFIX}
+  [ ${MATHWORKS} -eq 0 ] && [ "${2}" != "" ] && SYMLINK=${FILE}${2}
+
+  # Drop any pre-existing symlink
+  [ -h ${SYMLINK} ] && rm -f ~/${SYMLINK}
+
+  # Mathworks usurps ${FILE} otherwise it should have been moved to ~/.config
+  [ ${MATHWORKS} -eq 0 ] && [ -e ~/${FILE} ] && echo "Top-level name exists: ${FILE}" && return
+
+  # Create the actual symlink into ~/.config
+  ln -s ~/.config/${FILE} ~/${SYMLINK}
+}
+
+doFile mumble
+doFile fooBar _post_setup.el
