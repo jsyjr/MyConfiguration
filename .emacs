@@ -17,15 +17,6 @@
 (defconst copyright-owner "John S Yates Jr")
 (put 'copyright-owner 'safe-local-variable 'stringp)
 
-;; The Mathworks setup if very paternalistic and presumes to setup
-;; many customizations that conflict with my habits.  Load this file
-;; early so that later I can override it.
-;; (if (file-exists-p "/hub/share/sbtools/emacs_setup.el")
-;;     (let (save-version emacs-major-version)
-;;       (setq emacs-major-version 24)
-;;       (load-file "/hub/share/sbtools/emacs_setup.el")
-;;       (setq emacs-major-version save-version)))
-
 ;; Too many false alarms
 ;; (setq debug-on-error t)
 ;; (setq debug-on-error nil)
@@ -123,6 +114,7 @@
 ;; align
 ;; occur
 ;; grep
+;; gnus (see Mathworks' configuration in load-sb-tools.el)
 ;; sort lines
 ;; e/vtags
 ;; gtags?
@@ -474,7 +466,7 @@
 ;;  '(menu-bar-mode nil)
 ;;  )
 
-;;}}}glvc
+;;}}}
 ;;{{{  Minibuffer
 
 (my/custom-set-variables
@@ -630,7 +622,12 @@ mouse-2: Make current window occupy enitre frame
 mouse-3: Remove current window from display")) global-mode-string))
      #("-%-" 0 3 (help-echo "mouse-1: Select (drag to resize)
 mouse-2: Make current window occupy enitre frame
-mouse-3: Remove current window from display")))))
+mouse-3: Remove current window from display"))))
+
+ ;; If vc-mode ever gets turned on try to minize its impact.
+ '(vc-ignore-dir-regexp
+   "\"\\\\`\\\\(?:/mathworks\\\\|/mathworks/[A-Z]+\\\\|/mathworks/[^/]+\\\\|/mathworks/[A-Z]+/[^/]+\\\\|/mathworks/devel/[^/]+\\\\|/mathworks/[A-Z]+/devel/[^/]+\\\\|/mathworks/devel/bat/[^/]+\\\\|/mathworks/[A-Z]+/devel/bat/[^/]+\\\\|/mathworks/devel/jobarchive\\\\|/mathworks/[A-Z]+/devel/jobarchive\\\\|/mathworks/hub/[^/]+\\\\|/mathworks/[A-Z]+/hub/[^/]+\\\\|/mathworks/hub/scratch\\\\|/mathworks/[A-Z]+/hub/scratch\\\\|/mathworks/hub/site-local\\\\|/mathworks/[A-Z]+/hub/site-local\\\\|/sandbox\\\\|/home\\\\|/hub\\\\|/public\\\\|/src\\\\|/scratch\\\\|\\\\)/\\\\'\"\n")
+ )
 
 ;;}}}
 ;;{{{  mode-line eol-mnemonic
@@ -960,7 +957,7 @@ mouse-3: go to end")
  '(kill-whole-line t)
  )
 
-;;{{{  smarter move-beginning-of-line, move-end-of-line
+;;{{{  Smarter move-beginning-of-line, move-end-of-line
 
 (defun my/move-beginning-or-indentation (arg)
   "Move point back to beginning of line or of indentation.
@@ -1045,6 +1042,18 @@ point reaches the beginning or end of the buffer, stop there."
 (my/custom-set-variables
  '(activate-mark-hook 'my/turn-on-delete-selection-mode t)
  )
+
+;;}}}
+;;{{{  Simple editing operations
+
+(defun delete-whitespace-to-next-real-char ()
+  "Delete any white space from the current cursor position until the
+   first non-whitespace character. White space includes new-lines"
+  (interactive)
+  (if (looking-at "[ \t\n]")
+      (if (re-search-forward "[ \t\n]+" nil t)
+	  (replace-match "")))
+  )
 
 ;;}}}
 ;;{{{  White space hygiene
@@ -1215,26 +1224,22 @@ convert it to readonly/view-mode."
 ;;=== VC, diff, merge, patch ===========================================
 ;;{{{  git and magit
 
-;; (add-to-list 'el-get-sources
-;;              '(:name git-modes
-;;                      :branch      "master"
-;;                      :features    (git-commit-mode git-rebase-mode gitconfig-mode gitignore-mode)))
-;; (my/el-get-install "git-modes")
+(add-to-list 'el-get-sources 'git-modes)
+(my/el-get-install "git-modes")
 
-(add-to-list 'el-get-sources
-             '(:name magit
-                     :description "It's Magit! An Emacs mode for Git."
-                     :website     "https://github.com/magit/magit#readme"
-                     :type        github
-                     :pkgname     "magit/magit"
-;;                   :branch      "master"))
-                     :branch      "next"
-                     :depends     dash
-;;                   :load-path   ""
-                     :compile     "magit.*\.el\\'"
-;;                     :build       nil ;; `(("make" "lisp"))
-;;                   :info
-                     ))
+;; (add-to-list 'el-get-sources
+;;              '(:name magit
+;;                      :description "It's Magit! An Emacs mode for Git."
+;;                      :website     "https://github.com/magit/magit#readme"
+;;                      :type        github
+;;                      :pkgname     "magit/magit"
+;;                      :depends     dash
+;; ;;                   :load-path   ""
+;; ;;                     :compile     "magit.*\.el\\'"
+;;                      :build       `(("make" ""))
+;; ;;                   :info
+;;                      ))
+(add-to-list 'el-get-sources 'magit)
 (my/el-get-install "magit")
 
 (add-to-list 'el-get-sources 'git-timemachine)
@@ -1725,6 +1730,15 @@ This command is designed to be used whether you are already in Info or not."
   (setq truncate-lines (default-value 'truncate-lines)))
 
 ;;}}}
+;;{{{  Chasing URL's. See:  browse-url.el
+
+;; (if (file-exists-p (concat "/usr/bin/x-www-browser"))
+;;     (with-no-warnings
+;;       (setq browse-url-browser-function (quote browse-url-generic)
+;; 	    browse-url-generic-program "/usr/bin/x-www-browser"))
+;;   )
+
+;;}}}
 ;;{{{  Spell checking
 
 (my/custom-set-variables
@@ -1862,6 +1876,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (setenv "PAGER" "cat")  ; Use the transcript in lieu of a classic pager
 
 (my/custom-set-variables
+ '(explicit-shell-file-name "/bin/bash")
  '(shell-mode-hook 'ansi-color-for-comint-mode-on)
  )
 
@@ -2157,6 +2172,10 @@ can easily repeat an earlier amake -pgrep command."
                      :features    (vtags)))
 (my/el-get-install "vtags")
 
+(my/custom-set-variables
+ '(tags-revert-without-query t)
+ )
+
 ;; (add-to-list 'el-get-sources
 ;;              '(:name rtags
 ;;                      :description "A C/C++ client/server indexer based on clang."
@@ -2391,7 +2410,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (hs-minor-mode)
   (hideshowvis-enable)
 
-  (setq tab-width 4)
+  (setq tab-width 8)
   (setq comment-column 40)
 
   (c-set-style "jsy")
@@ -2423,10 +2442,180 @@ Works with: arglist-cont, arglist-cont-nonempty."
     ))
 
 ;;}}}
+;;{{{  Makefile mode
+
+(setq auto-mode-alist
+      (append
+       '(
+	 ("\\.mk_.+\\'"              . makefile-mode) ;; \' is end of string
+	 ("[mM]akefile[._][^/]+\\'"  . makefile-mode)
+	 ("\\.tmf\\'"                . makefile-mode)
+	 ("\\.tmf_[^/]+\\'"          . makefile-mode)
+	 ("\\.gnu\\'"                . makefile-mode)
+	 ("\\.gnu_[^/]+\\'"          . makefile-mode)
+	 ("\\.mak\\'"                . makefile-mode)
+	 ("\\.mak_[^/]+\\'"          . makefile-mode)
+	 ("\\.d\\'"                  . makefile-mode)
+	 ("\\.d_[^/]+\\'"            . makefile-mode)
+	 )
+       auto-mode-alist))
+
+;; Makefiles require tabs!
+(add-hook 'makefile-mode-hook ((lambda () (setq indent-tabs-mode t))))
+
+;;}}}
+;;{{{  Matlab mode
+
+(when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
+  (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools")
+  (require 'sbtools-locations)
+
+  (setq locate-dominating-stop-dir-regexp
+	(concat
+	 "\\`" ;; start of string
+         "\\(?:"
+         "/mathworks"                                                    "\\|"
+         ;; Handle /mathworks/AH, etc.
+         "/mathworks/[A-Z]+"                                             "\\|"
+         ;; /mathworks/home, /mathworks/hub, /mathworks/public, etc.
+         "/mathworks/[^/]+"                                              "\\|"
+         "/mathworks/[A-Z]+/[^/]+"                                       "\\|"
+         ;; /mathworks/devel/{sandbox,jobarchive}, etc.
+         "/mathworks/devel/[^/]+"                                        "\\|"
+         "/mathworks/[A-Z]+/devel/[^/]+"                                 "\\|"
+         ;; /mathworks/devel/bat/Aslrtw, etc.
+         "/mathworks/devel/bat/[^/]+"                                    "\\|"
+         "/mathworks/[A-Z]+/devel/bat/[^/]+"                             "\\|"
+         ;; /mathworks/AH/devel/jobarchive, etc.
+         "/mathworks/devel/jobarchive"                                   "\\|"
+         "/mathworks/[A-Z]+/devel/jobarchive"                            "\\|"
+         ;; /mahtworks/hub/{blah}
+         "/mathworks/hub/[^/]+"                                          "\\|"
+         "/mathworks/[A-Z]+/hub/[^/]+"                                   "\\|"
+         ;; /mathworks/hub/scratch
+         "/mathworks/hub/scratch"                                        "\\|"
+         "/mathworks/[A-Z]+/hub/scratch"                                 "\\|"
+         ;; /mathworks/AH/hub/site-local, etc.
+         "/mathworks/hub/site-local"                                     "\\|"
+         "/mathworks/[A-Z]+/hub/site-local"                              "\\|"
+         ;; symlinks
+	 "/sandbox"   "\\|"              ;; symlink to /mathworks/devel/sandbox
+	 "/home"      "\\|"              ;; symlink to /mathworks/home
+	 "/hub"       "\\|"              ;; symlink to /mathworks/hub
+	 "/public"    "\\|"              ;; symlink to /mathworks/public
+	 "/src"       "\\|"              ;; symlink to /mathworks/devel/src
+         "/scratch"   "\\|"              ;; symlink to /mathworks/hub/scratch
+	 "\\)"
+	 "/"   ;; end of directory, see vc-find-root
+	 "\\'" ;; end of string
+	 ))
+  (defvar skip-sbtools-matlab-mode-setup)
+  (when (or (not (boundp 'skip-sbtools-matlab-mode-setup))
+            (not skip-sbtools-matlab-mode-setup))
+
+    (let
+        ((matlabToolsDir (expand-file-name
+                          (concat (file-truename
+                                   (file-name-directory load-file-name))
+                                  "../matlab-emacs/matlab-emacs")))
+         )
+      (add-to-list 'load-path matlabToolsDir)
+
+      (autoload 'matlab-mode "matlab" "MATLAB Editing Mode" t)
+      (autoload 'matlab-shell "matlab" "Interactive MATLAB mode." t)
+      ))
+
+  (add-to-list 'auto-mode-alist '("\\.m\\'" . matlab-mode)) ;; \' is end of string
+  (add-to-list 'auto-mode-alist '("\\.m_[^/]+\\'" . matlab-mode))
+
+  (with-no-warnings
+    (setq matlab-shell-command "sb"
+          matlab-auto-fill nil
+          matlab-fill-code nil
+          matlab-indent-function-body 'MathWorks-Standard
+          ))
+
+  (defun my-matlab-mode-hook ()
+    (setq fill-column 80 		; where auto-fill should wrap
+          )
+    (imenu-add-to-menubar "Find") ; xxx what is this for?
+    )
+  (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
+  (defun my-matlab-shell-mode-hook ()
+    '())
+  (add-hook 'matlab-shell-mode-hook 'my-matlab-shell-mode-hook)
+
+
+  ;; To disable, specify
+  ;;  (setq skip-sbtools-mlint-setup t)
+  ;; prior to loading emacs_setup.el
+  ;;
+  ;; See the /matlab/java/extern/EmacsLink/lisp load path addition above
+  ;; for mlint lisp code.
+  (with-no-warnings
+    (if (or (not (boundp 'skip-sbtools-mlint-setup))
+            (not skip-sbtools-mlint-setup))
+        (progn
+          (message "Configuring auto-mlint")
+          (autoload 'mlint-minor-mode "mlint" nil t)
+          (add-hook 'matlab-mode-hook
+                    (lambda ()
+                      ;; Following are off by default to help customers
+                      ;; which have installed mlint, but didn't install
+                      ;; linemark.el, etc. object libraries.
+                      (setq matlab-show-mlint-warnings t
+                            highlight-cross-function-variables t
+                            mlint-flags '("-all" "-id"))
+                      (mlint-minor-mode 1)))
+          ) ;; progn
+      )
+    )
+
+  ;;
+  ;; Delete file.p if it exists when file.m is saved
+  ;;
+  (defun matlab-deletep-after-save-hook ()
+    "Delete file.p if it exists when file.m is saved"
+    (let* ((fname (buffer-file-name (current-buffer)))
+           (pfile (concat (file-name-sans-extension fname) ".p"))
+           )
+      (when (and (file-exists-p pfile)
+                 (or noninteractive  ;; sbindent
+                     (y-or-n-p (format "Delete %s too? " pfile))))
+        (delete-file pfile)
+        (message "Deleted %s. Remember to run sbgentbxcache!"
+                 (file-name-nondirectory pfile))
+        )))
+
+  (add-hook 'matlab-mode-hook (lambda ()
+                                (add-hook 'after-save-hook
+                                          'matlab-deletep-after-save-hook
+                                          t t))) ;; Local hook in matlab-mode
+  )
+
+;; (if (file-exists-p "/hub/share/sbtools/emacs_setup.el")
+;;     (let (save-version emacs-major-version)
+;;       (setq emacs-major-version 24)
+;;       (load-file "/hub/share/sbtools/emacs_setup.el")
+;;       (setq emacs-major-version save-version)))
+
+;;}}}
 ;;{{{  assembly language
 
 (my/custom-set-variables
  '(asm-comment-char 35))                ; = '#'
+
+;;}}}
+;;{{{  Wiki mode
+
+(add-to-list 'auto-mode-alist '("\\.wiki\\'" . simple-wiki-mode) t)
+(add-to-list 'auto-mode-alist '("\\.w3mtmp\\'" . simple-wiki-mode) t)
+
+;;}}}
+;;{{{  AT&T Graphviz mode
+
+(when (locate-library "graphviz-dot-mode")
+  (add-to-list 'auto-mode-alist '("\\.vis\\'" . graphviz-dot-mode)))
 
 ;;}}}
 ;;{{{  GDB support
@@ -2437,6 +2626,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
  '(gdb-stack-buffer-addresses t)
  '(gud-tooltip-mode t)
  )
+
+(defvar gdb-source-window nil)
 
 (eval-after-load "gud" '(progn
   ;; Assume that the *gud- input window is selected
@@ -2882,25 +3073,6 @@ can easily repeat an earlier amake -pgrep command."
  )
 
 ;;}}}
-;;{{{  Matlab
-
-;; (add-to-list 'el-get-sources
-;;              '(:name matlab-emacs
-;;                      :description "It's Magit! An Emacs mode for Git."
-;;                      :website     "https://github.com/magit/magit#readme"
-;;                      :type        github
-;;                      :pkgname     "magit/magit"
-;; ;;                   :branch      "master"))
-;;                      :branch      "next"
-;;                      :depends     dash
-;; ;;                   :load-path   ""
-;;                      :compile     "magit.*\.el\\'"
-;; ;;                     :build       nil ;; `(("make" "lisp"))
-;; ;;                   :info
-;;                      ))
-;; (my/el-get-install "magit")
-
-;;}}}
 
 ;;=== Uncatergorized ===================================================
 ;;{{{  email
@@ -2924,11 +3096,97 @@ can easily repeat an earlier amake -pgrep command."
  '(server-window 'pop-to-buffer)
  )
 
-(server-start)
-
 (defun my/pop-file-name-history ()
   "Pop most recent filename from the history."
   (setq file-name-history (cdr file-name-history)))
+
+;; Code lifted from Mathwork's load-sb-tools.el
+;;=======
+;; - On UNIX, name server based on desktop id - 0 is the main with name
+;;   "server" and others have name "serverId", Id = desktop number - 1.
+;;   sbemacsclient.sh assumes this convention and this convention also
+;;   handles the case of people using emacsclient directly.
+;; - Only start server when it isn't already running
+;;
+;; An alternative implementation is to use
+;;   (windowID (frame-parameter (selected-frame) 'outer-window-id))
+;;   ... (concat "xprop -id " windowID " _NET_WM_DESKTOP") ...
+;; but this doesn't handle when one rsh's over to a system.
+
+;; See if we should skip server-start. SBTools specifies:
+;;    emacs --eval=(setq skip-sbtools-server-start t) ....
+;; when using emacs for transient tags and this isn't evaluated before
+;; loading emacs_setup.el, thus see if it has been specified and
+;; process it.
+(defvar skip-sbtools-server-start) ;; suppress compile warning
+(let ((first-arg (car (cdr command-line-args))))
+  (if (equal first-arg "--eval=(setq skip-sbtools-server-start t)")
+      (setq skip-sbtools-server-start t)
+    )
+  )
+
+;; Emacs 21 doesn't support server-name, Emacs 23 is when
+;; Windows client started working.
+(when (and (>= emacs-major-version 23)
+	   (not noninteractive)  ;; --batch?
+	   (or (not (boundp 'skip-sbtools-server-start))
+	       (not skip-sbtools-server-start))
+	   )
+  (let ((sbtools-server-name nil))
+    (if (equal system-type 'gnu/linux)
+	;; UNIX (Linux)
+	(let ((display (getenv "DISPLAY")))
+	  (when display
+	    (let*
+		(
+		 (dispNumMatch   (string-match ":\\([0-9]+\\)" display))
+		 (dispNum        (when dispNumMatch (match-string 1 display)))
+		 (screenNumMatch (string-match ":[0-9]+\\.\\([0-9]+\\)" display))
+		 (screenNum      (if screenNumMatch 
+				     (match-string 1 display)
+				   "0"))
+		 (xpropDesktop   (shell-command-to-string
+				  (concat "xprop -root -display " 
+					  display " _NET_CURRENT_DESKTOP")))
+		 (desktopIdMatch (string-match
+				  "_NET_CURRENT_DESKTOP(CARDINAL) = \\([0-9]+\\)"
+				  xpropDesktop))
+		 (desktopId      (when desktopIdMatch (match-string 1 xpropDesktop)))
+		 )
+	      (let ((one-disp (getenv "SBTOOLS_ONE_EMACS_SESSION_PER_DISPLAY")))
+		(if (and one-disp (string= one-disp "1"))
+		    ;; server-name is serverDISP_NUM
+		    (when dispNum
+		      (setq sbtools-server-name (concat "server" dispNum)))
+		  ;; else server-name is serverDISP_NUM.SCREEN_NUM.DESKTOP_ID
+		  (when (and dispNum screenNum desktopId)
+		    (setq sbtools-server-name
+			  (concat "server" dispNum "." screenNum "." desktopId)))
+		  ))
+	      )))
+      ;; else maci64/Windows
+      (setq sbtools-server-name "server")
+      ) ;; end (if (equal system-type 'gnu/linux))
+
+    (defvar server-name) ;; suppress compile warning
+    (when sbtools-server-name
+      ;; In emacs23, server-running-p came into existence. Prior to
+      ;; that (emacs22) each invocation of server-start canceled the
+      ;; existing server and starts a new server. Using server-running-p
+      ;; we can avoid canceling an existing server.
+      (when (or (not (functionp 'server-running-p))
+		(not (server-running-p sbtools-server-name)))
+	(setq server-name sbtools-server-name)
+	(message (concat "SBTools: starting emacs server named: " server-name))
+	(if (> emacs-major-version 22)
+	    ;; server-force-delete arrived with emacs 23.
+	    (server-force-delete server-name)
+	  )
+	(server-start))
+      )
+    )
+  )
+;;=======
 
 ;;}}}
 ;;{{{  Performance
@@ -2937,12 +3195,6 @@ can easily repeat an earlier amake -pgrep command."
  '(gc-cons-threshold 50000000)
  '(message-log-max 10000)
  )
-
-;;}}}
-;;{{{  keydef
-
-(add-to-list 'el-get-sources 'keydef)
-(my/el-get-install "keydef")
 
 ;;}}}
 
@@ -3110,11 +3362,22 @@ can easily repeat an earlier amake -pgrep command."
 ;;}}}
 ;;{{{  Key bindings
 
-(require 'keydef)       ; simpler key definitions, autoloads for free
+; simpler key definitions, autoloads for free
+(add-to-list 'el-get-sources 'keydef)
+(my/el-get-install "keydef")
 
+(keydef "M-D"           delete-whitespace-to-next-real-char)
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
 (keydef "C-c C-k"       kill-compilation)
+
+(keydef "S-<mouse-3>"   browse-url-at-mouse)
+(keydef "C-c C-z ."     browse-url-at-point)
+(keydef "C-c C-z b"     browse-url-of-buffer)
+(keydef "C-c C-z r"     browse-url-of-region)
+(keydef "C-c C-z u"     browse-url)
+(keydef "C-c C-z v"     browse-url-of-file)
+(keydef (dired "z"      browse-url-of-dired-file))
 
 ;; easy ECB activation and deactivation
 (keydef "C-c b" ecb-activate)
@@ -3152,7 +3415,6 @@ can easily repeat an earlier amake -pgrep command."
 (keydef "C-h A"         apropos-toc)       ; mnemonic: apropos All
 (keydef "C-h L"         (info "elisp"))    ; was describe-language-environment
 (keydef "C-h R"         my/elisp-function-reference)
-
 
 (keydef "C-x C-b"       bs-show)           ; same binding as <f1>
 

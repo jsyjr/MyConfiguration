@@ -78,10 +78,6 @@ sudo apt-get install \
 #  Ubuntu:
 #
 sudo sed -i -e 's/kernel.yama.ptrace_scope = 0/kernel.yama.ptrace_scope = 1/' /etc/sysctl.d/10-ptrace.conf
-
-# We need to provide dmsetup access to the thin-provisioning libraries
-#
-sudo sed -i -e 's/kernel.yama.ptrace_scope = 0/kernel.yama.ptrace_scope = 1/' /etc/sysctl.d/10-ptrace.conf
 #
 #  Debian
 #
