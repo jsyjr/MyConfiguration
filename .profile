@@ -22,6 +22,7 @@ export CCACHE_DIR=/ccc
 export CCACHE_TEMPDIR=/tmp
 export CCACHE_LOGFILE=/tmp/ccache.log
 export CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
+export USE_CCACHE=1
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
