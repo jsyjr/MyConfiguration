@@ -1635,8 +1635,8 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  Browsing and completion (helm, ido, smex)
 
-(add-to-list 'el-get-sources 'helm)
-(my/el-get-install "helm")
+;; (add-to-list 'el-get-sources 'helm)
+;; (my/el-get-install "helm")
 
 ;; Repair helm "angry salad"
 (my/custom-set-faces
