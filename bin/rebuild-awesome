@@ -2,7 +2,7 @@
 
 set -e
 
-if [ ! -f "awesome-version-internal.h.in" ]; then
+if [ ! -f "awesome-version-internal.h" ]; then
    echo "Working directory ( $(pwd) ) is not the root of an awesome source tree."; exit 1
 fi
 
@@ -11,5 +11,8 @@ git pull
 sed -i.bak \
     -e 's/-O1/-O2 -march=corei7/g' \
   awesomeConfig.cmake
+
+
+sudo rm -rf ./.build-*
 sudo make clean
 sudo make install
