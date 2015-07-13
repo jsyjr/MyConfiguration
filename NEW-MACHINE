@@ -193,32 +193,6 @@ sudo mkdir -p /usr/local/share/fonts/Dina
 sudo cp ~/.dinafont/dina/* /usr/local/share/fonts/Dina
 
 
-# Turn on bitmap fonts but exclude X11's crummy Helvetica
-#
-cd /etc/fonts/conf.d
-sudo rm -f 70-no-bitmaps.conf 70-yes-bitmaps.conf
-sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
-
-cd /etc/fonts/conf.avail
-sudo cat >70-yes-bitmaps.conf <<EOF
-<?xml version="1.0"?>
-<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
-<fontconfig>
-<!-- Reject X11 bitmap Helvetica fonts -->
- <selectfont>
-  <rejectfont>
-   <glob>/usr/share/fonts/X11/*/helv*.pcf.gz</glob>
-  </rejectfont>
- </selectfont>
-</fontconfig>
-EOF
-
-# Install the Dina bitmapped font
-#
-sudo rm    -f /usr/local/share/fonts/Dina
-sudo mkdir -p /usr/local/share/fonts/Dina
-sudo cp ~/.dinafont/dina/* /usr/local/share/fonts/Dina
-
 # Install the Droid Sana Mono (slashed zero) bitmapped font
 #
 cd /tmp
