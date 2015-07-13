@@ -11,4 +11,5 @@ git pull
 sed -i.bak \
     -e 's/-O1/-O2 -march=corei7/g' \
   awesomeConfig.cmake
+sudo make clean
 sudo make install

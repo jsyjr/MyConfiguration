@@ -241,6 +241,7 @@ sudo apt-get install \
   libxcb-keysyms1-dev \
   libxcb-util0-dev \
   libxcb-xinerama0-dev \
+  libxcb-xkb-dev \
   libxcb-xtest0-dev \
   libxdg-basedir-dev \
   lua5.1 \

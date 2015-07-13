@@ -6,19 +6,16 @@ if [ ! -f "src/doxygen.cpp" ]; then
    echo "Working directory ( $(pwd) ) is not the root of a doxygen source tree."; exit 1
 fi
 
+rm -rf build
 git reset --hard
 git pull
 
-# ./configure --prefix=/usr/local --english-only --with-libclang
-./configure --prefix=/usr/local --english-only
+mkdir build
+cd build
+cmake -G "Unix Makefiles" english_only=1 use_libclang=1 ..
+sed -i -e 's/-O2/-march=corei7 -O3/' `find -name Makefile`
 
-make distclean
-
-mkdir -p lib bin objects/qtools html latex man docbook perlmod rtf xml
-
-./configure --prefix=/usr/local --english-only
-
-sed -i -e 's/-O2/-march=corei7 -O3/' src/Makefile.* libmd5/Makefile.* qtools/Makefile.*
+# mkdir -p lib bin objects/qtools html latex man docbook perlmod rtf xml
 
 make -kj8
 make -kj8
@@ -26,5 +23,8 @@ make
 
 ./bin/doxygen --version
 
-make docs
-make pdf
+# make docs
+# make pdf
+
+cd ..
+
