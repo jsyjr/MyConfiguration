@@ -143,7 +143,7 @@
         "~/.emacs.d/semanticdb"
         "~/.emacs.d/srecode"
         "~/.emacs.d/url"
-        "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools"
+;        "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools"
         ,el-get-dir
 	))
 
