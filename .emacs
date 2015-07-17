@@ -1,9 +1,6 @@
 ;; John Yates's .emacs  -*- emacs-lisp -*-
 
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
+;; Added by package.el: must precede config of installed packages.
 (package-initialize)
 
 ;; This program is free software; you can redistribute it and/or
@@ -16,6 +13,10 @@
 
 (defconst copyright-owner "John S Yates Jr")
 (put 'copyright-owner 'safe-local-variable 'stringp)
+
+;; Set to t when bringing up a new machine or reinstalling the full
+;; complement of packages.  (When t customizations get suppressed.)
+(defvar my/refetch-all-packages nil)
 
 ;; Too many false alarms
 ;; (setq debug-on-error t)
@@ -87,14 +88,7 @@
 ;; - git, bzr, cvs, svn, hg, autoconf, makeinfo (from texinfo)
 ;; - doxymacs requires that libxml2-dev be installed (presently not used)
 
-;; Remove older versions of emacs and emacs-goodies-el
-;;
-;; To fetch an initial copy emacs-goodies-el from debian.org or to update:
-;;
-;; $ cd ~/.emacs.d
-;; $ cvs -d :pserver:anonymous@anonscm.debian.org:/cvs/pkg-goodies-el login
-;; [blank password]
-;; $ cvs -z3 -d :pserver:anonymous@anonscm.debian.org:/cvs/pkg-goodies-el checkout emacs-goodies-el/elisp/emacs-goodies-el
+;; Remove older versions of emacs
 
 ;; - uncomment (el-get-update-all t) in section Sync and update (below)
 ;; - el-get-emacswiki-refresh (no separate subdirectory)
@@ -285,11 +279,12 @@
     (cdr form)))
 
 ;; Read custom-file, save the customization lists and evaluate the forms.
-(with-current-buffer (get-buffer-create "*Custom File*")
-  (insert-file-contents-literally custom-file )
-  (setq my/saved-custom-variables (process-customization-list))
-  (setq my/saved-custom-faces     (process-customization-list))
-  (kill-buffer))
+(unless my/refetch-all-packages
+  (with-current-buffer (get-buffer-create "*Custom File*")
+    (insert-file-contents-literally custom-file )
+    (setq my/saved-custom-variables (process-customization-list))
+    (setq my/saved-custom-faces     (process-customization-list))
+    (kill-buffer)))
 
 ;; Host specific initialization if it exists (my-rc-local-HOST.el[c])
 (require (intern (concat "my-rc-local-"
@@ -363,8 +358,7 @@
             (lambda nil
               (delete-trailing-whitespace)
               nil))
-           (require
-            (quote whitespace))
+           (require 'whitespace)
            "Sometimes the mode needs to be toggled off and on."
            (whitespace-mode 0)
            (whitespace-mode 1))
@@ -898,6 +892,10 @@ mouse-3: go to end")
     "DarkSlateGray1"
     "white"])
  )
+
+;; From the distant past...
+;;  '(ansi-color-faces-vector [default bold default italic underline bold bold-italic modeline])
+;;  '(ansi-color-names-vector ["black" "IndianRed1" "medium spring green" "khaki1" "DodgerBlue1" "maroon1" "DarkSlateGray1" "white"])
 
 ;;}}}
 ;;{{{  Extra color themes
@@ -1466,7 +1464,7 @@ convert it to readonly/view-mode."
                      :depends (yasnippet popup fuzzy)))
 
 (my/el-get-install "auto-complete")
-(require 'auto-complete)
+(require 'auto-complete nil t)
 
 ;; (add-to-list 'el-get-sources
 ;;              (:name auto-complete-c-headers
@@ -1635,8 +1633,8 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  Browsing and completion (helm, ido, smex)
 
-;; (add-to-list 'el-get-sources 'helm)
-;; (my/el-get-install "helm")
+(add-to-list 'el-get-sources 'helm)
+(my/el-get-install "helm")
 
 ;; Repair helm "angry salad"
 (my/custom-set-faces
@@ -1759,6 +1757,7 @@ This command is designed to be used whether you are already in Info or not."
 ;;{{{  Recent files
 
 (my/custom-set-variables
+ '(recentf-mode t)
  '(recentf-save-file "~/.emacs.d/recentf")
  )
 
@@ -2015,7 +2014,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
                      :type        http
                      :url         "http://cc-mode.sourceforge.net/filladapt.el"
                      :features    (filladapt)))
-(my/el-get-install "filladapt")
+;(my/el-get-install "filladapt")
 
 
 ;; As distributed filladapt.el contains no autoload cookies
@@ -3201,8 +3200,8 @@ can easily repeat an earlier amake -pgrep command."
 ;;=== el-get (epilog) ==================================================
 ;;{{{  Sync and update
 
-;; Use update all when first configuring a new machine or user
-;; (el-get-update-all t)
+(if my/refetch-all-packages
+    (el-get-update-all t))
 
 (message "======== Install missing packages")
 (princ my/missing-el-get-packages)
@@ -3233,86 +3232,16 @@ can easily repeat an earlier amake -pgrep command."
 ;; (my/custom-set-variables
 ;;  '(align-to-tab-stop t) ; align.el
 
-;;  '(ansi-color-faces-vector [default bold default italic underline bold bold-italic modeline])
-;;  '(ansi-color-names-vector ["black" "IndianRed1" "medium spring green" "khaki1" "DodgerBlue1" "maroon1" "DarkSlateGray1" "white"])
-
 ;;  '(c-basic-offset 4)
 ;;  '(c-font-lock-extra-types (quote ("FILE" "\\sw+_[hpt]")))
 
-;;  '(comint-highlight-input nil)
-
-;;  '(dvc-prefix-key [(control c) 100])
-;;  '(dvc-tips-enabled nil)
-
+;; This seems to a configuration for a package on emacswiki
 ;;  '(ebnf-justify-sequence (quote left))
 ;;  '(ebnf-non-terminal-shape (quote miter))
 ;;  '(ebnf-production-font (quote (10 Helvetica "White" "White" bold)))
 ;;  '(ebnf-terminal-shape (quote round))
 
-;;  '(ecb-compile-window-height 5)
-;;  '(ecb-compile-window-width (quote edit-window))
-;;  '(ecb-layout-name "left5")
-;;  '(ecb-options-version "2.33beta2")
-;;  '(ecb-scroll-other-window-scrolls-compile-window t)
-;;  '(ecb-windows-width 0.2)
-
 ;;  '(flyspell-incorrect-hook (quote (flyspell-maybe-correct-doubling flyspell-maybe-correct-transposition)))
-
-;;  '(gdb-many-windows t)
-;;  '(gdb-use-separate-io-buffer t)
-;;  '(gud-tooltip-mode t)
-;;  '(tooltip-gud-tips-p t)
-
-;;  '(help-at-pt-timer-delay 0.5)
-
-;;  '(package-archives
-;;    '(("elpa" . "http://tromey.com/elpa/")
-;;      ("marmalade" . "http://marmalade-repo.org/packages/")
-;;      ("sc" . "http://joseito.republika.pl/sunrise-commander/")
-;;      ("gnu" . "http://elpa.gnu.org/packages/")
-;;      ))
-;;  '(package-user-dir "~/emacs/elpa")
-
-;;  '(recentf-mode t nil (recentf))
-
-;;  '(same-window-buffer-names
-;;    '("*Buffer List*"
-;;      "*ielm*"
-;;      "*inferior-lisp*"
-;;      "*mail*"
-;;      "*scheme*"
-;;      "*shell*"
-;;      ))
-
-;;  '(speedbar-frame-parameters
-;;    '((minibuffer)
-;;      (width . 20)
-;;      (border-width . 0)
-;;      (menu-bar-lines . 0)
-;;      (tool-bar-lines . 0)
-;;      (unsplittable . t)
-;;      (set-background-color "black")
-;;      ))
-
-;;  '(widget-field ((((class grayscale color) (background light)) (:background "DarkBlue"))))
-;; )
-
-;; (my/custom-set-faces
-;;  '(background "blue")
-
-;;  '(makefile-space-face ((t (:background "wheat"))) t)
-
-;;  '(paren-match ((t (:background "darkseagreen4"))))
-;;  '(show-paren-match ((t (:foreground "black" :background "wheat"))))
-;;  '(show-paren-mismatch ((((class color)) (:foreground "white" :background "red"))))
-
-;;  '(speedbar-button-face ((((class color) (background dark)) (:foreground "green4"))))
-;;  '(speedbar-directory-face ((((class color) (background dark)) (:foreground "khaki"))))
-;;  '(speedbar-file-face ((((class color) (background dark)) (:foreground "cyan"))))
-;;  '(speedbar-tag-face ((((class color) (background dark)) (:foreground "Springgreen"))))
-
-;;  '(tool-bar ((t (:background "wheat1" :foreground "black" :box (:line-width 1 :style released-button)))))
-;;  )
 
 ;;}}}
 ;;{{{  Alex Ott detritus

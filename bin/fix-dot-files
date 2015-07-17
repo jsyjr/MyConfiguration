@@ -24,5 +24,6 @@ doFile() {
   ln -s ~/.config/${FILE} ~/${SYMLINK}
 }
 
-doFile mumble
-doFile fooBar _post_setup.el
+# doFile mumble
+# doFile fooBar _post_setup.el
+doFile .emacs  _post_setup.el
