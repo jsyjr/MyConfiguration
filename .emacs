@@ -1728,6 +1728,19 @@ This command is designed to be used whether you are already in Info or not."
   (setq truncate-lines (default-value 'truncate-lines)))
 
 ;;}}}
+;;{{{  grep
+
+(my/custom-set-variables
+ '(grep-command "grep --color -nH -e ")
+ '(grep-find-command
+   '("find . -type f -exec grep --color -nH -e  {} +" . 42))
+ '(grep-find-template "find <D> <X> -type f <F> -exec grep <C> -nH -e <R> {} +")
+ '(grep-highlight-matches nil)
+ '(grep-template "grep <X> <C> -nH -e <R> <F>")
+ '(grep-use-null-device nil)
+ )
+
+;;}}}
 ;;{{{  Chasing URL's. See:  browse-url.el
 
 ;; (if (file-exists-p (concat "/usr/bin/x-www-browser"))

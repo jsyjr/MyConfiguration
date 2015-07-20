@@ -152,6 +152,14 @@
  '(global-auto-complete-mode t)
  '(global-font-lock-mode t)
  '(global-hl-line-mode t)
+ '(grep-command "grep --color -nH -e ")
+ '(grep-find-command
+   (quote
+    ("find . -type f -exec grep --color -nH -e  {} +" . 42)))
+ '(grep-find-template "find <D> <X> -type f <F> -exec grep <C> -nH -e <R> {} +")
+ '(grep-highlight-matches nil)
+ '(grep-template "grep <X> <C> -nH -e <R> <F>")
+ '(grep-use-null-device nil)
  '(gud-tooltip-mode t)
  '(hl-line-sticky-flag nil)
  '(ido-minibuffer-setup-hook (quote my/ido-minibuffer-setup))
