@@ -2020,7 +2020,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;}}}
 ;;{{{  auto-fill and filladapt
 
-;; Redirect to a patched version more captible with cc-mode
+;; Redirect to a patched version more compatible with cc-mode
 (add-to-list 'el-get-sources
              '(:name filladapt
                      :description "Adaptively set fill-prefix and overload filling functions"
