@@ -51,6 +51,7 @@ sudo apt-get install \
   libjpeg-dev \
   libm17n-dev \
   libmagick++-dev \
+  libmagickwand-dev \
   libotf-dev \
   librsvg2-dev \
   libtinfo-dev \
