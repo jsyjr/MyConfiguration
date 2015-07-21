@@ -1,19 +1,18 @@
-# ctools version of PATH:
-#  .:~/bin:${PATH}:/sbin:~/asd:~/asd/rel/bin:~/asd/drel/bin:~/asd/src/ctools
 
-PATH=\
+export PATH=\
 /usr/lib/ccache\
-:${HOME}/bin\
-:/etc/alternatives\
-:/usr/local/sbin\
-:/usr/sbin\
-:/sbin\
 :/usr/local/bin\
 :/usr/bin\
 :/bin\
-:.\
-:./rel/bin\
-:./drel/bin\
-:./crel/bin\
-:./src/ctools\
-:./src/tools\
+:/usr/local/sbin\
+:/usr/sbin\
+:/sbin\
+:${HOME}/bin\
+
+if [ -d /usr/local/apps/bat/perl/perl-5.8.8-tmw-025/bin ]; then
+    export PATH=/usr/local/apps/bat/perl/perl-5.8.8-tmw-025/bin:${PATH}
+fi
+
+if [ -d /sandbox/savadhan/sbtools ]; then
+    export PATH=${PATH}:/sandbox/savadhan/sbtools
+fi
