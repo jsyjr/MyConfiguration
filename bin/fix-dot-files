@@ -8,22 +8,22 @@ SUFFIX=""
 
 doFile() {
   # Name within ~/.config
-  FILE=$1
+    FILE=$1
+    DOTFILE=.${FILE}
+    SUFFIX=$2
 
   # Choose the symlink name
-  SYMLINK=${FILE}${SUFFIX}
-  [ ${MATHWORKS} -eq 0 ] && [ "${2}" != "" ] && SYMLINK=${FILE}${2}
+  SYMLINK=${DOTFILE}${SUFFIX}
+  [ ${MATHWORKS} -eq 0 ] && [ "${SUFFIX}" != "" ] && SYMLINK=${DOTFILE}${SUFFIX}
 
   # Drop any pre-existing symlink
   [ -h ${SYMLINK} ] && rm -f ~/${SYMLINK}
 
-  # Mathworks usurps ${FILE} otherwise it should have been moved to ~/.config
-  [ ${MATHWORKS} -eq 0 ] && [ -e ~/${FILE} ] && echo "Top-level name exists: ${FILE}" && return
+  # Mathworks usurps .${FILE} otherwise it should have been moved to ~/.config
+  [ ${MATHWORKS} -eq 0 ] && [ -e ~/${DOTFILE} ] && echo "Top-level name exists: ${DOTFILE}" && return
 
-  # Create the actual symlink into ~/.config
-  ln -s ~/.config/${FILE} ~/${SYMLINK}
+  # Create the actual symlink into ~/.mine/
+  ln -s ~/.mine/${FILE} ~/${SYMLINK}
 }
 
-# doFile mumble
-# doFile fooBar _post_setup.el
-doFile .emacs  _post_setup.el
+dofile bashrc

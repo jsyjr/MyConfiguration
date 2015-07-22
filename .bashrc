@@ -1,24 +1,7 @@
-echo 'entering .bashrc'
-echo "PATH=${PATH}"
-echo
-/usr/bin/env | /usr/bin/sort
-echo
+#!/bin/bash
 
 # If not running interactively, don't do anything
 #[ -z "$PS1" ] && return
-
-# History (see bash(1) for more details):
-# - ignore lines starting with space
-# - keep only one copy of any line
-# - always move it to most recent
-export HISTCONTROL=ignoredups
-
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
-shopt -s checkwinsize
-
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
@@ -51,6 +34,36 @@ xterm*|rxvt*|st-*)
     ;;
 esac
 
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
+
+# Emacs key bindins
+set -E
+
+# History (see bash(1) for more details):
+# - ignore lines starting with space
+# - keep only one copy of any line
+# - always move it to most recent
+export HISTCONTROL=ignoredups
+
+export XDG_CONFIG_HOME="${HOME}/.config"
+
+# Specify emacs as default editor(?):
+export EDITOR=emacsclient
+export ALTERNATE_EDITOR=emacs
+export ESHELL=/bin/bash
+
+export CCACHE_DIR=/ccc
+export CCACHE_TEMPDIR=/tmp
+export CCACHE_LOGFILE=/tmp/ccache.log
+export CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
+export USE_CCACHE=1
+
+
 ######### GENERAL ALIASES #########
 # enable color support of ls and also add handy aliases
 if [ "$TERM" != "dumb" ]; then
@@ -62,6 +75,7 @@ fi
 #alias ll='ls -l'
 #alias la='ls -A'
 #alias l='ls -CF'
+alias env='env | sort'
 
 ###################################
 
@@ -75,13 +89,15 @@ if [ -d /mathworks ]; then
     export x=$DEFAULT_SANDBOX
     if [ -f /mathworks/hub/share/sbtools/bash_setup.bash ]; then
         . /mathworks/hub/share/sbtools/bash_setup.bash
-echo 'bash_setup.bash complete'
-echo "PATH=${PATH}"
-
-echo 'setting final path'
         . ${HOME}/.my_path
-echo "PATH=${PATH}"
     fi
+
+    # Use emacs as the merge/diff editor for p4
+    export   EDITOR='sbe -w'
+    export   VISUAL='sbe -w'
+    export P4EDITOR='sbe -w'
+    export   P4DIFF='sbe -sb-diff'
+    export  P4MERGE='sbe -sb-merge'
 
     alias qmake='sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
     alias dmake='sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
@@ -92,13 +108,9 @@ echo "PATH=${PATH}"
 
     if [ -d /sandbox/savadhan/sbtools ]; then
         if [ -f /sandbox/savadhan/sbtools/_bash_functions ]; then
-echo '.bashrc invoking _bash_functions'
             . /sandbox/savadhan/sbtools/_bash_functions
-echo '_bash_functions complete'
-echo "PATH=${PATH}"
         fi
     fi
 fi
 #
 ########### END MATHWORKS SPECIFIC ###########
-

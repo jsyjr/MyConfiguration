@@ -17,7 +17,30 @@ st-dark
 st-light
 
 # Hidden files in the root of the home directory
-/.*
+/.ICEauthority
+/.Xauthority
+/.bash_history
+/.dmrc
+/.esd_auth
+/.fehbg
+/.gksu.lock
+/.gtk-bookmarks
+/.lesshst
+/.login
+/.logout
+/.nano_history
+/.nvidia-settings-rc
+/.p4enviro
+/.pinerc
+/.plan
+/.pulse-cookie
+/.viminfo
+/.vimproj.xml
+/.vimrc
+/.xsession-errors
+/.xsession-errors.old
+
+# For completeness here are the currently tracked dot-files
 !/.bashrc
 !/.emacs
 !/.gitconfig
