@@ -1280,6 +1280,8 @@ convert it to readonly/view-mode."
             (magit-define-popup-action 'magit-ediff-popup ?S "Show staged"   'magit-ediff-show-staged)
             (magit-define-popup-action 'magit-ediff-popup ?U "Show unstaged" 'magit-ediff-show-unstaged)))
 
+(autoload 'magit-status-internal "magit" nil t)
+
 (defun my/magit-status ()
   "Switch to (or create) the magit status buffer for current context"
   (interactive)
@@ -1289,7 +1291,7 @@ convert it to readonly/view-mode."
       (let ((mbuf (get-buffer (concat "*magit: " (file-name-as-directory (substring dir 0 -1)) "*"))))
         (if mbuf
             (switch-to-buffer mbuf)
-          (magit-status dir))))))
+          (magit-status-internal dir))))))
 
 ;;}}}
 ;;{{{  diff
@@ -3059,9 +3061,9 @@ Recognized window header names are: 'comint, 'locals, 'registers,
      ("*Shell Command Output*")
      ))
  '(ecb-compile-window-width 'edit-window)
- '(ecb-compile-window-height 10)
+ '(ecb-compile-window-height 0.1)
  '(ecb-compile-window-temporally-enlarge nil)
- '(ecb-enlarged-compilation-window-max-height 0.6)
+ '(ecb-enlarged-compilation-window-max-height 0.9)
 
  ;; UI options
  '(ecb-tip-of-the-day nil)

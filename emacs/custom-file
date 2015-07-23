@@ -83,12 +83,12 @@
  '(ecb-compilation-major-modes
    (quote
     (compilation-mode dired-mode git-commit-mode magit-mode completion-list-mode comint-mode)))
- '(ecb-compile-window-height 10)
+ '(ecb-compile-window-height 0.1)
  '(ecb-compile-window-temporally-enlarge nil)
  '(ecb-compile-window-width (quote edit-window))
  '(ecb-deactivate-hook (quote (my/ecb-deactivate-hook)))
  '(ecb-display-image-icons-for-semantic-tags nil)
- '(ecb-enlarged-compilation-window-max-height 0.6)
+ '(ecb-enlarged-compilation-window-max-height 0.9)
  '(ecb-history-make-buckets (quote never))
  '(ecb-history-menu-sorter nil)
  '(ecb-history-sort-method nil)
