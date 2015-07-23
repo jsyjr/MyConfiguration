@@ -1,3 +1,5 @@
+# Remember: last (not first) pattern that matches
+
 # Files, irrespective of where they occur
 *.[ao]
 *.elc
@@ -8,15 +10,15 @@ tags
 BROWSE
 TAGS
 
-# In my setup ~/asd is a symbolic link to ~/wrk/asd
-asd
-
 # Files in ~/bin
 doxygen*
 st-dark
 st-light
 
 # Hidden files in the root of the home directory
+#/.* -- Do not include this pattern.  This supports spotting
+#       newly added dot files and making explicit decisions
+#       about how they should be treated.
 /.ICEauthority
 /.Xauthority
 /.bash_history
@@ -48,14 +50,68 @@ st-light
 !/.gitattributes
 !/.profile
 
-# Hidden directories in the root of the home directory
-/.*/
-!/.emacs.d/
 
-# Subdirectories of the home directory
-/*/
+# List directories after individual files.  Here is a quote from the
+# gitignore man page: "It is not possible to re-include a file if a
+# parent directory of that file is excluded."
+
+# Hidden directories in the root of the home directory
+#/.*/ -- Same rationale as for /.* (see previous comment).
+/.aptitude/
+/.cache/
+/.config/
+/.dbus/
+/.emacs.d/
+/.felix/
+/.fontconfig/
+/.gimp-2.8/
+/.gnome/
+/.gnome2/
+/.gnupg/
+/.gstreamer-0.10/
+/.icedove/
+/.java/
+/.kde/
+/.local/
+/.macromedia/
+/.matlab/
+/.mission-control/
+/.mozilla/
+/.nv/
+/.p4merge/
+/.p4qt/
+/.pki/
+/.pulse/
+/.sbtools/
+/.snapshot/
+/.ssh/
+/.subversion/
+/.synaptic/
+/.thumbnails/
+/.tin/
+/.vmware/
+/.vnc/
+#
+/Contacts/
+/Documents/
+/Downloads/
+/Favorites/
+/Links/
+/Pictures/
+/fontconfig/
+/repos/
+
+# Typicallly subdirectories of the home directory are version
+# controlled independently.  These are the directories deemed
+# part of HOME.
+#/*/ -- Same rationale as for /.* (see previous comment).
 !/bin/
 !/.dinafont/
 !/dot-files/
 !/emacs/
+!/.mine/
 !/org/
+!/.sbsyncmaster/
+
+# In my setup at home ~/asd is a symbolic link to ~/wrk/asd
+asd
