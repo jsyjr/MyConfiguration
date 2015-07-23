@@ -66,6 +66,7 @@
      ("\\*i?grep.*\\*" . t)
      ("\\*[mM]agit.*\\*" . t)
      ("*Apropos*")
+     ("*Async Shell Command*")
      ("*Backtrace*")
      ("*buffer-selection*")
      ("*apropos-toc*")
@@ -77,12 +78,13 @@
      ("*Help*")
      ("*Ido Completions*")
      ("*Messages*")
-     ("*Occur*"))))
+     ("*Occur*")
+     ("*Shell Command Output*"))))
  '(ecb-compilation-major-modes
    (quote
     (compilation-mode dired-mode git-commit-mode magit-mode completion-list-mode comint-mode)))
  '(ecb-compile-window-height 10)
- '(ecb-compile-window-temporally-enlarge (quote both))
+ '(ecb-compile-window-temporally-enlarge nil)
  '(ecb-compile-window-width (quote edit-window))
  '(ecb-deactivate-hook (quote (my/ecb-deactivate-hook)))
  '(ecb-display-image-icons-for-semantic-tags nil)
@@ -90,7 +92,6 @@
  '(ecb-history-make-buckets (quote never))
  '(ecb-history-menu-sorter nil)
  '(ecb-history-sort-method nil)
- '(ecb-layout-name "left-jsy1")
  '(ecb-maximize-ecb-window-after-selection t)
  '(ecb-mode-line-data
    (quote
@@ -108,21 +109,10 @@
      (ecb-history-buffer-name . "Buffers (LRU)")
      (ecb-analyse-buffer-name . "Analysis")
      (ecb-symboldef-buffer-name . "Symbol definition"))))
- '(ecb-options-version "2.40")
+ '(ecb-options-version "2.50")
  '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
  '(ecb-process-non-semantic-files nil)
  '(ecb-scroll-other-window-scrolls-compile-window t)
- '(ecb-source-path
-   (quote
-    (("/home/jyates/asd/src/as" "AS")
-     ("/home/jyates/asd/src/dp" "DP")
-     ("/home/jyates/asd/src/gt" "GT")
-     ("/home/jyates/asd/src/my" "MY")
-     ("/home/jyates/asd/src/qx" "QX")
-     ("/home/jyates/asd/src/ts" "TS")
-     ("/home/jyates/asd/src/ug" "UG")
-     ("/home/jyates/asd/src" "SBX")
-     ("/" "/"))))
  '(ecb-tip-of-the-day nil)
  '(ecb-tree-incremental-search (quote substring))
  '(ecb-tree-make-parent-node-sticky nil)
@@ -180,9 +170,7 @@
  '(ls-lisp-ignore-case t)
  '(magit-backup-mode nil)
  '(magit-emacsclient-executable "/etc/alternatives/emacsclient")
- '(magit-repository-directories
-   (quote
-    ("~/asd" "~/repos/awesome" "~/repos/doxygen" "~/repos/st")))
+ '(magit-repository-directories (quote ("~/repos/awesome" "~/repos/doxygen" "~/repos/st")))
  '(magit-repository-directories-depth 0)
  '(magit-save-repository-buffers nil)
  '(message-log-max 10000)

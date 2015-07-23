@@ -1225,18 +1225,6 @@ convert it to readonly/view-mode."
 (add-to-list 'el-get-sources 'git-modes)
 (my/el-get-install "git-modes")
 
-;; (add-to-list 'el-get-sources
-;;              '(:name magit
-;;                      :description "It's Magit! An Emacs mode for Git."
-;;                      :website     "https://github.com/magit/magit#readme"
-;;                      :type        github
-;;                      :pkgname     "magit/magit"
-;;                      :depends     dash
-;; ;;                   :load-path   ""
-;; ;;                     :compile     "magit.*\.el\\'"
-;;                      :build       `(("make" ""))
-;; ;;                   :info
-;;                      ))
 (add-to-list 'el-get-sources 'magit)
 (my/el-get-install "magit")
 
@@ -1256,8 +1244,7 @@ convert it to readonly/view-mode."
 ;'(magit-diff-refine-hunk t)
  '(magit-emacsclient-executable "/etc/alternatives/emacsclient")
  '(magit-repository-directories
-   '("~/asd"
-     "~/repos/awesome"
+   '("~/repos/awesome"
      "~/repos/doxygen"
      "~/repos/st"))
  '(magit-repository-directories-depth 0)
@@ -1626,6 +1613,16 @@ This command is designed to be used whether you are already in Info or not."
                  (t
                   (message "Symbol not bound: %S" symbol)))))
         (t (message "No symbol at point"))))
+
+(defun my/describe-major-mode-bindings ()
+  (interactive)
+  (call-interactively 'describe-bindings)
+  (with-current-buffer (help-buffer)
+    (search-forward "Major Mode Bindings")
+    (narrow-to-page)))
+
+(substitute-key-definition
+ 'describe-bindings 'my/describe-major-mode-bindings help-map)
 
 (my/custom-set-faces
  '(info-header-xref ((t (:foreground "LightSalmon4")))))
@@ -2167,6 +2164,22 @@ can easily repeat an earlier amake -pgrep command."
 (autoload 'grep-tag-default "grep"
   "Return tag under cursor (if such exists)."
   t)
+
+(defun am-grep-tag (command-args)
+  "Run amake -pgrep for the tag at cursor, collecting output in *grep*.
+While the scan runs asynchronously, you can use \\[next-error] (M-x next-error),
+or \\<grep-mode-map>\\[compile-goto-error] in the *grep* \
+buffer, to go to the lines where the scan found
+matches.  To kill the scan job before it finishes, type \\[kill-compilation].
+
+This command uses a special history list for its COMMAND-ARGS, so you
+can easily repeat an earlier amake -pgrep command."
+  (interactive
+   (list (read-shell-command "Run amake -pgrep (like this): "
+                             (am-grep-command-wth-tag)
+                             'am-grep-history
+                             nil)))
+  (am-grep-execute command-args))
 
 ;;}}}
 ;;{{{  Find file in project
@@ -2924,6 +2937,18 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;;}}}
 ;;{{{  ECB
 
+(add-to-list 'el-get-sources
+             '(:name ecb
+                     :description "Emacs Code Browser"
+                     :type github
+                     :pkgname "ecb-home/ecb"
+;;                     :branch "master"
+                     :branch "2.5-dev"
+                     :depends cedet
+                     :build `(("make" "CEDET=../cedet" ,(concat "EMACS=" (shell-quote-argument el-get-emacs))))))
+(my/el-get-install "ecb")
+
+
 (defun my/ecb-compile-window-dwim ()
   "If selected window is compile window cycle it else go there."
   (interactive)
@@ -2952,24 +2977,6 @@ Recognized window header names are: 'comint, 'locals, 'registers,
   ;; http://stackoverflow.com/questions/9389679/how-to-unload-a-mode-e-g-unload-ecb-to-restore-winner-el-functionality
   (ecb-disable-advices 'ecb-winman-not-supported-function-advices t))
 
-
-(defun am-grep-tag (command-args)
-  "Run amake -pgrep for the tag at cursor, collecting output in *grep*.
-While the scan runs asynchronously, you can use \\[next-error] (M-x next-error),
-or \\<grep-mode-map>\\[compile-goto-error] in the *grep* \
-buffer, to go to the lines where the scan found
-matches.  To kill the scan job before it finishes, type \\[kill-compilation].
-
-This command uses a special history list for its COMMAND-ARGS, so you
-can easily repeat an earlier amake -pgrep command."
-  (interactive
-   (list (read-shell-command "Run amake -pgrep (like this): "
-                             (am-grep-command-wth-tag)
-                             'am-grep-history
-                             nil)))
-  (am-grep-execute command-args))
-
-
 (defvar my/ecb-run-gdb-history nil
   "*Amake Find File history")
 
@@ -2982,9 +2989,15 @@ can easily repeat an earlier amake -pgrep command."
   (gdb (concat "gdb -i=mi " file))
   )
 
+(defadvice display-message-or-buffer (around my/disable-resize-mini-windows activate)
+  "Cause any output greate than one line to use ECB's compile window."
+  (let ((resize-mini-windows (if (bound-and-true-p ecb-minor-mode)
+                                 nil
+                               resize-mini-windows)))
+    ad-do-it))
 
 (my/custom-set-variables
- '(ecb-options-version "2.40")
+ '(ecb-options-version "2.50")
  ;; Activation / deactivation
  '(ecb-activate-hook
    '(my/ecb-activate-hook))
@@ -2992,7 +3005,7 @@ can easily repeat an earlier amake -pgrep command."
    '(my/ecb-deactivate-hook))
  ;; Visual layout
  '(ecb-maximize-ecb-window-after-selection t)
- '(ecb-layout-name "left-jsy1")
+; '(ecb-layout-name "left-jsy1")
  '(ecb-windows-width 0.15)
  ;; Mode line labeling
  '(ecb-mode-line-prefixes
@@ -3030,6 +3043,7 @@ can easily repeat an earlier amake -pgrep command."
      ("\\*i?grep.*\\*" . t)
      ("\\*[mM]agit.*\\*" . t)
      ("*Apropos*")
+     ("*Async Shell Command*")
      ("*Backtrace*")
      ("*buffer-selection*")
      ("*apropos-toc*")
@@ -3042,10 +3056,11 @@ can easily repeat an earlier amake -pgrep command."
      ("*Ido Completions*")
      ("*Messages*")
      ("*Occur*")
+     ("*Shell Command Output*")
      ))
  '(ecb-compile-window-width 'edit-window)
  '(ecb-compile-window-height 10)
- '(ecb-compile-window-temporally-enlarge 'both)
+ '(ecb-compile-window-temporally-enlarge nil)
  '(ecb-enlarged-compilation-window-max-height 0.6)
 
  ;; UI options
@@ -3058,16 +3073,16 @@ can easily repeat an earlier amake -pgrep command."
  '(ecb-vc-enable-support nil)
  
  ;; Handling of files
- '(ecb-source-path
-   '(("/home/jyates/asd/src/as" "AS")
-     ("/home/jyates/asd/src/dp" "DP")
-     ("/home/jyates/asd/src/gt" "GT")
-     ("/home/jyates/asd/src/my" "MY")
-     ("/home/jyates/asd/src/qx" "QX")
-     ("/home/jyates/asd/src/ts" "TS")
-     ("/home/jyates/asd/src/ug" "UG")
-     ("/home/jyates/asd/src" "SBX")
-     ("/" "/")))
+ ;; '(ecb-source-path
+ ;;   '(("/home/jyates/asd/src/as" "AS")
+ ;;     ("/home/jyates/asd/src/dp" "DP")
+ ;;     ("/home/jyates/asd/src/gt" "GT")
+ ;;     ("/home/jyates/asd/src/my" "MY")
+ ;;     ("/home/jyates/asd/src/qx" "QX")
+ ;;     ("/home/jyates/asd/src/ts" "TS")
+ ;;     ("/home/jyates/asd/src/ug" "UG")
+ ;;     ("/home/jyates/asd/src" "SBX")
+ ;;     ("/" "/")))
  '(ecb-process-non-semantic-files nil)
  )
 
@@ -3356,6 +3371,7 @@ can easily repeat an earlier amake -pgrep command."
 ;; Additions to the help command
 ;;
 (keydef "C-h A"         apropos-toc)       ; mnemonic: apropos All
+(keydef "C-h B"         describe-bindings)
 (keydef "C-h L"         (info "elisp"))    ; was describe-language-environment
 (keydef "C-h R"         my/elisp-function-reference)
 
