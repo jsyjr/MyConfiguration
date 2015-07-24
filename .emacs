@@ -3007,7 +3007,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
    '(my/ecb-deactivate-hook))
  ;; Visual layout
  '(ecb-maximize-ecb-window-after-selection t)
-; '(ecb-layout-name "left-jsy1")
+ '(ecb-layout-name "left-jsy1")
  '(ecb-windows-width 0.15)
  ;; Mode line labeling
  '(ecb-mode-line-prefixes
@@ -3043,7 +3043,8 @@ Recognized window header names are: 'comint, 'locals, 'registers,
      ("\\*Vtags-.*\\*" . t)
      ("\\*[cC]ompilation.*\\*" . t)
      ("\\*i?grep.*\\*" . t)
-     ("\\*[mM]agit.*\\*" . t)
+     ("\\*[mM]agit:.*\\*" . t)
+     ("\\*[mM]agit-process:.*\\*" . t)
      ("*Apropos*")
      ("*Async Shell Command*")
      ("*Backtrace*")
@@ -3051,7 +3052,6 @@ Recognized window header names are: 'comint, 'locals, 'registers,
      ("*apropos-toc*")
      ("*Calculator*")
      ("*Choices*")
-     ("COMMIT_EDITMSG")
      ("*Compile-log*")
      ("*Completions*")
      ("*Help*")
@@ -3062,7 +3062,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
      ))
  '(ecb-compile-window-width 'edit-window)
  '(ecb-compile-window-height 0.1)
- '(ecb-compile-window-temporally-enlarge nil)
+ '(ecb-compile-window-temporally-enlarge 'both)
  '(ecb-enlarged-compilation-window-max-height 0.9)
 
  ;; UI options
@@ -3089,16 +3089,16 @@ Recognized window header names are: 'comint, 'locals, 'registers,
  )
 
 (my/custom-set-faces
- '(ecb-default-general-face   ((t (:inherit default      :height 110 :family "DroidSansMonoSlashed"))))
- '(ecb-default-highlight-face ((t (:inherit widget-field :height 110 :family "DroidSansMonoSlashed"))))
- '(ecb-mode-line-win-nr-face  ((t nil)))
+ '(ecb-default-general-face   ((t (:inherit default                      ))))
+ '(ecb-default-highlight-face ((t (:inherit widget-field                 ))))
+ '(ecb-mode-line-win-nr-face  ((t nil                                     )))
  '(ecb-mode-line-prefix-face  ((t (:foreground "medium blue" :weight bold))))
- '(ecb-mode-line-data-face    ((t nil)))
- '(ecb-analyse-face           ((t (:inherit ecb-default-highlight-face))))
- '(ecb-directory-face         ((t (:inherit ecb-default-highlight-face))))
- '(ecb-history-face           ((t (:inherit ecb-default-highlight-face))))
- '(ecb-method-face            ((t (:inherit ecb-default-highlight-face))))
- '(ecb-source-face            ((t (:inherit ecb-default-highlight-face))))
+ '(ecb-mode-line-data-face    ((t nil                                     )))
+ '(ecb-analyse-face           ((t (:inherit ecb-default-highlight-face   ))))
+ '(ecb-directory-face         ((t (:inherit ecb-default-highlight-face   ))))
+ '(ecb-history-face           ((t (:inherit ecb-default-highlight-face   ))))
+ '(ecb-method-face            ((t (:inherit ecb-default-highlight-face   ))))
+ '(ecb-source-face            ((t (:inherit ecb-default-highlight-face   ))))
  '(ecb-tag-header-face        ((t (:underline "dark orange"))))
  )
 
