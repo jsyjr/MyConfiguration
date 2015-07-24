@@ -2939,6 +2939,11 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;;}}}
 ;;{{{  ECB
 
+;; When pulling from github.com/ecb-home/ecb the file ecb-eshell.el
+;; contains a bug.  Near the bottom of the file the customizable
+;; ecb-activate-hook variable gets set via add-hook.  That defeats all
+;; subsequent attempts to customize that hook.
+
 (add-to-list 'el-get-sources
              '(:name ecb
                      :description "Emacs Code Browser"
