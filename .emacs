@@ -2955,7 +2955,6 @@ Recognized window header names are: 'comint, 'locals, 'registers,
                      :build `(("make" "CEDET=../cedet" ,(concat "EMACS=" (shell-quote-argument el-get-emacs))))))
 (my/el-get-install "ecb")
 
-
 (defun my/ecb-compile-window-dwim ()
   "If selected window is compile window cycle it else go there."
   (interactive)
@@ -3002,6 +3001,13 @@ Recognized window header names are: 'comint, 'locals, 'registers,
                                  nil
                                resize-mini-windows)))
     ad-do-it))
+
+;; We prefer 'b' (for buffers rather than history)
+;; and we prefer 'f' (for files rather than sources)
+(defalias 'ecb-goto-window-buffers     'ecb-goto-window-history)
+(defalias 'ecb-goto-window-files       'ecb-goto-window-sources)
+(defalias 'ecb-maximize-window-buffers 'ecb-maximize-window-history)
+(defalias 'ecb-maximize-window-files   'ecb-maximize-window-sources)
 
 (my/custom-set-variables
  '(ecb-options-version "2.50")
@@ -3078,19 +3084,93 @@ Recognized window header names are: 'comint, 'locals, 'registers,
  '(ecb-tree-incremental-search 'substring)
  '(ecb-tree-make-parent-node-sticky nil)
  '(ecb-vc-enable-support nil)
- 
+
  ;; Handling of files
- ;; '(ecb-source-path
- ;;   '(("/home/jyates/asd/src/as" "AS")
- ;;     ("/home/jyates/asd/src/dp" "DP")
- ;;     ("/home/jyates/asd/src/gt" "GT")
- ;;     ("/home/jyates/asd/src/my" "MY")
- ;;     ("/home/jyates/asd/src/qx" "QX")
- ;;     ("/home/jyates/asd/src/ts" "TS")
- ;;     ("/home/jyates/asd/src/ug" "UG")
- ;;     ("/home/jyates/asd/src" "SBX")
- ;;     ("/" "/")))
+ '(ecb-source-path
+   '(("/" "/")
+     ("/home/jyates" "HOME")
+     ("/local-ssd/lsb" "LSB")
+     ("/local-ssd/lsb/tags/matlab/toolbox/stateflow" "TAGS")
+     ("/local-ssd/lsb/tags/matlab/toolbox/stateflow/src" "TAGS_SRC")
+     ("/local-ssd/lsb/tags/matlab/toolbox/stateflow/src/stateflow" "TAGS_SRC_SF")
+     ("/local-ssd/lsb/tags/matlab/toolbox/stateflow/src/stateflow/cdr" "TAGS_SRC_SF_CDR")
+     ))
  '(ecb-process-non-semantic-files nil)
+
+ ;; Key bindings (Sadly we have to replicate the
+ ;; entire map just to make a few small changes).
+ '(ecb-key-map
+   '("C-c ." . ((t "fh" ecb-history-filter)
+                (t "," ecb-cycle-maximized-ecb-buffers)
+                (t "." ecb-cycle-through-compilation-buffers)
+                (t "/" ecb-toggle-compile-window-height)
+                (t "\\" ecb-toggle-compile-window)
+                (t "a" ecb-toggle-auto-expand-tag-tree)
+                (t "e" eshell)
+;               (t "f..." prefix: filter)
+;               (t "g..." prefix: goto-window)
+                (t "h" ecb-show-help)
+;               (t "j..." prefix: jump (i.e. goto-window))
+;               (t "l..." prefix: layout)
+;               (t "m..." prefix: maximize-window)
+                (t "n" ecb-nav-goto-next)
+                (t "o" ecb-toggle-scroll-other-window-scrolls-compile)
+                (t "p" ecb-nav-goto-previous)
+                (t "r" ecb-rebuild-methods-buffer)
+                (t "s" ecb-window-sync)
+                (t "x" ecb-expand-methods-nodes)
+
+                (t "ma" ecb-maximize-window-analyse)
+;               (t "mb" ecb-maximize-window-speedbar)
+                (t "mb" ecb-maximize-window-buffers)
+                (t "md" ecb-maximize-window-directories)
+                (t "mf" ecb-maximize-window-files)
+                (t "mh" ecb-maximize-window-history)
+                (t "mm" ecb-maximize-window-methods)
+                (t "ms" ecb-maximize-window-sources)
+
+                (t "lc" ecb-change-layout)
+                (t "lr" ecb-redraw-layout)
+                (t "lt" ecb-toggle-layout)
+                (t "lw" ecb-toggle-ecb-windows)
+
+                ;; Allow 'j' (for jump) as an alias for 'g' (goto)
+                (t "j1" ecb-goto-window-edit1)
+                (t "j2" ecb-goto-window-edit2)
+                (t "ja" ecb-goto-window-analyse)
+;               (t "jb" ecb-goto-window-speedbar)
+                (t "jb" ecb-goto-window-buffers)
+                (t "jc" ecb-goto-window-compilation)
+                (t "jd" ecb-goto-window-directories)
+                (t "jf" ecb-goto-window-files)
+                (t "jh" ecb-goto-window-history)
+                (t "jl" ecb-goto-window-edit-last)
+                (t "jm" ecb-goto-window-methods)
+                (t "js" ecb-goto-window-sources)
+
+                (t "g1" ecb-goto-window-edit1)
+                (t "g2" ecb-goto-window-edit2)
+                (t "ga" ecb-goto-window-analyse)
+;               (t "gb" ecb-goto-window-speedbar)
+                (t "gb" ecb-goto-window-buffers)
+                (t "gc" ecb-goto-window-compilation)
+                (t "gd" ecb-goto-window-directories)
+                (t "gf" ecb-goto-window-files)
+                (t "gh" ecb-goto-window-history)
+                (t "gl" ecb-goto-window-edit-last)
+                (t "gm" ecb-goto-window-methods)
+                (t "gs" ecb-goto-window-sources)
+
+                (t "fs" ecb-sources-filter)
+                (t "fc" ecb-methods-filter-current-type)
+                (t "ff" ecb-methods-filter-function)
+                (t "fl" ecb-methods-filter-delete-last)
+                (t "fm" ecb-methods-filter)
+                (t "fn" ecb-methods-filter-nofilter)
+                (t "fp" ecb-methods-filter-protection)
+                (t "fr" ecb-methods-filter-regexp)
+                (t "ft" ecb-methods-filter-tagclass)
+                )))
  )
 
 (my/custom-set-faces
@@ -3345,9 +3425,9 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (keydef (dired "z"      browse-url-of-dired-file))
 
 ;; easy ECB activation and deactivation
-(keydef "C-c b" ecb-activate)
-(keydef "C-c d" ecb-deactivate)
-(keydef "C-c D" my/ecb-run-gdb)
+(keydef "C-c b"         ecb-activate)
+(keydef "C-c d"         ecb-deactivate)
+(keydef "C-c D"         my/ecb-run-gdb)
 
 
 ;; python-mode steals C-c C-k for python-mark-block. steal it back.
