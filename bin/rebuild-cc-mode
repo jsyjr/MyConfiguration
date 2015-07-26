@@ -7,5 +7,6 @@ if [ ! -f "admin/filladapt-orig.el" ]; then
 fi
 
 hg pull
+hg update -c c++11-0-1
 ~/repos/emacs/src/emacs --batch --eval '(batch-byte-recompile-directory 0)' .
 
