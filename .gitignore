@@ -22,11 +22,13 @@ st-light
 /.ICEauthority
 /.Xauthority
 /.bash_history
+/.bash_logout
 /.dmrc
 /.esd_auth
 /.fehbg
 /.gksu.lock
 /.gtk-bookmarks
+/.install4j
 /.lesshst
 /.login
 /.logout
@@ -36,6 +38,8 @@ st-light
 /.pinerc
 /.plan
 /.pulse-cookie
+/.repo_.gitconfig.json
+/.repopickle_.gitconfig
 /.viminfo
 /.vimproj.xml
 /.vimrc
@@ -57,10 +61,15 @@ st-light
 
 # Hidden directories in the root of the home directory
 #/.*/ -- Same rationale as for /.* (see previous comment).
+/.AndroidStudio1.2/
+/.adobe/
+/.android/
 /.aptitude/
 /.cache/
+/.compiz/
 /.config/
 /.dbus/
+/.eclipse/
 /.emacs.d/
 /.felix/
 /.fontconfig/
@@ -69,8 +78,10 @@ st-light
 /.gnome2/
 /.gnupg/
 /.gstreamer-0.10/
+/.hplip/
 /.icedove/
 /.java/
+/.jmc/
 /.kde/
 /.local/
 /.macromedia/
@@ -82,17 +93,29 @@ st-light
 /.p4qt/
 /.pki/
 /.pulse/
+/.remmina/
+/.repoconfig/
 /.sbtools/
 /.snapshot/
+/.speech-dispatcher/
 /.ssh/
 /.subversion/
 /.synaptic/
+/.terminfo/
+/.texmf-var/
 /.thumbnails/
+/.thunderbird/
 /.tin/
 /.vmware/
 /.vnc/
+/.webex/
+/.winswitch/
+/.xpra/
+/.yEd/
 #
+/Android/
 /Contacts/
+/Desktop/
 /Documents/
 /Downloads/
 /Favorites/
