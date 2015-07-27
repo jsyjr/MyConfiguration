@@ -2495,7 +2495,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;{{{  Matlab mode
 
 (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
-  (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools")
+  (add-to-list 'load-path "~/emacs/p4e")
+  (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools" t)
   (require 'sbtools-locations)
 
   (setq locate-dominating-stop-dir-regexp
@@ -2537,21 +2538,13 @@ Works with: arglist-cont, arglist-cont-nonempty."
 	 "/"   ;; end of directory, see vc-find-root
 	 "\\'" ;; end of string
 	 ))
+
   (defvar skip-sbtools-matlab-mode-setup)
   (when (or (not (boundp 'skip-sbtools-matlab-mode-setup))
             (not skip-sbtools-matlab-mode-setup))
-
-    (let
-        ((matlabToolsDir (expand-file-name
-                          (concat (file-truename
-                                   (file-name-directory load-file-name))
-                                  "../matlab-emacs/matlab-emacs")))
-         )
-      (add-to-list 'load-path matlabToolsDir)
-
-      (autoload 'matlab-mode "matlab" "MATLAB Editing Mode" t)
-      (autoload 'matlab-shell "matlab" "Interactive MATLAB mode." t)
-      ))
+    (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/matlab-emacs" t)
+    (autoload 'matlab-mode "matlab" "MATLAB Editing Mode" t)
+    (autoload 'matlab-shell "matlab" "Interactive MATLAB mode." t))
 
   (add-to-list 'auto-mode-alist '("\\.m\\'" . matlab-mode)) ;; \' is end of string
   (add-to-list 'auto-mode-alist '("\\.m_[^/]+\\'" . matlab-mode))

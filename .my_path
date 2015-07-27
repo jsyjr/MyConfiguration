@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PATH=\
+PATH=\
 /usr/lib/ccache\
 :/usr/local/bin\
 :/usr/bin\
@@ -8,12 +8,17 @@ export PATH=\
 :/usr/local/sbin\
 :/usr/sbin\
 :/sbin\
-:${HOME}/bin\
 
 if [ -d /usr/local/apps/bat/perl/perl-5.8.8-tmw-025/bin ]; then
-    export PATH=/usr/local/apps/bat/perl/perl-5.8.8-tmw-025/bin:${PATH}
+    PATH=/usr/local/apps/bat/perl/perl-5.8.8-tmw-025/bin:${PATH}
+fi
+
+if [ -d /mathworks ]; then
+    PATH=${PATH}:/hub/share/bin:/hub/share/sbtools/bin/glnxa64:/usr/local/netbin
 fi
 
 if [ -d /sandbox/savadhan/sbtools ]; then
-    export PATH=${PATH}:/sandbox/savadhan/sbtools
+    PATH=${PATH}:/sandbox/savadhan/sbtools
 fi
+
+export PATH=${PATH}:${HOME}/bin
