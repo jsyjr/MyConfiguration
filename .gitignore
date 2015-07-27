@@ -23,6 +23,7 @@ st-light
 /.Xauthority
 /.bash_history
 /.bash_logout
+/.bzr.log
 /.dmrc
 /.esd_auth
 /.fehbg
@@ -70,6 +71,7 @@ st-light
 /.config/
 /.dbus/
 /.eclipse/
+/.elinks/
 /.emacs.d/
 /.felix/
 /.fontconfig/
