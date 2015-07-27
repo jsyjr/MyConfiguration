@@ -2937,7 +2937,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;;  )
 
 ;;}}}
-;;{{{  ECB
+;;{{{  ECB and eshell
 
 ;; When pulling from github.com/ecb-home/ecb the file ecb-eshell.el
 ;; contains a bug.  Near the bottom of the file the customizable
@@ -3018,7 +3018,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
    '(my/ecb-deactivate-hook))
  ;; Visual layout
  '(ecb-maximize-ecb-window-after-selection t)
- '(ecb-layout-name "left-jsy1")
+ '(ecb-layout-name "left-jsy2")
  '(ecb-windows-width 0.15)
  ;; Mode line labeling
  '(ecb-mode-line-prefixes
@@ -3171,6 +3171,22 @@ Recognized window header names are: 'comint, 'locals, 'registers,
                 (t "fr" ecb-methods-filter-regexp)
                 (t "ft" ecb-methods-filter-tagclass)
                 )))
+
+ ;; Emacs' eshell
+ '(eshell-aliases-file "/home/jyates/emacs/eshell/alias")
+ '(eshell-modules-list
+   '(eshell-alias
+     eshell-banner
+     eshell-basic
+     eshell-cmpl
+     eshell-dirs
+     eshell-glob
+     eshell-hist
+     eshell-ls
+     eshell-pred
+     eshell-prompt
+     eshell-script
+     eshell-term))
  )
 
 (my/custom-set-faces
