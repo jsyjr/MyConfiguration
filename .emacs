@@ -2944,8 +2944,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
                      :pkgname "ecb-home/ecb"
 ;;                     :branch "master"
                      :branch "2.5-dev"
-                     :depends cedet
-                     :build `(("make" "CEDET=../cedet" ,(concat "EMACS=" (shell-quote-argument el-get-emacs))))))
+                     ))
 (my/el-get-install "ecb")
 
 (defun my/ecb-compile-window-dwim ()
