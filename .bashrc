@@ -89,7 +89,6 @@ if [ -d /mathworks ]; then
     export x=$DEFAULT_SANDBOX
     if [ -f /mathworks/hub/share/sbtools/bash_setup.bash ]; then
         . /mathworks/hub/share/sbtools/bash_setup.bash
-        . ${HOME}/.my_path
     fi
 
     # Use emacs as the merge/diff editor for p4
@@ -114,3 +113,6 @@ if [ -d /mathworks ]; then
 fi
 #
 ########### END MATHWORKS SPECIFIC ###########
+
+# This script is aware of Mathworks idiosyncracies
+. ${HOME}/.my_path
