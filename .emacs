@@ -3348,6 +3348,9 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 
 (message "========")
 
+;; Add this at the last moment to guarantee position at front of list
+(add-to-list 'load-path "~/emacs/patched")
+
 ;;}}}
 
 ;;=== Commented out ====================================================
