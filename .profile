@@ -7,5 +7,7 @@
 # non-debian linux system), bash will source this file instead.
 
 # Setup minimal sbtools environment (sets PATH, LOCATION, HOST, USER, ...)
-. /mathworks/hub/share/sbtools/bash_setup_env.bash
+if [ -d /mathworks ]; then
+    . /mathworks/hub/share/sbtools/bash_setup_env.bash
+fi
 
