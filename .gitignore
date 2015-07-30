@@ -41,6 +41,7 @@ st-light
 /.pulse-cookie
 /.repo_.gitconfig.json
 /.repopickle_.gitconfig
+/.sudo_as_admin_successful
 /.viminfo
 /.vimproj.xml
 /.vimrc
