@@ -2495,10 +2495,11 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;{{{  Matlab mode
 
 (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
-  (add-to-list 'load-path "~/emacs/p4e")
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools" t)
   (require 'sbtools-locations)
-
+  (require 'mathworks-maps)
+;;  (require 'p4e)
+  
   (setq locate-dominating-stop-dir-regexp
 	(concat
 	 "\\`" ;; start of string
@@ -3057,6 +3058,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
      ("*Choices*")
      ("*Compile-log*")
      ("*Completions*")
+     ("*GTAGS SELECT*")
      ("*Help*")
      ("*Ido Completions*")
      ("*Messages*")

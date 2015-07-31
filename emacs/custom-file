@@ -75,6 +75,7 @@
      ("*Choices*")
      ("*Compile-log*")
      ("*Completions*")
+     ("*GTAGS SELECT*")
      ("*Help*")
      ("*Ido Completions*")
      ("*Messages*")
