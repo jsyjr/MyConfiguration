@@ -1044,14 +1044,16 @@ point reaches the beginning or end of the buffer, stop there."
 ;;}}}
 ;;{{{  Simple editing operations
 
-(defun delete-whitespace-to-next-real-char ()
-  "Delete any white space from the current cursor position until the
-   first non-whitespace character. White space includes new-lines"
-  (interactive)
-  (if (looking-at "[ \t\n]")
-      (if (re-search-forward "[ \t\n]+" nil t)
-	  (replace-match "")))
-  )
+(defun delete-whitespace-forward (arg)
+  "Delete all white space from point to the next word.  With prefix ARG
+delete across newlines as well.  The only danger in this is that you
+don't have to actually be at the end of a word to make it work.  It
+skips over to the next whitespace and then whacks it all to the next
+word."
+  (interactive "P")
+  (let ((regexp (if arg "[ \t\n]+" "[ \t]+")))
+    (re-search-forward regexp nil t)
+    (replace-match "" nil nil)))
 
 ;;}}}
 ;;{{{  White space hygiene
@@ -3424,7 +3426,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (add-to-list 'el-get-sources 'keydef)
 (my/el-get-install "keydef")
 
-(keydef "M-D"           delete-whitespace-to-next-real-char)
+(keydef "M-D"           delete-whitespace-forward)
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
 (keydef "C-c C-k"       kill-compilation)
