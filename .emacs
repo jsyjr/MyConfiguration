@@ -2499,9 +2499,76 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools" t)
   (require 'sbtools-locations)
+
   (require 'mathworks-maps)
-;;  (require 'p4e)
-  
+  ;; C-x C-q         mathworks-toggle-read-only
+  ;;
+  ;; C-c m C-f       mathworks-sbfi
+  ;; C-c m C-g       mathworks-view-gecko
+  ;; C-c m SPC       mathworks-do-next-thing
+  ;; C-c m !         mathworks-ediff-versions
+  ;; C-c m &         mathworks-ediff-sync-src
+  ;; C-c m *         mathworks-ediff
+  ;; C-c m ,         gtags-find-symbol
+  ;; C-c m -         w80
+  ;; C-c m .         gtags-find-tag
+  ;; C-c m 1         w100
+  ;; C-c m 2         w200
+  ;; C-c m =         mathworks-diff
+  ;; C-c m @         mathworks-ediff-subsystem-version
+  ;; C-c m B         mathworks-sbbackup
+  ;; C-c m E         mathworks-sbedits
+  ;; C-c m F         mathworks-sblocate-gendb
+  ;; C-c m G         mathworks-gen-gtags
+  ;; C-c m I         mathworks-mkid
+  ;; C-c m L         mathworks-mlog
+  ;; C-c m Q         mathworks-local-edit
+  ;; C-c m R         mathworks-sb-matlab
+  ;; C-c m S         mathworks-mstatus
+  ;; C-c m U         mathworks-revert-to-version
+  ;; C-c m V         mathworks-submit-visit-submit-file
+  ;; C-c m ^         mathworks-ediff-latest-pass
+  ;; C-c m `         mathworks-ediff-version
+  ;; C-c m c         mathworks-compile-matlab
+  ;; C-c m d         mathworks-sb-debug
+  ;; C-c m e         mathworks-medit
+  ;; C-c m f         mathworks-sblocate
+  ;; C-c m g         mathworks-view-bearded-dragon-geck
+  ;; C-c m h         browse-url-at-point
+  ;; C-c m i         mathworks-gid
+  ;; C-c m j         gtags-pop-stack
+  ;; C-c m l         mathworks-sblocate-grep
+  ;; C-c m m         mathworks-man-page
+  ;; C-c m n         mathworks-toggle-line-num
+  ;; C-c m p         sbperldb
+  ;; C-c m q         mathworks-batq
+  ;; C-c m r         Prefix Command
+  ;; C-c m s         Prefix Command
+  ;; C-c m t         mathworks-sb-debug-ut
+  ;; C-c m u         mathworks-revert-to-ancestor
+  ;; C-c m v         mathworks-submit-add-entry
+  ;; C-c m x         mathworks-sbext
+  ;; C-c m |         w160
+  ;; C-c m ~         mathworks-fetch-version
+  ;;
+  ;; C-c m s b       mathworks-sbscanlog
+  ;; C-c m s d       mathworks-sbscanlog-dir
+  ;; C-c m s f       mathworks-sbscanlog-fonly
+  ;;
+  ;; C-c m r b       mathworks-sbcheck-file
+  ;; C-c m r c       mathworks-sbcc-file
+  ;; C-c m r l       mathworks-sbcc-lint-file
+  ;; C-c m r s       mathworks-sbcheck-submit-file
+  ;; C-c m r t       mathworks-sbspell-file-external
+  ;; C-c m r v       mathworks-sbcc-view-lint-msg
+  ;;
+  ;; C-x v =         mathworks-vc-diff
+  ;; C-x v g         mathworks-vc-annotate
+  ;; C-x v l         mathworks-vc-print-log
+  ;; C-x v u         mathworks-vc-revert-buffer
+  ;; C-x v v         mathworks-vc-next-action
+  ;; C-x v ~         mathworks-vc-version-other-window
+
   (setq locate-dominating-stop-dir-regexp
 	(concat
 	 "\\`" ;; start of string
