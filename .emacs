@@ -3425,6 +3425,11 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;; Add this at the last moment to guarantee position at front of list
 (add-to-list 'load-path "~/emacs/patched")
 
+;; Now we can load our patched p4e
+(when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
+  (require 'p4e))
+
+
 ;;}}}
 
 ;;=== Commented out ====================================================
