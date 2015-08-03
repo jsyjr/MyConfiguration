@@ -5,6 +5,6 @@
 #--------------------------------------------------------------#
 #
 source /mathworks/hub/share/sbtools/.gdbinit
-source /sandbox/savadhan/sbtools/mw-gdbscripts/.gdbinit
-bex
+# source /sandbox/savadhan/sbtools/mw-gdbscripts/.gdbinit
+# bex
 
