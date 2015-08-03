@@ -98,6 +98,7 @@ if [ -d /mathworks ]; then
     export   P4DIFF='sbe -sb-diff'
     export  P4MERGE='sbe -sb-merge'
 
+    # Typically should be run in .../matlab/toolbox/stateflow/src
     alias qmake='sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
     alias dmake='sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
     alias lmake='sbmake -j 16   DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
