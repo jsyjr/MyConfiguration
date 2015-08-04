@@ -281,9 +281,12 @@ sudo apt-get install \
   lua-ldoc \
   liblua5.1-dev \
   libstartup-notification0-dev \
+  libx11-xcb-dev \
   libxcb-cursor-dev \
   libxcb-icccm4-dev \
   libxcb-keysyms1-dev \
+  libxcb-randr0-dev \
+  libxcb-shape0-dev \
   libxcb-util0-dev \
   libxcb-xinerama0-dev \
   libxcb-xkb-dev \
