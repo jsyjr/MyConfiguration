@@ -4,8 +4,8 @@
 
 # Install a bunch of dependencies
 #
-echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
-sudo add-apt-repository ppa:webupd8team/java
+# echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
+# sudo add-apt-repository ppa:webupd8team/java
 sudo apt-get update
 sudo apt-get install fonts-dejavu # TEMPORARY: http://httpredir.debian.org/debian/ jessie main as a repository
 sudo apt-get install \
