@@ -1,5 +1,5 @@
 --- /hub/share/sbtools/apps/emacs-add-ons/src/sb-tools/p4e-cmd.el	2014-10-01 16:02:40.000000000 -0400
-+++ /home/jyates/emacs/patched/p4e-cmd.el	2015-08-03 14:36:35.616572000 -0400
++++ /home/jyates/emacs/patched/p4e-cmd.el	2015-08-05 17:14:25.547772000 -0400
 @@ -1,6 +1,6 @@
  ;;; p4e-cmd.el --- Command definitions for perforce.
  
@@ -38,8 +38,8 @@
 -(p4e-command "have" :command "have" :binding "h" :mode #'p4e-list-mode)
 -(p4e-command-on-file-revision "getHaveVersion" :command "print" :commandargs '("-q")
 +(p4e-command-on-file :name  "diff" :command "diff" :binding "=" :mode #'diff-mode)
-+(p4e-command  :name "have" :command "have" :binding "h" :mode #'p4e-list-mode)
-+(p4e-command-on-file-revision  :name "getHaveVersion" :command "print" :commandargs '("-q")
++(p4e-command :name "have" :command "have" :binding "h" :mode #'p4e-list-mode)
++(p4e-command-on-file-revision :name "getHaveVersion" :command "print" :commandargs '("-q")
  			      :mode #'p4e-mode-of-origin-RO)
 -(p4e-command-ediff-file-revision "ediff" :command "getHaveVersion" :binding "*")
 +(p4e-command-ediff-file-revision :name "ediff" :command "getHaveVersion" :binding "*")

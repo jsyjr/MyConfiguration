@@ -31,8 +31,8 @@
 
 ;;; diff'ing
 (p4e-command-on-file :name  "diff" :command "diff" :binding "=" :mode #'diff-mode)
-(p4e-command  :name "have" :command "have" :binding "h" :mode #'p4e-list-mode)
-(p4e-command-on-file-revision  :name "getHaveVersion" :command "print" :commandargs '("-q")
+(p4e-command :name "have" :command "have" :binding "h" :mode #'p4e-list-mode)
+(p4e-command-on-file-revision :name "getHaveVersion" :command "print" :commandargs '("-q")
 			      :mode #'p4e-mode-of-origin-RO)
 (p4e-command-ediff-file-revision :name "ediff" :command "getHaveVersion" :binding "*")
 
