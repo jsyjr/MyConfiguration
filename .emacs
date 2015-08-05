@@ -2562,6 +2562,25 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; C-c m r t       mathworks-sbspell-file-external
   ;; C-c m r v       mathworks-sbcc-view-lint-msg
   ;;
+  ;; C-c M *         ediff
+  ;; C-c M =         diff
+  ;; C-c M @@@       getHaveVersion
+  ;; C-c M @@@       my-changes
+  ;; C-c M @@@       my-pending-changes
+  ;; C-c M a         add)
+  ;; C-c M c         change
+  ;; C-c M C         client
+  ;; C-c M \C-c      wclients
+  ;; C-c M e         edit
+  ;; C-c M f         files
+  ;; C-c M h         have
+  ;; C-c M H         help
+  ;; C-c M i         info
+  ;; C-c M l         log
+  ;; C-c M o         opened
+  ;; C-c M v         submit
+  ;; C-c M U         revert
+  ;;
   ;; C-x v =         mathworks-vc-diff
   ;; C-x v g         mathworks-vc-annotate
   ;; C-x v l         mathworks-vc-print-log
