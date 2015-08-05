@@ -3,9 +3,16 @@
 # Mathworks: clone sbsyncmaster's latetst_pass into a new
 # workspace named $1 and augment it with a git repository.
 
-set -x
+[ -z "$1" ] && echo 'usage: sbnew <sandbox-name>' && exit 1
+[ -e /local-ssd/lsb/$1 ] && echo "sandbox \"/local-ssd/lsb/$1\" already exists" && exit 1
+
 cd /local-ssd/lsb
 sbclone bstateflow.latest_pass $1
+( cd /local-ssd/lsb/$1/matlab/src               && \
+  git init -q                                   && \
+  git add -A                                    && \
+  git commit -qm "New sandbox"                     \
+)
 ( cd /local-ssd/lsb/$1/matlab/toolbox/stateflow && \
   git init -q                                   && \
   git add -A                                    && \
