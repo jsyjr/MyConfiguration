@@ -2496,6 +2496,13 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;}}}
 ;;{{{  Matlab mode
 
+(add-to-list 'el-get-sources 'matlab-mode)
+(my/el-get-install "matlab-mode")
+
+;;}}}
+;;{{{  Other Mathworks stuff
+
+
 (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools" t)
   (require 'sbtools-locations)
