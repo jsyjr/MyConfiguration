@@ -808,7 +808,10 @@ mouse-3: go to end")
  )
 
 ;;}}}
-;;{{{  Pretty ^L
+;;{{{  Pretty ^L and other stuff
+
+;; Display Windows extended glyphs (instead of things like \223)
+(standard-display-8bit 128 255)
 
 (add-to-list 'el-get-sources
              '(:name  pp-c-l
@@ -903,15 +906,6 @@ mouse-3: go to end")
 (my/custom-set-variables
  '(custom-theme-directory "~/emacs/themes")
  )
-
-;;}}}
-;;{{{  Auto-modes and other stuff
-
-;; Recognize .bsh and .dsh as shell scripts
-(setq auto-mode-alist (cons '("\\.[bd]sh\\'" . sh-mode) auto-mode-alist))
-
-;; Display Windows extended glyphs (instead of things like \223)
-(standard-display-8bit 128 255)
 
 ;;}}}
 ;;{{{  Window splitting
@@ -1886,6 +1880,9 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;}}}
 ;;{{{  Shells (built upon comint-mode)
 
+;; Recognize .bsh and .dsh as shell scripts
+(add-to-list 'auto-mode-alist '("\\.[bd]sh\\'" . sh-mode))
+
 (defun my/named-shell (BUFFER)
   "Create or switch to a running shell process in BUFFER."
   (interactive "BShell name: ")
@@ -2507,7 +2504,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 ;;}}}
 ;;{{{  Other Mathworks stuff
-
 
 (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools" t)
