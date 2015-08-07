@@ -953,8 +953,14 @@ mouse-3: go to end")
 
 (my/custom-set-variables
  '(kill-whole-line t)
+ '(view-read-only t)    ; Use view-mode if file is or opened read-only
  )
 
+;;{{{  Files and directories
+
+(ffap-bindings)
+
+;;}}}
 ;;{{{  Smarter move-beginning-of-line, move-end-of-line
 
 (defun my/move-beginning-or-indentation (arg)

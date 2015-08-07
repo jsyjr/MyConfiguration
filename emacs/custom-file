@@ -370,6 +370,7 @@ mouse-3: Remove current window from display")))))
 ")
  '(vc-make-backup-files t)
  '(version-control t)
+ '(view-read-only t)
  '(visible-bell t)
  '(which-func-format
    (quote
