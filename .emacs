@@ -3297,6 +3297,82 @@ Recognized window header names are: 'comint, 'locals, 'registers,
  '(ecb-tag-header-face        ((t (:underline "dark orange"))))
  )
 
+
+
+;; Code lifted from distribution's files.el: find-file and
+;; file-file-other-window.  Unless ecb-minor-mode is active
+;; and point is within the compile window this function's
+;; behavior is unchanged.  If both conditions are true then
+;; use find-file-other-window logic.  This improves the
+;; chances that quiting that window will return focus to the
+;; compile window.
+(defun find-file (filename &optional wildcards)
+  "Edit file FILENAME.
+Switch to a buffer visiting file FILENAME,
+creating one if none already exists.
+Interactively, the default if you just type RET is the current directory,
+but the visited file name is available through the minibuffer history:
+type M-n to pull it into the minibuffer.
+
+You can visit files on remote machines by specifying something
+like /ssh:SOME_REMOTE_MACHINE:FILE for the file name.  You can
+also visit local files as a different user by specifying
+/sudo::FILE for the file name.
+See the Info node `(tramp)File name Syntax' in the Tramp Info
+manual, for more about this.
+
+Interactively, or if WILDCARDS is non-nil in a call from Lisp,
+expand wildcards (if any) and visit multiple files.  You can
+suppress wildcard expansion by setting `find-file-wildcards' to nil.
+
+To visit a file without any kind of conversion and without
+automatically choosing a major mode, use \\[find-file-literally]."
+  (interactive
+   (find-file-read-args "Find file: "
+                        (confirm-nonexistent-file-or-buffer)))
+
+  (if (and (bound-and-true-p ecb-minor-mode)
+	   (ecb-point-in-compile-window))
+      (progn
+        (let ((value (find-file-noselect filename nil nil wildcards)))
+          (if (listp value)
+              (progn
+                (setq value (nreverse value))
+                (switch-to-buffer-other-window (car value))
+                (mapc 'switch-to-buffer (cdr value))
+                value)
+            (switch-to-buffer-other-window value))))
+    (let ((value (find-file-noselect filename nil nil wildcards)))
+      (if (listp value)
+          (mapcar 'switch-to-buffer (nreverse value))
+        (switch-to-buffer value)))))
+
+;; Code lifted from distribution's view.el: view-file and
+;; view-file-other-window.  Unless ecb-minor-mode is active
+;; and point is within the compile window this function's
+;; behavior is unchanged.  If both conditions are true then
+;; use view-file-other-window logic.  This improves the
+;; chances that quiting that window will return focus to the
+;; compile window.
+(defun view-file (file)
+  "View FILE in View mode, returning to previous buffer when done.
+Emacs commands editing the buffer contents are not available; instead, a
+special set of commands (mostly letters and punctuation) are defined for
+moving around in the buffer.
+Space scrolls forward, Delete scrolls backward.
+For a list of all View commands, type H or h while viewing.
+
+This command runs the normal hook `view-mode-hook'."
+  (interactive "fView file: ")
+  (unless (file-exists-p file) (error "%s does not exist" file))
+  (let ((had-a-buf (get-file-buffer file))
+	(buffer (find-file-noselect file)))
+    (funcall (if (and (bound-and-true-p ecb-minor-mode)
+		      (ecb-point-in-compile-window))
+                 (function view-buffer-other-window)
+               (function view-buffer))
+     buffer (and (not had-a-buf) 'kill-buffer-if-not-modified))))
+
 ;;}}}
 
 ;;=== Uncatergorized ===================================================
