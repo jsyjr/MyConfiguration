@@ -959,6 +959,14 @@ mouse-3: go to end")
  '(view-read-only t)    ; Use view-mode if file is or opened read-only
  )
 
+;;{{{  Navigation: avy
+
+(autoload 'avy-goto-word-or-subword-1 "avy"
+  "Forward to `avy-goto-subword-1' or `avy-goto-word-1'.
+Which one depends on variable `subword-mode'."
+  t)
+
+;;}}
 ;;{{{  Files and directories
 
 (ffap-bindings)
@@ -3550,6 +3558,8 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
 (keydef "C-c C-k"       kill-compilation)
+
+(keydef "C-c j"         avy-goto-word-or-subword-1)
 
 (keydef "S-<mouse-3>"   browse-url-at-mouse)
 (keydef "C-c C-z ."     browse-url-at-point)
