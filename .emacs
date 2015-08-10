@@ -296,6 +296,15 @@
          nil t)
 
 ;;}}}
+;;{{{  List of installed ELPA packages
+
+(my/custom-set-variables
+ '(package-selected-packages
+   '(ace-window
+     avy
+     )))
+
+;;}}}
 
 ;;=== Protection =======================================================
 ;;{{{  Auto-save and backup
