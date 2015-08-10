@@ -1654,8 +1654,20 @@ This command is designed to be used whether you are already in Info or not."
  '(helm-source-header ((t (:inherit default :foreground "RosyBrown4" :underline t :weight bold)))))
 
 
+;; (my/custom-set-variables
+;; '(ido-mode 'both nil (ido))
+;; '(ido-save-directory-list-file "~/.emacs.d/ido.last")
+;; '(ido-setup-hook 'my/ido-setup)
+;; '(ido-minibuffer-setup-hook 'my/ido-minibuffer-setup)
+;; )
+
+;; SMEX is built on IDO
 ;; (add-to-list 'el-get-sources 'smex)
 ;; (my/el-get-install "smex")
+
+(my/custom-set-variables
+ '(smex-save-file "~/.emacs.d/smex.save")
+ )
 
 (my/custom-set-variables
  '(completion-ignored-extensions
@@ -1696,13 +1708,7 @@ This command is designed to be used whether you are already in Info or not."
      ".vrs"
      ".x86f"
      "~"
-     ))
- '(ido-mode 'both nil (ido))
- '(ido-save-directory-list-file "~/.emacs.d/ido.last")
- '(ido-setup-hook 'my/ido-setup)
- '(ido-minibuffer-setup-hook 'my/ido-minibuffer-setup)
- '(smex-save-file "~/.emacs.d/smex.save")
- )
+     )))
 
 ;; from minibuf-electric-gnuemacs.el
 (defun my/ido-electric-slash ()
