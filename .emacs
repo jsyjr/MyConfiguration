@@ -3562,11 +3562,11 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (keydef "C-c j"         avy-goto-word-or-subword-1)
 
 (keydef "S-<mouse-3>"   browse-url-at-mouse)
-(keydef "C-c C-z ."     browse-url-at-point)
-(keydef "C-c C-z b"     browse-url-of-buffer)
-(keydef "C-c C-z r"     browse-url-of-region)
-(keydef "C-c C-z u"     browse-url)
-(keydef "C-c C-z v"     browse-url-of-file)
+(keydef "C-c z ."       browse-url-at-point)
+(keydef "C-c z b"       browse-url-of-buffer)
+(keydef "C-c z r"       browse-url-of-region)
+(keydef "C-c z u"       browse-url)
+(keydef "C-c z v"       browse-url-of-file)
 (keydef (dired "z"      browse-url-of-dired-file))
 
 ;; easy ECB activation and deactivation
