@@ -1646,6 +1646,8 @@ This command is designed to be used whether you are already in Info or not."
 (add-to-list 'el-get-sources 'helm)
 (my/el-get-install "helm")
 
+(require 'helm-config)
+
 ;; Repair helm "angry salad"
 (my/custom-set-faces
  '(helm-buffer-not-saved ((t (:foreground "plum1"))))
