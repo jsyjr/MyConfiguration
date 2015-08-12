@@ -536,7 +536,7 @@ Use a normal parenthesis if not inside any."
 ;;{{{  Basic faces
 
 (my/custom-set-faces
- '(fixed-pitch ((t nil)))
+ '(fixed-pitch              ((t nil)))
  '(variable-pitch           ((t (:height 0.9 :family "Sans Serif"))))
  '(widget-documentation     ((t (:inherit font-lock-comment-face))))
  '(widget-field             ((t (:background "gray20"))))
@@ -1585,7 +1585,6 @@ convert it to readonly/view-mode."
   "Look up an elisp function in Info's Elisp manual.
 This command is designed to be used whether you are already in Info or not."
   (interactive (let ((fn (function-called-at-point))
-                     (enable-recursive-minibuffers t)
                      val)
                  (setq val (completing-read
                             (format "Look up Emacs Lisp function%s: "
@@ -1654,23 +1653,25 @@ This command is designed to be used whether you are already in Info or not."
 (add-to-list 'el-get-sources 'helm)
 (my/el-get-install "helm")
 
-(require 'helm-config)
+(my/custom-set-variables
+ '(helm-mode t)
+ )
 
 ;; Repair helm "angry salad"
 (my/custom-set-faces
- '(helm-buffer-not-saved ((t (:foreground "plum1"))))
- '(helm-buffer-process ((t (:foreground "DarkSeaGreen1"))))
- '(helm-buffer-size ((t (:foreground "gray66"))))
- '(helm-ff-directory ((t (:inherit dired-directory))))
- '(helm-ff-executable ((t (:foreground "DarkSeaGreen1"))))
- '(helm-ff-file ((t nil)))
+ '(header-line             ((t (:inherit mode-line-inactive :box nil :weight bold))))
+ '(helm-buffer-not-saved   ((t (:foreground "plum1"))))
+ '(helm-buffer-process     ((t (:foreground "DarkSeaGreen1"))))
+ '(helm-buffer-size        ((t (:foreground "gray66"))))
+ '(helm-ff-directory       ((t (:inherit dired-directory))))
+ '(helm-ff-executable      ((t (:foreground "DarkSeaGreen1"))))
+ '(helm-ff-file            ((t nil)))
  '(helm-ff-invalid-symlink ((t (:inherit dired-warning))))
- '(helm-ff-symlink ((t (:inherit dired-symlink))))
- '(header-line ((t (:inherit mode-line-inactive :box nil :weight bold))))
- '(helm-header ((t (:background "gray50" :foreground "black"))))
- '(helm-match ((t (:background "#1c3850"))))
- '(helm-selection ((t (:background "gray15"))))
- '(helm-source-header ((t (:inherit default :foreground "RosyBrown4" :underline t :weight bold)))))
+ '(helm-ff-symlink         ((t (:inherit dired-symlink))))
+ '(helm-header             ((t (:background "gray50" :foreground "black"))))
+ '(helm-match              ((t (:background "#1c3850"))))
+ '(helm-selection          ((t (:background "gray15"))))
+ '(helm-source-header      ((t (:inherit default :foreground "RosyBrown4" :underline t :weight bold)))))
 
 
 ;; (my/custom-set-variables
@@ -3169,6 +3170,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
    '(("\\*vc.*\\*" . t)
      ("\\*Vtags-.*\\*" . t)
      ("\\*[cC]ompilation.*\\*" . t)
+     ("\\*[hH]elm.*\\*" . t)
      ("\\*i?grep.*\\*" . t)
      ("\\*[mM]agit:.*\\*" . t)
      ("\\*[mM]agit-process:.*\\*" . t)
@@ -3553,6 +3555,10 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ; simpler key definitions, autoloads for free
 (add-to-list 'el-get-sources 'keydef)
 (my/el-get-install "keydef")
+
+
+(keydef "M-x"           helm-M-x)
+(keydef "C-x C-f"       helm-find-files)
 
 (keydef "M-D"           delete-whitespace-forward)
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
