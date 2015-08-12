@@ -3,18 +3,40 @@
 # Mathworks: clone sbsyncmaster's latetst_pass into a new
 # workspace named $1 and augment it with a git repository.
 
-[ -z "$1" ] && echo 'usage: sbnew <sandbox-name>' && exit 1
-[ -e /local-ssd/lsb/$1 ] && echo "sandbox \"/local-ssd/lsb/$1\" already exists" && exit 1
+SBNAME=$1
+[ -z "${SBNAME}" ] && echo 'usage: sbnew <sandbox-name> [-no-perforce]' && exit 1
+[ -e /local-ssd/lsb/${SBNAME} ] && echo "sandbox \"/local-ssd/lsb/${SBNAME}\" already exists" && exit 1
 
+# Create the clone
 cd /local-ssd/lsb
-sbclone bstateflow.latest_pass $1
-( cd /local-ssd/lsb/$1/matlab/src               && \
-  git init -q                                   && \
-  git add -A                                    && \
-  git commit -qm "New sandbox"                     \
-)
-( cd /local-ssd/lsb/$1/matlab/toolbox/stateflow && \
-  git init -q                                   && \
-  git add -A                                    && \
-  git commit -qm "New sandbox"                     \
+sbclone $2 bstateflow.latest_pass ${SBNAME}
+
+# Add/tweak .gitignore files to get a git repository of moderate size
+cat >${SBNAME}/.gitignore <<EOF
+/config/
+/.sbtools/
+/build.glnxa64.log.files/
+/*.log
+EOF
+chmod a+w ${SBNAME}/matlab/.gitignore
+cat     >>${SBNAME}/matlab/.gitignore <<EOF
+/*/
+!/src/
+!/toolbox/
+EOF
+cat >${SBNAME}/matlab/src/.gitignore <<EOF
+/sl*/
+/sim*/
+EOF
+chmod a+w ${SBNAME}/matlab/toolbox/.gitignore
+cat     >>${SBNAME}/matlab/toolbox/.gitignore <<EOF
+/*/
+!/stateflow/
+EOF
+
+# Create the git repository
+( cd /local-ssd/lsb/${SBNAME}  && \
+  git init -q                  && \
+  git add -A                   && \
+  git commit -qm "New sandbox"    \
 )
