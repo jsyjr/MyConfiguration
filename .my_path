@@ -9,16 +9,26 @@ PATH=\
 :/usr/sbin\
 :/sbin\
 
-if [ -d /usr/local/apps/bat/perl/perl-5.8.8-tmw-025/bin ]; then
-    PATH=/usr/local/apps/bat/perl/perl-5.8.8-tmw-025/bin:${PATH}
-fi
+#if [ -d /usr/local/apps/bat/perl/perl-5.8.8-tmw-025/bin ]; then
+#    PATH=/usr/local/apps/bat/perl/perl-5.8.8-tmw-025/bin:${PATH}
+#fi
 
 if [ -d /mathworks ]; then
-    PATH=${PATH}:/hub/share/bin:/hub/share/sbtools/bin/glnxa64:/usr/local/netbin
+    export SBTOOLS_ROOT=/hub/share/sbtools
+
+    PATH=${PATH}\
+:/hub/share/bin\
+:${SBTOOLS_ROOT}\
+:${SBTOOLS_ROOT}/bin/glnxa64\
+:${SBTOOLS_ROOT}/apps/cgir_tools\
+:/usr/local/netbin\
+
 fi
 
 if [ -d /sandbox/savadhan/sbtools ]; then
-    PATH=${PATH}:/sandbox/savadhan/sbtools
+    PATH=${PATH}\
+:/sandbox/savadhan/sbtools\
+
 fi
 
 # Put my ~/bin at the front so that I can override random commands
