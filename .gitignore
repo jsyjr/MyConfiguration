@@ -3,6 +3,8 @@
 # Files, irrespective of where they occur
 *.[ao]
 *.elc
+*.pyc
+*matlab_crash_dump.*
 *~
 %*
 am.dmp
