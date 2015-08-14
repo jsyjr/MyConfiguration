@@ -1653,6 +1653,8 @@ This command is designed to be used whether you are already in Info or not."
 (add-to-list 'el-get-sources 'helm)
 (my/el-get-install "helm")
 
+(require 'helm-mode)
+
 (my/custom-set-variables
  '(helm-mode t)
  )
