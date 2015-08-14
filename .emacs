@@ -2738,7 +2738,13 @@ Works with: arglist-cont, arglist-cont-nonempty."
                                 (add-hook 'after-save-hook
                                           'matlab-deletep-after-save-hook
                                           t t))) ;; Local hook in matlab-mode
-  )
+
+  ;; Mathworks added undesired lambdas as hook functions.
+  ;; HACK: assume that there were no pre-existing hook functions.
+  (setq gud-gdb-mode-hook nil)
+  (setq gdb-mode-hook nil)
+
+  )  ; (when (file-exists-p "/hub/share/sbtools/emacs_setup.el") ...
 
 ;; (if (file-exists-p "/hub/share/sbtools/emacs_setup.el")
 ;;     (let (save-version emacs-major-version)
