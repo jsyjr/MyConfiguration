@@ -100,10 +100,12 @@ if [ -d /mathworks ]; then
 
     # Typically should be run in .../matlab/toolbox/stateflow/src
     alias qmake='sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
-    alias dmake='sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
-    alias lmake='sbmake -j 16   DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
+#   alias dmake='sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
+#   alias lmake='sbmake -j 16   DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
     alias mw='mw -using Bstateflow'
     alias sbs='mw -using Bstateflow sbs'
+    alias sbn='sb -nodesktop -nosplash -r "opengl info"'
+    alias sbnj='sb -nodesktop -nosplash -nojvm -r "opengl info"'
     alias sbr='sbruntests -autofarm devel -rerunusing jobarchive'
 
     if [ -d /sandbox/savadhan/sbtools ]; then
