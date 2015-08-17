@@ -137,7 +137,6 @@
         "~/.emacs.d/semanticdb"
         "~/.emacs.d/srecode"
         "~/.emacs.d/url"
-        "~/repos/phw"
 ;        "/Hub/share/sbtools/apps/emacs-add-ons/src/sb-tools"
         ,el-get-dir
 	))
@@ -1657,6 +1656,7 @@ This command is designed to be used whether you are already in Info or not."
 (require 'helm-mode)
 
 (my/custom-set-variables
+ '(helm-ff-auto-update-initial-value t)
  '(helm-mode t)
  )
 
@@ -1835,10 +1835,11 @@ This command is designed to be used whether you are already in Info or not."
 
 (defun my/byte-compile-saved-elisp-buffer ()
   "Byte compile an elisp buffer anytime it is saved."
-  (if (eq major-mode 'emacs-lisp-mode)
+  (if (and (eq major-mode 'emacs-lisp-mode)
+           (not (string-prefix-p "phw" (buffer-name))))
       (byte-compile-file (buffer-file-name))))
 
-;(add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
+(add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
 
 ;;}}}
 ;;{{{  Comint
@@ -3349,7 +3350,8 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;;                      ))
 ;; (my/el-get-install "phw")
 
-(require 'phw)
+(add-to-list 'load-path "~/repos/phw")
+;(require 'phw)
 
 ;; (defadvice display-message-or-buffer (around my/disable-resize-mini-windows activate)
 ;;   "Cause any output greate than one line to use PHW's compile window."
@@ -3605,9 +3607,6 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (my/el-get-install "keydef")
 
 
-(keydef "M-x"           helm-M-x)
-(keydef "C-x C-f"       helm-find-files)
-
 (keydef "M-D"           delete-whitespace-forward)
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
@@ -3767,14 +3766,21 @@ Recognized window header names are: 'comint, 'locals, 'registers,
   (keydef "S-<f11>"     gud-remove)
   ))
 
-(keydef "C-."           vtags-find)
-(keydef "<kp-begin>"    vtags-point-to-placeholder)
-(keydef "<kp-right>"    vtags-next-placeholder)
-(keydef "<kp-left>"     vtags-prev-placeholder)
+;; (keydef "C-."           vtags-find)
+;; (keydef "<kp-begin>"    vtags-point-to-placeholder)
+;; (keydef "<kp-right>"    vtags-next-placeholder)
+;; (keydef "<kp-left>"     vtags-prev-placeholder)
 
 (keydef "<f12>"         customize-option)
 (keydef "C-<f12>"       customize-group)
 (keydef "M-<f12>"       customize-apropos)
+
+(eval-after-load "helm" '(progn
+  (keydef "M-x"         helm-M-x)
+  (keydef "C-x C-f"     helm-find-files)
+;;(keydef "C-i"         helm-execute-persistent-action)
+;;(keydef "C-j"         helm-select-action)
+  ))
 
 (eval-after-load "bs"  '(keydef (bs "<f1>") (if (bound-and-true-p ecb-minor-mode)
                                                 (quit-window t)

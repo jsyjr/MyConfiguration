@@ -229,6 +229,7 @@
  '(grep-template "grep <X> <C> -nH -e <R> <F>")
  '(grep-use-null-device nil)
  '(gud-tooltip-mode t)
+ '(helm-ff-auto-update-initial-value t)
  '(helm-mode t)
  '(hl-line-sticky-flag nil)
  '(indent-tabs-mode nil)
