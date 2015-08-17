@@ -97,7 +97,6 @@
  '(ecb-key-map
    (quote
     ("C-c ."
-     (t "fh" ecb-history-filter)
      (t "," ecb-cycle-maximized-ecb-buffers)
      (t "." ecb-cycle-through-compilation-buffers)
      (t "/" ecb-toggle-compile-window-height)
@@ -113,6 +112,7 @@
      (t "x" ecb-expand-methods-nodes)
      (t "fc" ecb-methods-filter-current-type)
      (t "ff" ecb-methods-filter-function)
+     (t "fh" ecb-history-filter)
      (t "fl" ecb-methods-filter-delete-last)
      (t "fm" ecb-methods-filter)
      (t "fn" ecb-methods-filter-nofilter)
@@ -308,6 +308,13 @@ mouse-3: Remove current window from display")))))
    (quote
     (org-docview org-info org-habit org-inlinetask org-protocol org-mouse)))
  '(package-selected-packages (quote (ace-window avy)))
+ '(phw-compile-window-height 0.1)
+ '(phw-compile-window-temporally-enlarge 'both)
+ '(phw-enlarged-compilation-window-max-height 0.9)
+ '(phw-options-version "2.50")
+ '(phw-process-non-semantic-files nil)
+ '(phw-vc-enable-support nil)
+ '(phw-windows-width 0.15)
  '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)))
  '(pretty-control-l-mode t)
  '(recentf-mode t)

@@ -19,7 +19,7 @@
 (defvar my/refetch-all-packages nil)
 
 ;; Too many false alarms
-;; (setq debug-on-error t)
+(setq debug-on-error t)
 ;; (setq debug-on-error nil)
 
 ;;=== Notes ============================================================
@@ -137,7 +137,8 @@
         "~/.emacs.d/semanticdb"
         "~/.emacs.d/srecode"
         "~/.emacs.d/url"
-;        "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools"
+        "~/repos/phw"
+;        "/Hub/share/sbtools/apps/emacs-add-ons/src/sb-tools"
         ,el-get-dir
 	))
 
@@ -1837,7 +1838,7 @@ This command is designed to be used whether you are already in Info or not."
   (if (eq major-mode 'emacs-lisp-mode)
       (byte-compile-file (buffer-file-name))))
 
-(add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
+;(add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
 
 ;;}}}
 ;;{{{  Comint
@@ -3226,8 +3227,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
  ;; Key bindings (Sadly we have to replicate the
  ;; entire map just to make a few small changes).
  '(ecb-key-map
-   '("C-c ." . ((t "fh" ecb-history-filter)
-                (t "," ecb-cycle-maximized-ecb-buffers)
+   '("C-c ." . ((t "," ecb-cycle-maximized-ecb-buffers)
                 (t "." ecb-cycle-through-compilation-buffers)
                 (t "/" ecb-toggle-compile-window-height)
                 (t "\\" ecb-toggle-compile-window)
@@ -3248,6 +3248,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 
                 (t "fc" ecb-methods-filter-current-type)
                 (t "ff" ecb-methods-filter-function)
+                (t "fh" ecb-history-filter)
                 (t "fl" ecb-methods-filter-delete-last)
                 (t "fm" ecb-methods-filter)
                 (t "fn" ecb-methods-filter-nofilter)
@@ -3330,6 +3331,45 @@ Recognized window header names are: 'comint, 'locals, 'registers,
  '(ecb-method-face            ((t (:inherit ecb-default-highlight-face   ))))
  '(ecb-source-face            ((t (:inherit ecb-default-highlight-face   ))))
  '(ecb-tag-header-face        ((t (:underline "dark orange"))))
+ )
+
+;;}}}
+;;{{{  PHW 
+
+;; When pulling from github.com/phw-home/phw the file phw-eshell.el
+;; contains a bug.  Near the bottom of the file the customizable
+;; phw-activate-hook variable gets set via add-hook.  That defeats all
+;; subsequent attempts to customize that hook.
+
+;; (add-to-list 'el-get-sources
+;;              '(:name phw
+;;                      :description "Persistent Horizontal Window"
+;;                      :type git
+;;                      :url         "file://localhost/home/jyates/repos/phw/"
+;;                      ))
+;; (my/el-get-install "phw")
+
+(require 'phw)
+
+;; (defadvice display-message-or-buffer (around my/disable-resize-mini-windows activate)
+;;   "Cause any output greate than one line to use PHW's compile window."
+;;   (let ((resize-mini-windows (if (bound-and-true-p phw-minor-mode)
+;;                                  nil
+;;                                resize-mini-windows)))
+;;     ad-do-it))
+
+(my/custom-set-variables
+ '(phw-options-version "2.50")
+ ;; Visual layout
+ '(phw-windows-width 0.15)
+ ;; Compile window
+ '(phw-compile-window-height 0.1)
+ '(phw-compile-window-temporally-enlarge 'both)
+ '(phw-enlarged-compilation-window-max-height 0.9)
+
+ '(phw-vc-enable-support nil)
+
+ '(phw-process-non-semantic-files nil)
  )
 
 ;;}}}
@@ -3584,8 +3624,10 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (keydef (dired "z"      browse-url-of-dired-file))
 
 ;; easy ECB activation and deactivation
-(keydef "C-c b"         ecb-activate)
-(keydef "C-c d"         ecb-deactivate)
+;; (keydef "C-c b"         ecb-activate)
+;; (keydef "C-c d"         ecb-deactivate)
+(keydef "C-c b"         phw-activate)
+(keydef "C-c d"         phw-deactivate)
 (keydef "C-c D"         my/ecb-run-gdb)
 
 
