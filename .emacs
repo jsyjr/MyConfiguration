@@ -3353,6 +3353,12 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (add-to-list 'load-path "~/repos/phw")
 ;(require 'phw)
 
+(autoload 'phw-activate     "phw" "" t)
+(autoload 'phw-deactivate   "phw" "" t)
+(autoload 'phw-minor-mode   "phw" "" t)
+(autoload 'phw-byte-compile "phw" "" t)
+
+
 ;; (defadvice display-message-or-buffer (around my/disable-resize-mini-windows activate)
 ;;   "Cause any output greate than one line to use PHW's compile window."
 ;;   (let ((resize-mini-windows (if (bound-and-true-p phw-minor-mode)
