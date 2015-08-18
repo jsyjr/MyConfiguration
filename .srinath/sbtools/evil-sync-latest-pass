@@ -1,0 +1,126 @@
+#!/bin/bash
+
+if [ $SILENT ]; then
+    STDOUT=/tmp/evil_sync_latest_pass_out_log.$USER.$$
+    BS="-no-backspace"
+else
+    STDOUT=/dev/stdout
+    BS=""
+fi
+
+if [ "$P4CONFIG" == "" ]; then
+    # sbsync fails if P4CONFIG is not set.
+    export P4CONFIG=.perforce
+fi
+
+function print_logs
+{
+    echo $1
+    if [ $SILENT ]; then
+        echo "Printing logs below:"
+        cat $STDOUT
+    fi
+}
+
+function sync_latest
+{
+    cluster=$1
+
+    if [ $cluster == "" ]; then
+        echo "Set cluster to a valid cluster name (for example Asfstage). Best is to do this in your .cshrc.mine or .bashrc"
+        return 1
+    fi
+
+    cd /local-ssd/$USER
+
+    latestPass=`readlink /mathworks/devel/jobarchive/$cluster/latest_pass`
+
+    lastJobSyncedLocally="NONE"
+    if [ -d ./.latest_snaps/$cluster ]; then
+        # Ask sbver what the version we sync'ed from. The grep | sed stuff
+        # extracts the final directory where we synced from
+        lastJobSyncedLocally=`sbver -s ./.latest_snaps/$cluster | grep SyncFrom: | sed 's/SyncFrom:.*\/\(\w\+\)/\1/'`
+    fi
+
+    if [ $lastJobSyncedLocally == "$latestPass" ]; then
+        echo "Already synced the latest version of ${cluster}"
+        return 0;
+    fi
+
+    if [ -d ./.latest_snaps/$cluster ]; then
+        lsof ./.latest_snaps/$cluster >>$STDOUT 2>&1
+        if [ $? -eq 0 ]; then
+            print_logs "lsof ./.latest_snaps/$cluster reports that someone is using this sandbox. Aborting..."
+            return 1;
+        fi
+    fi
+
+    if [ ! -d $cluster ]; then
+        echo "/local-ssd/$USER/$cluster does not exist."
+        echo "Create it by first cloning an existing sandbox using the command:"
+        echo "> btrfs subvolume snapshot /path/to/old/sandbox /local-ssd/$USER/$cluster"
+        echo ""
+        echo "If this is the very first sandbox you wish to create in /local-ssd/$USER, "
+        echo "you can create a brand new subvolume by doing:"
+        echo "> btrfs subvolume create /local-ssd/$USER/$cluster"
+        return 1;
+    fi
+
+    cd $cluster
+    lastJobSyncedToTempArea=`sbver | grep SyncFrom: | sed 's/SyncFrom:\s*\(.*\)/\1/'`
+
+    evil_fix_clone >>$STDOUT 2>&1
+
+    if [ "$lastJobSyncedToTempArea" != "/mathworks/devel/jobarchive/$cluster/$latestPass" ]; then
+        sbsync $BS -gensbid -gentags -src-root $cluster -nobackup >>$STDOUT 2>&1
+        if [ $? -ne 0 ]; then
+            print_logs "Error running sbsync!!"
+            return 1;
+        fi
+    fi
+
+    prepsb >>$STDOUT 2>&1
+    if [ $? -ne 0 ]; then
+        print_logs "Error running prepsb in /local/$USER/$cluster! Sandbox is sync'ed but not ready to use!"
+        return 1;
+    fi
+
+    cd ..
+
+    if [ -d ./.latest_snaps/$cluster ]; then
+        sudo btrfs subvolume delete ./.latest_snaps/$cluster >>$STDOUT 2>&1
+        if [ $? -ne 0 ]; then
+            print_logs "Error deleting /local-ssd/$USER/.latest_snaps/$cluster"
+            return 1;
+        fi
+    fi
+
+    btrfs subvolume snapshot -r $cluster ./.latest_snaps/$cluster  >>$STDOUT 2>&1
+    if [ $? -ne 0 ]; then
+        print_logs "Error creating a snapshot of /local-ssd/$USER/$cluster into /local-ssd/$USER/.latest_snaps/$cluster"
+        return 1;
+    fi
+
+    echo "Created new latest_pass from $cluster:$latestPass"
+    return 0;
+}
+
+if [ ! -d /local-ssd/$USER/.latest_snaps ]; then
+    echo "Creating /local-ssd/$USER/.latest_snaps for storing snapshots of clusters"
+    mkdir -p /local-ssd/$USER/.latest_snaps
+fi
+
+sbsyscheck >> $STDOUT 2>&1
+if [ $? -ne 0 ]; then
+    print_logs "sbsyscheck reports problems with the machine. See below"
+    exit 1
+fi
+
+for cluster in $ZFS_MASTER_SB
+do
+    echo "==========================================================================="
+    echo "Syncing latest $cluster"
+    echo "Starting sync of $cluster" > $STDOUT
+    sync_latest $cluster
+    echo "==========================================================================="
+done

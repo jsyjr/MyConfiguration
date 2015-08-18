@@ -1,0 +1,17 @@
+<html>
+    <script language="javascript">
+        origLocation = location.href;
+        qLoc = origLocation.indexOf('?');
+        cvsPath = origLocation.substring(qLoc+1);
+        document.write('Original location = ' + cvsPath + "\n");
+        cvsPath = cvsPath.replace(/%5[cC]/g, '/');
+        cvsPath = cvsPath.replace(/\\/g, '/');
+        cvsPath = cvsPath.replace(/^matlab\//, '');
+        cvsPath = 'matlab/' + cvsPath
+
+        cvsPath = 'http://batcave.mathworks.com/cgi-bin/viewcvs-dev/cgi/viewcvs.cgi/' + cvsPath;
+
+        document.write('Redirecting to ' + cvsPath);
+        window.location = cvsPath;
+    </script>
+</html>

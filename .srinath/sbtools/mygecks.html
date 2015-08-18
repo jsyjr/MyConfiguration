@@ -1,0 +1,22 @@
+<html>
+    <script language="javascript">
+        origLocation = location.href;
+        qLoc = origLocation.indexOf('?');
+        userName = origLocation.substring(qLoc+1);
+
+        var timeNow = new Date();
+        var timeLast = new Date();
+        timeLast.setTime(timeLast.getTime() - 10*24*60*60*1000);
+
+        var nowStr = timeNow.getFullYear() + "-" + (timeNow.getMonth()+1) + "-" + timeNow.getDate();
+        var lastStr = timeLast.getFullYear() + "-" + (timeLast.getMonth()+1) + "-" + timeLast.getDate();
+
+        var geckUrl =
+        "http://komodo.mathworks.com/main/gecko/list?Query=(CodedBy = '" +
+        userName + "') AND (CodedOn BETWEEN '" + lastStr + "' AND '" +
+        nowStr + "')";
+        document.write('Redirecting to ' + geckUrl);
+        window.location = geckUrl;
+    </script>
+</html>
+

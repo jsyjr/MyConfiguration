@@ -1,0 +1,200 @@
+#!/usr/bin/env bash
+
+function sbroot
+{
+    origdir=`pwd`
+    lastdir=`pwd`
+    while [ ! -f battree ]
+    do 
+        cd ..
+        if [ $lastdir == `pwd` ]
+        then
+            cd $origdir
+            break
+        fi
+        lastdir=`pwd`
+    done
+}
+
+function print_network_sandbox_warning
+{
+    red='\e[0;31m'
+    NC='\e[0m'
+
+    d=`pwd`
+    if [ "${d#/sandbox/$USER}" != "$d" ]
+    then
+        echo -e "${red}*** WARNING: In network sandbox ***${NC}\n "
+    fi
+}
+
+function go
+{
+    oldpwd=$OLDPWD
+    origdir=`pwd`
+    sbroot
+
+    nextdir="INVALID"
+    directories=(matlab/toolbox/stateflow/src/stateflow \
+                 matlab/toolbox/stateflow/src \
+                 matlab/toolbox/stateflow \
+                 matlab/src/simulink \
+                 matlab/src \
+                 matlab/test/toolbox/stateflow)
+                 
+    for dir in ${directories[*]}
+    do
+        if [ -d $dir/$1 ]
+        then
+            nextdir=$dir/$1
+            break
+        fi
+    done
+
+    if [ $nextdir == "INVALID" ]
+    then
+        case $1 in
+            root*)   nextdir=".";;
+            cg*)     nextdir="matlab/src/cg_ir";;
+            sf*)     nextdir="matlab/toolbox/stateflow/src/stateflow";;
+            cdr*)    nextdir="matlab/toolbox/stateflow/src/stateflow/cdr";;
+            test*)   nextdir="matlab/test/toolbox/stateflow";;
+            src*)    nextdir="matlab/src";;
+            sim*)    nextdir="matlab/src/simulink";;
+            res*)    nextdir="matlab/resources/Stateflow/en";;
+            sbt*)
+                presdir=`pwd`
+                basedir=${presdir##*/}
+                # basedir=`basename $presdir` # also works
+                nextdir="../$basedir""_sbruntests/glnxa64";;
+            *)
+                nextdir=$1;;
+        esac
+    fi
+
+    if [ -f battree ]
+    then
+        cd $nextdir
+        finaldir=`pwd`
+        cd $origdir
+        cd $finaldir
+    else
+        cd $oldpwd
+        cd $origdir
+    fi
+}
+
+function setmwe
+{
+    # echo 'Do not use setmwe!'
+    if [ "$COMSPEC" == "" ];
+    then
+        perl /hub/bat/common/bin/setmwe.pl sh ~/tmp/setmwe.tmp $1
+        source ~/tmp/setmwe.tmp
+        /bin/rm -f ~/tmp/setmwe.tmp
+    fi
+} 
+
+function get_sandbox
+{
+    location=$1
+    pattern=$2
+    if [ -f $location/Asf$pattern/battree ]
+    then
+        echo Asf$pattern
+        return
+    fi
+
+    sandboxes=`ls $location/*/battree | grep "$pattern" | sed 's/.*\/\(\S\+\)\/battree/\1/'`
+    sb_list=($sandboxes)
+    if [ ${#sb_list[@]} -eq 1 ]
+    then
+        echo ${sb_list[0]}
+    else
+        PS3='Multiple sandboxes found matchin pattern. Choose one of the above: '
+        select sb in $sandboxes
+        do
+            echo $sb
+            break
+        done
+    fi
+    echo ""
+}
+
+function go_sandbox
+{
+    root=$1
+    prefix=$2
+    sb=`get_sandbox $root $prefix`
+    if [ $sb ]
+    then
+        cd $root/$sb
+        return 0
+    else
+        return 1
+    fi
+}
+
+function gos_sbs
+{
+    sandboxes=`mw -using Bstateflow sbs list | grep "/mathworks" | grep "$1"`
+    sb_list=($sandboxes)
+    if [ ${#sb_list[@]} -eq 1 ]
+    then
+        cd ${sb_list[0]}
+    else
+        PS3='Multiple sandboxes found matchin pattern. Choose one of the above: '
+        select sb in $sandboxes
+        do
+            cd $sb
+            break
+        done
+    fi
+}
+
+function gos
+{
+    if [ "$COMSPEC" != "" ];
+    then
+        root=/cygdrive/c/Work
+    else
+        root=/mathworks/devel/sandbox/$USER
+    fi
+    go_sandbox $root "$1"
+    if [ $? -eq 1 ]
+    then
+        gos_sbs $1
+    fi
+}
+
+function gol
+{
+    go_sandbox /local-ssd/$USER "$1"
+    if [ $? -eq 1 ]
+    then
+        go_sandbox /local/$USER/sandbox "$1"
+        if [ $? -eq 1 ]
+        then
+            echo "No sandbox matching '$1' in /local-ssd/$USER or /local/$USER/sandbox"
+        fi
+    fi
+}
+
+if [ "$COMSPEC" != "" ]
+then
+function vim
+{
+    args=""
+    for i in $*;
+    do
+        if [ ${i:0:1} = '-' ]
+        then
+            args=$args" "$i
+        else
+            args=$args" `cygpath -w $i`"
+        fi
+    done
+    `\gvim $args`
+}
+fi
+

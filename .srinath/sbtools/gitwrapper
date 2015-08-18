@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+
+import sys
+import os
+from subprocess import check_call
+
+args = os.getenv('SSH_ORIGINAL_COMMAND').split()
+centralRepoName =  args[0]
+repoLocationToClone = args[1]
+
+centralRepoLocation = '/mathworks/inside/labs/dev/stateflow-tools/' + centralRepoName
+os.chdir(centralRepoLocation)
+try:
+    check_call(['/usr/bin/git', 'pull', '--ff-only', repoLocationToClone, 'master'])
+except:
+    # pull failed, lets reset hard.
+    check_call('git reset --hard'.split())
+    print '*'*80
+    print 'Your repo is behind me! You need to pull from the remote repo and then re-push!'
+    print '*'*80
+    sys.exit(1)
+
+check_call(['git', 'push', '--all'])

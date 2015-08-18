@@ -1,0 +1,106 @@
+# base-files version 3.4-2
+
+# WARNING
+#
+# IF THIS .bashrc IS MODIFIED IT WILL NOT BE UPDATED BY THE CYGWIN
+# SETUP PROGRAM.  IT BECOMES YOUR RESPONSIBILITY.
+#
+# The latest version as installed by the Cygwin Setup program can
+# always be found at /etc/defaults/etc/skel/.bashrc
+
+# User dependent .bashrc file
+
+# See man bash for more options...
+
+# Don't wait for job termination notification
+# set -o notify
+
+# Don't use ^D to exit
+# set -o ignoreeof
+
+# Don't put duplicate lines in the history.
+# export HISTCONTROL=ignoredups
+
+# Ignore some controlling instructions
+# export HISTIGNORE="[   ]*:&:bg:fg"
+
+# Some example alias instructions
+# If these are enabled they will be used instead of any instructions
+# they may mask.  For example, alias rm='rm -i' will mask the rm
+# application.  To override the alias instruction use a \ before, ie
+# \rm will call the real rm not the alias.
+
+source /hub/share/sbtools/bash_setup.bash
+
+# Interactive operation...
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias gvim='vim -g'
+
+# Default to human readable figures
+alias df='df -h'
+alias du='du -h'
+
+alias gotob='putty -ssh srinath@biomimetics.eecs.berkeley.edu &'
+alias gotoal='putty -ssh srinath@albinoni.eecs.berkeley.edu &'
+alias gotoh='putty -load srinath@home &'
+alias open='rundll32 url.dll,FileProtocolHandler'
+alias xfig='xfig -specialtext -latexfont -startlatexFont default'
+
+export DARCS_EDITOR=gvim
+
+export CVS_RSH=plink
+export CVSEDITOR=vimnobg
+
+# export PS1='\[\e]0;\W\a\]\n\[\e[32m\]\[\e[33m\][\@] \u@\h \w\[\e[0m\]\n$(print_network_sandbox_warning)\$ '
+export PS1='\[\e]0;\w\a\]\n\[\e[32m\]\[\e[33m\][\@] \u@\h \w\[\e[0m\]\n$ '
+
+bind '"\C-p": history-search-backward'
+bind '"\C-n": history-search-forward'
+bind '"[A": history-search-backward'
+bind '"[B": history-search-forward'
+
+if [ `uname` == "Linux" ]
+then
+    export PATH=~/bin:$PATH:/hub/share/bin:/hub/share/sbtools
+    # export PATH=~/bin/git/bin:$PATH
+    export PATH=$PATH:~/sb/sbtools
+else
+    export PATH=/cygdrive/i/bin:$PATH
+fi
+
+alias vi=vim
+
+export PAGER=less
+export EDITOR=vim
+export VISUAL=vim
+export ZFS_MASTER_SB="Bstateflow Bslevents"
+
+# export GECKFUN_TMP_DIR=/local/savadhan/tmp/gecko/
+export SBDIFF3_EDITOR=kdiff3
+export PATH=${PATH}:/mathworks/www/internal/devel/dastudio/morpheus/glsb:
+export PATH=${PATH}:/mathworks/inside/files/dev/cda/stateflow/buildmastering_scripts
+export PATH=${PATH}:/local/savadhan/bin/.dropbox-dist
+export P4CONFIG=.perforce
+export DEFAULT_SANDBOX=Bstateflow
+# source /sandbox/morpheus/ruby/.bashrc.ruby 
+
+alias pyMake='pymake -xml "$MWE_INSTALL/toolbox/sam/src/sam_studio/tools/pyMake.xml"'
+alias pmake='pyMake'
+alias pyMakeInteg='pymake -xml "$MWE_INSTALL/toolbox/sam/src/sam_studio/tools/pyMakeInteg.xml"'
+alias pmakei='pyMakeInteg'
+alias matlab='xterm -T MATLAB -e sb'
+alias vnc0='x11vnc -usepw -q -display :0 -ncache 0 -forever'
+alias chrome='killall chrome && google-chrome &'
+alias qmake='sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
+alias mw='mw -using Bstateflow'
+alias sbs='mw -using Bstateflow sbs'
+alias sb='sb -softwareopengl'
+alias sbr='sbruntests -autofarm devel -rerunusing jobarchive $*'
+alias sbsf='sb -r "vdp; bdclose all; disp ready"'
+# unalias which
+
+source /sandbox/savadhan/sbtools/_bash_functions
+
+export MW_ALT_BOOST_ARCHES=

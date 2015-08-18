@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+removeDebugFiles.py || exit 1
+
+BUILDFLAGS="NOBUILDTESTS=1 NORUNTESTS=1 DEBUG=1 MW_ALT_BOOST_ARCHES=1 build"
+
+sbpatch
+
+function build 
+{
+    olddir=`pwd`
+    dirname=$1
+    cd $dirname
+    find . -name '*.cpp' | xargs touch
+    sbmake -distcc $BUILDFLAGS
+    cd $olddir
+}
+
+build matlab/src/cg_ir
+build matlab/src/cgir_xform
+if [ "$BUILD_SRC_SIMULINK" != "" ]; then
+    build matlab/src/simulink
+fi
+build matlab/toolbox/stateflow/src
+
+sfsyncMwInterpDbgFiles
+mkdir -p .sbtools
+sb -update-gdb-source-path
+
+sb -nodesktop -nosplash -r "rehash toolboxcache; feature CachePath; addpath([matlabroot '/toolbox/stateflow/tools']); savepath; exit"

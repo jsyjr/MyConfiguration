@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+latest_cluster_snaps=""
+for cluster in $ZFS_MASTER_SB; do
+    latest_cluster_snaps+=" `cat /local-ssd/$USER/latest_snap_$cluster.txt`"
+done
+
+all_snaps=`sudo zfs list -H -t snap | awk '{ print $1 }'`
+for snap in $all_snaps; do
+    if [[ $latest_cluster_snaps != *$snap* ]]; then
+        echo "Attempting to destroy $snap"
+        sudo zfs destroy $snap
+    fi
+done

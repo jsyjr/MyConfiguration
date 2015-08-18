@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if [ "`lsof $1 2>&1`" != "" ]; then
+    echo "lsof $1 reports that someone is using this sandbox. Aborting..."
+    exit 1;
+fi
+
+if [ -f "$1/.perforce" ]; then
+    echo "Removing perforce client for this sandbox"
+    client=`cat "$1/.perforce" | sed "s/P4CLIENT=//g"`
+
+    p4 client -d $client
+    if [ $? -ne 0 ]; then
+        echo "Error removing perforce client! Exiting..."
+        exit 1;
+    fi
+fi
+
+sudo zfs destroy local-ssd/$USER/`basename $1`
+exit 0;

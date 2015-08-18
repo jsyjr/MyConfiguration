@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+sudo zfs rename local-ssd/$USER/`basename $1` local-ssd/$USER/$2

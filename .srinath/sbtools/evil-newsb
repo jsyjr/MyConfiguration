@@ -1,0 +1,108 @@
+#!/usr/bin/env python
+
+from commands import getoutput
+import argparse
+import sys
+import os
+import re
+
+def createNewNetworkSb(args):
+    SNAPSHOT_PATTERN = re.compile(r'/mathworks/devel/sbs/.*%s_\w+_job(\d+)_pass' % args.cluster)
+
+    matches = []
+    # clients = getoutput("mw -using Bstateflow sbs list -u savadhan").split()
+    clients = getoutput("mw -using Bstateflow sbs list").split()
+    for client in clients:
+        m = SNAPSHOT_PATTERN.match(client)
+        if m:
+            matches.append(m)
+
+    if not matches:
+        print 'Not found latest_pass in synced sandboxes! Found following clients:'
+        print clients
+        return
+
+    lastMatch = matches[-1]
+    lastSyncedPath = lastMatch.group(0)
+    print 'Creating new sandbox called %s from %s' % (args.sandbox_name[0], lastSyncedPath)
+    output = getoutput('mw -using Bstateflow sbs create -from %s -s ready -n %s' % (lastSyncedPath, args.sandbox_name[0]))
+    print output
+
+    CLONED_PATTERN = re.compile(r'Clone located at: (/mathworks/devel.*)', re.M)
+    m = CLONED_PATTERN.search(output)
+    if not m:
+        print 'Something went wrong. Not able to figure out the path to the cloned network sandbox'
+        return
+
+    newLocation = m.group(1)
+    os.chdir(newLocation)
+    print 'Fixing gdb source path'
+    print getoutput('sb -update-gdb-source-path')
+
+def chooseFromNames(prefix, names):
+    namesWithNums = ['{}. {}'.format(i+1, n) for (i, n) in enumerate(names)]
+    suffix = 'Enter your choice: '
+    fullStr = prefix + '\n' + ('\n'.join(namesWithNums)) + '\n' + suffix
+    choice =  input(fullStr)
+    return names[choice-1]
+
+def main():
+    zfsNames = os.getenv('ZFS_MASTER_SB').split()
+
+    parser = argparse.ArgumentParser(description="Create a new sandbox")
+    parser.add_argument('--cluster', '-c')
+    parser.add_argument('--local', '-l', action='store_true')
+    parser.add_argument('sandbox_name', nargs=1)
+
+    args = parser.parse_args(sys.argv[1:])
+
+    if not args.cluster:
+        if len(zfsNames) == 1:
+            clusterName = zfsNames[0]
+        else:
+            clusterName = chooseFromNames('Multiple master sandboxes found. Choose one.', zfsNames)
+        args.cluster = clusterName
+    else:
+        if args.cluster not in zfsNames:
+            print('Invalid cluster name {}. Should be one of "{}"'.format(clusterName, ','.join(zfsNames)))
+            return
+
+    if args.local:
+        createNewLocalSb(args)
+    else:
+        createNewNetworkSb(args)
+
+if __name__ == "__main__":
+    main()
+
+# 
+# 
+# 
+# if [ $# -lt 1 ]
+# then
+#     echo "Usage: $0 [-c CLUSTER] [-local] NEW_SB_NAME"
+#     exit 1
+# fi
+# 
+# sbname=$1
+# if [ $# -lt 2 ]
+# then
+#     cluster=${ZFS_MASTER_SB%% *}
+# else
+#     cluster=$2
+# fi
+# 
+# echo "Creating a clone of last syned ${cluster}:latest_pass"
+# 
+# cd /local-ssd/$USER
+# 
+# if [ ! -d ./.latest_snaps/$cluster ]; then
+#     echo "/local-ssd/$USER/.latest_snaps/$cluster does not exist.  Please create it first by running evil-sync-latest-pass"
+#     exit 1
+# fi
+# 
+# btrfs subvolume snapshot ./.latest_snaps/$cluster $sbname
+# 
+# cd /local-ssd/$USER/$sbname
+# evil_fix_clone
+# echo "Sandbox /local-ssd/$USER/$1 is ready to use!"
