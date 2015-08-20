@@ -966,7 +966,7 @@ mouse-3: go to end")
 Which one depends on variable `subword-mode'."
   t)
 
-;;}}
+;;}}}
 ;;{{{  Files and directories
 
 (ffap-bindings)
