@@ -959,6 +959,8 @@ mouse-3: go to end")
  '(view-read-only t)    ; Use view-mode if file is or opened read-only
  )
 
+;; Checkout https://github.com/nschum/highlight-symbol.el
+
 ;;{{{  Navigation: avy
 
 (autoload 'avy-goto-word-or-subword-1 "avy"
