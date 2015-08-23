@@ -585,11 +585,20 @@ Use a normal parenthesis if not inside any."
 ;;}}}
 ;;{{{  mode-line basics
 
+(defface mode-line-highlight-bold
+  '((t (:inherit mode-line-highlight
+        :weight bold)))
+  "Basic mode line face for bolding in highlights."
+  :version "22.1"
+  :group 'mode-line-faces
+  :group 'basic-faces)
+
 (my/custom-set-faces
- '(mode-line           ((t (:background "tan2" :foreground "black" :box (:line-width -1 :style released-button) :height 1.2))))
- '(mode-line-buffer-id ((t (:weight bold))))
- '(mode-line-highlight ((t (:background "wheat2" :box (:line-width -1 :style released-button)))))
- '(mode-line-inactive  ((t (:inherit mode-line :background "gray65"))))
+ '(mode-line                ((t (:background "tan2" :foreground "black" :box (:line-width -1 :style released-button) :height 1.2))))
+ '(mode-line-buffer-id      ((t (:weight bold))))
+ '(mode-line-highlight      ((t (:background "wheat2" :box (:line-width -1 :style released-button)))))
+ '(mode-line-highlight-bold ((t (:background "wheat2" :weight bold :box (:line-width -1 :style released-button)))))
+ '(mode-line-inactive       ((t (:inherit mode-line :background "gray65"))))
  )
 
 (my/custom-set-variables
@@ -683,7 +692,7 @@ mouse-3: Remove current window from display"))))
             (concat
              ;; Leading [
              (if (= wbeg-line 1)
-                 #("[" 0 1 (face bold))
+                 #("[" 0 1 (face mode-line-highlight-bold))
                "[")
              ;; Body
              (if (not (or l-n-m c-n-m))
@@ -735,7 +744,7 @@ mouse-3: Remove current window from display"))))
                  expanded))
              ;; Trailing ]
              (if (= wend-line eob-line)
-                 #("]" 0 1 (face bold))
+                 #("]" 0 1 (face mode-line-highlight-bold))
                "]"))))
 
         (propertize
