@@ -2164,7 +2164,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;=== Programming ======================================================
 ;;{{{  Sanjay Dixit's am package
 
-(add-to-list 'load-path "~/emacs/nz")
+;; (add-to-list 'load-path "~/emacs/nz")
 
 (autoload 'am-force-recache "am"
   "Run 'amake -cache' and reload files lists"
@@ -3686,17 +3686,17 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 
 
 ;; amake supported find-file, grep and
-(keydef "C-, f"         am-find-file)
-(keydef "C-, 4 f"       am-find-file-other-window)
-(keydef "C-, g"         am-grep)
-(keydef "C-, r"         am-force-recache)
-(keydef "C-, ."         am-grep-tag)
+;; (keydef "C-, f"         am-find-file)
+;; (keydef "C-, 4 f"       am-find-file-other-window)
+;; (keydef "C-, g"         am-grep)
+;; (keydef "C-, r"         am-force-recache)
+;; (keydef "C-, ."         am-grep-tag)
 
-(keydef "C-x , f"       am-find-file)
-(keydef "C-x , 4 f"     am-find-file-other-window)
-(keydef "C-x , g"       am-grep)
-(keydef "C-x , r"       am-force-recache)
-(keydef "C-x , ."       am-grep-tag)
+;; (keydef "C-x , f"       am-find-file)
+;; (keydef "C-x , 4 f"     am-find-file-other-window)
+;; (keydef "C-x , g"       am-grep)
+;; (keydef "C-x , r"       am-force-recache)
+;; (keydef "C-x , ."       am-grep-tag)
 
 
 ;; GUD navigation claims the capital letters in the "goto" map:
