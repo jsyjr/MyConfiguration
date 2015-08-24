@@ -16,7 +16,7 @@
 
 ;; Set to t when bringing up a new machine or reinstalling the full
 ;; complement of packages.  (When t customizations get suppressed.)
-(defvar my/refetch-all-packages nil)
+(defvar my/el-get-refetch-all-packages nil)
 
 ;; Too many false alarms
 (setq debug-on-error t)
@@ -281,7 +281,7 @@
     (cdr form)))
 
 ;; Read custom-file, save the customization lists and evaluate the forms.
-(unless my/refetch-all-packages
+(unless my/el-get-refetch-all-packages
   (with-current-buffer (get-buffer-create "*Custom File*")
     (insert-file-contents-literally custom-file )
     (setq my/saved-custom-variables (process-customization-list))
@@ -3522,7 +3522,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;;=== el-get (epilog) ==================================================
 ;;{{{  Sync and update
 
-(if my/refetch-all-packages
+(if my/el-get-refetch-all-packages
     (el-get-update-all t))
 
 (message "======== Install missing packages")
