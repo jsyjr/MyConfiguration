@@ -109,7 +109,7 @@ if [ -d /mathworks ]; then
     alias sbnj='sb -nodesktop -nosplash -nojvm -r "opengl info"'
     alias sbr='sbruntests -autofarm devel -rerunusing jobarchive'
     alias sbr_sf='sbruntests -autofarm devel -rerunusing jobarchive -runallunder test/toolbox/stateflow'
-    alias sbr_all='sbruntests -autofarm devel -rerunusing jobarchive -testsuites Acgir Astlrtw'
+    alias sbr_all='sbruntests -autofarm devel -rerunusing jobarchive -testsuites Acgir Aslrtw'
     alias sbr_sf='sbruntests -autofarm devel -rerunusing jobarchive -runallunder test/toolbox/stateflow'
 
     if [ -d /sandbox/savadhan/sbtools ]; then
