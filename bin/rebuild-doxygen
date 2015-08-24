@@ -21,10 +21,9 @@ make -kj8
 make -kj8
 make
 
-./bin/doxygen --version
-
 # make docs
 # make pdf
 
 cd ..
 
+./build/bin/doxygen --version
