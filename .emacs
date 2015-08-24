@@ -169,6 +169,8 @@
 (setq el-get-sources '(el-get)) ; built incrementally via add-to-list
 (setq el-get-git-shallow-clone t)
 
+(defalias 'seq-copy #'copy-sequence)
+
 ;; Minimal bootstrap
 (unless (file-directory-p (concat el-get-dir "el-get"))
   (url-retrieve "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
