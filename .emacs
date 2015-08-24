@@ -2619,7 +2619,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; C-c M @@@       getHaveVersion
   ;; C-c M @@@       my-changes
   ;; C-c M @@@       my-pending-changes
-  ;; C-c M a         add)
+  ;; C-c M a         add
   ;; C-c M c         change
   ;; C-c M C         client
   ;; C-c M \C-c      wclients
