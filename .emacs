@@ -1074,7 +1074,7 @@ point reaches the beginning or end of the buffer, stop there."
 ;;}}}
 ;;{{{  Simple editing operations
 
-(defun delete-whitespace-forward (arg)
+(defun my/delete-whitespace-forward (arg)
   "Delete all white space from point to the next word.  With prefix ARG
 delete across newlines as well.  The only danger in this is that you
 don't have to actually be at the end of a word to make it work.  It
@@ -3626,7 +3626,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (my/el-get-install "keydef")
 
 
-(keydef "M-D"           delete-whitespace-forward)
+(keydef "M-D"           my/delete-whitespace-forward)
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
 (keydef "C-c C-k"       kill-compilation)
