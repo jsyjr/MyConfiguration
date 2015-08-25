@@ -8,6 +8,8 @@
 *~
 %*
 am.dmp
+gdb
+java.log.*
 tags
 BROWSE
 TAGS
@@ -36,6 +38,7 @@ st-light
 /.login
 /.logout
 /.nano_history
+/.nfs*
 /.nvidia-settings-rc
 /.p4enviro
 /.pinerc
@@ -72,6 +75,7 @@ st-light
 /.cache/
 /.compiz/
 /.config/
+/.cpan/
 /.dbus/
 /.eclipse/
 /.elinks/
@@ -94,6 +98,7 @@ st-light
 /.mission-control/
 /.mozilla/
 /.nv/
+/.oracle_jre_usage/
 /.p4merge/
 /.p4qt/
 /.pki/
