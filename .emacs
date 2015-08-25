@@ -587,12 +587,6 @@ Use a normal parenthesis if not inside any."
 ;;}}}
 ;;{{{  mode-line basics
 
-(defconst mode-line-window-id
-  '(:eval (if (and (boundp phw--window-id-in-mode-line)
-                   phw--window-id-in-mode-line)
-              (phw--window-id)
-            nil)))
-
 (defface mode-line-highlight-bold
   '((t (:inherit mode-line-highlight
         :weight bold)))
@@ -658,6 +652,34 @@ mouse-3: Remove current window from display"))))
  '(eol-mnemonic-unix "/")               ; defaults to ':'
  )
 
+;;{{{  mode-line window-id and controlling minor mode
+
+(defconst mode-line-window-id
+  '(:eval (mode-line-window-id)))
+
+(defun mode-line-window-id ()
+  "Return window ID as if window-id-minor-mode is enable otherwise nil."
+  (if window-id-minor-mode (window-id-string) nil))
+
+(defun window-id-string ()
+  "Return ID of selected window as a string with a trailing space"
+  (let ((txt (substring (format "%s" (selected-window)) (length "#<window "))))
+    (substring txt 0 (1+ (string-match " " txt)))))
+
+(defvar window-id-minor-mode t
+  "Debugging aid: set to enable displaying window IDs in mode-lines")
+
+(defun window-id-minor-mode (&optional arg)
+  "Toggle window-id minor mode.
+With prefix argument ARG, turn on if positive, otherwise
+off. Return non-nil if the minor mode is enabled."
+  (interactive "P")
+  (setq window-id-minor-mode (if (null arg)
+                           (not window-id-minor-mode)
+                           (> (prefix-numeric-value arg) 0)))
+  (force-mode-line-update t))
+
+;;}}}
 ;;}}}
 ;;{{{  mode-line position-widget
 
