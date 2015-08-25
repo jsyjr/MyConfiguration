@@ -652,6 +652,7 @@ mouse-3: Remove current window from display"))))
  '(eol-mnemonic-unix "/")               ; defaults to ':'
  )
 
+;;}}}
 ;;{{{  mode-line window-id and controlling minor mode
 
 (defconst mode-line-window-id
@@ -659,11 +660,11 @@ mouse-3: Remove current window from display"))))
 
 (defun mode-line-window-id ()
   "Return window ID as if window-id-minor-mode is enable otherwise nil."
-  (if window-id-minor-mode (window-id-string) nil))
+  (if window-id-minor-mode (window-id-string (selected-window)) nil))
 
-(defun window-id-string ()
+(defun window-id-string (win)
   "Return ID of selected window as a string with a trailing space"
-  (let ((txt (substring (format "%s" (selected-window)) (length "#<window "))))
+  (let ((txt (substring (format "%s" win) (length "#<window "))))
     (substring txt 0 (1+ (string-match " " txt)))))
 
 (defvar window-id-minor-mode t
@@ -679,7 +680,6 @@ off. Return non-nil if the minor mode is enabled."
                            (> (prefix-numeric-value arg) 0)))
   (force-mode-line-update t))
 
-;;}}}
 ;;}}}
 ;;{{{  mode-line position-widget
 
