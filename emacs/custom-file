@@ -260,7 +260,7 @@
      (user-position . t))))
  '(mode-line-format
    (quote
-    ("%e"
+    ("%e" mode-line-window-id
      #("-" 0 1
        (help-echo "mouse-1: Select (drag to resize)
 mouse-2: Make current window occupy enitre frame

@@ -587,6 +587,12 @@ Use a normal parenthesis if not inside any."
 ;;}}}
 ;;{{{  mode-line basics
 
+(defconst mode-line-window-id
+  '(:eval (if (and (boundp phw--window-id-in-mode-line)
+                   phw--window-id-in-mode-line)
+              (phw--window-id)
+            nil)))
+
 (defface mode-line-highlight-bold
   '((t (:inherit mode-line-highlight
         :weight bold)))
@@ -605,7 +611,7 @@ Use a normal parenthesis if not inside any."
 
 (my/custom-set-variables
  '(mode-line-format
-   '("%e"
+   '("%e" mode-line-window-id
      #("-" 0 1 (help-echo "mouse-1: Select (drag to resize)
 mouse-2: Make current window occupy enitre frame
 mouse-3: Remove current window from display"))
