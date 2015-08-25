@@ -100,8 +100,8 @@ if [ -d /mathworks ]; then
 
     # Typically should be run in .../matlab/toolbox/stateflow/src
     alias qmake='sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
-    alias dmake='sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
-    alias lmake='sbmake -j 16   DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
+    alias pmake='cd .../matlab/toolbox/stateflow/src/stateflow ; sbmake -j 8 DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES= prebuild'
+    alias bmake='cd .../matlab/toolbox/stateflow/src/stateflow ; sbmake -j 8 DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES= prebuild ; sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES= build'
     alias jmake='lmake prebuild ; dmake build'
     alias mw='mw -using Bstateflow'
     alias sbs='mw -using Bstateflow sbs'
