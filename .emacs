@@ -3673,9 +3673,9 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;; easy ECB activation and deactivation
 ;; (keydef "C-c b"         ecb-activate)
 ;; (keydef "C-c d"         ecb-deactivate)
-(keydef "C-c b"         phw-activate)
-(keydef "C-c d"         phw-deactivate)
-(keydef "C-c D"         my/ecb-run-gdb)
+(keydef "C-c b"         phw-minor-mode)
+;(keydef "C-c d"         phw-deactivate)
+;(keydef "C-c D"         my/ecb-run-gdb)
 
 
 ;; python-mode steals C-c C-k for python-mark-block. steal it back.
@@ -3723,23 +3723,6 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;; region and using `M-x apply-macro-to-region-lines' (which I've bound to
 ;; `C-x E')
 (keydef "C-x E"         apply-macro-to-region-lines)
-
-;; Bindings for PHW
-(keydef "C-, ,"         phw-goto-window)
-(keydef "C-, C-,"       phw-goto-window)
-(keydef "C-, ."         phw-goto-window)
-(keydef "C-, C-."       phw-goto-window)
-(keydef "C-, f"         phw-goto-window)
-(keydef "C-, b"         phw-goto-window)
-(keydef "C-, 1"         phw-goto-window)
-(keydef "C-, 2"         phw-goto-window)
-(keydef "C-, 3"         phw-goto-window)
-(keydef "C-, 4"         phw-goto-window)
-(keydef "C-, 5"         phw-goto-window)
-(keydef "C-, 6"         phw-goto-window)
-(keydef "C-, 7"         phw-goto-window)
-(keydef "C-, 8"         phw-goto-window)
-(keydef "C-, 9"         phw-goto-window)
 
 ;; amake supported find-file, grep and
 ;; (keydef "C-, f"         am-find-file)
