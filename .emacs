@@ -19,7 +19,7 @@
 (defvar my/el-get-refetch-all-packages nil)
 
 ;; Too many false alarms
-(setq debug-on-error t)
+;; (setq debug-on-error t)
 ;; (setq debug-on-error nil)
 
 ;;=== Notes ============================================================
