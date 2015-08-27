@@ -19,7 +19,7 @@
 (defvar my/el-get-refetch-all-packages nil)
 
 ;; Too many false alarms
-;; (setq debug-on-error t)
+(setq debug-on-error t)
 ;; (setq debug-on-error nil)
 
 ;;=== Notes ============================================================
@@ -147,6 +147,8 @@
 ; Various packages reference c-common-mode-hook.  Update load-path
 ; early to ensure that we pick up the latest cc-mode sources.
 (add-to-list 'load-path "~/repos/cc-mode")
+
+(add-to-list 'load-path "~/repos/phw")
 
 (let ((entries (reverse (directory-files el-get-dir t))))
   (mapc (lambda (path)
@@ -3391,36 +3393,10 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;;                      ))
 ;; (my/el-get-install "phw")
 
-(add-to-list 'load-path "~/repos/phw")
-;(require 'phw)
-
-(autoload 'phw-activate     "phw" "" t)
-(autoload 'phw-deactivate   "phw" "" t)
-(autoload 'phw-minor-mode   "phw" "" t)
-(autoload 'phw-byte-compile "phw" "" t)
-(autoload 'phw-goto-window  "phw" "" t)
-
-
-;; (defadvice display-message-or-buffer (around my/disable-resize-mini-windows activate)
-;;   "Cause any output greate than one line to use PHW's compile window."
-;;   (let ((resize-mini-windows (if (bound-and-true-p phw-minor-mode)
-;;                                  nil
-;;                                resize-mini-windows)))
-;;     ad-do-it))
-
-(my/custom-set-variables
- '(phw-options-version "2.50")
- ;; Visual layout
- '(phw-windows-width 0.15)
- ;; Compile window
- '(phw-compile-window-height 0.1)
- '(phw-compile-window-temporally-enlarge 'both)
- '(phw-enlarged-compilation-window-max-height 0.9)
-
- '(phw-vc-enable-support nil)
-
- '(phw-process-non-semantic-files nil)
- )
+(autoload 'phw-mode "phw" 
+  "Toggle phw-mode.
+Setting this variable directly does not take effect;
+use either \\[customize] or the function `phw-mode'." t)
 
 ;;}}}
 
@@ -3655,7 +3631,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 (my/el-get-install "keydef")
 
 
-(keydef "M-D"           my/delete-whitespace-forward)
+;(keydef "M-D"           my/delete-whitespace-forward)
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
 (keydef "C-c C-k"       kill-compilation)
@@ -3673,7 +3649,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;; easy ECB activation and deactivation
 ;; (keydef "C-c b"         ecb-activate)
 ;; (keydef "C-c d"         ecb-deactivate)
-(keydef "C-c b"         phw-minor-mode)
+(keydef "C-c b"         phw-mode)
 ;(keydef "C-c d"         phw-deactivate)
 ;(keydef "C-c D"         my/ecb-run-gdb)
 
