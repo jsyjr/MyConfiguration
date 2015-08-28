@@ -1,0 +1,22 @@
+#/bin/dash
+set -e
+
+RECOMPILE_SCRIPT="/tmp/recompile-$$.el"
+
+(cd ${HOME}           ; git status ; git pull --ff-only)
+(cd ${HOME}/repos/phw ; git status ; git pull --ff-only)
+
+rm -f \
+${HOME}/.emacs.elc \
+${HOME}/emacs/custom-file.elc \
+${HOME}/repos/phw/phw.elc \
+
+cat >${RECOMPILE_SCRIPT} <<EOF
+(byte-compile-file "${HOME}/.emacs")
+(byte-compile-file "${HOME}/emacs/custom-file")
+(byte-compile-file "${HOME}/repos/phw/phw.el")
+EOF
+
+emacs -batch --quick -l ${RECOMPILE_SCRIPT} -kill
+
+rm -f ${RECOMPILE_SCRIPT}
