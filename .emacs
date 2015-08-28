@@ -662,27 +662,9 @@ mouse-3: Remove current window from display"))))
 
 (defun mode-line-window-id ()
   "If possible return a phw-mode window ID."
-   (if (boundp 'phw-window-ordinal)
+   (if (fboundp 'phw-window-ordinal)
        (phw-window-ordinal (selected-window))
      nil))
-
-(defun window-id-string (win)
-  "Return ID of selected window as a string with a trailing space"
-  (let ((txt (substring (format "%s" win) (length "#<window "))))
-    (substring txt 0 (string-match " " txt))))
-
-;; (defvar window-id-minor-mode nil
-;;   "Debugging aid: set to enable displaying window IDs in mode-lines")
-
-;; (defun window-id-minor-mode (&optional arg)
-;;   "Toggle window-id minor mode.
-;; With prefix argument ARG, turn on if positive, otherwise
-;; off. Return non-nil if the minor mode is enabled."
-;;   (interactive "P")
-;;   (setq window-id-minor-mode (if (null arg)
-;;                            (not window-id-minor-mode)
-;;                            (> (prefix-numeric-value arg) 0)))
-;;   (force-mode-line-update t))
 
 ;;}}}
 ;;{{{  mode-line position-widget
