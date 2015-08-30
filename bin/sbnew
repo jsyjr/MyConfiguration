@@ -16,7 +16,10 @@ cat >${SBNAME}/.gitignore <<EOF
 /config/
 /.sbtools/
 /build.glnxa64.log.files/
+
 /*.log
+/sbrestore_*.txt
+.gdb_history
 EOF
 chmod a+w ${SBNAME}/matlab/.gitignore
 cat     >>${SBNAME}/matlab/.gitignore <<EOF
