@@ -305,6 +305,7 @@
  '(package-selected-packages
    '(ace-window
      avy
+     ggtags
      )))
 
 ;;}}}
@@ -2266,6 +2267,9 @@ can easily repeat an earlier amake -pgrep command."
  '(tags-revert-without-query t)
  )
 
+;; For idutils:
+;; /hub/share/sbtools/external-apps/idutils/idutils-4.6-sbmod1/install/share/id-lang.map
+
 ;; (add-to-list 'el-get-sources
 ;;              '(:name rtags
 ;;                      :description "A C/C++ client/server indexer based on clang."
@@ -2499,6 +2503,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
   (hs-minor-mode)
   (hideshowvis-enable)
+  (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+    (ggtags-mode 1))
 
   (setq tab-width 8)
   (setq comment-column 40)

@@ -309,7 +309,7 @@ mouse-3: Remove current window from display")))))
    (quote
     (org-docview org-info org-habit org-inlinetask org-protocol org-mouse)))
  '(org-support-shift-select t)
- '(package-selected-packages (quote (ace-window avy)))
+ '(package-selected-packages (quote (ace-window avy ggtags)))
  '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)))
  '(pretty-control-l-mode t)
  '(recentf-mode t)
