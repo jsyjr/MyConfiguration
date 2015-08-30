@@ -37,9 +37,16 @@ cat     >>${SBNAME}/matlab/toolbox/.gitignore <<EOF
 !/stateflow/
 EOF
 
+if [ ! -d /local-ssd/lsb/git ] ; then
+  mkdir  /local-ssd/lsb/git
+  chmod a-w /local-ssd/lsb/git
+fi
+
 # Create the git repository outside of the workspace
 ( cd /local-ssd/lsb/${SBNAME}                                 && \
+  chmod a+w /local-ssd/lsb/git                                && \
   git init -q --separate-git-dir /local-ssd/lsb/git/${SBNAME} && \
+  chmod a-w /local-ssd/lsb/git                                && \
   git add -A                                                  && \
   git commit -qm "New sandbox"                                   \
 )
