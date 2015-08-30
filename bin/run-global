@@ -1,0 +1,7 @@
+#!/bin/dash
+
+cat $(find .sbtools/global/matlab/src .sbtools/global/matlab/toolbox/stateflow -name project-file-list.txt) \
+ | fgrep '/derived/' -v \
+ | grep -e '\.\([hHlycC]\|h\.in\|hh\|cc\|[hc]\(pp\|xx\)\|lex\|yacc\|java\)$' \
+ | gtags -q --file - --idutils --sqlite3 --statistics
+
