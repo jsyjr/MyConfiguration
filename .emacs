@@ -2178,6 +2178,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
      ))
  '(org-mobile-directory "~/Dropbox/MobileOrg")
  '(org-mobile-files '(org-agenda-files "~/org"))
+ '(org-support-shift-select t)
  )
 
 ;; Interesting org-mode completion, integrate with auto-complete?
