@@ -1,0 +1,24 @@
+#!/bin/dash
+
+set -e
+
+if [ ! -f "parsers/clojure.c" ]; then
+  echo "Working directory ( $(pwd) ) is not the root of a ctags source tree."
+  echo 'Download and unpack tarball from "ftp://ftp.gnu.org/pub/gnu/global/"'
+  exit 1
+fi
+
+autoreconf -vfi
+./configure
+
+sed -i -e 's/-g -O2/-march=corei7 -O3/' `find -name Makefile`
+
+# mkdir -p lib bin objects/qtools html latex man docbook perlmod rtf xml
+
+make -kj8
+make
+
+# sudo update-alternatives \
+#  --install /usr/bin/ctags                 ctags      /usr/local/bin/ctags 1 \
+#  --slave   /usr/share/man/man1/ctags.1.gz ctags.1.gz /usr/local/share/man/man1/ctags.1 \
+
