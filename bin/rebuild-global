@@ -9,7 +9,7 @@ if [ ! -f "globash/globash.in" ]; then
 fi
 
 make distclean
-./configure
+./configure --with-exuberant-ctags=/usr/local/bin/ctags --with-sqlite3
 
 sed -i -e 's/-g -O2/-march=corei7 -O3/' libtool reconf.sh `find -name Makefile`
 
