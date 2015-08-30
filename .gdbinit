@@ -36,3 +36,20 @@
 
 # source /mathworks/hub/share/sbtools/.gdbinit
 source /sandbox/savadhan/sbtools/mw-gdbscripts/.gdbinit
+
+# source /mathworks/hub/share/sbtools/.gdbinit
+
+set breakpoint pending on
+set history save
+set print object on
+set print pretty on
+set print static-members off
+set unwindonsignal on
+
+define segv
+handle SIGSEGV print stop
+end
+
+define nosegv
+handle SIGSEGV noprint nostop
+end
