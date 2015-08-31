@@ -1,7 +1,17 @@
 #!/bin/dash
 
+if [ ! -f ".sbtools/global/project-dirs.txt" ]; then
+  echo "Working directory ( $(pwd) ) is not the root of a sandbox."
+  exit 1
+fi
+
+# Read various project-file-list.txt files, drop all
+# lines mentioning /derived/ and return those that
+# include a meaningful file extension.  Use a recent
+# version of gtags to build a sqlite3 database as well
+# as a traditional idutils database.
 cat $(find .sbtools/global/matlab/src .sbtools/global/matlab/toolbox/stateflow -name project-file-list.txt) \
  | fgrep -v '/derived/' \
  | grep -e '\.\([hHlycC]\|h\.in\|hh\|cc\|[hc]\(pp\|xx\)\|lex\|yacc\|java\)$' \
- | gtags -q --file - --idutils --sqlite3 --statistics
+ | gtags -q --file - --sqlite3 --idutils --statistics
 
