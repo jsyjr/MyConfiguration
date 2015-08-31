@@ -2256,6 +2256,8 @@ can easily repeat an earlier amake -pgrep command."
 ;;}}}
 ;;{{{  Find a "tag" in a project
 
+(require 'ggtags)
+
 (with-current-buffer "*Messages*" (ggtags-mode 1))
 (with-current-buffer "*scratch*" (ggtags-mode 1))
 (add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1)))
