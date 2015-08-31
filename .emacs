@@ -2255,15 +2255,20 @@ can easily repeat an earlier amake -pgrep command."
 ;;}}}
 ;;{{{  Find a "tag" in a project
 
-(add-to-list 'el-get-sources
-             '(:name vtags
-                     :description "Edward Bishop's fork of emacs' etags"
-                     :type        http
-                     :url         "file://localhost/home/jyates/emacs/vtags/vtags.el"
-                     :features    (vtags)))
-(my/el-get-install "vtags")
+(with-current-buffer "*Messages*" (ggtags-mode 1))
+(with-current-buffer "*scratch*" (ggtags-mode 1))
+(add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1)))
+
+;; (add-to-list 'el-get-sources
+;;              '(:name vtags
+;;                      :description "Edward Bishop's fork of emacs' etags"
+;;                      :type        http
+;;                      :url         "file://localhost/home/jyates/emacs/vtags/vtags.el"
+;;                      :features    (vtags)))
+;; (my/el-get-install "vtags")
 
 (my/custom-set-variables
+ '(ggtags-mode-sticky nil)
  '(tags-revert-without-query t)
  )
 
@@ -2503,8 +2508,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
   (hs-minor-mode)
   (hideshowvis-enable)
-  (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
-    (ggtags-mode 1))
 
   (setq tab-width 8)
   (setq comment-column 40)
@@ -3667,6 +3670,28 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "C-c 8"         my/set-buffer-local-tab-width-to-8)
 (keydef "C-c c"         org-capture)
 (keydef "C-c l"         org-store-link)
+
+;; Binding from the ggtags package
+;;
+;; M-.             ggtags-find-tag-dwim
+;; M-]             ggtags-find-reference
+;; C-M-.           ggtags-find-tag-regexp
+;;
+;; C-c M-SPC       ggtags-save-to-register
+;; C-c M-%         ggtags-query-replace
+;; C-c M-/         ggtags-view-search-history
+;; C-c M-?         ggtags-show-definition
+;; C-c M-b         ggtags-browse-file-as-hypertext
+;; C-c M-f         ggtags-find-file
+;; C-c M-g         ggtags-grep
+;; C-c M-h         ggtags-view-tag-history
+;; C-c M-i         ggtags-idutils-query
+;; C-c M-j         ggtags-visit-project-root
+;; C-c M-k         ggtags-kill-file-buffers
+;; C-c M-n         ggtags-next-mark
+;; C-c M-o         ggtags-find-other-symbol
+;; C-c M-p         ggtags-prev-mark
+;; C-c M-DEL       ggtags-delete-tags
 
 
 ;; Additions to the help command
