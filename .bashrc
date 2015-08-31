@@ -107,10 +107,12 @@ if [ -d /mathworks ]; then
     alias sbs='mw -using Bstateflow sbs'
     alias sbn='sb -nodesktop -nosplash -r "opengl info"'
     alias sbnj='sb -nodesktop -nosplash -nojvm -r "opengl info"'
-    alias sbr='sbruntests -autofarm devel -rerunusing jobarchive'
-    alias sbr_sf='sbruntests -autofarm devel -rerunusing jobarchive -runallunder test/toolbox/stateflow'
-    alias sbr_all='sbruntests -autofarm devel -rerunusing jobarchive -testsuites Acgir Aslrtw'
-    alias sbr_sf='sbruntests -autofarm devel -rerunusing jobarchive -runallunder test/toolbox/stateflow'
+    alias sbf='    sbruntests -autofarm devel -rerunusing jobarchive'
+    alias sbf_sf=' sbruntests -autofarm devel -rerunusing jobarchive -runallunder test/toolbox/stateflow'
+    alias sbf_all='sbruntests -autofarm devel -rerunusing jobarchive -testsuites Acgir Aslrtw'
+    alias sbl='    sbruntests -local    all   -rerunusing jobarchive'
+    alias sbl_sf=' sbruntests -local    all   -rerunusing jobarchive -runallunder test/toolbox/stateflow'
+    alias sbl_all='sbruntests -local    all   -rerunusing jobarchive -testsuites Acgir Aslrtw'
 
     if [ -d /sandbox/savadhan/sbtools ]; then
         if [ -f /sandbox/savadhan/sbtools/_bash_functions ]; then
