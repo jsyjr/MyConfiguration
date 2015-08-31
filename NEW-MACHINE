@@ -168,6 +168,16 @@ sudo cp /tmp/source-serif*/TTF/* /usr/local/share/fonts/SourceSerifPro
 
 rm   -rf /tmp/Source* /tmp/source-*
 
+# Install Chris Simpkins' Hack font
+#
+sudo rm   -rf /usr/local/share/fonts/Hack /tmp/Hack*
+sudo mkdir -p /usr/local/share/fonts/Hack
+cd /tmp
+wget https://github.com/chrissimpkins/Hack/releases/download/v2.010/Hack-v2_010-ttf.zip -O Hack.zip
+unzip Hack.zip
+sudo cp /tmp/Hack-*.ttf /usr/local/share/fonts/Hack
+rm /tmp/Hack*
+
 
 # Turn on bitmap fonts but exclude X11's crummy Helvetica
 #
@@ -212,6 +222,7 @@ sudo dpkg-reconfigure fontconfig-config
 sudo dpkg-reconfigure fontconfig
 sudo fc-cache
 fc-list | grep Dina
+fc-list | grep Hack
 fc-list | grep Slashed
 fc-list | grep Source
 
