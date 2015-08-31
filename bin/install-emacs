@@ -4,7 +4,13 @@ if [ ! -f "src/bitmaps/leftptr.xbm" ]; then
    echo "Working directory ( $(pwd) ) is not the root of an emacs source tree."; exit 1
 fi
 
-sudo make install
+make doc
+
+sudo rm -rf /usr/local/emacs
+sudo mkdir /usr/local/emacs
+
+sudo make -j1 install
+
 sudo update-alternatives \
  --install /usr/bin/emacs                                                 emacs              /usr/local/emacs/bin/emacs 1000 \
  --slave   /usr/share/icons/hicolor/128x128/apps/emacs.png                emacs-128x128.png  /usr/local/emacs/share/icons/hicolor/128x128/apps/emacs.png \

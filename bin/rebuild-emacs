@@ -15,15 +15,14 @@ fi
 
 set +e
 make extraclean
-make maintainer-clean
+make bootstrap-clean
 set -e
 
-if [ -d .bzr ] ; then
-  bzr pull
-elif [ -d .git ] ; then
-  git reset --hard
-  git pull
-fi
+git reset --hard
+git pull
+
+./autogen.sh
+./configure
 
 set +e
 # CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs --enable-link-time-optimization
@@ -33,7 +32,11 @@ CFLAGS='-march=corei7 -O3' make -j8
 # CFLAGS='-march=corei7 -O3' make
 
 # make -j8 -k doc
+make -j8 bootstrap
+make
 make doc
+
+(cd lisp ; make autoloads)
 
 echo
 echo "Build is complete; performing very simple invocation"
