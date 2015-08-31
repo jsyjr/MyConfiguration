@@ -1104,30 +1104,31 @@ word."
 
 ;; Electic indentation creates trailing whitespace.  These hook
 ;; functions cleanup only modified lines.
-(defvar my/modified-line nil)
 
-(defun my/modified-line-note (beg end old-len)
-  (let ((bol (line-beginning-position)))
-    (if (/= (point) bol)
-        (setq-local my/modified-line bol))))
-
-(defun my/modified-line-cleanup-after-leaving ()
-  (when my/modified-line
-    (when (not buffer-read-only)
-      (save-excursion
-        (beginning-of-line 1)
-        (when (/= (point) my/modified-line)
-          (goto-char my/modified-line)
-          (end-of-line)
-          (while (memq (char-before) '(?\  ?\t))
-            (delete-char -1)))))
-    (setq-local my/modified-line nil)))
-
-(defun my/modified-line-first-change ()
-  (add-hook 'post-command-hook 'my/modified-line-cleanup-after-leaving t))
-
-(add-hook 'after-change-functions 'my/modified-line-note)
-(add-hook 'first-change-hook 'my/modified-line-first-change)
+;; (defvar my/modified-line nil)
+;;
+;; (defun my/modified-line-note (beg end old-len)
+;;   (let ((bol (line-beginning-position)))
+;;     (if (/= (point) bol)
+;;         (setq-local my/modified-line bol))))
+;;
+;; (defun my/modified-line-cleanup-after-leaving ()
+;;   (when my/modified-line
+;;     (when (not buffer-read-only)
+;;       (save-excursion
+;;         (beginning-of-line 1)
+;;         (when (/= (point) my/modified-line)
+;;           (goto-char my/modified-line)
+;;           (end-of-line)
+;;           (while (memq (char-before) '(?\  ?\t))
+;;             (delete-char -1)))))
+;;     (setq-local my/modified-line nil)))
+;;
+;; (defun my/modified-line-first-change ()
+;;   (add-hook 'post-command-hook 'my/modified-line-cleanup-after-leaving t))
+;;
+;; (add-hook 'after-change-functions 'my/modified-line-note)
+;; (add-hook 'first-change-hook 'my/modified-line-first-change)
 
 ;; Other bits of hygiene
 (my/custom-set-variables
