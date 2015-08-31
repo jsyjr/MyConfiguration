@@ -85,7 +85,7 @@ if [ -d /mathworks ]; then
 
     # Customize DEFAULT_SANDBOX to where you normally work
     # (This must be defined before sourcing bash_setup.bash)
-    export DEFAULT_SANDBOX=/local-ssd/lsb
+    export DEFAULT_SANDBOX=/local-ssd/lsb/bstateflow.latest_pass/
     export x=$DEFAULT_SANDBOX
     if [ -f /mathworks/hub/share/sbtools/bash_setup.bash ]; then
         . /mathworks/hub/share/sbtools/bash_setup.bash
