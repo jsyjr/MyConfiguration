@@ -28,3 +28,8 @@ mkdir -p .sbtools
 sb -update-gdb-source-path
 
 sb -nodesktop -nosplash -r "rehash toolboxcache; feature CachePath; addpath([matlabroot '/toolbox/stateflow/tools']); savepath; exit"
+
+cat $(find .sbtools/global/matlab/src .sbtools/global/matlab/toolbox/stateflow -name project-file-list.txt) \
+ | fgrep -v '/derived/' \
+ | grep -e '\.\([hHlycC]\|h\.in\|hh\|cc\|[hc]\(pp\|xx\)\|lex\|yacc\|java\)$' \
+ | gtags -q --file - --idutils --sqlite3 --statistics
