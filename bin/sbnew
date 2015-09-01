@@ -23,6 +23,7 @@ cat >${SBNAME}/.gitignore <<EOF
 /GTAGS
 /ID
 /sbrestore_*.txt
+/.sbcheck.*
 .gdb_history
 EOF
 
