@@ -215,6 +215,9 @@
  '(gdb-many-windows t)
  '(gdb-stack-buffer-addresses t)
  '(ggtags-mode-sticky nil)
+ '(ggtags-oversize-limit nil)
+ '(ggtags-sort-by-nearness t)
+ '(ggtags-use-sqlite3 t)
  '(git-commit-setup-hook
    (quote
     (git-commit-save-message magit-revert-buffers git-commit-save-message git-commit-setup-changelog-support git-commit-turn-on-auto-fill git-commit-propertize-diff with-editor-usage-message)))
