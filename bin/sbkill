@@ -1,0 +1,19 @@
+#!/bin/dash
+
+# Delete local sandbox $1, its network mirror and git repository.
+# This effectively reverses sbnew.
+
+SBNAME=$1
+[ -z "${SBNAME}" ] && echo 'usage: sbkill <sandbox-name>' && exit 1
+[ ! -e /local-ssd/lsb/${SBNAME} ] && echo "sandbox \"/local-ssd/lsb/${SBNAME}\" does not exists" && exit 1
+
+if [ -e /local-ssd/lsb/${SBNAME}/network-sandbox ] ; then
+  ( cd /local-ssd/lsb/${SBNAME}/network-sandbox ; NETSB=$(pwd) )
+  sbrmtree ${NETSB}
+fi
+
+chmod a+w /local-ssd/lsb/git
+rm -rf /local-ssd/lsb/git/${SBNAME}
+chmod a-w /local-ssd/lsb/git
+
+sbrmtree /local-ssd/lsb/${SBNAME}
