@@ -7,10 +7,9 @@ SBNAME=$1
 [ -z "${SBNAME}" ] && echo 'usage: sbkill <sandbox-name>' && exit 1
 [ ! -e /local-ssd/lsb/${SBNAME} ] && echo "sandbox \"/local-ssd/lsb/${SBNAME}\" does not exists" && exit 1
 
-if [ -e /local-ssd/lsb/${SBNAME}/network-sandbox ] ; then
-  ( cd /local-ssd/lsb/${SBNAME}/network-sandbox ; NETSB=$(pwd) )
-  sbrmtree ${NETSB}
-fi
+# Remove the network mirror if it exists
+NETSB=$(sbnet)
+[ -e ${NETSB} ] && sbrmtree ${NETSB}
 
 chmod a+w /local-ssd/lsb/git
 rm -rf /local-ssd/lsb/git/${SBNAME}
