@@ -59,5 +59,3 @@ fi
   git add -A                                                  && \
   git commit -qm "New sandbox"                                   \
 )
-
-sbcopy -to-sbs-tag ${SBNAME} -no-perforce /local-ssd/lsb/${SBNAME} &
