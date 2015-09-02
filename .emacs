@@ -1272,7 +1272,7 @@ convert it to readonly/view-mode."
 (add-to-list 'el-get-sources 'git-modes)
 (my/el-get-install "git-modes")
 
-(add-to-list 'el-get-sources 'magit)
+(add-to-list 'el-get-sources '(:name magit :branch "pu"))
 (my/el-get-install "magit")
 
 (add-to-list 'el-get-sources 'git-timemachine)
