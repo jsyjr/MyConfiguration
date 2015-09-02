@@ -11,8 +11,9 @@ SBNAME=$1
 NETSB=$(sbnet)
 [ -e ${NETSB} ] && sbrmtree ${NETSB}
 
+# Drop the associated git repository
 chmod a+w /local-ssd/lsb/git
-rm -rf /local-ssd/lsb/git/${SBNAME}
+[ -e /local-ssd/lsb/git/${SBNAME} ] && rm -rf /local-ssd/lsb/git/${SBNAME}
 chmod a-w /local-ssd/lsb/git
 
 sbrmtree /local-ssd/lsb/${SBNAME}
