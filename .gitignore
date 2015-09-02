@@ -9,7 +9,9 @@
 %*
 am.dmp
 gdb
+.gdb_history
 java.log.*
+jogl.ex.*
 tags
 BROWSE
 TAGS
