@@ -16,4 +16,5 @@ chmod a+w /local-ssd/lsb/git
 [ -e /local-ssd/lsb/git/${SBNAME} ] && rm -rf /local-ssd/lsb/git/${SBNAME}
 chmod a-w /local-ssd/lsb/git
 
-sbrmtree /local-ssd/lsb/${SBNAME}
+# Avoid being within the sandbox while it gets deleted
+( cd /local-ssd/lsb && sbrmtree ${SBNAME} )
