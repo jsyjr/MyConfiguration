@@ -1,7 +1,7 @@
 #!/bin/dash
 
-# Mathworks: clone sbsyncmaster's latetst_pass into a new
-# workspace named $1 and augment it with a git repository.
+# Mathworks: clone sbsyncmaster's latetst_pass into a new local
+# workspace named $1 and augment it with both a git repository.
 
 SBNAME=$1
 [ -z "${SBNAME}" ] && echo 'usage: sbnew <sandbox-name> [-no-perforce]' && exit 1
@@ -45,6 +45,7 @@ cat     >>${SBNAME}/matlab/toolbox/.gitignore <<EOF
 !/stateflow/
 EOF
 
+# Ensure existence of directory for remote git repositories
 if [ ! -d /local-ssd/lsb/git ] ; then
   mkdir  /local-ssd/lsb/git
   chmod a-w /local-ssd/lsb/git
