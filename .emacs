@@ -2272,7 +2272,6 @@ can easily repeat an earlier amake -pgrep command."
 
 (my/custom-set-variables
  '(ggtags-mode-sticky nil)
- '(ggtags-oversize-limit nil)
  '(ggtags-sort-by-nearness t)
  '(ggtags-use-sqlite3 t)
  '(tags-revert-without-query t)

@@ -215,7 +215,6 @@
  '(gdb-many-windows t)
  '(gdb-stack-buffer-addresses t)
  '(ggtags-mode-sticky nil)
- '(ggtags-oversize-limit nil)
  '(ggtags-sort-by-nearness t)
  '(ggtags-use-sqlite3 t)
  '(git-commit-setup-hook
