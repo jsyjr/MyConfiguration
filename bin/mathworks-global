@@ -1,17 +1,28 @@
 #!/bin/dash
 
+# Run a more modern version of global (and the same old
+# mkid) on a sandbox.  In particular generate the new
+# sqlite3 database.
+
 if [ ! -f ".sbtools/global/project-dirs.txt" ]; then
   echo "Working directory ( $(pwd) ) is not the root of a sandbox."
   exit 1
 fi
+
+# Generate a list of newly added files.  These will be
+# absent from the various project-file-list.txt files.
+ADDED="/tmp/project-added-files.$$"
+p4 opened | grep '#1 - add ' | sed -e 's!//mw/B[^/]*/\(matlab/.*\)#1 - add .*$!\1!' >${ADDED}
 
 # Read various project-file-list.txt files, drop all
 # lines mentioning /derived/ and return those that
 # include a meaningful file extension.  Use a recent
 # version of gtags to build a sqlite3 database as well
 # as a traditional idutils database.
-cat $(find .sbtools/global/matlab/src .sbtools/global/matlab/toolbox/stateflow -name project-file-list.txt) \
+cat ${ADDED} $(find .sbtools/global/matlab/src .sbtools/global/matlab/toolbox/stateflow -name project-file-list.txt) \
  | fgrep -v '/derived/' \
  | grep -e '\.\([hHlycC]\|h\.in\|hh\|cc\|[hc]\(pp\|xx\)\|lex\|yacc\|java\)$' \
  | gtags -q --file - --sqlite3 --idutils --statistics
 
+# Clean up
+rm ${ADDED}
