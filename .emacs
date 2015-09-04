@@ -560,9 +560,10 @@ Use a normal parenthesis if not inside any."
  )
 
 ;;}}}
-;;{{{  Font lock faces
+;;{{{  Font lock and other basic faces
 
 (my/custom-set-faces
+ '(error ((t (:foreground "brown2"))))
  '(font-lock-builtin-face ((((class color) (background dark)) (:foreground "Turquoise"))))
  '(font-lock-comment-face ((t (:foreground "MediumAquamarine"))))
  '(font-lock-constant-face ((((class color) (background dark)) (:bold t :foreground "DarkOrchid"))))
@@ -575,14 +576,16 @@ Use a normal parenthesis if not inside any."
  '(font-lock-type-face ((t (:foreground "#9290ff"))))
  '(font-lock-variable-name-face ((t (:foreground "PaleGreen"))))
  '(font-lock-warning-face ((((class color) (background dark)) (:foreground "yellow" :background "red"))))
+ '(success ((t (:foreground "PaleGreen1"))))
  )
 
 ;;}}}
 ;;{{{  Selection and highlighting
 
 (my/custom-set-faces
- '(highlight ((t (:background "#091830"))))
-; '(highlight-beyond-fill-column-face ((t (:inverse-video t))))
+;'(highlight ((t (:background "#091830"))))
+ '(highlight ((t (:background "#123060"))))
+;'(highlight-beyond-fill-column-face ((t (:inverse-video t))))
  '(region ((t (:background "DarkSlateBlue"))))
  )
 
@@ -2258,17 +2261,9 @@ can easily repeat an earlier amake -pgrep command."
 
 (require 'ggtags)
 
-(with-current-buffer "*Messages*" (ggtags-mode 1))
-(with-current-buffer "*scratch*" (ggtags-mode 1))
-(add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1)))
-
-;; (add-to-list 'el-get-sources
-;;              '(:name vtags
-;;                      :description "Edward Bishop's fork of emacs' etags"
-;;                      :type        http
-;;                      :url         "file://localhost/home/jyates/emacs/vtags/vtags.el"
-;;                      :features    (vtags)))
-;; (my/el-get-install "vtags")
+-(with-current-buffer "*Messages*" (ggtags-mode 1))
+-(with-current-buffer "*scratch*" (ggtags-mode 1))
+-(add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1)))
 
 (my/custom-set-variables
  '(ggtags-mode-sticky nil)
@@ -2279,6 +2274,14 @@ can easily repeat an earlier amake -pgrep command."
 
 ;; For idutils:
 ;; /hub/share/sbtools/external-apps/idutils/idutils-4.6-sbmod1/install/share/id-lang.map
+
+;; (add-to-list 'el-get-sources
+;;              '(:name vtags
+;;                      :description "Edward Bishop's fork of emacs' etags"
+;;                      :type        http
+;;                      :url         "file://localhost/home/jyates/emacs/vtags/vtags.el"
+;;                      :features    (vtags)))
+;; (my/el-get-install "vtags")
 
 ;; (add-to-list 'el-get-sources
 ;;              '(:name rtags
@@ -2303,10 +2306,16 @@ can easily repeat an earlier amake -pgrep command."
 
 (my/custom-set-variables
 ;; '(compile-command "/usr/bin/make -k")
- '(compilation-scroll-output t)   ; follow compilation output
+ '(compilation-scroll-output 'first-error)   ; follow compilation output
 ;; '(compilation-skip-threshold 2); next-errormpil should only stop at errors
  '(next-error-hook 'compile-goto-error)
  '(next-error-recenter '(4))
+ )
+
+(my/custom-set-faces
+ '(compilation-column-number ((t (:inherit file-name-shadow           ))))
+ '(compilation-info          ((t (:inherit font-lock-comment-face     ))))
+ '(compilation-line-number   ((t (:inherit font-lock-preprocessor-face))))
  )
 
 ;; Fix next error so that it does not visit every file in the include stack
