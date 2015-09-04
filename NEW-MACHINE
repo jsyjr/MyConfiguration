@@ -83,11 +83,13 @@ sudo apt-get install \
 #
 #  Ubuntu:
 #
-sudo sed -i -e 's/kernel.yama.ptrace_scope = 0/kernel.yama.ptrace_scope = 1/' /etc/sysctl.d/10-ptrace.conf
+sudo sed -i -e 's/kernel.yama.ptrace_scope = 1/kernel.yama.ptrace_scope = 0/' /etc/sysctl.d/10-ptrace.conf
+sudo sysctl -w kernel.yama.ptrace_scope=0
 #
 #  Debian
 #
-sudo sed -i -e 's/kernel.yama.ptrace_scope = 0/kernel.yama.ptrace_scope = 1/' /etc/sysctl.d/disable-yama-ptrace-scope-limit.conf
+sudo sed -i -e 's/kernel.yama.ptrace_scope = 1/kernel.yama.ptrace_scope = 0/' /etc/sysctl.d/disable-yama-ptrace-scope-limit.conf
+sudo sysctl -w kernel.yama.ptrace_scope=0
 
 # Install an older bison (2.7)
 #
