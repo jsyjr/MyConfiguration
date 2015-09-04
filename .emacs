@@ -1864,7 +1864,7 @@ This command is designed to be used whether you are already in Info or not."
 (defun my/byte-compile-saved-elisp-buffer ()
   "Byte compile an elisp buffer anytime it is saved."
   (if (and (eq major-mode 'emacs-lisp-mode)
-           (not (string-prefix-p "phw" (buffer-name))))
+           (not (string-prefix-p "HIDE-phw" (buffer-name))))
       (byte-compile-file (buffer-file-name))))
 
 (add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
