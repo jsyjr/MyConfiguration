@@ -20,6 +20,7 @@
 
 ;; Too many false alarms
 ;; (setq debug-on-error t)
+(eldoc-mode -1)
 
 ;;=== Notes ============================================================
 ;;{{{  Goals
@@ -2259,11 +2260,11 @@ can easily repeat an earlier amake -pgrep command."
 ;;}}}
 ;;{{{  Find a "tag" in a project
 
-(require 'ggtags)
+;; (require 'ggtags)
 
--(with-current-buffer "*Messages*" (ggtags-mode 1))
--(with-current-buffer "*scratch*" (ggtags-mode 1))
--(add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1)))
+;; (with-current-buffer "*Messages*" (ggtags-mode 1))
+;; (with-current-buffer "*scratch*" (ggtags-mode 1))
+;; (add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1)))
 
 (my/custom-set-variables
  '(ggtags-mode-sticky nil)
