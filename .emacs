@@ -306,7 +306,6 @@
  '(package-selected-packages
    '(ace-window
      avy
-     ggtags
      )))
 
 ;;}}}
@@ -2260,18 +2259,22 @@ can easily repeat an earlier amake -pgrep command."
 ;;}}}
 ;;{{{  Find a "tag" in a project
 
-;; (require 'ggtags)
-
-;; (with-current-buffer "*Messages*" (ggtags-mode 1))
-;; (with-current-buffer "*scratch*" (ggtags-mode 1))
-;; (add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1)))
+(add-to-list 'el-get-sources
+             '(:name ggtags
+                     :description "Use GNU Global in Emacs."
+                     :type github
+                     :pkgname "jsyjr/ggtags"))
+(my/el-get-install "ggtags")
 
 (my/custom-set-variables
- '(ggtags-mode-sticky nil)
+ '(ggtags-auto-jump-to-match nil)
  '(ggtags-sort-by-nearness t)
  '(ggtags-use-sqlite3 t)
  '(tags-revert-without-query t)
  )
+
+(require 'ggtags)
+(add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1)))
 
 ;; For idutils:
 ;; /hub/share/sbtools/external-apps/idutils/idutils-4.6-sbmod1/install/share/id-lang.map
