@@ -16,8 +16,10 @@ cat >${SBNAME}/.gitignore <<EOF
 /config/
 /.sbtools/
 /build.glnxa64.log.files/
+/build.log.files/
 
 /*.log
+/changes.sbsmartbuild.mk
 /GPATH
 /GRTAGS
 /GTAGS
