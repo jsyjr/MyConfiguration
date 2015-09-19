@@ -8,6 +8,13 @@ if [ ! -f "parsers/clojure.c" ]; then
   exit 1
 fi
 
+[ -e Makefile ] && make distclean
+git reset --hard
+git pull
+
+./autogen.sh
+./configure
+
 autoreconf -vfi
 ./configure
 
@@ -18,7 +25,12 @@ sed -i -e 's/-g -O2/-march=corei7 -O3/' `find -name Makefile`
 make -kj8
 make
 
-# sudo update-alternatives \
-#  --install /usr/bin/ctags                 ctags      /usr/local/bin/ctags 1 \
-#  --slave   /usr/share/man/man1/ctags.1.gz ctags.1.gz /usr/local/share/man/man1/ctags.1 \
+exit 0
+
+rm -rf config.log
+sudo make install
+
+sudo update-alternatives \
+ --install /usr/bin/ctags                 ctags      /usr/local/bin/ctags 1 \
+ --slave   /usr/share/man/man1/ctags.1.gz ctags.1.gz /usr/local/share/man/man1/ctags.1 \
 
