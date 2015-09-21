@@ -249,6 +249,7 @@
  '(ls-lisp-ignore-case t)
  '(magit-backup-mode nil)
  '(magit-emacsclient-executable "/etc/alternatives/emacsclient")
+ '(magit-refs-show-commit-count (quote all))
  '(magit-repository-directories (quote ("~/repos/awesome" "~/repos/doxygen" "~/repos/st")))
  '(magit-repository-directories-depth 0)
  '(magit-save-repository-buffers nil)

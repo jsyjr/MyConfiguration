@@ -1293,6 +1293,7 @@ convert it to readonly/view-mode."
  '(magit-backup-mode nil)
 ;'(magit-diff-refine-hunk t)
  '(magit-emacsclient-executable "/etc/alternatives/emacsclient")
+ '(magit-refs-show-commit-count 'all)
  '(magit-repository-directories
    '("~/repos/awesome"
      "~/repos/doxygen"
