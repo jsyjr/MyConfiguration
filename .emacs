@@ -1698,11 +1698,14 @@ This command is designed to be used whether you are already in Info or not."
 (add-to-list 'el-get-sources 'helm)
 (my/el-get-install "helm")
 
-(require 'helm-mode)
+(require 'helm)
+(require 'helm-config)
 
 (my/custom-set-variables
+ '(helm-command-prefix-key "C-c h")
  '(helm-ff-auto-update-initial-value t)
  '(helm-mode t)
+ '(helm-move-to-line-cycle-in-source t)
  )
 
 ;; Repair helm "angry salad"
