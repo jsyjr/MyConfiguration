@@ -3421,7 +3421,7 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;;                      ))
 ;; (my/el-get-install "phw")
 
-(autoload 'phw-mode "phw" 
+(autoload 'phw-mode "phw"
   "Toggle phw-mode.
 Setting this variable directly does not take effect;
 use either \\[customize] or the function `phw-mode'." t)
