@@ -964,8 +964,8 @@ mouse-3: go to end")
 ;;}}}
 ;;{{{  Popwin and guide-key
 
-(add-to-list 'el-get-sources 'popwin)
-(my/el-get-install "popwin")
+;; (add-to-list 'el-get-sources 'popwin)
+;; (my/el-get-install "popwin")
 
 
 ;; (add-to-list 'el-get-sources
@@ -3844,9 +3844,7 @@ use either \\[customize] or the function `phw-mode'." t)
 ;;(keydef "C-j"         helm-select-action)
   ))
 
-(eval-after-load "bs"  '(keydef (bs "<f1>") (if (bound-and-true-p phw-mode)
-                                                (quit-window t)
-                                              (bs-kill))))
+(eval-after-load "bs"  '(keydef (bs "<f1>") (bs-kill)))
 
 ;;}}}
 
