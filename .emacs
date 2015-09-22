@@ -961,19 +961,6 @@ mouse-3: go to end")
 
 ; (add-hook 'temp-buffer-setup-hook 'split-horizontally-for-temp-buffers)
 
-(advice-add 'split-window :after #'my/advise-split-window)
-
-(defun my/advise-split-window (&optional _win size _side _pxl)
-  "Balance windows following a split if no explicit size was given."
-  (unless size
-    (balance-windows)))
-
-(advice-add 'delete-window :after #'my/advise-delete-window)
-
-(defun my/advise-delete-window (&optional _win)
-  "Balance windows following a deletion."
-  (balance-windows))
-
 ;;}}}
 ;;{{{  Popwin and guide-key
 
