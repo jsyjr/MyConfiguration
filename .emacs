@@ -3129,239 +3129,241 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;; ecb-activate-hook variable gets set via add-hook.  That defeats all
 ;; subsequent attempts to customize that hook.
 
-(add-to-list 'el-get-sources
-             '(:name ecb
-                     :description "Emacs Code Browser"
-                     :type github
-                     :pkgname "ecb-home/ecb"
-;;                     :branch "master"
-                     :branch "2.5-dev"
-                     ))
-(my/el-get-install "ecb")
+;; (add-to-list 'el-get-sources
+;;              '(:name ecb
+;;                      :description "Emacs Code Browser"
+;;                      :type github
+;;                      :pkgname "ecb-home/ecb"
+;; ;;                     :branch "master"
+;;                      :branch "2.5-dev"
+;;                      ))
+;; (my/el-get-install "ecb")
 
-(defun my/ecb-compile-window-dwim ()
-  "If selected window is compile window cycle it else go there."
-  (interactive)
-  (if ecb-minor-mode
-      (progn
-        (raise-frame ecb-frame)
-        (select-frame ecb-frame)
-        (if (ecb-point-in-compile-window)
-            (ecb-cycle-through-compilation-buffers)
-          (if (equal 'hidden (ecb-compile-window-state))
-              (ecb-toggle-compile-window -1))
-          (select-window ecb-compile-window)))))
+;; (defun my/ecb-compile-window-dwim ()
+;;   "If selected window is compile window cycle it else go there."
+;;   (interactive)
+;;   (if ecb-minor-mode
+;;       (progn
+;;         (raise-frame ecb-frame)
+;;         (select-frame ecb-frame)
+;;         (if (ecb-point-in-compile-window)
+;;             (ecb-cycle-through-compilation-buffers)
+;;           (if (equal 'hidden (ecb-compile-window-state))
+;;               (ecb-toggle-compile-window -1))
+;;           (select-window ecb-compile-window)))))
 
-(defun my/ecb-activate-hook ()
-  "ECB activation hook."
-  ;; (popwin-mode -1) ;; Popwin conflicts with ECB.
-  ;; (ido-mode nil)
-  (ecb-eshell-auto-activate-hook)
-  (substitute-key-definition
-   'ecb-cycle-through-compilation-buffers 'my/ecb-compile-window-dwim ecb-mode-map))
+;; (defun my/ecb-activate-hook ()
+;;   "ECB activation hook."
+;;   ;; (popwin-mode -1) ;; Popwin conflicts with ECB.
+;;   ;; (ido-mode nil)
+;;   (ecb-eshell-auto-activate-hook)
+;;   (substitute-key-definition
+;;    'ecb-cycle-through-compilation-buffers 'my/ecb-compile-window-dwim ecb-mode-map))
 
-(defun my/ecb-deactivate-hook ()
-  "ECB deactivation hook."
-  ;; (popwin-mode t)
-  ;; (ido-mode 'both)
-  ;; http://stackoverflow.com/questions/9389679/how-to-unload-a-mode-e-g-unload-ecb-to-restore-winner-el-functionality
-  (ecb-disable-advices 'ecb-winman-not-supported-function-advices t))
+;; (defun my/ecb-deactivate-hook ()
+;;   "ECB deactivation hook."
+;;   ;; (popwin-mode t)
+;;   ;; (ido-mode 'both)
+;;   ;; http://stackoverflow.com/questions/9389679/how-to-unload-a-mode-e-g-unload-ecb-to-restore-winner-el-functionality
+;;   (ecb-disable-advices 'ecb-winman-not-supported-function-advices t))
 
-(defvar my/ecb-run-gdb-history nil
-  "*Amake Find File history")
+;; (defvar my/ecb-run-gdb-history nil
+;;   "*Amake Find File history")
 
-(defun my/ecb-run-gdb (file)
-  "Deactivate ECB, prompt for an image and invoke GDB."
-  (interactive
-   (list (read-shell-command "GDB on: " my/ecb-run-gdb-history 'my/ecb-run-gdb-history)))
-  (if (boundp 'ecb-mode-map)
-      (ecb-deactivate))
-  (gdb (concat "gdb -i=mi " file))
-  )
+;; (defun my/ecb-run-gdb (file)
+;;   "Deactivate ECB, prompt for an image and invoke GDB."
+;;   (interactive
+;;    (list (read-shell-command "GDB on: " my/ecb-run-gdb-history 'my/ecb-run-gdb-history)))
+;;   (if (boundp 'ecb-mode-map)
+;;       (ecb-deactivate))
+;;   (gdb (concat "gdb -i=mi " file))
+;;   )
 
-(defadvice display-message-or-buffer (around my/disable-resize-mini-windows activate)
-  "Cause any output greate than one line to use ECB's compile window."
-  (let ((resize-mini-windows (if (bound-and-true-p ecb-minor-mode)
-                                 nil
-                               resize-mini-windows)))
-    ad-do-it))
+;; (defadvice display-message-or-buffer (around my/disable-resize-mini-windows activate)
+;;   "Cause any output greate than one line to use ECB's compile window."
+;;   (let ((resize-mini-windows (if (bound-and-true-p ecb-minor-mode)
+;;                                  nil
+;;                                resize-mini-windows)))
+;;     ad-do-it))
 
-;; We prefer 'b' (for buffers rather than history)
-;; and we prefer 'f' (for files rather than sources)
-(defalias 'ecb-goto-window-buffers     'ecb-goto-window-history)
-(defalias 'ecb-goto-window-files       'ecb-goto-window-sources)
-(defalias 'ecb-maximize-window-buffers 'ecb-maximize-window-history)
-(defalias 'ecb-maximize-window-files   'ecb-maximize-window-sources)
+;; ;; We prefer 'b' (for buffers rather than history)
+;; ;; and we prefer 'f' (for files rather than sources)
+;; (defalias 'ecb-goto-window-buffers     'ecb-goto-window-history)
+;; (defalias 'ecb-goto-window-files       'ecb-goto-window-sources)
+;; (defalias 'ecb-maximize-window-buffers 'ecb-maximize-window-history)
+;; (defalias 'ecb-maximize-window-files   'ecb-maximize-window-sources)
 
+;; (my/custom-set-variables
+;;  '(ecb-options-version "2.50")
+;;  ;; Activation / deactivation
+;;  '(ecb-activate-hook
+;;    '(my/ecb-activate-hook))
+;;  '(ecb-deactivate-hook
+;;    '(my/ecb-deactivate-hook))
+;;  ;; Visual layout
+;;  '(ecb-layout-name "left-jsy2")
+;;  '(ecb-windows-width 0.15)
+;;  ;; Mode line labeling
+;;  '(ecb-mode-line-prefixes
+;;    '((ecb-analyse-buffer-name     . "Analysis")
+;;      (ecb-directories-buffer-name . "Directories")
+;;      (ecb-history-buffer-name     . "Buffers (LRU)")
+;;      (ecb-methods-buffer-name     . "Members")
+;;      (ecb-sources-buffer-name     . "Files")
+;;      (ecb-speedbar-buffer-name    . "Speedbar")
+;;      (ecb-symboldef-buffer-name   . "Symbol definition")
+;;      ))
+;;  '(ecb-mode-line-data
+;;    '((ecb-analyse-buffer-name)
+;;      (ecb-directories-buffer-name . sel-dir)
+;;      (ecb-history-buffer-name)
+;;      (ecb-methods-buffer-name)
+;;      (ecb-sources-buffer-name     . sel-source)
+;;      (ecb-speedbar-buffer-name    . sel-source)
+;;      (ecb-symboldef-buffer-name)
+;;      ))
+;;  ;; Buffer history is simply an LRU list
+;;  '(ecb-history-make-buckets 'never)
+;;  '(ecb-history-menu-sorter nil)
+;;  '(ecb-history-sort-method nil)
+;;  ;; Compile window
+;;  '(ecb-compilation-major-modes
+;;    '(compilation-mode
+;;      dired-mode
+;;      git-commit-mode
+;;      magit-mode
+;;      completion-list-mode
+;;      comint-mode))
+;;  '(ecb-compilation-buffer-names
+;;    '(("\\*vc.*\\*" . t)
+;;      ("\\*Vtags-.*\\*" . t)
+;;      ("\\*[cC]ompilation.*\\*" . t)
+;;      ("\\*[hH]elm.*\\*" . t)
+;;      ("\\*i?grep.*\\*" . t)
+;;      ("\\*[mM]agit:.*\\*" . t)
+;;      ("\\*[mM]agit-process:.*\\*" . t)
+;;      ("*Apropos*")
+;;      ("*Async Shell Command*")
+;;      ("*Backtrace*")
+;;      ("*buffer-selection*")
+;;      ("*apropos-toc*")
+;;      ("*Calculator*")
+;;      ("*Choices*")
+;;      ("*Compile-log*")
+;;      ("*Completions*")
+;;      ("*GTAGS SELECT*")
+;;      ("*Help*")
+;;      ("*Ido Completions*")
+;;      ("*Messages*")
+;;      ("*Occur*")
+;;      ("*Shell Command Output*")
+;;      ))
+;;  '(ecb-compile-window-width 'edit-window)
+;;  '(ecb-compile-window-height 0.1)
+;;  '(ecb-compile-window-temporally-enlarge 'both)
+;;  '(ecb-enlarged-compilation-window-max-height 0.9)
+
+;;  ;; UI options
+;;  '(ecb-tip-of-the-day nil)
+;;  '(ecb-display-image-icons-for-semantic-tags nil)
+;;  '(ecb-primary-secondary-mouse-buttons 'mouse-1--C-mouse-1)
+;;  '(ecb-tree-incremental-search 'substring)
+;;  '(ecb-tree-make-parent-node-sticky nil)
+;;  '(ecb-vc-enable-support nil)
+
+;;  ;; Handling of files
+;;  '(ecb-source-path
+;;    '(("/" "/")
+;;      ("/home/jyates" "HOME")
+;;      ("/local-ssd/lsb" "LSB")
+;;      ("/local-ssd/lsb/tags/matlab/toolbox/stateflow" "TAGS")
+;;      ("/local-ssd/lsb/tags/matlab/toolbox/stateflow/src" "TAGS_SRC")
+;;      ("/local-ssd/lsb/tags/matlab/toolbox/stateflow/src/stateflow" "TAGS_SRC_SF")
+;;      ("/local-ssd/lsb/tags/matlab/toolbox/stateflow/src/stateflow/cdr" "TAGS_SRC_SF_CDR")
+;;      ))
+;;  '(ecb-process-non-semantic-files nil)
+
+;;  ;; Key bindings (Sadly we have to replicate the
+;;  ;; entire map just to make a few small changes).
+;;  '(ecb-key-map
+;;    '("C-c ." . ((t "," ecb-cycle-maximized-ecb-buffers)
+;;                 (t "." ecb-cycle-through-compilation-buffers)
+;;                 (t "/" ecb-toggle-compile-window-height)
+;;                 (t "\\" ecb-toggle-compile-window)
+;;                 (t "a" ecb-toggle-auto-expand-tag-tree)
+;;                 (t "e" eshell)
+;; ;               (t "f..." prefix: filter)
+;; ;               (t "g..." prefix: goto-window)
+;;                 (t "h" ecb-show-help)
+;; ;               (t "j..." prefix: jump (i.e. goto-window))
+;; ;               (t "l..." prefix: layout)
+;; ;               (t "m..." prefix: maximize-window)
+;;                 (t "n" ecb-nav-goto-next)
+;;                 (t "o" ecb-toggle-scroll-other-window-scrolls-compile)
+;;                 (t "p" ecb-nav-goto-previous)
+;;                 (t "r" ecb-rebuild-methods-buffer)
+;;                 (t "s" ecb-window-sync)
+;;                 (t "x" ecb-expand-methods-nodes)
+
+;;                 (t "fc" ecb-methods-filter-current-type)
+;;                 (t "ff" ecb-methods-filter-function)
+;;                 (t "fh" ecb-history-filter)
+;;                 (t "fl" ecb-methods-filter-delete-last)
+;;                 (t "fm" ecb-methods-filter)
+;;                 (t "fn" ecb-methods-filter-nofilter)
+;;                 (t "fp" ecb-methods-filter-protection)
+;;                 (t "fr" ecb-methods-filter-regexp)
+;;                 (t "fs" ecb-sources-filter)
+;;                 (t "ft" ecb-methods-filter-tagclass)
+
+;;                 (t "g1" ecb-goto-window-edit1)
+;;                 (t "g2" ecb-goto-window-edit2)
+;;                 (t "ga" ecb-goto-window-analyse)
+;; ;               (t "gb" ecb-goto-window-speedbar)
+;;                 (t "gb" ecb-goto-window-buffers)
+;;                 (t "gc" ecb-goto-window-compilation)
+;;                 (t "gd" ecb-goto-window-directories)
+;;                 (t "gf" ecb-goto-window-files)
+;;                 (t "gh" ecb-goto-window-history)
+;;                 (t "gj" ecb-goto-window-speedbar)
+;;                 (t "gl" ecb-goto-window-edit-last)
+;;                 (t "gm" ecb-goto-window-methods)
+;;                 (t "gs" ecb-goto-window-sources)
+
+;;                 ;; Allow 'j' (for jump) as an alias for 'g' (goto)
+;;                 (t "j1" ecb-goto-window-edit1)
+;;                 (t "j2" ecb-goto-window-edit2)
+;;                 (t "ja" ecb-goto-window-analyse)
+;; ;               (t "jb" ecb-goto-window-speedbar)
+;;                 (t "jb" ecb-goto-window-buffers)
+;;                 (t "jc" ecb-goto-window-compilation)
+;;                 (t "jd" ecb-goto-window-directories)
+;;                 (t "jf" ecb-goto-window-files)
+;;                 (t "jh" ecb-goto-window-history)
+;;                 (t "jj" ecb-goto-window-speedbar)
+;;                 (t "jl" ecb-goto-window-edit-last)
+;;                 (t "jm" ecb-goto-window-methods)
+;;                 (t "js" ecb-goto-window-sources)
+
+;;                 (t "lc" ecb-change-layout)
+;;                 (t "lr" ecb-redraw-layout)
+;;                 (t "lt" ecb-toggle-layout)
+;;                 (t "lw" ecb-toggle-ecb-windows)
+
+;;                 (t "ma" ecb-maximize-window-analyse)
+;; ;               (t "mb" ecb-maximize-window-speedbar)
+;;                 (t "mb" ecb-maximize-window-buffers)
+;;                 (t "md" ecb-maximize-window-directories)
+;;                 (t "mf" ecb-maximize-window-files)
+;;                 (t "mh" ecb-maximize-window-history)
+;;                 (t "mj" ecb-maximize-window-speedbar)
+;;                 (t "mm" ecb-maximize-window-methods)
+;;                 (t "ms" ecb-maximize-window-sources)
+;;                 )))
+;; )
+
+;; Emacs' eshell
 (my/custom-set-variables
- '(ecb-options-version "2.50")
- ;; Activation / deactivation
- '(ecb-activate-hook
-   '(my/ecb-activate-hook))
- '(ecb-deactivate-hook
-   '(my/ecb-deactivate-hook))
- ;; Visual layout
- '(ecb-layout-name "left-jsy2")
- '(ecb-windows-width 0.15)
- ;; Mode line labeling
- '(ecb-mode-line-prefixes
-   '((ecb-analyse-buffer-name     . "Analysis")
-     (ecb-directories-buffer-name . "Directories")
-     (ecb-history-buffer-name     . "Buffers (LRU)")
-     (ecb-methods-buffer-name     . "Members")
-     (ecb-sources-buffer-name     . "Files")
-     (ecb-speedbar-buffer-name    . "Speedbar")
-     (ecb-symboldef-buffer-name   . "Symbol definition")
-     ))
- '(ecb-mode-line-data
-   '((ecb-analyse-buffer-name)
-     (ecb-directories-buffer-name . sel-dir)
-     (ecb-history-buffer-name)
-     (ecb-methods-buffer-name)
-     (ecb-sources-buffer-name     . sel-source)
-     (ecb-speedbar-buffer-name    . sel-source)
-     (ecb-symboldef-buffer-name)
-     ))
- ;; Buffer history is simply an LRU list
- '(ecb-history-make-buckets 'never)
- '(ecb-history-menu-sorter nil)
- '(ecb-history-sort-method nil)
- ;; Compile window
- '(ecb-compilation-major-modes
-   '(compilation-mode
-     dired-mode
-     git-commit-mode
-     magit-mode
-     completion-list-mode
-     comint-mode))
- '(ecb-compilation-buffer-names
-   '(("\\*vc.*\\*" . t)
-     ("\\*Vtags-.*\\*" . t)
-     ("\\*[cC]ompilation.*\\*" . t)
-     ("\\*[hH]elm.*\\*" . t)
-     ("\\*i?grep.*\\*" . t)
-     ("\\*[mM]agit:.*\\*" . t)
-     ("\\*[mM]agit-process:.*\\*" . t)
-     ("*Apropos*")
-     ("*Async Shell Command*")
-     ("*Backtrace*")
-     ("*buffer-selection*")
-     ("*apropos-toc*")
-     ("*Calculator*")
-     ("*Choices*")
-     ("*Compile-log*")
-     ("*Completions*")
-     ("*GTAGS SELECT*")
-     ("*Help*")
-     ("*Ido Completions*")
-     ("*Messages*")
-     ("*Occur*")
-     ("*Shell Command Output*")
-     ))
- '(ecb-compile-window-width 'edit-window)
- '(ecb-compile-window-height 0.1)
- '(ecb-compile-window-temporally-enlarge 'both)
- '(ecb-enlarged-compilation-window-max-height 0.9)
-
- ;; UI options
- '(ecb-tip-of-the-day nil)
- '(ecb-display-image-icons-for-semantic-tags nil)
- '(ecb-primary-secondary-mouse-buttons 'mouse-1--C-mouse-1)
- '(ecb-tree-incremental-search 'substring)
- '(ecb-tree-make-parent-node-sticky nil)
- '(ecb-vc-enable-support nil)
-
- ;; Handling of files
- '(ecb-source-path
-   '(("/" "/")
-     ("/home/jyates" "HOME")
-     ("/local-ssd/lsb" "LSB")
-     ("/local-ssd/lsb/tags/matlab/toolbox/stateflow" "TAGS")
-     ("/local-ssd/lsb/tags/matlab/toolbox/stateflow/src" "TAGS_SRC")
-     ("/local-ssd/lsb/tags/matlab/toolbox/stateflow/src/stateflow" "TAGS_SRC_SF")
-     ("/local-ssd/lsb/tags/matlab/toolbox/stateflow/src/stateflow/cdr" "TAGS_SRC_SF_CDR")
-     ))
- '(ecb-process-non-semantic-files nil)
-
- ;; Key bindings (Sadly we have to replicate the
- ;; entire map just to make a few small changes).
- '(ecb-key-map
-   '("C-c ." . ((t "," ecb-cycle-maximized-ecb-buffers)
-                (t "." ecb-cycle-through-compilation-buffers)
-                (t "/" ecb-toggle-compile-window-height)
-                (t "\\" ecb-toggle-compile-window)
-                (t "a" ecb-toggle-auto-expand-tag-tree)
-                (t "e" eshell)
-;               (t "f..." prefix: filter)
-;               (t "g..." prefix: goto-window)
-                (t "h" ecb-show-help)
-;               (t "j..." prefix: jump (i.e. goto-window))
-;               (t "l..." prefix: layout)
-;               (t "m..." prefix: maximize-window)
-                (t "n" ecb-nav-goto-next)
-                (t "o" ecb-toggle-scroll-other-window-scrolls-compile)
-                (t "p" ecb-nav-goto-previous)
-                (t "r" ecb-rebuild-methods-buffer)
-                (t "s" ecb-window-sync)
-                (t "x" ecb-expand-methods-nodes)
-
-                (t "fc" ecb-methods-filter-current-type)
-                (t "ff" ecb-methods-filter-function)
-                (t "fh" ecb-history-filter)
-                (t "fl" ecb-methods-filter-delete-last)
-                (t "fm" ecb-methods-filter)
-                (t "fn" ecb-methods-filter-nofilter)
-                (t "fp" ecb-methods-filter-protection)
-                (t "fr" ecb-methods-filter-regexp)
-                (t "fs" ecb-sources-filter)
-                (t "ft" ecb-methods-filter-tagclass)
-
-                (t "g1" ecb-goto-window-edit1)
-                (t "g2" ecb-goto-window-edit2)
-                (t "ga" ecb-goto-window-analyse)
-;               (t "gb" ecb-goto-window-speedbar)
-                (t "gb" ecb-goto-window-buffers)
-                (t "gc" ecb-goto-window-compilation)
-                (t "gd" ecb-goto-window-directories)
-                (t "gf" ecb-goto-window-files)
-                (t "gh" ecb-goto-window-history)
-                (t "gj" ecb-goto-window-speedbar)
-                (t "gl" ecb-goto-window-edit-last)
-                (t "gm" ecb-goto-window-methods)
-                (t "gs" ecb-goto-window-sources)
-
-                ;; Allow 'j' (for jump) as an alias for 'g' (goto)
-                (t "j1" ecb-goto-window-edit1)
-                (t "j2" ecb-goto-window-edit2)
-                (t "ja" ecb-goto-window-analyse)
-;               (t "jb" ecb-goto-window-speedbar)
-                (t "jb" ecb-goto-window-buffers)
-                (t "jc" ecb-goto-window-compilation)
-                (t "jd" ecb-goto-window-directories)
-                (t "jf" ecb-goto-window-files)
-                (t "jh" ecb-goto-window-history)
-                (t "jj" ecb-goto-window-speedbar)
-                (t "jl" ecb-goto-window-edit-last)
-                (t "jm" ecb-goto-window-methods)
-                (t "js" ecb-goto-window-sources)
-
-                (t "lc" ecb-change-layout)
-                (t "lr" ecb-redraw-layout)
-                (t "lt" ecb-toggle-layout)
-                (t "lw" ecb-toggle-ecb-windows)
-
-                (t "ma" ecb-maximize-window-analyse)
-;               (t "mb" ecb-maximize-window-speedbar)
-                (t "mb" ecb-maximize-window-buffers)
-                (t "md" ecb-maximize-window-directories)
-                (t "mf" ecb-maximize-window-files)
-                (t "mh" ecb-maximize-window-history)
-                (t "mj" ecb-maximize-window-speedbar)
-                (t "mm" ecb-maximize-window-methods)
-                (t "ms" ecb-maximize-window-sources)
-                )))
-
- ;; Emacs' eshell
  '(eshell-aliases-file "/home/jyates/emacs/eshell/alias")
  '(eshell-modules-list
    '(eshell-alias
@@ -3378,19 +3380,19 @@ Recognized window header names are: 'comint, 'locals, 'registers,
      eshell-term))
  )
 
-(my/custom-set-faces
- '(ecb-default-general-face   ((t (:inherit default                      ))))
- '(ecb-default-highlight-face ((t (:inherit widget-field                 ))))
- '(ecb-mode-line-win-nr-face  ((t nil                                     )))
- '(ecb-mode-line-prefix-face  ((t (:foreground "medium blue" :weight bold))))
- '(ecb-mode-line-data-face    ((t nil                                     )))
- '(ecb-analyse-face           ((t (:inherit ecb-default-highlight-face   ))))
- '(ecb-directory-face         ((t (:inherit ecb-default-highlight-face   ))))
- '(ecb-history-face           ((t (:inherit ecb-default-highlight-face   ))))
- '(ecb-method-face            ((t (:inherit ecb-default-highlight-face   ))))
- '(ecb-source-face            ((t (:inherit ecb-default-highlight-face   ))))
- '(ecb-tag-header-face        ((t (:underline "dark orange"))))
- )
+;; (my/custom-set-faces
+;;  '(ecb-default-general-face   ((t (:inherit default                      ))))
+;;  '(ecb-default-highlight-face ((t (:inherit widget-field                 ))))
+;;  '(ecb-mode-line-win-nr-face  ((t nil                                     )))
+;;  '(ecb-mode-line-prefix-face  ((t (:foreground "medium blue" :weight bold))))
+;;  '(ecb-mode-line-data-face    ((t nil                                     )))
+;;  '(ecb-analyse-face           ((t (:inherit ecb-default-highlight-face   ))))
+;;  '(ecb-directory-face         ((t (:inherit ecb-default-highlight-face   ))))
+;;  '(ecb-history-face           ((t (:inherit ecb-default-highlight-face   ))))
+;;  '(ecb-method-face            ((t (:inherit ecb-default-highlight-face   ))))
+;;  '(ecb-source-face            ((t (:inherit ecb-default-highlight-face   ))))
+;;  '(ecb-tag-header-face        ((t (:underline "dark orange"))))
+;;  )
 
 ;;}}}
 ;;{{{  PHW
