@@ -977,9 +977,8 @@ mouse-3: go to end")
 ;;}}}
 ;;{{{  Popwin and guide-key
 
-;; Popwin really screws up ECB's completion buffer handling
-;; (add-to-list 'el-get-sources 'popwin)
-;; (my/el-get-install "popwin")
+(add-to-list 'el-get-sources 'popwin)
+(my/el-get-install "popwin")
 
 
 ;; (add-to-list 'el-get-sources
@@ -3856,7 +3855,7 @@ use either \\[customize] or the function `phw-mode'." t)
 ;;(keydef "C-j"         helm-select-action)
   ))
 
-(eval-after-load "bs"  '(keydef (bs "<f1>") (if (bound-and-true-p ecb-minor-mode)
+(eval-after-load "bs"  '(keydef (bs "<f1>") (if (bound-and-true-p phw-mode)
                                                 (quit-window t)
                                               (bs-kill))))
 
