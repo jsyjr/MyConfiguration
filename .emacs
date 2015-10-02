@@ -1695,6 +1695,7 @@ This command is designed to be used whether you are already in Info or not."
  '(helm-ff-auto-update-initial-value t)
  '(helm-mode t)
  '(helm-move-to-line-cycle-in-source t)
+ '(helm-split-window-default-side: 'same)
  )
 
 ;; Repair helm "angry salad"
