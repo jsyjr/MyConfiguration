@@ -97,7 +97,14 @@
 ;; Launcher: /usr/bin/emacs-snapshot --no-site-file -bg black -fg white -fn dina -mm --debug-init
 
 ;;}}}
-;;{{{  Missing
+;;{{{  Missing and TODO
+
+;; TODO
+;; - mode-line:
+;;   position-widget could change color is cursor exceeds limit column
+;;   see http://www.emacswiki.org/emacs/ModeLinePosition
+;; - Searching:
+;;   see https://github.com/nschum/highlight-symbol.el
 
 ;; swap caps lock and control
 ;; Sanjay Dixit's am package - add autoload cookies, use el-get
@@ -983,8 +990,6 @@ mouse-3: go to end")
  '(kill-whole-line t)
  '(view-read-only t)    ; Use view-mode if file is or opened read-only
  )
-
-;; Checkout https://github.com/nschum/highlight-symbol.el
 
 ;;{{{  Navigation: avy
 
