@@ -1269,9 +1269,6 @@ convert it to readonly/view-mode."
 ;;=== VC, diff, merge, patch ===========================================
 ;;{{{  git and magit
 
-(add-to-list 'el-get-sources 'git-modes)
-(my/el-get-install "git-modes")
-
 ;(add-to-list 'el-get-sources '(:name magit :branch "pu"))
 (add-to-list 'el-get-sources 'magit)
 (my/el-get-install "magit")
