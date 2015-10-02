@@ -2,6 +2,8 @@
 
 ;; Added by package.el: must precede config of installed packages.
 (package-initialize)
+(defconst copyright-owner "John S Yates Jr")
+(put 'copyright-owner 'safe-local-variable 'stringp)
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it as you will.  I place it in the public domain.  I do
@@ -10,9 +12,6 @@
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-(defconst copyright-owner "John S Yates Jr")
-(put 'copyright-owner 'safe-local-variable 'stringp)
 
 ;; Set to t when bringing up a new machine or reinstalling the full
 ;; complement of packages.  (When t customizations get suppressed.)
