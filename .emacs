@@ -2997,21 +2997,6 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ))
 
 ;;}}}
-;;{{{  Cedet: semantic
-
-;; (my/custom-set-variables
-;;  '(semantic-mode t)
-;;  '(global-semantic-decoration-mode nil)
-;;  '(global-semantic-idle-scheduler-mode nil)
-;;  '(semantic-complete-inline-analyzer-displayor-class 'semantic-displayor-tooltip)
-;;  '(semantic-completion-displayor-format-tag-function 'semantic-format-tag-prototype)
-;;  '(semantic-default-submodes '(global-semanticdb-minor-mode
-;;                                global-semantic-mru-bookmark-mode))
-;;  '(semanticdb-default-save-directory "/home/jyates/.emacs.d/semanticdb")
-;;  '(semanticdb-project-roots '("~/asd" "~/asd.upstream"))
-;;  )
-
-;;}}}
 ;;{{{  ECB and eshell
 
 ;; When pulling from github.com/ecb-home/ecb the file ecb-eshell.el
