@@ -105,6 +105,8 @@
 ;;   see http://www.emacswiki.org/emacs/ModeLinePosition
 ;; - Searching:
 ;;   see https://github.com/nschum/highlight-symbol.el
+;; - Window resizing:
+;;   see https://github.com/roman/golden-ratio.el
 
 ;; swap caps lock and control
 ;; Sanjay Dixit's am package - add autoload cookies, use el-get
