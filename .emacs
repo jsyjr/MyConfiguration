@@ -1863,8 +1863,8 @@ This command is designed to be used whether you are already in Info or not."
 (my/custom-set-variables
  '(before-save-hook '(copyright-update
                       time-stamp
-                      my/modified-line-cleanup-after-leaving)))
-
+;                      my/modified-line-cleanup-after-leaving
+                      )))
 
 ;;}}}
 ;;{{{  Comint

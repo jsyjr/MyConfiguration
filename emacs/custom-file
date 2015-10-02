@@ -24,7 +24,7 @@
  '(backup-directory-alist (quote ((".*" . "/home/jyates/.emacs.d/backup/"))))
  '(before-save-hook
    (quote
-    (copyright-update time-stamp my/modified-line-cleanup-after-leaving)))
+    (copyright-update time-stamp)))
  '(blink-cursor-blinks 0)
  '(blink-cursor-delay 0)
  '(c-tab-always-indent nil)
