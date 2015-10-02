@@ -2846,8 +2846,13 @@ Works with: arglist-cont, arglist-cont-nonempty."
  '(gdb-create-source-file-list nil)
  '(gdb-many-windows t)
  '(gdb-stack-buffer-addresses t)
+ '(gud-gdb-command-name "gdb -i=mi")
  '(gud-tooltip-mode t)
  )
+
+;; Mathworks trashes the program to run when requesting gdb
+(when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
+  (setq gud-gdb-command-name "~/bin/gdb"))
 
 (defvar gdb-source-window nil)
 
