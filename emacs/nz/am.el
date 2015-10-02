@@ -6,11 +6,27 @@
 (defvar am-files-directory nil
   "Directory whence file list was loaded")
 
-(defvar am-files-alist nil
-  "Associative list of files after scanning the amake dump file")
-
 (defvar am-files-list nil
-  "Simple list of files after scanning the amake dump file")
+  "Simple list of filenames.  The load file contains:
+
+    (setq am-files-list '(
+    \"filename1\"
+    \"filename2\"
+    ...
+    )
+
+with the filename strings in sorted order")
+
+(defvar am-files-alist nil
+  "Association simple list of (filenames . directory).  It parallele
+am-files-list.  The load file contains:
+
+    (setq am-files-alist '(
+    ( \"filename1\" . \"path1\" )
+    ( \"filename2\" . \"path2\" )
+    )
+
+with pairs sorted by filename string.")
 
 (defvar am-file-opener 'find-file-read-only
   "Set to file opener of your choice.  am-find-file uses this opener.
@@ -67,7 +83,8 @@
   (interactive)
   (am-load-file-lists)
   (let ((filename
-         (ido-completing-read
+         ;; (ido-completing-read
+         (completing-read
           (concat "Workspace " am-workspace "- find file: ")
           am-files-list nil t nil am-find-file-history)))
     (if (> (length filename) 0)
