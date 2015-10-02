@@ -17,7 +17,6 @@
 
 ;; Too many false alarms
 ;; (setq debug-on-error t)
-(eldoc-mode -1)
 
 ;;=== Notes ============================================================
 ;;{{{  Goals
@@ -268,7 +267,6 @@
 (package-initialize)
 
 (setq custom-file "~/emacs/custom-file")
-(add-to-list 'auto-mode-alist '("custom-file" . emacs-lisp-mode))
 
 (defvar my/saved-custom-variables nil
   "List of customizations read from the custom file.")
@@ -1865,16 +1863,6 @@ This command is designed to be used whether you are already in Info or not."
                       time-stamp
                       my/modified-line-cleanup-after-leaving)))
 
-;;}}}
-;;{{{  Always byte compile after saving elisp
-
-(defun my/byte-compile-saved-elisp-buffer ()
-  "Byte compile an elisp buffer anytime it is saved."
-  (if (and (eq major-mode 'emacs-lisp-mode)
-           (not (string-prefix-p "HIDE-phw" (buffer-name))))
-      (byte-compile-file (buffer-file-name))))
-
-(add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
 
 ;;}}}
 ;;{{{  Comint
@@ -2334,6 +2322,25 @@ can easily repeat an earlier amake -pgrep command."
 
 (eval-after-load "yasnippet"
   '(add-hook 'after-save-hook 'my/yasnippet-reload-on-save))
+
+;;}}}
+;;{{{  Emacs' elisp (with auto-compile on save)
+
+(add-to-list 'auto-mode-alist '("custom-file" . emacs-lisp-mode))
+
+;; (my/custom-set-variables
+;;  '(eldoc-idle-delay 1.5)
+;;  )
+
+;(global-eldoc-mode -1)
+
+(defun my/byte-compile-saved-elisp-buffer ()
+  "Byte compile an elisp buffer anytime it is saved."
+  (if (and (eq major-mode 'emacs-lisp-mode)
+           (not (string-prefix-p "phw" (buffer-name))))
+      (byte-compile-file (buffer-file-name))))
+
+(add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
 
 ;;}}}
 ;;{{{  C/C++ mode
