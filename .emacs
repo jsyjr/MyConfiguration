@@ -1,7 +1,5 @@
 ;; John Yates's .emacs  -*- emacs-lisp -*-
 
-;; Added by package.el: must precede config of installed packages.
-(package-initialize)
 (defconst copyright-owner "John S Yates Jr")
 (put 'copyright-owner 'safe-local-variable 'stringp)
 
@@ -266,6 +264,9 @@
 ;;}}}
 ;;{{{  Load customizations
 
+;; Added by package.el: must precede config of installed packages.
+(package-initialize)
+
 (setq custom-file "~/emacs/custom-file")
 (add-to-list 'auto-mode-alist '("custom-file" . emacs-lisp-mode))
 
@@ -299,7 +300,7 @@
          nil t)
 
 ;;}}}
-;;{{{  List of installed ELPA packages
+;;{{{  List of packages installed from ELPA
 
 (my/custom-set-variables
  '(package-selected-packages
