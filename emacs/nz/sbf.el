@@ -52,7 +52,7 @@ common to all directory paths is factored out.")
     (when (> (length filename) 0)
       (let ((path (sbf--reconstitute-file-path filename)))
         (message "Path= %s" path)))))
-        
+
         ;; (funcall sbf--file-open-function path)
         ;; (let ((buf-name (buffer-file-name)))
         ;;   (when buf-name
@@ -163,7 +163,7 @@ Also all loops over duplicates have numerous early exits.)"
                     (setq completion-list
                           (cons (if suffix (concat file " " (substring suffix 1 -1)) file) completion-list)))))
       ;; Record the final result
-      (setq sbf--completion-list completion-list))))
+      (setq sbf--completion-list (sort completion-list 'string<)))))
 
 (defun sbf--persist ()
   "Write the completion list and hash table to disk as a .el / .elc pair"
