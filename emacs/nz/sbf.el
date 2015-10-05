@@ -1,16 +1,52 @@
 ;;; sbf.el --- Mathworks sandbox-based file finder
 
-(defun sbf-helm-source-find-file ()
-  "Return a HELM source data structure supporting find file."
-  '((name . "Find a file in a sandbox")
-        (candidates . sbf--current-completions)
-        (action . (lambda (filename)
-                    (let ((path (sbf--reconstitute-file-path filename)))
-                      (message "Path= %s" path))))))
+;;====================================================
+;; Autoloaded entrypoints for HELM access
+;;====================================================
+
+;;;###autoload
+(defun sbf-helm-find-file ()
+  "Return a HELM arglist to perform find-file in a sandbox."
+  '(:prompt
+    "Sandbox find-file: "
+    :sources
+    ((name . "Sandbox find-file")
+     (candidates . sbf--current-completions)
+     (prompt . "Sandbox file-file: ")
+     (action . (lambda (filename)
+                 (let ((path (sbf--reconstitute-file-path filename)))
+                   (message-box "Path= %s" path)))))))
+
+;;;###autoload
+(defun sbf-helm-find-file-read-only ()
+  "Return a HELM arglist to perform find-file-read-only in a sandbox."
+  '(:prompt
+    "Sandbox find-file-read-only: "
+    :sources
+    ((name . "Sandbox find-file-read-only")
+     (candidates . ,(sbf--current-completions))
+     (prompt . "Sandbox file-file-read-only: ")
+     (action . (lambda (filename)
+                 (let ((path (sbf--reconstitute-file-path filename)))
+                   (message-box "Path= %s" path)))))))
+
+;;;###autoload
+(defun sbf-helm-view-file ()
+  "Return a HELM arglist to perform view-file in a sandbox."
+  '(:prompt
+    "Sandbox find-file-read-only: "
+    :sources
+    ((name . "Sandbox view-file")
+     (prompt . "Sandbox view-file: ")
+     (candidates . ,(sbf--current-completions))
+     (action . (lambda (filename)
+                 (let ((path (sbf--reconstitute-file-path filename)))
+                   (message-box "Path= %s" path)))))))
 
 
-(defvar sbf--file-open-function 'find-file-read-only
-  "")
+;;====================================================
+;; Global data
+;;====================================================
 
 (defvar sbf--common-prefix nil
   "Accumulated a prefix common to all paths.")
@@ -42,14 +78,12 @@ common to all directory paths is factored out.")
 (defvar sbf--sandbox nil
   "Sandbox with which in-memory state is associated.")
 
-(defun sbf--force-recache ()
-  "Recompute and reload all structures"
-  (interactive)
-  (setq sbf--from-scratch t)
-  (sbf--current-completions))
 
-;;;
-(defun sbf--find-file ()
+;;====================================================
+;; Lesser entrypoints
+;;====================================================
+
+(defun sbf-find-file ()
   "Find a file known to amake"
   (interactive)
   (sbf--current-completions)
@@ -61,11 +95,18 @@ common to all directory paths is factored out.")
       (let ((path (sbf--reconstitute-file-path filename)))
         (message "Path= %s" path)))))
 
-        ;; (funcall sbf--file-open-function path)
-        ;; (let ((buf-name (buffer-file-name)))
-        ;;   (when buf-name
-        ;;     (message "File %s%s" buf-name
-        ;;              (if (file-writable-p path) "" " (File is write protected)"))))))))
+
+(defun sbf-force-from-scratch ()
+  "Recompute and reload all structures"
+  (interactive)
+  (setq sbf--from-scratch t)
+  (sbf--current-completions)
+  (setq sbf--from-scratch nil))
+
+
+;;====================================================
+;; Final path reconstruction
+;;====================================================
 
 (defun sbf--reconstitute-file-path (filename)
   ""
@@ -84,12 +125,28 @@ common to all directory paths is factored out.")
           (error "Could not locate matching directory path: filename= %s, tag= %s" filename tag)))
       (concat sbf--reconstitute-path-prefix sbf--common-prefix value filename))))
 
+
+;;====================================================
+;; Building and caching
+;;====================================================
+
 (defun sbf--current-completions ()
   "Return a completions list appropriate to the current context"
-;;  (setq sbf--sandbox (locate-dominating-file "." sbf--STATE_DIR))
-  (let ((sandbox (locate-dominating-file "." ".git")))
+  (sbf--get-sandbox)
+  (with-temp-buffer
+    (when (sbf--get-completion-list)
+      (sbf--persist)))
+  sbf--completion-list)
+
+(defun sbf--get-sandbox ()
+  ""
+  (let ((sandbox (locate-dominating-file "." 'sbf--sandbox-p)))
     (if sandbox
-        (setq sandbox (concat sandbox (if (string= "/" (substring sandbox -1)) "" "/")))
+        ;; Convert to absolute with trailing "/"
+        (setq sandbox
+              (concat (substring (shell-command-to-string
+                                  (concat "cd " sandbox "; pwd"))
+                                 0 -1) "/"))
       (let ((msg (format "Working directory (%s) is not in a sandbox" default-directory)))
         (if (null sbf--sandbox)
             (user-error "%s; no prior sandbox available" msg)
@@ -100,12 +157,16 @@ common to all directory paths is factored out.")
       (setq sbf--sandbox sandbox)
       (setq sbf--hash-table nil)
       (setq sbf--completion-list nil)))
-  (let ((default-directory sbf--sandbox))
-    (with-temp-buffer
-      (when (sbf--get-completion-list)
-        (sbf--persist))))
-  ;;  (setq sbf--from-scratch nil)
-  sbf--completion-list)
+  sbf--sandbox)
+
+(defun sbf--sandbox-p (dir)
+  ""
+  (message "sbf--sandbox-p: dir= \"%s\"" dir)
+  (cond
+   ((file-exists-p (concat dir "/.git"))
+    t)
+   ((file-exists-p (concat dir "/.sbtools"))
+    t)))
 
 ;; File system visible paths and names
 (defconst sbf--STATE_DIR   ".sbtools/global/")  ; relative to sbf--sandbox
@@ -220,11 +281,11 @@ Also all loops over duplicates have numerous early exits.)"
 
 (defun sbf--can-reuse (file &optional depends)
   "Return t IFF reusing FILE is safe"
-  (message "  CAN-REUSE %s  [%s]" file depends)
-  (and (not sbf--from-scratch)
-       (file-exists-p file)
+  (when sbf--from-scratch
+    (shell-command-to-string (concat "rm -f " file "*"))
+  (and (file-exists-p file)
        (or (null depends)
-           (file-newer-than-file-p file depends))))
+           (file-newer-than-file-p file depends)))))
 
 (defun sbf--build-hash-table ()
   "Construct a hash table from file paths in current buffer"

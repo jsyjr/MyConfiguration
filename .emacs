@@ -2193,8 +2193,16 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 (add-to-list 'load-path "~/emacs/nz")
 
-(autoload 'sbf-helm-source-find-file "sbf"
-  "Return a HELM source data structure supporting find file"
+(autoload 'sbf-helm-find-file "sbf"
+  "Return a HELM arglist to perform find-file in a sandbox."
+  t)
+
+(autoload 'sbf-helm-find-file-read-only "sbf"
+  "Return a HELM arglist to perform find-file-read-only in a sandbox."
+  t)
+
+(autoload 'sbf-helm-view-file "sbf"
+  "Return a HELM arglist to perform view-file in a sandbox."
   t)
 
 ;;}}}
@@ -3322,7 +3330,7 @@ use either \\[customize] or the function `phw-mode'." t)
 
 ;; amake supported find-file, grep and
 
-(keydef "C-x , f"       (helm :sources (sbf-helm-source-find-file)))
+(keydef    "C-x , f"    (apply 'helm (sbf-helm-find-file)))
 ;; (keydef "C-x , f"       am-find-file)
 ;; (keydef "C-x , 4 f"     am-find-file-other-window)
 ;; (keydef "C-x , g"       am-grep)
