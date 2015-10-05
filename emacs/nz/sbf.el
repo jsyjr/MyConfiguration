@@ -28,11 +28,10 @@ and end with slashes.  The longest prefix of complete path elements
 common to all directory paths is factored out.")
 
 (defvar sbf--reconstitute-path-prefix nil
-  "")
+  "A version of sandbox path appropriate for path reconstitution.")
 
 (defvar sbf--sandbox nil
   "Sandbox with which in-memory state is associated.")
-
 
 (defun sbf--force-recache ()
   "Recompute and reload all structures"
@@ -78,7 +77,7 @@ common to all directory paths is factored out.")
 
 (defun sbf--current-completions ()
   "Return a completions list appropriate to the current context"
-  ;; (setq sbf--sandbox (locate-dominating-file "." sbf--STATE_DIR))
+;;  (setq sbf--sandbox (locate-dominating-file "." sbf--STATE_DIR))
   (let ((sandbox (locate-dominating-file "." ".git")))
     (if sandbox
         (setq sandbox (concat sandbox (if (string= "/" (substring sandbox -1)) "" "/")))
@@ -96,11 +95,11 @@ common to all directory paths is factored out.")
     (with-temp-buffer
       (when (sbf--get-completion-list)
         (sbf--persist))))
-;;  (setq sbf--from-scratch nil)
-  )
+  ;;  (setq sbf--from-scratch nil)
+  sbf--completion-list)
 
 ;; File system visible paths and names
-(defconst sbf--STATE_DIR   ".sbtools/global")  ; relative to sbf--sandbox
+(defconst sbf--STATE_DIR   ".sbtools/global/")  ; relative to sbf--sandbox
 (defconst sbf--ADDED_FILES "added-files.txt")
 (defconst sbf--FULL_LIST   "all-files.txt")
 (defconst sbf--CODE_LIST   "code-files.txt")
@@ -187,10 +186,11 @@ Also all loops over duplicates have numerous early exits.)"
 (defun sbf--get-hash-table ()
   "Populate the hash table either from elisp or from list of paths."
   (unless sbf--hash-table
-    (let ((path-added (concat sbf--STATE_DIR "/" sbf--ADDED_FILES))
-          (path-full  (concat sbf--STATE_DIR "/" sbf--FULL_LIST))
-          (path-code  (concat sbf--STATE_DIR "/" sbf--CODE_LIST))
-          (path-elisp (concat sbf--STATE_DIR "/" sbf--CODE_ELISP)))
+    (let* ((abs-state-dir (concat sbf--sandbox sbf--STATE_DIR))
+           (path-added (concat abs-state-dir sbf--ADDED_FILES))
+           (path-full  (concat abs-state-dir sbf--FULL_LIST))
+           (path-code  (concat abs-state-dir sbf--CODE_LIST))
+           (path-elisp (concat abs-state-dir sbf--CODE_ELISP)))
       ;; Collect a list of newly added files not yet under version control
       (unless (sbf--can-reuse path-added)
         (message (concat sbf--cmd-add-files path-added))
@@ -205,16 +205,17 @@ Also all loops over duplicates have numerous early exits.)"
       (if (sbf--can-reuse path-elisp path-code)
           ;; Just load from disk (hopefully from a .elc)
           (load path-elisp)
-        ;; Build hash table from lines in path-code and save as elisp
+        ;; Otherwise build hash table from lines in path-code
         (insert-file-contents-literally path-code)
         (sbf--build-hash-table)))))
 
-(defun sbf--can-reuse (result &optional depends)
-  "Return t IFF reusing file RESULT is safe"
+(defun sbf--can-reuse (file &optional depends)
+  "Return t IFF reusing FILE is safe"
+  (message "  CAN-REUSE %s  [%s]" file depends)
   (and (not sbf--from-scratch)
-       (file-exists-p result)
+       (file-exists-p file)
        (or (null depends)
-           (file-newer-than-file-p result depends))))
+           (file-newer-than-file-p file depends))))
 
 (defun sbf--build-hash-table ()
   "Construct a hash table from file paths in current buffer"
@@ -300,3 +301,5 @@ Also all loops over duplicates have numerous early exits.)"
     (loop for path across-ref value do
           (setf path (substring path sbf--common-prefix-length))))
   (puthash key value sbf--hash-table))
+
+(provide 'sbf)
