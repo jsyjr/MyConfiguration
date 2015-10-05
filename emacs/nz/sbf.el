@@ -1,5 +1,14 @@
 ;;; sbf.el --- Mathworks sandbox-based file finder
 
+(defun sbf-helm-source-find-file ()
+  "Return a HELM source data structure supporting find file."
+  '((name . "Find a file in a sandbox")
+        (candidates . sbf--current-completions)
+        (action . (lambda (filename)
+                    (let ((path (sbf--reconstitute-file-path filename)))
+                      (message "Path= %s" path))))))
+
+
 (defvar sbf--file-open-function 'find-file-read-only
   "")
 

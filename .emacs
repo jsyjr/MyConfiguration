@@ -2189,63 +2189,13 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;}}}
 
 ;;=== Programming ======================================================
-;;{{{  Sanjay Dixit's am package
+;;{{{  Sandbox file access
 
-;; (add-to-list 'load-path "~/emacs/nz")
+(add-to-list 'load-path "~/emacs/nz")
 
-(autoload 'am-force-recache "am"
-  "Run 'amake -cache' and reload files lists"
+(autoload 'sbf-helm-source-find-file "sbf"
+  "Return a HELM source data structure supporting find file"
   t)
-
-(autoload 'am-find-file "am"
-  "Find a file known to amake."
-  t)
-
-(autoload 'am-find-file-other-window "am"
-  "Find a file known to amake, open it in another window."
-  t)
-
-(autoload 'am-grep "am"
-  "Run amake -pgrep, with user-specified args, collecting output in *grep*.
-While the scan runs asynchronously, you can use \\[next-error] (M-x next-error),
-or \\<grep-mode-map>\\[compile-goto-error] in the *grep* \
-buffer, to go to the lines where the scan found
-matches.  To kill the scan job before it finishes, type \\[kill-compilation].
-
-This command uses a special history list for its COMMAND-ARGS, so you
-can easily repeat an earlier amake -pgrep command."
-  t)
-
-(autoload 'am-grep-tag "am"
-  "Run amake -pgrep for the tag at cursor, collecting output in *grep*.
-While the scan runs asynchronously, you can use \\[next-error] (M-x next-error),
-or \\<grep-mode-map>\\[compile-goto-error] in the *grep* \
-buffer, to go to the lines where the scan found
-matches.  To kill the scan job before it finishes, type \\[kill-compilation].
-
-This command uses a special history list for its COMMAND-ARGS, so you
-can easily repeat an earlier amake -pgrep command."
-  t)
-
-(autoload 'grep-tag-default "grep"
-  "Return tag under cursor (if such exists)."
-  t)
-
-(defun am-grep-tag (command-args)
-  "Run amake -pgrep for the tag at cursor, collecting output in *grep*.
-While the scan runs asynchronously, you can use \\[next-error] (M-x next-error),
-or \\<grep-mode-map>\\[compile-goto-error] in the *grep* \
-buffer, to go to the lines where the scan found
-matches.  To kill the scan job before it finishes, type \\[kill-compilation].
-
-This command uses a special history list for its COMMAND-ARGS, so you
-can easily repeat an earlier amake -pgrep command."
-  (interactive
-   (list (read-shell-command "Run amake -pgrep (like this): "
-                             (am-grep-command-wth-tag)
-                             'am-grep-history
-                             nil)))
-  (am-grep-execute command-args))
 
 ;;}}}
 ;;{{{  Find file in project
@@ -3371,12 +3321,8 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "C-x E"         apply-macro-to-region-lines)
 
 ;; amake supported find-file, grep and
-;; (keydef "C-, f"         am-find-file)
-;; (keydef "C-, 4 f"       am-find-file-other-window)
-;; (keydef "C-, g"         am-grep)
-;; (keydef "C-, r"         am-force-recache)
-;; (keydef "C-, ."         am-grep-tag)
 
+(keydef "C-x , f"       (helm :sources (sbf-helm-source-find-file)))
 ;; (keydef "C-x , f"       am-find-file)
 ;; (keydef "C-x , 4 f"     am-find-file-other-window)
 ;; (keydef "C-x , g"       am-grep)
