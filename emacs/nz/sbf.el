@@ -1,4 +1,4 @@
-;;; sbf.el --- Mathworks sandbox-based file finder
+;;; sbf.el --- Mathworks sandbox-based file finder  -*- lexical-binding: t -*-
 
 ;;====================================================
 ;; Autoloaded entrypoints for HELM access
@@ -10,9 +10,20 @@
   '(:prompt
     "Sandbox find-file: "
     :sources
-    ((name . "Sandbox find-file")
+    ((name . "Sandbox find-file 1")
      (candidates . sbf--current-completions)
      (prompt . "Sandbox file-file: ")
+     (buffer . "*helm sandbox files*")
+     ;(history . sbf--find-file-history)
+     ;(reverse-history . t)
+     ;(del-input . nil)
+     ;(help-message . helm-M-x-help-message)
+     (must-match . t)
+     ;(fuzzy . helm-M-x-fuzzy-match)
+     (nomark . t)
+     (candidates-in-buffer . t)
+     ;(fc-transformer . 'helm-M-x-transformer)
+     ;(hist-fc-transformer . 'helm-M-x-transformer-hist)
      (action . (lambda (filename)
                  (let ((path (sbf--reconstitute-file-path filename)))
                    (message-box "Path= %s" path)))))))
@@ -60,7 +71,7 @@
 (defvar sbf--find-file-history nil
   "MW Find File history.")
 
-(defvar sbf--from-scratch t
+(defvar sbf--from-scratch nil
   "When non-nil force a full recompuation of all state.")
 
 (defvar sbf--hash-table nil
@@ -83,8 +94,9 @@ common to all directory paths is factored out.")
 ;; Lesser entrypoints
 ;;====================================================
 
+;;;###autoload
 (defun sbf-find-file ()
-  "Find a file known to amake"
+  "Find a file in a sandbox using a completion framework."
   (interactive)
   (sbf--current-completions)
   (let ((filename
@@ -92,8 +104,7 @@ common to all directory paths is factored out.")
           (concat "Sandbox " sbf--sandbox " - find file: ")
           sbf--completion-list nil t nil sbf--find-file-history)))
     (when (> (length filename) 0)
-      (let ((path (sbf--reconstitute-file-path filename)))
-        (message "Path= %s" path)))))
+      (find-file-read-only (sbf--reconstitute-file-path filename)))))
 
 
 (defun sbf-force-from-scratch ()
@@ -132,11 +143,11 @@ common to all directory paths is factored out.")
 
 (defun sbf--current-completions ()
   "Return a completions list appropriate to the current context"
-  (sbf--get-sandbox)
-  (with-temp-buffer
-    (when (sbf--get-completion-list)
-      (sbf--persist)))
-  sbf--completion-list)
+  (let ((default-directory (sbf--get-sandbox)))
+    (with-temp-buffer
+      (when (sbf--get-completion-list)
+        (sbf--persist)))
+    sbf--completion-list))
 
 (defun sbf--get-sandbox ()
   ""
@@ -161,7 +172,6 @@ common to all directory paths is factored out.")
 
 (defun sbf--sandbox-p (dir)
   ""
-  (message "sbf--sandbox-p: dir= \"%s\"" dir)
   (cond
    ((file-exists-p (concat dir "/.git"))
     t)
@@ -218,7 +228,8 @@ Also all loops over duplicates have numerous early exits.)"
                                           (let ((end (search-forward "/" nil t path-elements)))
                                             (unless end
                                               (when (= start-element 1)
-                                                (user-error "Cannot uniquify path: %s" this))
+                                                (setq suffix this)
+                                                (throw 'found-unique nil))
                                               (throw 'sequence-too-long nil))
                                             (let ((needle (buffer-substring (1- start) end)))
                                               (loop for other across paths do
@@ -262,7 +273,7 @@ Also all loops over duplicates have numerous early exits.)"
            (path-code  (concat abs-state-dir sbf--CODE_LIST))
            (path-elisp (concat abs-state-dir sbf--CODE_ELISP)))
       ;; Collect a list of newly added files not yet under version control
-      (unless (sbf--can-reuse path-added)
+      (unless (sbf--can-reuse path-added nil)
         (message (concat sbf--cmd-add-files path-added))
         (shell-command-to-string (concat sbf--cmd-add-files path-added)))
       ;; Collect a cleansed list of files that are under version control
@@ -279,13 +290,13 @@ Also all loops over duplicates have numerous early exits.)"
         (insert-file-contents-literally path-code)
         (sbf--build-hash-table)))))
 
-(defun sbf--can-reuse (file &optional depends)
+(defun sbf--can-reuse (file depends)
   "Return t IFF reusing FILE is safe"
   (when sbf--from-scratch
-    (shell-command-to-string (concat "rm -f " file "*"))
+    (shell-command-to-string (concat "rm -f " file "*")))
   (and (file-exists-p file)
        (or (null depends)
-           (file-newer-than-file-p file depends)))))
+           (file-newer-than-file-p file depends))))
 
 (defun sbf--build-hash-table ()
   "Construct a hash table from file paths in current buffer"
@@ -340,7 +351,7 @@ Also all loops over duplicates have numerous early exits.)"
     (t
      (user-error "Cannot determine relative or absolute nature of non-existent file: %s" path)))))
 
-(defun sbf--keep-line-p (line-beg line-end)
+(defun sbf--keep-line-p (_line-beg _line-end)
   ;; check for /derived/ and well-formedness (distinct path and file)
   t)
 
