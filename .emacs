@@ -2205,6 +2205,10 @@ An alternate approach would be after-advice on isearch-other-meta-char."
   "Return a HELM arglist to perform view-file in a sandbox."
   t)
 
+(autoload 'sbf-find-file "sbf"
+  "Find a file in a sandbox using a completion framework."
+  t)
+
 ;;}}}
 ;;{{{  Find file in project
 
@@ -3330,6 +3334,7 @@ use either \\[customize] or the function `phw-mode'." t)
 
 ;; amake supported find-file, grep and
 
+;;(keydef    "C-x , f"    (sbf-find-file))
 (keydef    "C-x , f"    (apply 'helm (sbf-helm-find-file)))
 ;; (keydef "C-x , f"       am-find-file)
 ;; (keydef "C-x , 4 f"     am-find-file-other-window)
