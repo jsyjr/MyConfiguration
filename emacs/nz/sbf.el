@@ -61,6 +61,8 @@ common to all directory paths is factored out.")
 (defvar sbf--uniquified-list nil
   "Argument to completion functions (built or reloaded from disk).")
 
+(defvar sbf--vector-hash nil
+  "")
 
 ;;====================================================
 ;; Autoloaded entrypoints for HELM access
@@ -71,17 +73,21 @@ common to all directory paths is factored out.")
   "Return a HELM arglist to perform find-file in a sandbox."
   (sbf--current-completions)
   `(:prompt "Sandbox find-file: X "
+    :history 'sbf--find-file-history
+    :must-match t
+    :nomark t
+    :action 'sbf--action
     :sources
     ,(helm-build-in-buffer-source "Sandbox find-file"
                  :init (lambda ()
                          (helm-init-candidates-in-buffer
                              sbf--uniquified-buffer
                            sbf--uniquified-list))
-                 :history 'sbf--find-file-history
+                 ;:history 'sbf--find-file-history
                  ;:reverse-history t
-                 :must-match t
-                 :nomark t
-                 :action 'sbf--action
+                 ;:must-match t
+                 ;:nomark t
+                 ;:action 'sbf--action
                  )))
 
 (defun sbf--action (filename)
@@ -240,8 +246,9 @@ common to all directory paths is factored out.")
               sbf--from-scratch)
       (setq sbf--sandbox sandbox)
       (setq sbf--hash-table nil)
-      (setq sbf--uniquified-buffer (get-buffer-create sbf--BUF_UNIQUE))
       (setq sbf--uniquified-list nil)
+      (setq sbf--uniquified-buffer (get-buffer-create sbf--BUF_UNIQUE))
+      (buffer-disable-undo sbf--uniquified-buffer)
       (let ((abs-state-dir (concat sbf--sandbox sbf--STATE_DIR "/")))
         (setq sbf--path-state-dir abs-state-dir)
         (setq sbf--path-added  (concat abs-state-dir sbf--ADDED_FILES))
@@ -293,8 +300,7 @@ common to all directory paths is factored out.")
               (goto-char line-beg)
               (forward-line 1)
               (setq line-end (point))
-              (backward-char 1)
-              (setq sbf--uniquified-list (cons (buffer-substring line-beg (point)) sbf--uniquified-list)))))
+              (setq sbf--uniquified-list (cons (buffer-substring line-beg (1- (point))) sbf--uniquified-list)))))
     t))
 
 (defun sbf--can-reuse (file depends)
@@ -334,20 +340,21 @@ common to all directory paths is factored out.")
     (setq sbf--common-prefix (buffer-substring (point-min) (1+ (point))))
     ;; Process buffer lines to build initial hash table (values are lists)
     (let ((line-end (point-min))
-          (line-beg nil))
+          (path-beg nil)
+          (name-end nil))
       (loop until (eq line-end (point-max)) do
-            (setq line-beg line-end)
-            (goto-char line-beg)
+            (setq path-beg line-end)
+            (goto-char path-beg)
             (forward-line 1)
-            (backward-char 1)
             (setq line-end (point))
-            (when (sbf--keep-line-p line-beg line-end)
-              (search-backward "/" line-beg)
+            (backward-char 1)
+            (setq name-end (point))
+            (when (sbf--keep-line-p path-beg (point))
+              (search-backward "/" path-beg)
               (forward-char 1)
-              (let ((path (buffer-substring line-beg (point))))
+              (let ((path (buffer-substring path-beg (point))))
                 (sbf--adjust-common-prefix path)
-                (sbf--puthash-initial (buffer-substring (point) line-end) path)))
-            (setq line-end (1+ line-end))))
+                (sbf--puthash-initial (buffer-substring (point) name-end) path)))))
     ;; Strip common prefix back to a path element boundary
     (erase-buffer)
     (insert sbf--common-prefix)
@@ -355,7 +362,9 @@ common to all directory paths is factored out.")
     (setq sbf--common-prefix (buffer-substring (point-min) (search-backward "/")))
     (setq sbf--common-prefix-length (length sbf--common-prefix))
     ;; Convert hash table value lists to vectors of shrunk strings
-    (maphash 'sbf--convert-list-to-vector sbf--hash-table)))
+    (setq sbf--vector-hash (make-hash-table :test 'equal))
+    (maphash 'sbf--convert-list-to-vector sbf--hash-table)
+    (setq sbf--vector-hash nil)))
 
 (defun sbf--set-reconstitute-path-prefix (path)
   ""
@@ -394,14 +403,15 @@ common to all directory paths is factored out.")
       (setq value (cons path value))))
     (puthash file value sbf--hash-table)))
 
-(defun sbf--convert-list-to-vector (key value)
-  "Replace key's value list with a vector of prefix-stripped paths"
-  (if (stringp value)
-      (setq value (substring value sbf--common-prefix-length))
-    (setq value (vconcat value))
-    (loop for path across-ref value do
-          (setf path (substring path sbf--common-prefix-length))))
-  (puthash key value sbf--hash-table))
+(defun sbf--convert-list-to-vector (file paths)
+  "Replace file's paths list with a vector of prefix-stripped paths"
+  (if (stringp paths)
+      (setq paths (substring paths sbf--common-prefix-length))
+    (setq paths (vconcat paths))
+    (loop for path across-ref paths do
+          (setf path (substring path sbf--common-prefix-length)))
+    (sort paths 'string<))
+  (puthash file (gethash paths sbf--vector-hash paths) sbf--hash-table))
 
 
 ;;====================================================
@@ -426,39 +436,39 @@ Also all loops over duplicates have numerous early exits."
     (with-temp-buffer
       (loop for file being the hash-keys of sbf--hash-table
             using (hash-values paths) do
-            (loop for this across paths do
-                  (let ((suffix nil))
-                    (catch 'found-unique
-                      (when (stringp paths)
-                        (throw 'found-unique nil))
-                      (erase-buffer)
-                      (insert this)
-                      (catch 'path-exhausted
-                        (loop for path-elements from 1 do
-                              (catch 'sequence-too-long
-                                (loop for start-element from 1 do
-                                      (catch 'not-unique
-                                        (goto-char (point-min))
-                                        (let ((start (search-forward "/" nil t start-element)))
-                                          (unless start
-                                            (throw 'path-exhausted nil))
-                                          (let ((end (search-forward "/" nil t path-elements)))
-                                            (unless end
-                                              (when (= start-element 1)
-                                                (setq suffix this)
-                                                (throw 'found-unique nil))
-                                              (throw 'sequence-too-long nil))
-                                            (let ((needle (buffer-substring (1- start) end)))
-                                              (loop for other across paths do
-                                                    (when (and (not (string= this other))
-                                                               (string-match-p needle other))
-                                                      (throw 'not-unique nil)))
-                                              (setq suffix needle)
-                                              (throw 'found-unique nil)))))))
-                              )))
-                    ;; Add a possibly "uniquified" file to the list
-                    (setq uniquified
-                          (cons (if suffix (concat file " " (substring suffix 1 -1)) file) uniquified))))))
+            (if (stringp paths)
+                (setq uniquified (cons file uniquified))
+              (loop for this across paths do
+                    (let ((suffix nil))
+                      (catch 'found-unique
+                        (erase-buffer)
+                        (insert this)
+                        (catch 'path-exhausted
+                          (loop for path-elements from 1 do
+                                (catch 'sequence-too-long
+                                  (loop for start-element from 1 do
+                                        (catch 'not-unique
+                                          (goto-char (point-min))
+                                          (let ((start (search-forward "/" nil t start-element)))
+                                            (unless start
+                                              (throw 'path-exhausted nil))
+                                            (let ((end (search-forward "/" nil t path-elements)))
+                                              (unless end
+                                                (when (= start-element 1)
+                                                  (setq suffix this)
+                                                  (throw 'found-unique nil))
+                                                (throw 'sequence-too-long nil))
+                                              (let ((needle (buffer-substring (1- start) end)))
+                                                (loop for other across paths do
+                                                      (when (and (not (string= this other))
+                                                                 (string-match-p needle other))
+                                                        (throw 'not-unique nil)))
+                                                (setq suffix needle)
+                                                (throw 'found-unique nil)))))))
+                                )))
+                      ;; Add a possibly "uniquified" file to the list
+                      (setq uniquified
+                            (cons (if suffix (concat file " " (substring suffix 1 -1)) file) uniquified)))))))
 
     (setq sbf--uniquified-list (sort uniquified 'string<))))
 
