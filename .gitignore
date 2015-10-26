@@ -9,6 +9,7 @@
 %*
 am.dmp
 gdb
+gdb-7.9
 .gdb_history
 java.log.*
 jogl.ex.*
@@ -45,6 +46,7 @@ st-light
 /.p4enviro
 /.pinerc
 /.plan
+/.post-review-cookies.txt
 /.pulse-cookie
 /.repo_.gitconfig.json
 /.repopickle_.gitconfig
@@ -75,6 +77,7 @@ st-light
 /.android/
 /.aptitude/
 /.cache/
+/.ccache/
 /.compiz/
 /.config/
 /.cpan/

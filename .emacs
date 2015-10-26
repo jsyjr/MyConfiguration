@@ -18,6 +18,9 @@
 ;; Too many false alarms
 ;; (setq debug-on-error t)
 
+;; Suppress redefinition warnings during startup
+(setq ad-redefinition-action 'accept)
+
 ;;=== Notes ============================================================
 ;;{{{  Goals
 
@@ -990,7 +993,7 @@ mouse-3: go to end")
 
 (my/custom-set-variables
  '(kill-whole-line t)
- '(view-read-only t)    ; Use view-mode if file is or opened read-only
+;'(view-read-only t)    ; Use view-mode if file is or opened read-only
  )
 
 ;;{{{  Navigation: avy

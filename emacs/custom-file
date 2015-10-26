@@ -22,9 +22,7 @@
  '(auto-save-list-file-prefix "~/.emacs.d/autosave-list/saves-")
  '(backup-by-copying t)
  '(backup-directory-alist (quote ((".*" . "/home/jyates/.emacs.d/backup/"))))
- '(before-save-hook
-   (quote
-    (copyright-update time-stamp)))
+ '(before-save-hook (quote (copyright-update time-stamp)))
  '(blink-cursor-blinks 0)
  '(blink-cursor-delay 0)
  '(c-tab-always-indent nil)
@@ -244,7 +242,6 @@ mouse-3: Remove current window from display")))))
 ")
  '(vc-make-backup-files t)
  '(version-control t)
- '(view-read-only t)
  '(visible-bell t)
  '(which-func-format
    (quote

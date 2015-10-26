@@ -1,15 +1,21 @@
 #!/bin/dash
 
-# Mathworks: clone sbsyncmaster's latetst_pass into a new local
-# workspace named $1 and augment it with both a git repository.
+# Mathworks: clone sbsyncmaster's $1.latetst_pass into a new local
+# sandbox named $2 and augment it with both a git repository.
+# Remaining arguments may extra flags (typically -no-perforce).
 
-SBNAME=$1
-[ -z "${SBNAME}" ] && echo 'usage: sbnew <sandbox-name> [-no-perforce]' && exit 1
-[ -e /local-ssd/lsb/${SBNAME} ] && echo "sandbox \"/local-ssd/lsb/${SBNAME}\" already exists" && exit 1
+CLUSTER=$1.latest_pass
+SBNAME=$2
+[   -z "${SBNAME}"               ] && echo 'usage: sbnew <cluster-name> <sandbox-name> [-no-perforce]' && exit 1
+[ ! -e /local-ssd/lsb/${CLUSTER} ] && echo "cluster \"/local-ssd/lsb/${CLUSTER}\" is not available"    && exit 1
+[   -e /local-ssd/lsb/${SBNAME}  ] && echo "sandbox \"/local-ssd/lsb/${SBNAME}\" already exists"       && exit 1
+
+shift 2
+FLAGS=$*
 
 # Create the clone
 cd /local-ssd/lsb
-sbclone $2 bstateflow.latest_pass ${SBNAME}
+sbclone ${FLAGS} ${CLUSTER} ${SBNAME}
 
 # Add/tweak .gitignore files to get a git repository of moderate size
 cat >${SBNAME}/.gitignore <<EOF

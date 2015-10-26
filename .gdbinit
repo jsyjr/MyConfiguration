@@ -18,6 +18,7 @@ set unwindonsignal on
 set print pretty on
 set history save
 set breakpoint pending on
+set non-stop off
 set print object on
 set print static-members off
 

@@ -6,8 +6,12 @@
 # however if a bash login shell is launched as /bin/sh (such as on a mac, or
 # non-debian linux system), bash will source this file instead.
 
+# In my configuration both .xsessionrc and .bash_profile simply source this file.
+
 # Setup minimal sbtools environment (sets PATH, LOCATION, HOST, USER, ...)
 if [ -d /mathworks ]; then
     . /mathworks/hub/share/sbtools/bash_setup_env.bash
 fi
 
+# Rewrite path per my own preferences
+. ~/.my_path

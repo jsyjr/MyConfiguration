@@ -8,6 +8,8 @@ make doc
 
 sudo rm -rf /usr/local/emacs
 sudo mkdir -p /usr/local/emacs/bin
+rm -f src/emacs
+chmod a+w src
 sudo make -j1 install
 
 sudo update-alternatives \

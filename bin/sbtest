@@ -1,11 +1,11 @@
-#!/bin/dash
+#!/bin/bash
 
 TEST_ALIAS=$1
 [ -z "${TEST_ALIAS}" ] && echo 'usage: sbtest <test-alias>' && exit 1
 
 LCLSB=$(pwd | fgrep /local-ssd/lsb/ | sed -e 's|\(/local-ssd/lsb/[^/]*\).*$|\1|')
 
-if [ ! ${LCLSB} ] ; then
+if [ -z "${LCLSB}" ] ; then
   echo "Current working directory ($(pwd)) is not within a local sandbox"
   exit 1
 fi
