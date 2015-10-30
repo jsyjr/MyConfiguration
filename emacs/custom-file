@@ -97,7 +97,6 @@
  '(gud-gdb-command-name "gdb -i=mi")
  '(gud-tooltip-mode t)
  '(helm-command-prefix-key "C-c h")
- '(helm-ff-auto-update-initial-value t)
  '(helm-mode t)
  '(helm-move-to-line-cycle-in-source t)
  '(helm-split-window-default-side (quote same))

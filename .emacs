@@ -1695,10 +1695,9 @@ This command is designed to be used whether you are already in Info or not."
 
 (my/custom-set-variables
  '(helm-command-prefix-key "C-c h")
- '(helm-ff-auto-update-initial-value t)
  '(helm-mode t)
  '(helm-move-to-line-cycle-in-source t)
- '(helm-split-window-default-side: 'same)
+ '(helm-split-window-default-side 'same)
  )
 
 ;; Repair helm "angry salad"
@@ -3430,12 +3429,14 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "C-<f12>"       customize-group)
 (keydef "M-<f12>"       customize-apropos)
 
-(eval-after-load "helm" '(progn
+(eval-after-load 'helm '(progn
   (keydef "M-x"         helm-M-x)
   (keydef "C-x C-f"     helm-find-files)
-;;(keydef "C-i"         helm-execute-persistent-action)
-;;(keydef "C-j"         helm-select-action)
+  ;; Swap TAB and C-j
+  (define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
+  (define-key helm-map (kbd "C-j") 'helm-select-action)
   ))
+
 
 (eval-after-load "bs"  '(keydef (bs "<f1>") (bs-kill)))
 
