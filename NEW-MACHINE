@@ -89,6 +89,7 @@ sudo apt-get install \
   graphviz \
   heirloom-mailx \
   imagemagick \
+  inotify-tools \
   libappindicator1 \
   libXpm-dev \
   libbison-dev \
@@ -112,8 +113,6 @@ sudo apt-get install \
   libotf-dev \
   librsvg2-dev \
   libtinfo-dev \
-  libxkbcommon-dev \
-  libxkbcommon-x11-dev \
   libx11-dev \
   libxml2-dev \
   llvm \
@@ -131,6 +130,12 @@ sudo apt-get install \
   unison-all-gtk \
   xmlto \
   zlib1g-dev \
+
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+sudo apt-get update
+# apt-get install google-chrome-stable
+sudo apt-get install google-chrome-beta
 
 
 # enable generalized debugging
@@ -192,6 +197,7 @@ dch --bpo
 # in Makefile comment out body of ^test: all
 dpkg-buildpackage -uc -us -b  # takes a long time to run tests
 sudo dpkg -i ../*.deb
+rm -rf ~/git_2.1.4* ~/git-2.1.4
 
 
 
@@ -301,9 +307,7 @@ cd ~/repos
 rm -rf ctags
 git clone git clone https://github.com/universal-ctags/ctags.git
 cd ctags
-./configure CFLAGS='-march=corei7 -O3'
-make
-sudo make install
+~/bin/rebuild-ctags
 
 
 # Install a recent version of global from
@@ -311,7 +315,7 @@ sudo make install
 cd <download directory>
 tar xzkf <tarball>
 cd global-x.y.z
-./configure --with-sqlite3 CFLAGS='-march=corei7 -O3'
+./configure --prefix=/usr --with-sqlite3 CFLAGS='-march=corei7 -O3' --with-exuberant-ctags=/usr/local/bin/ctags
 make
 sudo make install
 
@@ -363,7 +367,12 @@ cd doxygen
 make -j8
 # sudo make install
 
-# Download and build awesome window manager
+# Unavailable on Debian at Mathworks
+sudo apt-get install \
+  libxkbcommon-dev \
+  libxkbcommon-x11-dev \
+
+  # Download and build awesome window manager
 #
 sudo apt-get install \
   asciidoc \
@@ -393,6 +402,13 @@ cd ~/repos/awesome
 
 
 sudo mkdir -p /net/whs/homes
+
+# At Mathworks add a line to /etc/fstab for /local-ssd
+# (Use blkid to find the UUID)
+cat >>/tmp/fstab <<EOF
+UUID=xx	/local-ssd	btrfs	rw,noatime,discard,compress=lzo,user_subvol_rm_allowed	0	0
+EOF
+
 
 cat >/tmp/fstab <<EOF
 # /etc/fstab: static file system information.
