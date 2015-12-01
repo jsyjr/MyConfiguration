@@ -19,7 +19,10 @@ make bootstrap-clean
 set -e
 
 git reset --hard
+git clean -xdf
 git pull
+
+# rm -r lisp/cedet test/cedet
 
 ./autogen.sh
 ./configure
@@ -27,12 +30,14 @@ git pull
 set +e
 # CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs --enable-link-time-optimization
 CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs
-set -e
-CFLAGS='-march=corei7 -O3' make -j8
-# CFLAGS='-march=corei7 -O3' make
+# CFLAGS='-march=corei7 -O3' make -j8
+CFLAGS='-march=corei7 -O3' make
 
-# make -j8 -k doc
-make -j8 bootstrap
+make -j8 -k doc
+make -j8 -k bootstrap
+
+set -e
+make bootstrap
 make
 make doc
 
