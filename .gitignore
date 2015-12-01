@@ -10,6 +10,7 @@
 am.dmp
 gdb
 gdb-7.9
+gdb-7.10
 .gdb_history
 java.log.*
 jogl.ex.*
@@ -23,19 +24,34 @@ st-dark
 st-light
 
 # Hidden files in the root of the home directory
-#/.* -- Do not include this pattern.  This supports spotting
+#
+# ~/.*  Do not include this pattern.  This supports spotting
 #       newly added dot files and making explicit decisions
 #       about how they should be treated.
+#
+# At Mathworks the following directories are moved from the
+# slow network to local-ssd and replaced with symbolic links:
+# ~/.cache
+# ~/.config
+# ~/.fontconfig
+# ~/.icons
+# ~/.pki
+#
 /.ICEauthority
 /.Xauthority
+/.Xconfig*
 /.bash_history
 /.bash_logout
 /.bzr.log
+/.cache
+/.config
 /.dmrc
 /.esd_auth
 /.fehbg
+/.fontconfig
 /.gksu.lock
 /.gtk-bookmarks
+/.icons
 /.install4j
 /.lesshst
 /.login
@@ -45,6 +61,7 @@ st-light
 /.nvidia-settings-rc
 /.p4enviro
 /.pinerc
+/.pki
 /.plan
 /.post-review-cookies.txt
 /.pulse-cookie
@@ -78,6 +95,7 @@ st-light
 /.aptitude/
 /.cache/
 /.ccache/
+/.cgtools/
 /.compiz/
 /.config/
 /.cpan/
