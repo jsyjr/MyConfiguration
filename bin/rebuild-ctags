@@ -13,7 +13,7 @@ git reset --hard
 git pull
 
 ./autogen.sh
-./configure
+./configure  CFLAGS='-march=corei7 -O3'
 
 autoreconf -vfi
 ./configure
@@ -25,7 +25,7 @@ sed -i -e 's/-g -O2/-march=corei7 -O3/' `find -name Makefile`
 make -kj8
 make
 
-exit 0
+# exit 0
 
 rm -rf config.log
 sudo make install
@@ -34,3 +34,5 @@ sudo update-alternatives \
  --install /usr/bin/ctags                 ctags      /usr/local/bin/ctags 1 \
  --slave   /usr/share/man/man1/ctags.1.gz ctags.1.gz /usr/local/share/man/man1/ctags.1 \
 
+sudo update-alternatives \
+ --set ctags /usr/local/bin/ctags
