@@ -33,9 +33,12 @@ CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs
 # CFLAGS='-march=corei7 -O3' make -j8
 CFLAGS='-march=corei7 -O3' make
 
+# Dependencies are not complete so parallel builds have sporadic failures.
+# Do a first parallel pass to build as much as possible.
+make -j8 -k
 make -j8 -k doc
-make -j8 -k bootstrap
 
+# Now do a non-parallel build to get things finished up.
 set -e
 make bootstrap
 make
