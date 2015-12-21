@@ -37,6 +37,10 @@ st-light
 # ~/.icons
 # ~/.pki
 #
+# Similarly the following directory is on the network to allow
+# access during distributed builds:
+# ~/runLogs
+#
 /.ICEauthority
 /.Xauthority
 /.Xconfig*
@@ -73,6 +77,7 @@ st-light
 /.vimrc
 /.xsession-errors
 /.xsession-errors.old
+/runLogs
 
 # For completeness here are the currently tracked dot-files
 !/.bashrc
