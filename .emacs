@@ -1687,11 +1687,11 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  Browsing and completion (helm, ido, smex)
 
-(add-to-list 'el-get-sources 'helm)
-(my/el-get-install "helm")
+;(add-to-list 'el-get-sources 'helm)
+;(my/el-get-install "helm")
 
-(require 'helm)
-(require 'helm-config)
+;(require 'helm)
+;(require 'helm-config)
 
 (my/custom-set-variables
  '(helm-command-prefix-key "C-c h")
