@@ -90,6 +90,7 @@ st-light
 # Hidden directories in the root of the home directory
 #/.*/ -- Same rationale as for /.* (see previous comment).
 /.AndroidStudio1.2/
+/.BullseyeCoverage/
 /.adobe/
 /.android/
 /.aptitude/
@@ -156,6 +157,7 @@ st-light
 /Pictures/
 /fontconfig/
 /repos/
+/runLogs/
 
 # Typicallly subdirectories of the home directory are version
 # controlled independently.  These are the directories deemed
