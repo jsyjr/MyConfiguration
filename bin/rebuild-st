@@ -98,7 +98,7 @@ index 930e468..19f33b5 100644
  static unsigned int defaultbg = 0;
 -static unsigned int defaultcs = 256;
 +static unsigned int defaultcs = 14;
- 
+ static unsigned int defaultrcs = 257;
  
  /*
 -- 
@@ -159,7 +159,7 @@ index 930e468..650fc13 100644
  static unsigned int defaultbg = 0;
 -static unsigned int defaultcs = 256;
 +static unsigned int defaultcs = 14;
- 
+ static unsigned int defaultrcs = 257;
  
  /*
 -- 
