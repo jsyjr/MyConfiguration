@@ -1,0 +1,33 @@
+#!/bin/dash
+
+# Mathworks: clone sbsyncmaster's latetst_pass into a new local
+# workspace named $1 and augment it with both a git repository.
+
+CWD=$(pwd)/
+TAG=$1
+ITM=$2
+SBX="/local-ssd/lsb/${TAG}"
+SRC=$(echo ${CWD}${ITM} | sed -e 's|//|/|')
+DST=$(echo ${SRC} | sed -e "s|/.*/matlab/\(.*\)|${SBX}/matlab/\1|")
+
+echo "ITM= ${ITM}"
+echo "SRC= ${SRC}"
+echo "DST= ${DST}"
+
+[ -z "${SBX}" -o -z "${ITM}" ] && echo 'usage: sbdupe <target-local-sandbox-tag> <item-path>' && exit 1
+[ ! -e ${SBX}                ] && echo "destination sandbox \"${SBX}\" does not exist"        && exit 1
+[ ! -d ${SBX}                ] && echo "destination sandbox \"${SBX}\" is not a directory"    && exit 1
+[ ! -e ${ITM}                ] && echo "source \"${ITM}\" does not exist"                     && exit 1
+[ ! -f ${ITM}                ] && echo "source \"${ITM}\" is not a file"                      && exit 1
+
+set -x
+cd ${SBX}
+if [ -e ${DST} ] ; then
+    p4 edit ${DST}
+    cp ${SRC} ${DST}
+else
+    cp ${SRC} ${DST}
+    p4 add ${DST}
+fi
+cd ${CWD}
+
