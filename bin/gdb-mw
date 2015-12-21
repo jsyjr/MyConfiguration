@@ -1,0 +1,10 @@
+#!/bin/csh
+
+# setmwe pwd
+/hub/bat/common/bin/setmwe.pl csh /tmp/setmwetmp.$$ pwd && source /tmp/setmwetmp.$$ ; /bin/rm -f /tmp/setmwetmp.$$*
+# sed -i.bak -s '/setenv MWESAVE.*/d' /tmp/setmwetmp.$$
+# source /tmp/setmwetmp.$$
+# /bin/rm -f /tmp/setmwetmp.$$*
+
+cd ${MW_ANCHOR}
+/mathworks/hub/share/sbtools/external-apps/gdb/gdb-7.10/install/deb7-64/bin/gdb -i=mi $argv

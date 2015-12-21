@@ -21,6 +21,7 @@ set breakpoint pending on
 set non-stop off
 set print object on
 set print static-members off
+# handle SIGALRM nostop noprint
 
 define pp
 p cg_pp_see_it($arg0)

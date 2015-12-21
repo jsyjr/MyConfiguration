@@ -2775,6 +2775,58 @@ Works with: arglist-cont, arglist-cont-nonempty."
                                           'matlab-deletep-after-save-hook
                                           t t))) ;; Local hook in matlab-mode
 
+  (require 'gdb-mi)
+
+;; Debugging via 'sb -Dgdb' or 'sb -Ddbx', etc.:
+(defun MY_/mathworks-sb-debug (&optional many-windows debug-ut)
+  "Run 'sb -debug' in specified directory, optionally with many-windows in
+emacs23 and later. The many-windows mode is known to be slow/buggy when 
+used on MATLAB. Specify sb-default-args use different default arguments 
+to sb"
+  (interactive)
+  (let ((run-with-many-windows
+         (and many-windows
+              (not (member (framep (selected-frame)) '(nil t pc))))
+         )
+        )
+    (if (equal (get-buffer "*gud*") nil)
+        ;; Launch gdb
+	(let* ((start-dir (mathworks-get-sb-dir
+                           (if debug-ut
+                               (concat "Unit test directory to debug: " )
+                             "Run sb -debug in dir: ")))
+               (default-args (if debug-ut
+                                 (concat "-debug-ut " start-dir)
+                               "-debug"))
+               (sb-args (read-string "Run sb with args: " 
+                                     default-args nil default-args))
+               (sb-cmd (concat (mathworks-path-to-sbtool-program "sb")
+                               " " (if run-with-many-windows "-i=mi " "") sb-args))
+               )
+
+          ;; Ask for directory to run in.
+	  (switch-to-buffer "*gud*")
+	  (cd start-dir)
+          (setq gud-chdir-before-run nil) ;; use current directory, start-dir
+
+          (if run-with-many-windows  ;; many-windows has a 'studio' interface
+              (progn
+                (require 'gdb-mi)
+                ;; (w160)
+                (gdb-many-windows 1)
+                (gdb sb-cmd)
+                )
+            ;; else run in classic mode
+            (gud-gdb sb-cmd)
+            )
+          )
+      (progn
+        (switch-to-buffer "*gud*")
+        (message "*gud* buffer already exists"))
+      )
+    )
+  )
+
   ;; Mathworks added undesired lambdas as hook functions.
   ;; HACK: assume that there were no pre-existing hook functions.
   (setq gud-gdb-mode-hook nil)
@@ -2814,7 +2866,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
  '(gdb-many-windows t)
  '(gdb-stack-buffer-addresses t)
  '(gud-gdb-command-name "gdb -i=mi")
- '(gud-tooltip-mode t)
  )
 
 ;; Mathworks trashes the program to run when requesting gdb
@@ -2839,72 +2890,72 @@ Works with: arglist-cont, arglist-cont-nonempty."
     (gud-stepi 1)(gud-call "x/i $pc"))
 
 
-  ;; From http://markshroyer.com/2012/11/emacs-gdb-keyboard-navigation/
-
-  ;; For the consistency of gdb-select-window's calling convention...
-  (defun gdb-comint-buffer-name ()
-    (buffer-name gud-comint-buffer))
-  (defun gdb-source-buffer-name ()
-    (buffer-name (window-buffer gdb-source-window)))
-
-  (defun gdb-select-window (header)
-    "Switch directly to the specified GDB window.
-Moves the cursor to the requested window, switching between
-`gdb-many-windows' \"tabs\" if necessary in order to get there.
-
-Recognized window header names are: 'comint, 'locals, 'registers,
-'stack, 'breakpoints, 'threads, and 'source."
-
-    (interactive "Sheader: ")
-
-    (let* ((header-alternate (case header
-                               ('locals      'registers)
-                               ('registers   'locals)
-                               ('breakpoints 'threads)
-                               ('threads     'breakpoints)))
-           (buffer (intern (concat "gdb-" (symbol-name header) "-buffer")))
-           (buffer-names (mapcar (lambda (header)
-                                   (funcall (intern (concat "gdb-"
-                                                            (symbol-name header)
-                                                            "-buffer-name"))))
-                                 (if (null header-alternate)
-                                     (list header)
-                                   (list header header-alternate))))
-           (window (if (eql header 'source)
-                       gdb-source-window
-                     (or (get-buffer-window (car buffer-names))
-                         (when (not (null (cadr buffer-names)))
-                           (get-buffer-window (cadr buffer-names)))))))
-
-      (when (not (null window))
-        (let ((was-dedicated (window-dedicated-p window)))
-          (select-window window)
-          (set-window-dedicated-p window nil)
-          (when (member header '(locals registers breakpoints threads))
-            (switch-to-buffer (gdb-get-buffer-create buffer))
-            (setq header-line-format (gdb-set-header buffer)))
-          (set-window-dedicated-p window was-dedicated))
-        t)))
-
-  ;; Use global keybindings for the window selection functions so that they
-  ;; work from the source window too...
-  (mapcar (lambda (setting)
-            (lexical-let ((key    (car setting))
-                          (header (cdr setting)))
-              (global-set-key (concat "\M-g" key) #'(lambda ()
-                                                          (interactive)
-                                                          (gdb-select-window header)))))
-          '(("A" . disassembly)         ; assembly language
-            ("B" . breakpoints)
-            ("D" . disassembly)
-            ("F" . stack)
-            ("G" . comint)
-            ("I" . disassembly)         ; instructions
-            ("L" . locals)
-            ("O" . input/output)
-            ("R" . registers)
-            ("S" . source)
-            ("T" . threads)))
+;;;;   ;; From http://markshroyer.com/2012/11/emacs-gdb-keyboard-navigation/
+;;;; 
+;;;;   ;; For the consistency of gdb-select-window's calling convention...
+;;;;   (defun gdb-comint-buffer-name ()
+;;;;     (buffer-name gud-comint-buffer))
+;;;;   (defun gdb-source-buffer-name ()
+;;;;     (buffer-name (window-buffer gdb-source-window)))
+;;;; 
+;;;;   (defun gdb-select-window (header)
+;;;;     "Switch directly to the specified GDB window.
+;;;; Moves the cursor to the requested window, switching between
+;;;; `gdb-many-windows' \"tabs\" if necessary in order to get there.
+;;;; 
+;;;; Recognized window header names are: 'comint, 'locals, 'registers,
+;;;; 'stack, 'breakpoints, 'threads, and 'source."
+;;;; 
+;;;;     (interactive "Sheader: ")
+;;;; 
+;;;;     (let* ((header-alternate (case header
+;;;;                                ('locals      'registers)
+;;;;                                ('registers   'locals)
+;;;;                                ('breakpoints 'threads)
+;;;;                                ('threads     'breakpoints)))
+;;;;            (buffer (intern (concat "gdb-" (symbol-name header) "-buffer")))
+;;;;            (buffer-names (mapcar (lambda (header)
+;;;;                                    (funcall (intern (concat "gdb-"
+;;;;                                                             (symbol-name header)
+;;;;                                                             "-buffer-name"))))
+;;;;                                  (if (null header-alternate)
+;;;;                                      (list header)
+;;;;                                    (list header header-alternate))))
+;;;;            (window (if (eql header 'source)
+;;;;                        gdb-source-window
+;;;;                      (or (get-buffer-window (car buffer-names))
+;;;;                          (when (not (null (cadr buffer-names)))
+;;;;                            (get-buffer-window (cadr buffer-names)))))))
+;;;; 
+;;;;       (when (not (null window))
+;;;;         (let ((was-dedicated (window-dedicated-p window)))
+;;;;           (select-window window)
+;;;;           (set-window-dedicated-p window nil)
+;;;;           (when (member header '(locals registers breakpoints threads))
+;;;;             (switch-to-buffer (gdb-get-buffer-create buffer))
+;;;;             (setq header-line-format (gdb-set-header buffer)))
+;;;;           (set-window-dedicated-p window was-dedicated))
+;;;;         t)))
+;;;; 
+;;;;   ;; Use global keybindings for the window selection functions so that they
+;;;;   ;; work from the source window too...
+;;;;   (mapcar (lambda (setting)
+;;;;             (lexical-let ((key    (car setting))
+;;;;                           (header (cdr setting)))
+;;;;               (global-set-key (concat "\M-g" key) #'(lambda ()
+;;;;                                                           (interactive)
+;;;;                                                           (gdb-select-window header)))))
+;;;;           '(("A" . disassembly)         ; assembly language
+;;;;             ("B" . breakpoints)
+;;;;             ("D" . disassembly)
+;;;;             ("F" . stack)
+;;;;             ("G" . comint)
+;;;;             ("I" . disassembly)         ; instructions
+;;;;             ("L" . locals)
+;;;;             ("O" . input/output)
+;;;;             ("R" . registers)
+;;;;             ("S" . source)
+;;;;             ("T" . threads)))
 
 ;; Make sure the file named TRUE-FILE is in a buffer that appears on the screen
 ;; and that its line LINE is visible.
@@ -2913,58 +2964,58 @@ Recognized window header names are: 'comint, 'locals, 'registers,
 ;; region-restriction if that's possible.  We use an explicit display-buffer
 ;; to get around the fact that this is called inside a save-excursion.
 
-(defadvice gud-display-line (around my/gud-display-line activate)
-  (let* ((last-nonmenu-event t)	 ; Prevent use of dialog box for questions.
-	 (buffer
-	  (with-current-buffer gud-comint-buffer
-	    (gud-find-file true-file)))
-         ;;================
-	 ;; (window (and buffer
-	 ;;              (or (get-buffer-window buffer)
-	 ;;        	  (display-buffer buffer))))
-         ;;================
-         (window (and buffer
-                      (or (if (eq gud-minor-mode 'gdbmi)
-                              (unless (gdb-display-source-buffer buffer)
-                                (gdb-display-buffer buffer nil 'visible)))
-                          (get-buffer-window buffer)
-                          (display-buffer buffer))))
-         ;;================
-	 (pos))
-    (when buffer
-      (with-current-buffer buffer
-	(unless (or (verify-visited-file-modtime buffer) gud-keep-buffer)
-	  (if (yes-or-no-p
-	       (format "File %s changed on disk.  Reread from disk? "
-		       (buffer-name)))
-	      (revert-buffer t t)
-	    (setq gud-keep-buffer t)))
-	(save-restriction
-	  (widen)
-	  (goto-char (point-min))
-	  (forward-line (1- line))
-	  (setq pos (point))
-	  (or gud-overlay-arrow-position
-	      (setq gud-overlay-arrow-position (make-marker)))
-	  (set-marker gud-overlay-arrow-position (point) (current-buffer))
-	  ;; If they turned on hl-line, move the hl-line highlight to
-	  ;; the arrow's line.
-	  (when (featurep 'hl-line)
-	    (cond
-	     (global-hl-line-mode
-	      (global-hl-line-highlight))
-	     ((and hl-line-mode hl-line-sticky-flag)
-	      (hl-line-highlight)))))
-	(cond ((or (< pos (point-min)) (> pos (point-max)))
-	       (widen)
-	       (goto-char pos))))
-      (when window
-	(set-window-point window gud-overlay-arrow-position)
-	(if (eq gud-minor-mode 'gdbmi)
-	    (setq gdb-source-window window))))))
+;; (defadvice gud-display-line (around my/gud-display-line activate)
+;;   (let* ((last-nonmenu-event t)	 ; Prevent use of dialog box for questions.
+;; 	 (buffer
+;; 	  (with-current-buffer gud-comint-buffer
+;; 	    (gud-find-file true-file)))
+;;          ;;================
+;; 	 ;; (window (and buffer
+;; 	 ;;              (or (get-buffer-window buffer)
+;; 	 ;;        	  (display-buffer buffer))))
+;;          ;;================
+;;          (window (and buffer
+;;                       (or (if (eq gud-minor-mode 'gdbmi)
+;;                               (unless (gdb-display-source-buffer buffer)
+;;                                 (gdb-display-buffer buffer nil 'visible)))
+;;                           (get-buffer-window buffer)
+;;                           (display-buffer buffer))))
+;;          ;;================
+;; 	 (pos))
+;;     (when buffer
+;;       (with-current-buffer buffer
+;; 	(unless (or (verify-visited-file-modtime buffer) gud-keep-buffer)
+;; 	  (if (yes-or-no-p
+;; 	       (format "File %s changed on disk.  Reread from disk? "
+;; 		       (buffer-name)))
+;; 	      (revert-buffer t t)
+;; 	    (setq gud-keep-buffer t)))
+;; 	(save-restriction
+;; 	  (widen)
+;; 	  (goto-char (point-min))
+;; 	  (forward-line (1- line))
+;; 	  (setq pos (point))
+;; 	  (or gud-overlay-arrow-position
+;; 	      (setq gud-overlay-arrow-position (make-marker)))
+;; 	  (set-marker gud-overlay-arrow-position (point) (current-buffer))
+;; 	  ;; If they turned on hl-line, move the hl-line highlight to
+;; 	  ;; the arrow's line.
+;; 	  (when (featurep 'hl-line)
+;; 	    (cond
+;; 	     (global-hl-line-mode
+;; 	      (global-hl-line-highlight))
+;; 	     ((and hl-line-mode hl-line-sticky-flag)
+;; 	      (hl-line-highlight)))))
+;; 	(cond ((or (< pos (point-min)) (> pos (point-max)))
+;; 	       (widen)
+;; 	       (goto-char pos))))
+;;       (when window
+;; 	(set-window-point window gud-overlay-arrow-position)
+;; 	(if (eq gud-minor-mode 'gdbmi)
+;; 	    (setq gdb-source-window window))))))
 
-(defadvice gud-setup-windows (after my/dedicate-gud-comint-buffer activate)
-  (set-window-dedicated-p (selected-window) t))
+;; (defadvice gud-setup-windows (after my/dedicate-gud-comint-buffer activate)
+;;   (set-window-dedicated-p (selected-window) t))
 
 ))
 

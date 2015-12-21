@@ -95,7 +95,6 @@
  '(grep-template "grep <X> <C> -nH -e <R> <F>")
  '(grep-use-null-device nil)
  '(gud-gdb-command-name "gdb -i=mi")
- '(gud-tooltip-mode t)
  '(helm-command-prefix-key "C-c h")
  '(helm-mode t)
  '(helm-move-to-line-cycle-in-source t)
