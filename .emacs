@@ -2571,8 +2571,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
          (objc-method-intro . [0])
          (statement . 0)
          (statement-block-intro . +)
-         (statement-case-intro . +)
-         (statement-case-open . +)
+         (statement-case-intro . *)
+         (statement-case-open . *)
          (statement-cont . 7)
          (stream-op . c-lineup-streamop)
          (string . -1000)
@@ -2598,6 +2598,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
   (setq tab-width 8)
   (setq comment-column 40)
+
+  (c-set-style (if (locate-dominating-file "." "matlab") "mathworks" "jsy"))
 
   ;; Doxygen end of line comments are introduced by "///<"
   (add-to-list 'c-comment-prefix-regexp '(other . "//+<?\\|\\**"))
