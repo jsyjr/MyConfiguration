@@ -2606,7 +2606,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
   (c-setup-paragraph-variables)
   (my/turn-on-filling)
-  (setq fill-column 75)
+  (setq fill-column 78)
   (c-setup-filladapt)  ; not really setup, more like post-configure
 
   (c-toggle-auto-hungry-state -1)
@@ -2680,6 +2680,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; C-c m =         mathworks-diff
   ;; C-c m @         mathworks-ediff-subsystem-version
   ;; C-c m B         mathworks-sbbackup
+  ;; C-c m D         mathworks-sb-debug-ut-many-windows
   ;; C-c m E         mathworks-sbedits
   ;; C-c m F         mathworks-sblocate-gendb
   ;; C-c m G         mathworks-gen-gtags
@@ -2688,6 +2689,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; C-c m Q         mathworks-local-edit
   ;; C-c m R         mathworks-sb-matlab
   ;; C-c m S         mathworks-mstatus
+  ;; C-c m T         mathworks-sb-debug-ut-many-windows
   ;; C-c m U         mathworks-revert-to-version
   ;; C-c m V         mathworks-submit-visit-submit-file
   ;; C-c m ^         mathworks-ediff-latest-pass
@@ -2750,6 +2752,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; C-x v u         mathworks-vc-revert-buffer
   ;; C-x v v         mathworks-vc-next-action
   ;; C-x v ~         mathworks-vc-version-other-window
+  (define-key mathworks-prefix-map "D" 'mathworks-sb-debug-many-windows)
+  (define-key mathworks-prefix-map "T" 'mathworks-sb-debug-ut-many-windows)
 
   (setq locate-dominating-stop-dir-regexp
 	(concat
@@ -2868,7 +2872,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (require 'gdb-mi)
 
 ;; Debugging via 'sb -Dgdb' or 'sb -Ddbx', etc.:
-(defun MY_/mathworks-sb-debug (&optional many-windows debug-ut)
+(defun MY/mathworks-sb-debug (&optional many-windows debug-ut)
   "Run 'sb -debug' in specified directory, optionally with many-windows in
 emacs23 and later. The many-windows mode is known to be slow/buggy when 
 used on MATLAB. Specify sb-default-args use different default arguments 
@@ -2890,8 +2894,8 @@ to sb"
                                "-debug"))
                (sb-args (read-string "Run sb with args: " 
                                      default-args nil default-args))
-               (sb-cmd (concat (mathworks-path-to-sbtool-program "sb")
-                               " " (if run-with-many-windows "-i=mi " "") sb-args))
+               (sb-cmd (concat (mathworks-path-to-sbtool-program "sb ")
+                               " -gdb-switches -i=mi -debug-exe /home/jyates/bin/gdb-strip-fullname " sb-args))
                )
 
           ;; Ask for directory to run in.
@@ -3132,11 +3136,6 @@ to sb"
 
 ;;}}}
 ;;{{{  PHW
-
-;; When pulling from github.com/phw-home/phw the file phw-eshell.el
-;; contains a bug.  Near the bottom of the file the customizable
-;; phw-activate-hook variable gets set via add-hook.  That defeats all
-;; subsequent attempts to customize that hook.
 
 ;; (add-to-list 'el-get-sources
 ;;              '(:name phw
