@@ -372,7 +372,7 @@ sudo apt-get install \
   libxkbcommon-dev \
   libxkbcommon-x11-dev \
 
-  # Download and build awesome window manager
+# Download and build awesome window manager
 #
 sudo apt-get install \
   asciidoc \
