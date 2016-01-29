@@ -1,9 +1,22 @@
 #!/bin/dash
 
-( cd ~/repos/awesome ; ~/bin/rebuild-awesome )
-( cd ~/repos/cc-mode ; ~/bin/rebuild-cc-mode )
-( cd ~/repos/ctags   ; ~/bin/rebuild-ctags   )
-( cd ~/repos/doxygen ; ~/bin/rebuild-doxygen )
-( cd ~/repos/emacs   ; ~/bin/rebuild-emacs   )
-( cd ~/repos/phw     ; ~/bin/rebuild-phw     )
-( cd ~/repos/st      ; ~/bin/rebuild-st      )
+rebuild()
+{
+    ( echo
+      echo
+      echo
+      echo '==============================================================================='
+      echo  Rebuild: $1
+      echo '==============================================================================='
+      echo
+      cd ~/repos/$1
+      ~/bin/rebuild-$1 )
+}
+
+rebuild awesome
+rebuild cc-mode
+rebuild ctags
+rebuild doxygen
+rebuild emacs
+rebuild phw
+rebuild st
