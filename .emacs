@@ -2680,7 +2680,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; C-c m =         mathworks-diff
   ;; C-c m @         mathworks-ediff-subsystem-version
   ;; C-c m B         mathworks-sbbackup
-  ;; C-c m D         mathworks-sb-debug-ut-many-windows
+  ;; C-c m D         mathworks-sb-debug-many-windows
   ;; C-c m E         mathworks-sbedits
   ;; C-c m F         mathworks-sblocate-gendb
   ;; C-c m G         mathworks-gen-gtags
