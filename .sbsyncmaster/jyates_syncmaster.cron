@@ -1,8 +1,0 @@
-# CCACHE_DIR=/ccc
-# CCACHE_TEMPDIR=/tmp
-# CCACHE_LOGFILE=/tmp/ccache.log
-# CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
-USE_CCACHE=1
-
-# Run every day at 3:05am
-5 3 * * * . /hub/share/sbtools/bash_setup.bash && sbsyncmaster -C /local-ssd/lsb -log-dir /local-ssd/lsb/logs -r bstateflow -cfg /local-ssd/lsb/jyates_syncmaster_debug.cfg
