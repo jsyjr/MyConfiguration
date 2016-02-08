@@ -8,8 +8,8 @@ SBNAME=$1
 [ ! -e /local-ssd/lsb/${SBNAME} ] && echo "sandbox \"/local-ssd/lsb/${SBNAME}\" does not exists" && exit 1
 
 # Remove the network mirror if it exists
-NETSB=$(sbnet)
-[ -e ${NETSB} ] && sbrmtree ${NETSB}
+NETSB=$(sbnet ${SBNAME})
+[ ! -z ${NETSB} ] && [ -e ${NETSB} ] && sbrmtree ${NETSB}
 
 # Drop the associated git repository
 chmod a+w /local-ssd/lsb/git

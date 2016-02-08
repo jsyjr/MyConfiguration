@@ -6,8 +6,8 @@ SBNAME=$1
 [ -z "${SBNAME}" ] && echo 'usage: sbnet <sandbox-name>' && exit 1
 [ ! -e /local-ssd/lsb/${SBNAME} ] && echo "sandbox \"/local-ssd/lsb/${SBNAME}\" does not exists" && exit 1
 
-SYNC=$(cd /local-ssd/lsb/${SBNAME} && sbver | grep SyncFromBackingStore)
 USER=$(whoami)
+SYNC=$(cd /local-ssd/lsb/${SBNAME} && sbver | grep SyncFromBackingStore | grep ${USER})
 NETSB=$(echo ${SYNC} | sed -e "s!SyncFromBackingStore: /\(/mathworks/devel/sbs/[0-9]*/\)\(B[^.]*\.j[^.]*\)\.sb!\1${USER}.\2.${SBNAME}!")
 
 echo ${NETSB}
