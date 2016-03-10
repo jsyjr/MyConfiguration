@@ -692,7 +692,7 @@ mouse-3: Remove current window from display"))))
 ;;   http://permalink.gmane.org/gmane.emacs.devel/122038
 ;;
 ;; Further learnings from Lennart Borgman's sml-modeline.el
-;;   http://bazaar.launchpad.net/~nxhtml/nxhtml/main/annotate/head%3A/util/mode-line-pos.el
+;;   https://www.emacswiki.org/emacs/sml-modeline.el
 
 (defvar buffer-max-column-visited 1
   "Accumulate max column visited to prevent mode-line jitter.")
