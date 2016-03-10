@@ -2755,6 +2755,21 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (define-key mathworks-prefix-map "D" 'mathworks-sb-debug-many-windows)
   (define-key mathworks-prefix-map "T" 'mathworks-sb-debug-ut-many-windows)
 
+  (defun my/clean-up-gud-buffers (orig-fun &rest args)
+    (dolist (buf (buffer-list))
+      (let ((name (buffer-name buf)))
+        (when (>= (length name) 5)
+          (let ((prefix (substring name 0 5)))
+            (if (or (string= prefix "*gud*")
+                    (string= prefix "*gud-"))
+                (kill-buffer buf))))))
+    (apply orig-fun args))
+
+  (advice-add 'mathworks-sb-debug                 :around #'my/clean-up-gud-buffers)
+  (advice-add 'mathworks-sb-debug-many-windows    :around #'my/clean-up-gud-buffers)
+  (advice-add 'mathworks-sb-debug-ut              :around #'my/clean-up-gud-buffers)
+  (advice-add 'mathworks-sb-debug-ut-many-windows :around #'my/clean-up-gud-buffers)
+
   (setq locate-dominating-stop-dir-regexp
 	(concat
 	 "\\`" ;; start of string
