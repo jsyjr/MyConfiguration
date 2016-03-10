@@ -2949,8 +2949,12 @@ to sb"
 ;;}}}
 ;;{{{  AT&T Graphviz mode
 
-(when (locate-library "graphviz-dot-mode")
-  (add-to-list 'auto-mode-alist '("\\.vis\\'" . graphviz-dot-mode)))
+(add-to-list 'el-get-sources
+             '(:name graphviz-dot-mode
+                     :description "Edit AT&T's dot language."
+                     :type github
+                     :pkgname "ppareit/graphviz-dot-mode"))
+(my/el-get-install "graphviz-dot-mode")
 
 ;;}}}
 ;;{{{  GDB support
