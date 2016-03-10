@@ -2943,8 +2943,29 @@ to sb"
 ;;}}}
 ;;{{{  Wiki mode
 
-(add-to-list 'auto-mode-alist '("\\.wiki\\'" . simple-wiki-mode) t)
-(add-to-list 'auto-mode-alist '("\\.w3mtmp\\'" . simple-wiki-mode) t)
+(add-to-list 'el-get-sources
+             '(:name mediawiki
+                     :description "Edit mediawiki sites from Emacs."
+                     :type github
+                     :pkgname "hexmode/mediawiki-el"))
+(my/el-get-install "mediawiki")
+
+
+(autoload 'mediawiki-open
+  "Open a wiki page specified by NAME from the mediawiki engine.
+
+\(fn NAME)" t)
+
+(my/custom-set-variables
+ '(mediawiki-pop-buffer-hook nil)
+ '(mediawiki-site-alist
+ '(("Wikipedia" "http://en.wikipedia.org/w/" "username" "password" "" "Main Page")
+   ("Mathworks CGIR" "http://inside.mathworks.com/wiki/" "jyates" "" "" "Category:CGIR")))
+ '(mediawiki-site-default "Mathworks CGIR")
+ )
+
+;; (add-to-list 'auto-mode-alist '("\\.wiki\\'" . simple-wiki-mode) t)
+;; (add-to-list 'auto-mode-alist '("\\.w3mtmp\\'" . simple-wiki-mode) t)
 
 ;;}}}
 ;;{{{  AT&T Graphviz mode
@@ -3513,6 +3534,7 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "M-g m"         my/magit-status)
 (keydef "M-g r"         jump-to-register)
 (keydef "M-g s"         my/elisp-find-symbol-definition)
+(keydef "M-g w"         mediawiki-open)
 
 (keydef "M-["           align)
 

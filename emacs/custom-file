@@ -118,6 +118,12 @@
  '(magit-repository-directories (quote ("~/repos/awesome" "~/repos/doxygen" "~/repos/st")))
  '(magit-repository-directories-depth 0)
  '(magit-save-repository-buffers nil)
+ '(mediawiki-pop-buffer-hook nil)
+ '(mediawiki-site-alist
+   (quote
+    (("Wikipedia" "http://en.wikipedia.org/w/" "username" "password" "" "Main Page")
+     ("Mathworks CGIR" "http://inside.mathworks.com/wiki/" "jyates" "" "" "Category:CGIR"))))
+ '(mediawiki-site-default "Mathworks CGIR")
  '(message-log-max 10000)
  '(minibuffer-frame-alist
    (quote
