@@ -3008,21 +3008,58 @@ to sb"
 
 (defvar gdb-source-window nil)
 
+  (defun my/gud-eob ()
+    "Select the \"*gud-*\" buffer and jump to EOB."
+    (pop-to-buffer "*gud-*")
+    (goto-char (point-max)))
+
+(defmacro my/gud-def (func cmd select &optional doc)
+  "Define FUNC as sending CMD. See gud.el's gud-def for more details."
+  `(defalias ',func (lambda (arg)
+                      ,@(if doc (list doc))
+                      (interactive "p")
+                      (when (not gud-running)
+                        ,(if (zerop select)
+                             `(display-buffer "*gud-*")
+                           `(my/gud-eob))
+                        ,(if (stringp cmd)
+                             `(gud-call ,cmd arg)
+                           cmd)))))
+
+
+  (my/gud-def my/gud-break  "break %f:%l"  0 "Set breakpoint at current line.")
+  (my/gud-def my/gud-tbreak "tbreak %f:%l" 0 "Set temporary breakpoint at current line.")
+  (my/gud-def my/gud-remove "clear %f:%l"  0 "Remove breakpoint at current line")
+  (my/gud-def my/gud-step   "step %p"      1 "Step one or more source lines (step into calls).")
+  (my/gud-def my/gud-next   "next %p"      1 "Step one or more source lines (skip over calls).")
+  (my/gud-def my/gud-stepi  (progn (gud-call "stepi %p")
+                                   (gud-call "x/i $pc"))
+                                           1 "Step one or more instructions (step into calls).")
+  (my/gud-def my/gud-nexti  (progn (gud-call "nexti %p")
+                                   (gud-call "x/i $pc"))
+                                           1 "Step one or more instructions (skip over calls).")
+  (my/gud-def my/gud-cont   "cont"         1 "Continue with display.")
+  (my/gud-def my/gud-finish "finish"       1 "Finish executing current function.")
+  (my/gud-def my/gud-jump   (progn (gud-call "tbreak %f:%l")
+                                   (gud-call "jump %f:%l"))
+                                           0 "Set execution address to current line.")
+  (my/gud-def my/gud-up     "up %p"        0 "Up N stack frames (numeric arg).")
+  (my/gud-def my/gud-down   "down %p"      0 "Down N stack frames (numeric arg).")
+  (my/gud-def my/gud-pprint "pp %e"        0 "Evaluate C expression at point.")
+  (my/gud-def my/gud-ppstar "pp* %e"       0 "Evaluate C dereferenced pointer expression at point.")
+  (my/gud-def my/gud-print  "print %e"     0 "Evaluate C expression at point.")
+  (my/gud-def my/gud-pstar  "print* %e"    0 "Evaluate C dereferenced pointer expression at point.")
+  (my/gud-def my/gud-until  "until %f:%l"  0 "Continue to current line.")
+  (my/gud-def my/gud-run    "run"          1 "Run the program.")
+  (my/gud-def my/gud-frame0 "frame 0"      0 "Restore stack frame 0 in source window.")
+  (my/gud-def my/gud-prompt "frame 0"      1 "Select \"*gud-*\" window and move point to end of prompt.")
+
+
+
 (eval-after-load "gud" '(progn
   ;; Assume that the *gud- input window is selected
   (add-hook 'gud-mode-hook
-    (lambda () (set-window-dedicated-p (selected-window) t)))
-
-  (defun my/gud-cont-to-tbreak ()
-    "Run to cursor"
-    (interactive)
-    (gud-tbreak)(gud-cont))
-
-  (defun my/gud-stepi ()
-    "Step one instruction then display the next instruction"
-    (interactive)
-    (gud-stepi 1)(gud-call "x/i $pc"))
-
+    (lambda () (set-window-dedicated-p (selected-window) t))))
 
 ;;;;   ;; From http://markshroyer.com/2012/11/emacs-gdb-keyboard-navigation/
 ;;;; 
@@ -3151,7 +3188,7 @@ to sb"
 ;; (defadvice gud-setup-windows (after my/dedicate-gud-comint-buffer activate)
 ;;   (set-window-dedicated-p (selected-window) t))
 
-))
+)
 
 ;;}}}
 ;;{{{  eshell
@@ -3575,31 +3612,35 @@ use either \\[customize] or the function `phw-mode'." t)
 
 
 ;; Strong similarity to MS Visual Studio's function keys
-(keydef    "<f4>"       next-error)
-(keydef  "C-<f4>"       first-error)
+(keydef   "<f4>"        next-error)
+(keydef "C-<f4>"        first-error)
 
-(eval-after-load "gud" '(progn
-  (keydef   "<f5>"      gud-cont)          ; MS go / continue
-  (keydef "C-<f5>"      my/gud-cont-to-tbreak) ; MS run to cursor
-  (keydef "S-<f5>"      gud-run)           ; restart
-  ))
+(keydef   "<f5>"        my/gud-cont)    ; MS go / continue
+(keydef "C-<f5>"        my/gud-until)   ; MS run to cursor
+(keydef "S-<f5>"        my/gud-run)     ; restart
 
-(keydef   "C-<f7>"      compile)
-(keydef   "S-<f7>"      kill-compilation)
+(keydef   "<f6>"        my/gud-print*)
+(keydef "S-<f6>"        my/gud-pprint*)
 
-(eval-after-load "gud" '(progn
-  (keydef   "<f9>"      gud-step)          ; MS step into
-  (keydef "C-<f9>"      gud-stepi)
-  (keydef "S-<f9>"      gud-down)
+(keydef   "<f7>"        my/gud-prompt)  ; focus GUD prompt
+(keydef "C-<f7>"        compile)
+(keydef "S-<f7>"        kill-compilation)
 
-  (keydef   "<f10>"     gud-next)          ; MS step over
-  (keydef "C-<f10>"     gud-finish)        ; MS step out
-  (keydef "S-<f10>"     gud-up)
+(keydef   "<f8>"        my/gud-print)
+(keydef "C-<f8>"        my/gud-pprint)
+(keydef "S-<f8>"        my/gud-frame0)
 
-  (keydef   "<f11>"     gud-break)
-  (keydef "C-<f11>"     gud-tbreak)
-  (keydef "S-<f11>"     gud-remove)
-  ))
+(keydef   "<f9>"        my/gud-step)    ; MS step into
+(keydef "C-<f9>"        my/gud-stepi)   ; step by instruction
+(keydef "S-<f9>"        my/gud-down)
+
+(keydef   "<f10>"       my/gud-next)    ; MS step over
+(keydef "C-<f10>"       my/gud-finish)  ; MS step out
+(keydef "S-<f10>"       my/gud-up)
+
+(keydef   "<f11>"       my/gud-break)
+(keydef "C-<f11>"       my/gud-tbreak)
+(keydef "S-<f11>"       my/gud-remove)
 
 ;; (keydef "C-."           vtags-find)
 ;; (keydef "<kp-begin>"    vtags-point-to-placeholder)
