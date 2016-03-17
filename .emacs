@@ -3055,6 +3055,34 @@ to sb"
   (my/gud-def my/gud-prompt "frame 0"      1 "Select \"*gud-*\" window and move point to end of prompt.")
 
 
+(defun my/gud-help ()
+  "Pop up a table of GDB key bindings."
+  (interactive)
+  (display-buffer "*gud-*")
+  (let ((gud-win  (get-buffer-window "*gud-*"))
+        (gdb-keys (get-buffer-create "*GDB key bindings*")))
+    (with-current-buffer gdb-keys
+      (setq-local buffer-undo-list t)
+      (read-only-mode -1)
+      (erase-buffer)
+      (insert
+"
+Modi |
+fier | <F5>     <F6>     <F7>     <F8>     <F9>     <F10>    <F11>
+---- | ------   ------   ------   ------   ------   ------   ------
+     | run      print*   goto     print    step     next     set
+     |                   prompt                              break
+     |
+Ctrl | run to   help              print    stepi    finish   temp
+     | cursor                     via pp                     break
+     |
+Shft | rerun    print*            frame    frame    frame    remove
+     |          via pp            zero     down     up       break
+")
+      (set-buffer-modified-p nil)
+      (view-mode 1)
+      (set-window-buffer gud-win gdb-keys)
+      (select-window gud-win t))))
 
 (eval-after-load "gud" '(progn
   ;; Assume that the *gud- input window is selected
@@ -3620,6 +3648,7 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "S-<f5>"        my/gud-run)     ; restart
 
 (keydef   "<f6>"        my/gud-print*)
+(keydef "C-<f6>"        my/gud-help)
 (keydef "S-<f6>"        my/gud-pprint*)
 
 (keydef   "<f7>"        my/gud-prompt)  ; focus GUD prompt
