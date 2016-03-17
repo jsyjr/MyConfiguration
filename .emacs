@@ -3013,14 +3013,14 @@ to sb"
     (pop-to-buffer "*gud-*")
     (goto-char (point-max)))
 
-(defmacro my/gud-def (func cmd select &optional doc)
+(defmacro my/gud-def (func cmd stay-put &optional doc)
   "Define FUNC as sending CMD. See gud.el's gud-def for more details."
   `(defalias ',func (lambda (arg)
                       ,@(if doc (list doc))
                       (interactive "p")
                       (when (not gud-running)
-                        ,(if (zerop select)
-                             `(display-buffer "*gud-*")
+                        ,(if (zerop stay-put)
+                             `(select-window (display-buffer "*gud-*"))
                            `(my/gud-eob))
                         ,(if (stringp cmd)
                              `(gud-call ,cmd arg)
