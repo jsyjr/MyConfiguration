@@ -2651,13 +2651,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (add-hook 'makefile-mode-hook ((lambda () (setq indent-tabs-mode t))))
 
 ;;}}}
-;;{{{  Matlab mode
+;;{{{  Mathworks stuff
 
-(add-to-list 'el-get-sources 'matlab-mode)
-(my/el-get-install "matlab-mode")
-
-;;}}}
-;;{{{  Other Mathworks stuff
 (defun my/local-ssd-workspace-shell (WORKSPACE)
   "Create or switch to a running shell process in WORKSPACE."
   (interactive "BWorkspace: ")
@@ -2815,15 +2810,77 @@ Works with: arglist-cont, arglist-cont-nonempty."
 	 "\\'" ;; end of string
 	 ))
 
-  (defvar skip-sbtools-matlab-mode-setup)
+  (defvar skip-sbtools-matlab-mode-setup t)
   (when (or (not (boundp 'skip-sbtools-matlab-mode-setup))
             (not skip-sbtools-matlab-mode-setup))
+
+    (add-to-list 'el-get-sources 'matlab-mode)
+    (my/el-get-install "matlab-mode")
+
     (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/matlab-emacs" t)
     (autoload 'matlab-mode "matlab" "MATLAB Editing Mode" t)
-    (autoload 'matlab-shell "matlab" "Interactive MATLAB mode." t))
+    (autoload 'matlab-shell "matlab" "Interactive MATLAB mode." t)
 
-  (add-to-list 'auto-mode-alist '("\\.m\\'" . matlab-mode)) ;; \' is end of string
-  (add-to-list 'auto-mode-alist '("\\.m_[^/]+\\'" . matlab-mode))
+    (add-to-list 'auto-mode-alist '("\\.m\\'" . matlab-mode)) ;; \' is end of string
+    (add-to-list 'auto-mode-alist '("\\.m_[^/]+\\'" . matlab-mode))
+
+    (defun my/matlab-mode-hook ()
+      (setq fill-column 80 		; where auto-fill should wrap
+            )
+      (imenu-add-to-menubar "Find") ; xxx what is this for?
+      )
+    (add-hook 'matlab-mode-hook 'my/matlab-mode-hook)
+
+    (defun my/matlab-shell-mode-hook ()
+      '())
+    (add-hook 'matlab-shell-mode-hook 'my/matlab-shell-mode-hook)
+
+    ;; To disable, specify
+    ;;  (setq skip-sbtools-mlint-setup t)
+    ;; prior to loading emacs_setup.el
+    ;;
+    ;; See the /matlab/java/extern/EmacsLink/lisp load path addition above
+    ;; for mlint lisp code.
+    (with-no-warnings
+      (if (or (not (boundp 'skip-sbtools-mlint-setup))
+              (not skip-sbtools-mlint-setup))
+          (progn
+            (message "Configuring auto-mlint")
+            (autoload 'mlint-minor-mode "mlint" nil t)
+            (add-hook 'matlab-mode-hook
+                      (lambda ()
+                        ;; Following are off by default to help customers
+                        ;; which have installed mlint, but didn't install
+                        ;; linemark.el, etc. object libraries.
+                        (setq matlab-show-mlint-warnings t
+                              highlight-cross-function-variables t
+                              mlint-flags '("-all" "-id"))
+                        (mlint-minor-mode 1)))
+            ) ;; progn
+        )
+      )
+
+    ;;
+    ;; Delete file.p if it exists when file.m is saved
+    ;;
+    (defun matlab-deletep-after-save-hook ()
+      "Delete file.p if it exists when file.m is saved"
+      (let* ((fname (buffer-file-name (current-buffer)))
+             (pfile (concat (file-name-sans-extension fname) ".p"))
+             )
+        (when (and (file-exists-p pfile)
+                   (or noninteractive  ;; sbindent
+                       (y-or-n-p (format "Delete %s too? " pfile))))
+          (delete-file pfile)
+          (message "Deleted %s. Remember to run sbgentbxcache!"
+                   (file-name-nondirectory pfile))
+          )))
+
+    (add-hook 'matlab-mode-hook (lambda ()
+                                  (add-hook 'after-save-hook
+                                            'matlab-deletep-after-save-hook
+                                            t t))) ;; Local hook in matlab-mode
+    )
 
   (with-no-warnings
     (setq matlab-shell-command "sb"
@@ -2832,114 +2889,56 @@ Works with: arglist-cont, arglist-cont-nonempty."
           matlab-indent-function-body 'MathWorks-Standard
           ))
 
-  (defun my-matlab-mode-hook ()
-    (setq fill-column 80 		; where auto-fill should wrap
-          )
-    (imenu-add-to-menubar "Find") ; xxx what is this for?
-    )
-  (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
-  (defun my-matlab-shell-mode-hook ()
-    '())
-  (add-hook 'matlab-shell-mode-hook 'my-matlab-shell-mode-hook)
-
-
-  ;; To disable, specify
-  ;;  (setq skip-sbtools-mlint-setup t)
-  ;; prior to loading emacs_setup.el
-  ;;
-  ;; See the /matlab/java/extern/EmacsLink/lisp load path addition above
-  ;; for mlint lisp code.
-  (with-no-warnings
-    (if (or (not (boundp 'skip-sbtools-mlint-setup))
-            (not skip-sbtools-mlint-setup))
-        (progn
-          (message "Configuring auto-mlint")
-          (autoload 'mlint-minor-mode "mlint" nil t)
-          (add-hook 'matlab-mode-hook
-                    (lambda ()
-                      ;; Following are off by default to help customers
-                      ;; which have installed mlint, but didn't install
-                      ;; linemark.el, etc. object libraries.
-                      (setq matlab-show-mlint-warnings t
-                            highlight-cross-function-variables t
-                            mlint-flags '("-all" "-id"))
-                      (mlint-minor-mode 1)))
-          ) ;; progn
-      )
-    )
-
-  ;;
-  ;; Delete file.p if it exists when file.m is saved
-  ;;
-  (defun matlab-deletep-after-save-hook ()
-    "Delete file.p if it exists when file.m is saved"
-    (let* ((fname (buffer-file-name (current-buffer)))
-           (pfile (concat (file-name-sans-extension fname) ".p"))
-           )
-      (when (and (file-exists-p pfile)
-                 (or noninteractive  ;; sbindent
-                     (y-or-n-p (format "Delete %s too? " pfile))))
-        (delete-file pfile)
-        (message "Deleted %s. Remember to run sbgentbxcache!"
-                 (file-name-nondirectory pfile))
-        )))
-
-  (add-hook 'matlab-mode-hook (lambda ()
-                                (add-hook 'after-save-hook
-                                          'matlab-deletep-after-save-hook
-                                          t t))) ;; Local hook in matlab-mode
-
-  (require 'gdb-mi)
 
 ;; Debugging via 'sb -Dgdb' or 'sb -Ddbx', etc.:
-(defun MY/mathworks-sb-debug (&optional many-windows debug-ut)
-  "Run 'sb -debug' in specified directory, optionally with many-windows in
-emacs23 and later. The many-windows mode is known to be slow/buggy when 
-used on MATLAB. Specify sb-default-args use different default arguments 
-to sb"
-  (interactive)
-  (let ((run-with-many-windows
-         (and many-windows
-              (not (member (framep (selected-frame)) '(nil t pc))))
-         )
-        )
-    (if (equal (get-buffer "*gud*") nil)
-        ;; Launch gdb
-	(let* ((start-dir (mathworks-get-sb-dir
-                           (if debug-ut
-                               (concat "Unit test directory to debug: " )
-                             "Run sb -debug in dir: ")))
-               (default-args (if debug-ut
-                                 (concat "-debug-ut " start-dir)
-                               "-debug"))
-               (sb-args (read-string "Run sb with args: " 
-                                     default-args nil default-args))
-               (sb-cmd (concat (mathworks-path-to-sbtool-program "sb ")
-                               " -gdb-switches -i=mi -debug-exe /home/jyates/bin/gdb-strip-fullname " sb-args))
-               )
+;; (defun MY/mathworks-sb-debug (&optional many-windows debug-ut)
+;;   "Run 'sb -debug' in specified directory, optionally with many-windows in
+;; emacs23 and later. The many-windows mode is known to be slow/buggy when 
+;; used on MATLAB. Specify sb-default-args use different default arguments 
+;; to sb"
+;;   (interactive)
+;;   (let ((run-with-many-windows
+;;          (and many-windows
+;;               (not (member (framep (selected-frame)) '(nil t pc))))
+;;          )
+;;         )
+;;     (if (equal (get-buffer "*gud*") nil)
+;;         ;; Launch gdb
+;; 	(let* ((start-dir (mathworks-get-sb-dir
+;;                            (if debug-ut
+;;                                (concat "Unit test directory to debug: " )
+;;                              "Run sb -debug in dir: ")))
+;;                (default-args (if debug-ut
+;;                                  (concat "-debug-ut " start-dir)
+;;                                "-debug"))
+;;                (sb-args (read-string "Run sb with args: " 
+;;                                      default-args nil default-args))
+;;                (sb-cmd (concat (mathworks-path-to-sbtool-program "sb ")
+;;                                " -gdb-switches -i=mi -debug-exe /home/jyates/bin/gdb-strip-fullname " sb-args))
+;;                )
 
-          ;; Ask for directory to run in.
-	  (switch-to-buffer "*gud*")
-	  (cd start-dir)
-          (setq gud-chdir-before-run nil) ;; use current directory, start-dir
+;;           ;; Ask for directory to run in.
+;; 	  (switch-to-buffer "*gud*")
+;; 	  (cd start-dir)
+;;           (setq gud-chdir-before-run nil) ;; use current directory, start-dir
 
-          (if run-with-many-windows  ;; many-windows has a 'studio' interface
-              (progn
-                (require 'gdb-mi)
-                ;; (w160)
-                (gdb-many-windows 1)
-                (gdb sb-cmd)
-                )
-            ;; else run in classic mode
-            (gud-gdb sb-cmd)
-            )
-          )
-      (progn
-        (switch-to-buffer "*gud*")
-        (message "*gud* buffer already exists"))
-      )
-    )
-  )
+;;           (if run-with-many-windows  ;; many-windows has a 'studio' interface
+;;               (progn
+;;                 (require 'gdb-mi)
+;;                 ;; (w160)
+;;                 (gdb-many-windows 1)
+;;                 (gdb sb-cmd)
+;;                 )
+;;             ;; else run in classic mode
+;;             (gud-gdb sb-cmd)
+;;             )
+;;           )
+;;       (progn
+;;         (switch-to-buffer "*gud*")
+;;         (message "*gud* buffer already exists"))
+;;       )
+;;     )
+;;   )
 
   ;; Mathworks added undesired lambdas as hook functions.
   ;; HACK: assume that there were no pre-existing hook functions.
@@ -3000,6 +2999,8 @@ to sb"
 ;;}}}
 ;;{{{  GDB support
 
+(require 'gdb-mi)
+
 (my/custom-set-variables
  '(gdb-create-source-file-list nil)
  '(gdb-many-windows t)
@@ -3013,11 +3014,6 @@ to sb"
 
 (defvar gdb-source-window nil)
 
-  (defun my/gud-eob ()
-    "Select the \"*gud-*\" buffer and jump to EOB."
-    (pop-to-buffer "*gud-*")
-    (goto-char (point-max)))
-
 (defmacro my/gud-def (func cmd stay-put &optional doc)
   "Define FUNC as sending CMD. See gud.el's gud-def for more details."
   `(defalias ',func (lambda (arg)
@@ -3025,7 +3021,7 @@ to sb"
                       (interactive "p")
                       (when (not gud-running)
                         ,(if (zerop stay-put)
-                             `(select-window (display-buffer "*gud-*"))
+                             `(display-buffer (my/gud-interaction-buffer))
                            `(my/gud-eob))
                         ,(if (stringp cmd)
                              `(gud-call ,cmd arg)
@@ -3043,7 +3039,7 @@ to sb"
   (my/gud-def my/gud-nexti  (progn (gud-call "nexti %p")
                                    (gud-call "x/i $pc"))
                                            1 "Step one or more instructions (skip over calls).")
-  (my/gud-def my/gud-cont   (gud-cont)     1 "Continue with display.")
+  (my/gud-def my/gud-cont   (gud-cont 1)   1 "Continue with display.")
   (my/gud-def my/gud-finish "finish"       1 "Finish executing current function.")
   (my/gud-def my/gud-jump   (progn (gud-call "tbreak %f:%l")
                                    (gud-call "jump %f:%l"))
@@ -3056,22 +3052,33 @@ to sb"
   (my/gud-def my/gud-pstar  "print* %e"    0 "Evaluate C dereferenced pointer expression at point.")
   (my/gud-def my/gud-until  "until %f:%l"  0 "Continue to current line.")
   (my/gud-def my/gud-run    "run"          1 "Run the program.")
-  (my/gud-def my/gud-frame0 "frame 0"      0 "Restore stack frame 0 in source window.")
-  (my/gud-def my/gud-prompt "frame 0"      1 "Select \"*gud-*\" window and move point to end of prompt.")
+  (my/gud-def my/gud-frame0 "frame 0"      0 "Return to stack frame 0 in source window.")
+  (my/gud-def my/gud-prompt "frame"        1 "Jump to EOB in GUD's interaction buffer.")
 
+
+(defun my/gud-interaction-buffer ()
+  (or (get-buffer "*gud-*")             ; Mathworks unit tests ([C-c m t] and [C-c m T])
+      (get-buffer "*gud*")))            ; All other GDB invocations
+
+(defun my/gud-eob ()
+  "Jump to EOB in GUD's interaction buffer."
+  (pop-to-buffer (my/gud-interaction-buffer))
+  (goto-char (point-max)))
 
 (defun my/gud-help ()
   "Pop up a table of GDB key bindings."
   (interactive)
-  (display-buffer "*gud-*")
-  (let ((gud-win  (get-buffer-window "*gud-*"))
-        (gdb-keys (get-buffer-create "*GDB key bindings*")))
-    (with-current-buffer gdb-keys
-      (setq-local buffer-undo-list t)
-      (read-only-mode -1)
-      (erase-buffer)
-      (insert
-"
+  (display-buffer (my/gud-interaction-buffer))
+  (let ((gud-win  (get-buffer-window (my/gud-interaction-buffer)))
+        (gdb-keys (get-buffer "*GDB key bindings*")))
+    (unless gdb-keys
+      (setq gdb-keys (get-buffer-create "*GDB key bindings*"))
+      (with-current-buffer gdb-keys
+        (setq-local buffer-undo-list t)
+        (read-only-mode -1)
+        (erase-buffer)
+        (insert
+         "
 Modi |
 fier | <F5>     <F6>     <F7>     <F8>     <F9>     <F10>    <F11>
 ---- | ------   ------   ------   ------   ------   ------   ------
@@ -3084,10 +3091,11 @@ Ctrl | run to   help              print    stepi    finish   temp
 Shft | rerun    print*            frame    frame    frame    remove
      |          via pp            zero     down     up       break
 ")
-      (set-buffer-modified-p nil)
-      (view-mode 1)
+        (set-buffer-modified-p nil)
+        (view-mode 1)
+        ))
       (set-window-buffer gud-win gdb-keys)
-      (select-window gud-win t))))
+      (select-window gud-win t)))
 
 (eval-after-load "gud" '(progn
   ;; Assume that the *gud- input window is selected
@@ -3600,7 +3608,7 @@ use either \\[customize] or the function `phw-mode'." t)
 ;;  "M-g B"     *breakpoints
 ;;  "M-g D"     *disassembly
 ;;  "M-g F"     *stack (Frames)
-;;  "M-g G"     *gud-
+;;  "M-g G"     *gud*
 ;;  "M-g I"     *disassembly            ; instructions
 ;;  "M-g L"     *locals
 ;;  "M-g O"     *input/output
