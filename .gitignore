@@ -51,6 +51,7 @@ st-light
 /.config
 /.dmrc
 /.esd_auth
+/.*fakexinerama
 /.fehbg
 /.fontconfig
 /.gksu.lock
@@ -77,6 +78,7 @@ st-light
 /.vimrc
 /.xsession-errors
 /.xsession-errors.old
+/.zgrviewer
 /runLogs
 
 # For completeness here are the currently tracked dot-files
@@ -111,6 +113,7 @@ st-light
 /.emacs.d/
 /.felix/
 /.fontconfig/
+/.freerdp/
 /.gimp-2.8/
 /.gnome/
 /.gnome2/
