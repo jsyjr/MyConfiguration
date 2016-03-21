@@ -2658,6 +2658,11 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 ;;}}}
 ;;{{{  Other Mathworks stuff
+(defun my/local-ssd-workspace-shell (WORKSPACE)
+  "Create or switch to a running shell process in WORKSPACE."
+  (interactive "BWorkspace: ")
+  (let ((default-directory (concat "/local-ssd/lsb/" WORKSPACE "/")))
+    (shell WORKSPACE)))
 
 (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools" t)
@@ -3634,6 +3639,7 @@ use either \\[customize] or the function `phw-mode'." t)
 
 (keydef "<f1>"          bs-show)
 (keydef "C-<f1>"        my/named-shell)
+(keydef "S-<f1>"        my/local-ssd-workspace-shell)
 (keydef "M-<f1>"        menu-bar-mode)
 
 (keydef "<f2>"          disk)
