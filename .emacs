@@ -156,6 +156,8 @@
 ; early to ensure that we pick up the latest cc-mode sources.
 (add-to-list 'load-path "~/repos/cc-mode")
 
+(add-to-list 'load-path "~/.emacs.d/el-get/magit/lisp")
+
 (add-to-list 'load-path "~/repos/phw")
 
 (let ((entries (reverse (directory-files el-get-dir t))))
@@ -860,10 +862,12 @@ mouse-3: go to end")
 ;; Display Windows extended glyphs (instead of things like \223)
 (standard-display-8bit 128 255)
 
+
 (add-to-list 'el-get-sources
              '(:name  pp-c-l
                      :description "Display Control-l characters as a full-width rule"
                      :after       (progn
+                                    (load-library "pp-c-l")
                                     (add-hook 'window-setup-hook
                                               'refresh-pretty-control-l)
                                     (add-hook 'window-configuration-change-hook
@@ -1282,6 +1286,29 @@ convert it to readonly/view-mode."
 ;(add-to-list 'el-get-sources '(:name magit :branch "pu"))
 (add-to-list 'el-get-sources 'magit)
 (my/el-get-install "magit")
+(autoload 'magit-status-internal "magit" nil t)
+
+(add-to-list 'el-get-sources
+             '(:name magit-stgit
+                     :description "StGit extension for Magit."
+                     :type        github
+                     :pkgname     "magit/magit-stgit"
+                     ;:features    (magit-stgit)
+                     ))
+(my/el-get-install "magit-stgit")
+(autoload 'magit-stgit-mode "magit-stgit" nil t)
+
+
+;; (add-to-list 'el-get-sources 'magit-topgit)
+;; (my/el-get-install "magit-topgit")
+
+;; (add-to-list 'el-get-sources
+;;              '(:name stgit
+;;                      :description "An emacs mode for StGit."
+;;                      :type        http
+;;                      :url         "file://localhost/home/jyates/repos/stgit-0.17.1/contrib/stgit.el"
+;;                      :features    (stgit)))
+;; (my/el-get-install "stgit")
 
 (add-to-list 'el-get-sources 'git-timemachine)
 (my/el-get-install "git-timemachine")
@@ -1331,12 +1358,15 @@ convert it to readonly/view-mode."
  '(magit-tag                        ((t (:foreground "LightGoldenrod2"    :weight bold               ))))
  )
 
+;; (with-eval-after-load 'magit
+;;   (define-key magit-mode-map "N" 'magit-notes-popup)
+;;   (magit-change-popup-key 'magit-dispatch-popup :action ?T ?N))
+
 (add-hook 'magit-mode-hook
           (lambda ()
             (magit-define-popup-action 'magit-ediff-popup ?S "Show staged"   'magit-ediff-show-staged)
-            (magit-define-popup-action 'magit-ediff-popup ?U "Show unstaged" 'magit-ediff-show-unstaged)))
-
-(autoload 'magit-status-internal "magit" nil t)
+            (magit-define-popup-action 'magit-ediff-popup ?U "Show unstaged" 'magit-ediff-show-unstaged)
+            (magit-stgit-mode)))
 
 (defun my/magit-status ()
   "Switch to (or create) the magit status buffer for current context"
@@ -1509,7 +1539,8 @@ convert it to readonly/view-mode."
                      :depends (yasnippet popup fuzzy)))
 
 (my/el-get-install "auto-complete")
-(require 'auto-complete nil t)
+(ignore-errors
+  (require 'auto-complete nil t))
 
 ;; (add-to-list 'el-get-sources
 ;;              (:name auto-complete-c-headers
@@ -2109,8 +2140,9 @@ An alternate approach would be after-advice on isearch-other-meta-char."
   (turn-on-auto-fill)
   ;; Typically filladapt's "FA" indicates that filling is active
   (diminish 'auto-fill-function)
-  (require 'filladapt)
-  (turn-on-filladapt-mode)
+  (ignore-errors
+    (require 'filladapt)
+    (turn-on-filladapt-mode))
   )
 
 (defun my/text-mode ()
@@ -2234,8 +2266,10 @@ An alternate approach would be after-advice on isearch-other-meta-char."
  '(tags-revert-without-query t)
  )
 
-(require 'ggtags)
-(add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1)))
+(ignore-errors
+  (require 'ggtags))
+
+;(add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1)))
 
 ;; For idutils:
 ;; /hub/share/sbtools/external-apps/idutils/idutils-4.6-sbmod1/install/share/id-lang.map
@@ -3427,7 +3461,6 @@ use either \\[customize] or the function `phw-mode'." t)
 ;; Now we can load our patched p4e
 (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
   (require 'p4e))
-
 
 ;;}}}
 
