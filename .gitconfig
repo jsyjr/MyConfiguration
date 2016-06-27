@@ -1,5 +1,5 @@
 [user]
-	name = John S. Yates, Jr.\n\n
+	name = John S. Yates, Jr.
 	email = john@yates-sheets.org
 [diff]
 	algorithm = histogram
@@ -19,3 +19,9 @@
 	pfo = pull --ff-only
 	undo = reset HEAD~1
 	strip = reset HEAD~1 --hard
+[transfer]
+        fsckObjects = true
+[fetch]
+        fsckObjects = true
+[receive]
+        fsckObjects = true
