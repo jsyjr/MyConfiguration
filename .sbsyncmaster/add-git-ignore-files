@@ -1,0 +1,37 @@
+#!/bin/dash
+
+# Add/tweak .gitignore files to get a git repository of moderate size
+cat >.gitignore <<EOF
+/config/
+/.sbtools/
+/build.glnxa64.log.files/
+/build.log.files/
+
+/*.log
+/changes.sbsmartbuild.mk
+/GPATH
+/GRTAGS
+/GTAGS
+/ID
+/sbrestore_*.txt
+/.sbcheck.*
+.gdb_history
+EOF
+
+chmod a+w matlab/.gitignore
+cat     >>matlab/.gitignore <<EOF
+/*/
+!/src/
+!/toolbox/
+EOF
+
+cat >matlab/src/.gitignore <<EOF
+/sl*/
+/sim*/
+EOF
+
+chmod a+w matlab/toolbox/.gitignore
+cat     >>matlab/toolbox/.gitignore <<EOF
+/*/
+!/stateflow/
+EOF

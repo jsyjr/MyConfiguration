@@ -1,0 +1,7 @@
+#!/bin/dash
+
+cat >>.git/config <<EOF
+[user]
+	name = jyates
+	email = jyates@mathworks.com
+EOF
