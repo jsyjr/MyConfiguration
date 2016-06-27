@@ -10,6 +10,18 @@
 
 source /mathworks/hub/share/sbtools/.gdbinit
 
+define sbnj
+run -nodesktop -nosplash -nojvm -r "opengl info"
+end
+
+define sbn
+run -nodesktop -nosplash -r "opengl info"
+end
+
+define segv
+handle SIGSEGV stop
+end
+
 # Don't display the thread creation/deletion/switch messages
 # This doesn't work on MACI, so comment it out when debuggin on MACI
 set print thread-events off
