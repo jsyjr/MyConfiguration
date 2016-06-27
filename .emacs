@@ -1316,12 +1316,11 @@ convert it to readonly/view-mode."
 (my/custom-set-variables
  '(git-commit-setup-hook
    '(git-commit-save-message
-     magit-revert-buffers
-     git-commit-save-message
      git-commit-setup-changelog-support
      git-commit-turn-on-auto-fill
      git-commit-propertize-diff
      with-editor-usage-message))
+ '(magit-auto-revert-mode t)
  '(magit-backup-mode nil)
 ;'(magit-diff-refine-hunk t)
  '(magit-emacsclient-executable "/etc/alternatives/emacsclient")
