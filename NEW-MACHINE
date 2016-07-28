@@ -2,6 +2,8 @@
 
 # VPN login: "Legacy default"  john.yates wireless
 
+# checkout:
+# - mupdf (might want to build from source: git clone --recursive git://git.ghostscript.com/mupdf.git)
 
 
 # Install most recent cmake (awesome currently wants at least 3.0.0)
