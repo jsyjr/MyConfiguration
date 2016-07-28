@@ -1,6 +1,6 @@
-;;; hideshow.el --- minor mode cmds to selectively display code/comment blocks -*- coding: utf-8 -*-
+;;; hideshow.el --- minor mode cmds to selectively display code/comment blocks
 
-;; Copyright (C) 1994-2015 Free Software Foundation, Inc.
+;; Copyright (C) 1994-2016 Free Software Foundation, Inc.
 
 ;; Author: Thien-Thi Nguyen <ttn@gnu.org>
 ;;      Dan Nicolaescu <dann@ics.uci.edu>
@@ -351,6 +351,10 @@ Use the command `hs-minor-mode' to toggle or set this variable.")
     (define-key map "\C-c@\C-\M-s"    'hs-show-all)
     (define-key map "\C-c@\C-l"	      'hs-hide-level)
     (define-key map "\C-c@\C-c"	      'hs-toggle-hiding)
+    (define-key map "\C-c@\C-a"       'hs-show-all)
+    (define-key map "\C-c@\C-t"       'hs-hide-all)
+    (define-key map "\C-c@\C-d"       'hs-hide-block)
+    (define-key map "\C-c@\C-e"       'hs-toggle-hiding)
     (define-key map [(shift mouse-2)] 'hs-mouse-toggle-hiding)
     map)
   "Keymap for hideshow minor mode.")
@@ -469,9 +473,9 @@ KIND is either `code' or `comment'.  Optional fourth arg B-OFFSET
 when added to B specifies the actual buffer position where the block
 begins.  Likewise for optional fifth arg E-OFFSET.  If unspecified
 they are taken to be 0 (zero).  The following properties are set
-in the overlay: 'invisible 'hs 'hs-b-offset 'hs-e-offset.  Also,
+in the overlay: `invisible' `hs' `hs-b-offset' `hs-e-offset'.  Also,
 depending on variable `hs-isearch-open', the following properties may
-be present: 'isearch-open-invisible 'isearch-open-invisible-temporary.
+be present: `isearch-open-invisible' `isearch-open-invisible-temporary'.
 If variable `hs-set-up-overlay' is non-nil it should specify a function
 to call with the newly initialized overlay."
   (unless b-offset (setq b-offset 0))
@@ -936,7 +940,7 @@ if ARG is omitted or nil.
 
 When hideshow minor mode is on, the menu bar is augmented with hideshow
 commands and the hideshow commands are enabled.
-The value '(hs . t) is added to `buffer-invisibility-spec'.
+The value (hs . t) is added to `buffer-invisibility-spec'.
 
 The main commands are: `hs-hide-all', `hs-show-all', `hs-hide-block',
 `hs-show-block', `hs-hide-level' and `hs-toggle-hiding'.  There is also
