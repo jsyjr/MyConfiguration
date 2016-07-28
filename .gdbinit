@@ -10,12 +10,16 @@
 
 source /mathworks/hub/share/sbtools/.gdbinit
 
-define sbnj
-run -nodesktop -nosplash -nojvm -r "opengl info"
+define sb
+run -r "opengl info" -nosplash
 end
 
 define sbn
-run -nodesktop -nosplash -r "opengl info"
+run -r "opengl info" -nosplash -nodesktop
+end
+
+define sbnj
+run -r "opengl info" -nosplash -nodesktop -nojvm
 end
 
 define segv
