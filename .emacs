@@ -156,6 +156,8 @@
 ; early to ensure that we pick up the latest cc-mode sources.
 (add-to-list 'load-path "~/repos/cc-mode")
 
+;; (add-to-list 'load-path "~/repos/emacs-helm-p4locate")
+
 (add-to-list 'load-path "~/.emacs.d/el-get/magit/lisp")
 
 (add-to-list 'load-path "~/repos/phw")
@@ -1717,11 +1719,12 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  Browsing and completion (helm, ido, smex)
 
-;(add-to-list 'el-get-sources 'helm)
-;(my/el-get-install "helm")
+;; (add-to-list 'el-get-sources 'helm)
+;; (my/el-get-install "helm")
 
-;(require 'helm)
-;(require 'helm-config)
+;; (require 'helm)
+;; (require 'helm-config)
+;; (require 'helm-p4locate)
 
 (my/custom-set-variables
  '(helm-command-prefix-key "C-c h")
@@ -1729,6 +1732,8 @@ This command is designed to be used whether you are already in Info or not."
  '(helm-move-to-line-cycle-in-source t)
  '(helm-split-window-default-side 'same)
  )
+
+;; (global-set-key (kbd "C-x C-l") 'helm-do-p4l)
 
 ;; Repair helm "angry salad"
 (my/custom-set-faces
