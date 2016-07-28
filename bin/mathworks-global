@@ -1,30 +1,28 @@
-#!/bin/dash
+#!/bin/bash
+
+# set -x
 
 # Run a more modern version of global (and the same old
 # mkid) on a sandbox.  In particular generate the new
 # sqlite3 database.
 
 STATE_DIR=".sbtools/global"
-ADDED_FILES="${STATE_DIR}/newly-added-files"
-FULL_LIST="${STATE_DIR}/all-project-files.txt"
-CODE_LIST="${STATE_DIR}/all-source-files.txt"
+SOURCE_FILES="${STATE_DIR}/all-source-files.txt"
 
 if [ ! -f ".sbtools/global/project-dirs.txt" ]; then
   echo "Working directory ( $(pwd) ) is not the root of a sandbox."
   exit 1
 fi
 
-# Generate ADDED_FILES as files recognized as added by Perforce.
-p4 opened | grep '#1 - add ' | sed -e 's!//mw/B[^/]*/\(matlab/.*\)#1 - add .*$!\1!' >${ADDED_FILES}
+# # Start with a clean slate
+rm -rf ${SOURCE_FILES}
 
-# Create FULL_LIST by concatenating all project-file-list.txt
-# files and dropping lines mentioning /derived/.
-cat ${ADDED_FILES} | $(find .sbtools/global/matlab/ -name project-file-list.txt) \
-    | fgrep -v '/derived/'  >${FULL_LIST}
-
-# Create CODE_LIST by keeping only file witn meaningful extensions.
-cat  ${FULL_LIST} | grep -e '\.\([hHlycC]\|h\.in\|hh\|cc\|[hc]\(pp\|xx\)\|lex\|yacc\|java\)$' >${CODE_LIST}
+# Create SOURCE_FILES by keeping only file witn meaningful extensions.
+find matlab/src matlab/toolbox matlab/test \
+     -regex '.*\.\([hHlycC]\|h\.in\|hh\|cc\|[hc]\(pp\|xx\)\|lex\|yacc\|java\)$' \
+     | fgrep -v '/derived/' \
+     >${SOURCE_FILES}
 
 # Use a recent version of gtags to build a sqlite3 database
 # as well as a traditional idutils database.
-cat ${CODE_LIST} | gtags -q --file - --sqlite3 --idutils --statistics
+cat ${SOURCE_FILES} | gtags -q --file - --sqlite3 --idutils --statistics
