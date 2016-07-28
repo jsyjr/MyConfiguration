@@ -230,7 +230,6 @@ mouse-3: Remove current window from display")))))
  '(smerge-command-prefix "")
  '(smex-save-file "~/.emacs.d/smex.save")
  '(split-height-threshold nil)
- '(switch-to-buffer-preserve-window-point t)
  '(tab-always-indent nil)
  '(tab-stop-list
    (quote

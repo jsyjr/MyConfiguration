@@ -900,7 +900,6 @@ mouse-3: go to end")
  '(scroll-conservatively 1)             ; scroll window a line at a line
  '(show-paren-mode t)                   ; highlight matching parens
  '(show-paren-delay 0)                  ;  and do it immediately
- '(switch-to-buffer-preserve-window-point t)
 ; Replaced by 'Emacs.toolBar: off' in ~/.Xresources
 ;'(tool-bar-mode nil)                   ; recover screen space, no toolbar
  '(truncate-lines t)                    ; no wrapped lines
