@@ -25,3 +25,5 @@
         fsckObjects = true
 [receive]
         fsckObjects = true
+[core]
+	autocrlf = input
