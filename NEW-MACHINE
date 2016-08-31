@@ -373,6 +373,7 @@ sudo apt-get install \
 #
 sudo apt-get install \
   asciidoc \
+  lua-discount \
   lua-ldoc \
   liblua5.1-dev \
   libstartup-notification0-dev \
@@ -387,6 +388,8 @@ sudo apt-get install \
   libxcb-xkb-dev \
   libxcb-xtest0-dev \
   libxdg-basedir-dev \
+  libxkbcommon-dev \
+  libxkbcommon-x11-dev \
   lua5.1 \
   lua-lgi \
 
