@@ -8,10 +8,12 @@
 
 # Install most recent cmake (awesome currently wants at least 3.0.0)
 cd /tmp
-sudo mkdir -p /usr/local/cmake/cmake-3.3.2
-wget https://cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.sh
-chmod a+x cmake-*.sh
-sudo ./cmake-3.3.2-Linux-x86_64.sh --prefix=/usr/local/cmake/cmake-3.2.2   Yes, No
+sudo mkdir -p /usr/local/cmake/cmake-3.6.1
+wget https://cmake.org/files/v3.6/cmake-3.6.1.tar.gz
+tar -xzf cmake-3.6.1.tar.gz
+cd /tmp/cmake-3.6.1
+./bootstrap --prefix=/usr/local/cmake/cmake-3.6.1 && make
+sudo make install
 sudo chown -R root:staff /usr/local/cmake
 sudo gzip -9 man/man1/* man/man7/*
 sudo mv /usr/bin/cmake /usr/bin/cmake-distro
@@ -22,36 +24,37 @@ sudo mv /usr/share/man/man1/cpack.1.gz /usr/share/man/man1/cpack-distro.1.gz
 sudo mv /usr/share/man/man1/ctest.1.gz /usr/share/man/man1/ctest-distro.1.gz
 
 sudo update-alternatives \
- --install /usr/bin/cmake     cmake     /usr/local/cmake/cmake-3.2.2/bin/cmake 1 \
- --slave   /usr/bin/cmake-gui cmake-gui /usr/local/cmake/cmake-3.2.2/bin/cmake-gui \
- --slave   /usr/bin/ccmake    ccmake    /usr/local/cmake/cmake-3.2.2/bin/ccmake \
- --slave   /usr/bin/cpack     cpack     /usr/local/cmake/cmake-3.2.2/bin/cpack \
- --slave   /usr/bin/ctest     ctest     /usr/local/cmake/cmake-3.2.2/bin/ctest \
+ --install /usr/bin/cmake     cmake     /usr/local/cmake/cmake-3.6.1/bin/cmake 1 \
+ --slave   /usr/bin/cmake-gui cmake-gui /usr/local/cmake/cmake-3.6.1/bin/cmake-gui \
+ --slave   /usr/bin/ccmake    ccmake    /usr/local/cmake/cmake-3.6.1/bin/ccmake \
+ --slave   /usr/bin/cpack     cpack     /usr/local/cmake/cmake-3.6.1/bin/cpack \
+ --slave   /usr/bin/ctest     ctest     /usr/local/cmake/cmake-3.6.1/bin/ctest \
 \
- --slave   /usr/share/man/man1/ccmake.1.gz                      ccmake.1.gz                      /usr/local/cmake/cmake-3.2.2/man/man1/ccmake.1.gz \
- --slave   /usr/share/man/man1/cmake.1.gz                       cmake.1.gz                       /usr/local/cmake/cmake-3.2.2/man/man1/cmake.1.gz \
- --slave   /usr/share/man/man1/cmake-gui.1.gz                   cmake-gui.1.gz                   /usr/local/cmake/cmake-3.2.2/man/man1/cmake-gui.1.gz \
- --slave   /usr/share/man/man1/cpack.1.gz                       cpack.1.gz                       /usr/local/cmake/cmake-3.2.2/man/man1/cpack.1.gz \
- --slave   /usr/share/man/man1/ctest.1.gz                       ctest.1                          /usr/local/cmake/cmake-3.2.2/man/man1/ctest.1.gz \
+ --slave   /usr/share/man/man1/ccmake.1.gz                      ccmake.1.gz                      /usr/local/cmake/cmake-3.6.1/man/man1/ccmake.1.gz \
+ --slave   /usr/share/man/man1/cmake.1.gz                       cmake.1.gz                       /usr/local/cmake/cmake-3.6.1/man/man1/cmake.1.gz \
+ --slave   /usr/share/man/man1/cmake-gui.1.gz                   cmake-gui.1.gz                   /usr/local/cmake/cmake-3.6.1/man/man1/cmake-gui.1.gz \
+ --slave   /usr/share/man/man1/cpack.1.gz                       cpack.1.gz                       /usr/local/cmake/cmake-3.6.1/man/man1/cpack.1.gz \
+ --slave   /usr/share/man/man1/ctest.1.gz                       ctest.1                          /usr/local/cmake/cmake-3.6.1/man/man1/ctest.1.gz \
 \
- --slave   /usr/share/man/man7/cmake-buildsystem.7.gz           cmake-buildsystem.7.gz           /usr/local/cmake/cmake-3.2.2/man/man7/cmake-buildsystem.7.gz \
- --slave   /usr/share/man/man7/cmake-commands.7.gz              cmake-commands.7.gz              /usr/local/cmake/cmake-3.2.2/man/man7/cmake-commands.7.gz \
- --slave   /usr/share/man/man7/cmake-compile-features.7.gz      cmake-compile-features.7.gz      /usr/local/cmake/cmake-3.2.2/man/man7/cmake-compile-features.7.gz \
- --slave   /usr/share/man/man7/cmake-developer.7.gz             cmake-developer.7.gz             /usr/local/cmake/cmake-3.2.2/man/man7/cmake-developer.7.gz \
- --slave   /usr/share/man/man7/cmake-generator-expressions.7.gz cmake-generator-expressions.7.gz /usr/local/cmake/cmake-3.2.2/man/man7/cmake-generator-expressions.7.gz \
- --slave   /usr/share/man/man7/cmake-generators.7.gz            cmake-generators.7.gz            /usr/local/cmake/cmake-3.2.2/man/man7/cmake-generators.7.gz \
- --slave   /usr/share/man/man7/cmake-language.7.gz              cmake-language.7.gz              /usr/local/cmake/cmake-3.2.2/man/man7/cmake-language.7.gz \
- --slave   /usr/share/man/man7/cmake-modules.7.gz               cmake-modules.7.gz               /usr/local/cmake/cmake-3.2.2/man/man7/cmake-modules.7.gz \
- --slave   /usr/share/man/man7/cmake-packages.7.gz              cmake-packages.7.gz              /usr/local/cmake/cmake-3.2.2/man/man7/cmake-packages.7.gz \
- --slave   /usr/share/man/man7/cmake-policies.7.gz              cmake-policies.7.gz              /usr/local/cmake/cmake-3.2.2/man/man7/cmake-policies.7.gz \
- --slave   /usr/share/man/man7/cmake-properties.7.gz            cmake-properties.7.gz            /usr/local/cmake/cmake-3.2.2/man/man7/cmake-properties.7.gz \
- --slave   /usr/share/man/man7/cmake-qt.7.gz                    cmake-qt.7.gz                    /usr/local/cmake/cmake-3.2.2/man/man7/cmake-qt.7.gz \
- --slave   /usr/share/man/man7/cmake-toolchains.7.gz            cmake-toolchains.7.gz            /usr/local/cmake/cmake-3.2.2/man/man7/cmake-toolchains.7.gz \
- --slave   /usr/share/man/man7/cmake-variables.7.gz             cmake-variables.7.gz             /usr/local/cmake/cmake-3.2.2/man/man7/cmake-variables.7.gz \
+ --slave   /usr/share/man/man7/cmake-buildsystem.7.gz           cmake-buildsystem.7.gz           /usr/local/cmake/cmake-3.6.1/man/man7/cmake-buildsystem.7.gz \
+ --slave   /usr/share/man/man7/cmake-commands.7.gz              cmake-commands.7.gz              /usr/local/cmake/cmake-3.6.1/man/man7/cmake-commands.7.gz \
+ --slave   /usr/share/man/man7/cmake-compile-features.7.gz      cmake-compile-features.7.gz      /usr/local/cmake/cmake-3.6.1/man/man7/cmake-compile-features.7.gz \
+ --slave   /usr/share/man/man7/cmake-developer.7.gz             cmake-developer.7.gz             /usr/local/cmake/cmake-3.6.1/man/man7/cmake-developer.7.gz \
+ --slave   /usr/share/man/man7/cmake-generator-expressions.7.gz cmake-generator-expressions.7.gz /usr/local/cmake/cmake-3.6.1/man/man7/cmake-generator-expressions.7.gz \
+ --slave   /usr/share/man/man7/cmake-generators.7.gz            cmake-generators.7.gz            /usr/local/cmake/cmake-3.6.1/man/man7/cmake-generators.7.gz \
+ --slave   /usr/share/man/man7/cmake-language.7.gz              cmake-language.7.gz              /usr/local/cmake/cmake-3.6.1/man/man7/cmake-language.7.gz \
+ --slave   /usr/share/man/man7/cmake-modules.7.gz               cmake-modules.7.gz               /usr/local/cmake/cmake-3.6.1/man/man7/cmake-modules.7.gz \
+ --slave   /usr/share/man/man7/cmake-packages.7.gz              cmake-packages.7.gz              /usr/local/cmake/cmake-3.6.1/man/man7/cmake-packages.7.gz \
+ --slave   /usr/share/man/man7/cmake-policies.7.gz              cmake-policies.7.gz              /usr/local/cmake/cmake-3.6.1/man/man7/cmake-policies.7.gz \
+ --slave   /usr/share/man/man7/cmake-properties.7.gz            cmake-properties.7.gz            /usr/local/cmake/cmake-3.6.1/man/man7/cmake-properties.7.gz \
+ --slave   /usr/share/man/man7/cmake-qt.7.gz                    cmake-qt.7.gz                    /usr/local/cmake/cmake-3.6.1/man/man7/cmake-qt.7.gz \
+ --slave   /usr/share/man/man7/cmake-toolchains.7.gz            cmake-toolchains.7.gz            /usr/local/cmake/cmake-3.6.1/man/man7/cmake-toolchains.7.gz \
+ --slave   /usr/share/man/man7/cmake-variables.7.gz             cmake-variables.7.gz             /usr/local/cmake/cmake-3.6.1/man/man7/cmake-variables.7.gz \
 
 # Install most recent autoconf tools (emacs currently wants at least 2.65)
 cd /tmp
 wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.xz
+tar -xJf autoconf-2.69.tar.xz
 cd /tmp/autoconf-2.69
 ./configure
 make
