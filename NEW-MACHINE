@@ -134,6 +134,7 @@ sudo apt-get install \
   msmtp \
   m4 \
   network-manager-openconnect-gnome \
+  pavucontrol \
   python-software-properties \
   texinfo \
   texlive-fonts-extra \
