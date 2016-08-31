@@ -85,7 +85,7 @@ if [ -d /mathworks ]; then
 
     # Customize DEFAULT_SANDBOX to where you normally work
     # (This must be defined before sourcing bash_setup.bash)
-    export DEFAULT_SANDBOX=/local-ssd/lsb/bstateflow.latest_pass/
+    export DEFAULT_SANDBOX=/local-ssd/lsb/Bcgir_task.latest_pass/
     export x=$DEFAULT_SANDBOX
     if [ -f /mathworks/hub/share/sbtools/bash_setup.bash ]; then
         . /mathworks/hub/share/sbtools/bash_setup.bash
@@ -97,14 +97,6 @@ if [ -d /mathworks ]; then
     export P4EDITOR='sbe -w'
     export   P4DIFF='sbe -sb-diff'
     export  P4MERGE='sbe -sb-merge'
-
-    # Typically should be run in .../matlab/toolbox/stateflow/src
-    alias qmake='sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES='
-    alias pmake='cd .../matlab/toolbox/stateflow/src/stateflow ; sbmake -j 8 DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES= prebuild'
-    alias bmake='cd .../matlab/toolbox/stateflow/src/stateflow ; sbmake -j 8 DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES= prebuild ; sbmake -distcc DEBUG=1 NOBUILDTESTS=1 NORUNTESTS=1 MW_ALT_BOOST_ARCHES= build'
-    alias jmake='lmake prebuild ; dmake build'
-    alias mw='mw -using Bstateflow'
-    alias sbs='mw -using Bstateflow sbs'
     alias sbn='sb -nodesktop -nosplash -r "opengl info"'
     alias sbnj='sb -nodesktop -nosplash -nojvm -r "opengl info"'
     alias sbf='    sbruntests -autofarm devel -rerunusing jobarchive'
@@ -114,11 +106,11 @@ if [ -d /mathworks ]; then
     alias sbl_sf=' sbruntests -local    all   -rerunusing jobarchive -runallunder test/toolbox/stateflow'
     alias sbl_all='sbruntests -local    all   -rerunusing jobarchive -testsuites Acgir_Aslrtw'
 
-    if [ -d /sandbox/savadhan/sbtools ]; then
-        if [ -f /sandbox/savadhan/sbtools/_bash_functions ]; then
-            . /sandbox/savadhan/sbtools/_bash_functions
-        fi
-    fi
+    # if [ -d /sandbox/savadhan/sbtools ]; then
+    #     if [ -f /sandbox/savadhan/sbtools/_bash_functions ]; then
+    #         . /sandbox/savadhan/sbtools/_bash_functions
+    #     fi
+    # fi
 fi
 #
 ########### END MATHWORKS SPECIFIC ###########
