@@ -97,6 +97,7 @@ sudo apt-get install \
   flex \
   git \
   global \
+  gnutls-dev \
   gparted \
   graphviz \
   heirloom-mailx \
@@ -113,7 +114,6 @@ sudo apt-get install \
   libexpat1-dev \
   libgconf2-dev \
   libgif-dev \
-  libgnutls-dev \
   libgpm-dev \
   libgtk2.0-dev \
   libjna-java \
