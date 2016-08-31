@@ -1290,27 +1290,19 @@ convert it to readonly/view-mode."
 (my/el-get-install "magit")
 (autoload 'magit-status-internal "magit" nil t)
 
-(add-to-list 'el-get-sources
-             '(:name magit-stgit
-                     :description "StGit extension for Magit."
-                     :type        github
-                     :pkgname     "magit/magit-stgit"
-                     ;:features    (magit-stgit)
-                     ))
-(my/el-get-install "magit-stgit")
-(autoload 'magit-stgit-mode "magit-stgit" nil t)
+;; (add-to-list 'el-get-sources
+;;              '(:name magit-stgit
+;;                      :description "StGit extension for Magit."
+;;                      :type        github
+;;                      :pkgname     "magit/magit-stgit"
+;;                      ;:features    (magit-stgit)
+;;                      ))
+;; (my/el-get-install "magit-stgit")
+;; (autoload 'magit-stgit-mode "magit-stgit" nil t)
 
 
 ;; (add-to-list 'el-get-sources 'magit-topgit)
 ;; (my/el-get-install "magit-topgit")
-
-;; (add-to-list 'el-get-sources
-;;              '(:name stgit
-;;                      :description "An emacs mode for StGit."
-;;                      :type        http
-;;                      :url         "file://localhost/home/jyates/repos/stgit-0.17.1/contrib/stgit.el"
-;;                      :features    (stgit)))
-;; (my/el-get-install "stgit")
 
 (add-to-list 'el-get-sources 'git-timemachine)
 (my/el-get-install "git-timemachine")
@@ -1367,7 +1359,8 @@ convert it to readonly/view-mode."
           (lambda ()
             (magit-define-popup-action 'magit-ediff-popup ?S "Show staged"   'magit-ediff-show-staged)
             (magit-define-popup-action 'magit-ediff-popup ?U "Show unstaged" 'magit-ediff-show-unstaged)
-            (magit-stgit-mode)))
+            ; (magit-stgit-mode)
+            ))
 
 (defun my/magit-status ()
   "Switch to (or create) the magit status buffer for current context"
