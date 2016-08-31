@@ -5,6 +5,13 @@
 # checkout:
 # - mupdf (might want to build from source: git clone --recursive git://git.ghostscript.com/mupdf.git)
 
+# Install Google Chrome browser
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+sudo apt-get update
+sudo apt-get install google-chrome-stable
+
+
 
 # Install most recent cmake (awesome currently wants at least 3.0.0)
 cd /tmp
@@ -136,11 +143,6 @@ sudo apt-get install \
   xmlto \
   zlib1g-dev \
 
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-sudo apt-get update
-# apt-get install google-chrome-stable
-sudo apt-get install google-chrome-beta
 
 
 # enable generalized debugging
