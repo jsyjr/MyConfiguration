@@ -181,7 +181,7 @@ makeSt() {
       -e 's/:antialias=false/:antialias=false/g' \
       -e 's/:autohint=false/:autohint=false/g' \
     config.h
-  CFLAGS='-march=corei7' make
+  CFLAGS='-march=native -mfpmath=387' make
   cp st ~/bin/st-$1
 }
 

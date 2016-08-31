@@ -12,7 +12,7 @@ fi
 
 ./configure --with-exuberant-ctags=/usr/local/bin/ctags --with-sqlite3
 
-sed -i -e 's/-g -O2/-march=corei7 -O3/' libtool reconf.sh `find -name Makefile`
+sed -i -e 's/-g -O2/-march=native -mfpmath=387 -O3/' libtool reconf.sh `find -name Makefile`
 
 # mkdir -p lib bin objects/qtools html latex man docbook perlmod rtf xml
 

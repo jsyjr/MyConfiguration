@@ -9,7 +9,7 @@ fi
 git reset --hard
 git pull
 sed -i.bak \
-    -e 's/-O1/-O2 -march=corei7/g' \
+    -e 's/-O1/-O2 -march=native -mfpmath=387/g' \
   awesomeConfig.cmake
 
 

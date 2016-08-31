@@ -4,7 +4,7 @@ set -e
 
 if [ ! -f "parsers/clojure.c" ]; then
   echo "Working directory ( $(pwd) ) is not the root of a ctags source tree."
-  echo 'Download and unpack tarball from "ftp://ftp.gnu.org/pub/gnu/global/"'
+  echo '$ git clone https://github.com/universal-ctags/ctags.git'
   exit 1
 fi
 
@@ -13,12 +13,10 @@ git reset --hard
 git pull
 
 ./autogen.sh
-./configure  CFLAGS='-march=corei7 -O3'
-
-autoreconf -vfi
+#./configure  CFLAGS='-march=native -mfpmath=387 -O3'
 ./configure
 
-sed -i -e 's/-g -O2/-march=corei7 -O3/' `find -name Makefile`
+# sed -i -e 's/-g -O2/-march=native -mfpmath=387 -O3/' `find -name Makefile`
 
 # mkdir -p lib bin objects/qtools html latex man docbook perlmod rtf xml
 
@@ -28,7 +26,11 @@ make
 # exit 0
 
 rm -rf config.log
-sudo make install
+
+sudo mkdir -p  /usr/local/bin /usr/local/share/man/man1 /usr/local/libexec/ctags/drivers
+sudo chmod a+w /usr/local/bin /usr/local/share/man/man1 /usr/local/libexec/ctags/drivers
+make install
+sudo chmod o-w /usr/local/bin /usr/local/share/man/man1 /usr/local/libexec/ctags/drivers
 
 sudo update-alternatives \
  --install /usr/bin/ctags                 ctags      /usr/local/bin/ctags 1 \

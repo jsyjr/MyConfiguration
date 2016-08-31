@@ -24,25 +24,23 @@ git pull
 
 # rm -r lisp/cedet test/cedet
 
-./autogen.sh
-./configure
+./autogen.sh all
 
 set +e
-# CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs --enable-link-time-optimization
-CFLAGS='-march=corei7 -O3' ./configure  --prefix=/usr/local/emacs
-# CFLAGS='-march=corei7 -O3' make -j8
-CFLAGS='-march=corei7 -O3' make
+#CFLAGS='-march=native -mfpmath=387 -O3' ./configure  --prefix=/usr/local/emacs --enable-link-time-optimization
+CFLAGS='-march=native -mfpmath=387 -O3' ./configure  --prefix=/usr/local/emacs
+
+# CFLAGS='-march=native -mfpmath=387 -O3' make bootstrap
 
 # Dependencies are not complete so parallel builds have sporadic failures.
 # Do a first parallel pass to build as much as possible.
-make -j8 -k
-make -j8 -k doc
+CFLAGS='-march=native -mfpmath=387 -O3' make -j24 -k
+CFLAGS='-march=native -mfpmath=387 -O3' make -j24 -k doc
 
 # Now do a non-parallel build to get things finished up.
 set -e
-make bootstrap
-make
-make doc
+CFLAGS='-march=native -mfpmath=387 -O3' make
+CFLAGS='-march=native -mfpmath=387 -O3' make doc
 
 (cd lisp ; make autoloads)
 

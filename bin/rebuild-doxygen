@@ -13,7 +13,7 @@ git pull
 mkdir build
 cd build
 cmake -G "Unix Makefiles" english_only=1 use_libclang=1 ..
-sed -i -e 's/-O2/-march=corei7 -O3/' `find -name Makefile`
+sed -i -e 's/-O2/-march=native -mfpmath=387 -O3/' `find -name Makefile`
 
 # mkdir -p lib bin objects/qtools html latex man docbook perlmod rtf xml
 
