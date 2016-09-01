@@ -1903,21 +1903,20 @@ This command is designed to be used whether you are already in Info or not."
 ;;{{{  Comint
 
 (my/custom-set-variables
- '(tramp-default-method "ssh")          ; uses ControlMaster
- '(comint-scroll-to-bottom-on-input t)  ; always insert at the bottom
  '(tramp-default-method "ssh" nil (tramp))  ; uses ControlMaster
+ '(comint-scroll-to-bottom-on-input t)      ; always insert at the bottom
 ;; '(comint-scroll-to-bottom-on-output nil) ; [DEF] always add output at the bottom
-;; '(comint-scroll-show-maximum-output t) ; [DEF] scroll to show max output
-;; '(comint-completion-autolist t)      ; show completion list when ambiguous
-;; '(comint-eol-on-send t)              ; [DEF] see following defadvice
- '(comint-input-ignoredups t)           ; no duplicates in command history
-;; '(comint-completion-addsuffix t)     ; [DEF] completion adds space/slash
-;; '(comint-buffer-maximum-size 20000)  ; max length of the buffer in lines
-;; '(comint-prompt-read-only nil)       ; [DEF] breaks shell-command if t
- '(comint-get-old-input (lambda () "") t); submit as process input when <RET> typed
-                                        ; line above the current prompt
- '(comint-input-ring-size 5000)         ; max shell history size
-;; '(protect-buffer-bury-p nil)           ; revive if we setup protbuf
+;; '(comint-scroll-show-maximum-output t)   ; [DEF] scroll to show max output
+;; '(comint-completion-autolist t)          ; show completion list when ambiguous
+;; '(comint-eol-on-send t)                  ; [DEF] see following defadvice
+ '(comint-input-ignoredups t)               ; no duplicates in command history
+;; '(comint-completion-addsuffix t)         ; [DEF] completion adds space/slash
+;; '(comint-buffer-maximum-size 20000)      ; max length of the buffer in lines
+;; '(comint-prompt-read-only nil)           ; [DEF] breaks shell-command if t
+ '(comint-get-old-input (lambda () "") t)   ; submit as process input when <RET> typed
+                                            ; line above the current prompt
+ '(comint-input-ring-size 5000)             ; max shell history size
+;; '(protect-buffer-bury-p nil)             ; revive if we setup protbuf
 )
 
 (defadvice comint-send-input (around my/go-to-end-of-multiline activate)
