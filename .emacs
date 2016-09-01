@@ -1905,6 +1905,7 @@ This command is designed to be used whether you are already in Info or not."
 (my/custom-set-variables
  '(tramp-default-method "ssh")          ; uses ControlMaster
  '(comint-scroll-to-bottom-on-input t)  ; always insert at the bottom
+ '(tramp-default-method "ssh" nil (tramp))  ; uses ControlMaster
 ;; '(comint-scroll-to-bottom-on-output nil) ; [DEF] always add output at the bottom
 ;; '(comint-scroll-show-maximum-output t) ; [DEF] scroll to show max output
 ;; '(comint-completion-autolist t)      ; show completion list when ambiguous
