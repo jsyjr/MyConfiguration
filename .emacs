@@ -1982,7 +1982,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 (my/custom-set-variables
  '(explicit-shell-file-name "/bin/bash")
- '(shell-mode-hook 'ansi-color-for-comint-mode-on)
+ '(shell-mode-hook '(ansi-color-for-comint-mode-on))
  )
 
 ;; The dirtrack package can be more reliable than shell-dirtrack-mode.
