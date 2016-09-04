@@ -635,35 +635,42 @@ Use a normal parenthesis if not inside any."
 (my/custom-set-variables
  '(mode-line-format
    '("%e" mode-line-window-id
-     #("-" 0 1 (help-echo "mouse-1: Select (drag to resize)
+     #("-" 0 1 (help-echo
+"mouse-1: Select (drag to resize)
 mouse-2: Make current window occupy enitre frame
 mouse-3: Remove current window from display"))
      mode-line-mule-info
      mode-line-client
      mode-line-modified
      mode-line-remote
-     #(" " 0 1 (help-echo "mouse-1: Select (drag to resize)
+     #(" " 0 1 (help-echo
+"mouse-1: Select (drag to resize)
 mouse-2: Make current window occupy enitre frame
 mouse-3: Remove current window from display"))
      mode-line-position
      mode-line-frame-identification
      mode-line-buffer-identification
-     #(" " 0 1 (help-echo "mouse-1: Select (drag to resize)
+     #(" " 0 1 (help-echo
+"mouse-1: Select (drag to resize)
 mouse-2: Make current window occupy enitre frame
 mouse-3: Remove current window from display"))
      (which-func-mode
       ("" which-func-format
-       #(" " 0 1 (help-echo "mouse-1: Select (drag to resize)
+       #(" " 0 1 (help-echo
+"mouse-1: Select (drag to resize)
 mouse-2: Make current window occupy enitre frame
 mouse-3: Remove current window from display"))))
      mode-line-modes
-     (vc-mode ("" vc-mode #(" " 0 1 (help-echo "mouse-1: Select (drag to resize)
-mouse-2: Make current window occupy enitre frame
-mouse-3: Remove current window from display"))))
-     (global-mode-string (#("-" 0 1 (help-echo "mouse-1: Select (drag to resize)
+;;      (vc-mode ("" vc-mode #(" " 0 1 (help-echo
+;; "mouse-1: Select (drag to resize)
+;; mouse-2: Make current window occupy enitre frame
+;; mouse-3: Remove current window from display"))))
+     (global-mode-string (#("-" 0 1 (help-echo
+"mouse-1: Select (drag to resize)
 mouse-2: Make current window occupy enitre frame
 mouse-3: Remove current window from display")) global-mode-string))
-     #("-%-" 0 3 (help-echo "mouse-1: Select (drag to resize)
+     #("-%-" 0 3 (help-echo
+"mouse-1: Select (drag to resize)
 mouse-2: Make current window occupy enitre frame
 mouse-3: Remove current window from display"))))
 
