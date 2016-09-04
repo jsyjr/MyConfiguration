@@ -208,6 +208,17 @@
       (add-to-list 'my/missing-el-get-packages pkg))))
 
 ;;}}}
+;;{{{  require-maybe and when-available
+
+(defmacro require-maybe (feature &optional file)
+  "*Try to require FEATURE, but don't signal an error if `require' fails."
+  `(require ,feature ,file 'noerror))
+
+(defmacro when-available (func foo)
+  "*Do something if FUNCTION is available."
+  `(when (fboundp ,func) ,foo))
+
+;;}}}
 ;;{{{  John Wiegley's use-package
 
 (add-to-list 'el-get-sources
@@ -305,13 +316,12 @@
     (kill-buffer)))
 
 ;; Host specific initialization if it exists (my-rc-local-HOST.el[c])
-(require (intern (concat "my-rc-local-"
-                         (let* ((host (system-name))
-                                (idx (string-match "\\." host)))
-                           (if idx
-                               (substring host 0 idx)
-                             host))))
-         nil t)
+(require-maybe (intern (concat "my-rc-local-"
+			       (let* ((host (system-name))
+				      (idx (string-match "\\." host)))
+				 (if idx
+				     (substring host 0 idx)
+				   host)))))
 
 ;;}}}
 ;;{{{  List of packages installed from ELPA
@@ -385,7 +395,7 @@
             (lambda nil
               (delete-trailing-whitespace)
               nil))
-           (require 'whitespace)
+           (require-maybe 'whitespace)
            "Sometimes the mode needs to be toggled off and on."
            (whitespace-mode 0)
            (whitespace-mode 1))
@@ -852,7 +862,7 @@ mouse-3: go to end")
 ;;}}}
 ;;{{{  Uniquify buffer names
 
-(require 'uniquify)
+(require-maybe 'uniquify)
 
 (my/custom-set-variables
  '(uniquify-buffer-name-style 'forward nil (uniquify)) ; prefix '/'
@@ -1533,8 +1543,7 @@ convert it to readonly/view-mode."
                      :depends (yasnippet popup fuzzy)))
 
 (my/el-get-install "auto-complete")
-(ignore-errors
-  (require 'auto-complete nil t))
+(require-maybe 'auto-completet)
 
 ;; (add-to-list 'el-get-sources
 ;;              (:name auto-complete-c-headers
@@ -2263,10 +2272,8 @@ An alternate approach would be after-advice on isearch-other-meta-char."
  '(tags-revert-without-query t)
  )
 
-(ignore-errors
-  (require 'ggtags))
-
-;(add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1)))
+(when (require-maybe 'ggtags)
+  (add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1))))
 
 ;; For idutils:
 ;; /hub/share/sbtools/external-apps/idutils/idutils-4.6-sbmod1/install/share/id-lang.map
