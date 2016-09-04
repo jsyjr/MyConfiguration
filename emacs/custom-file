@@ -158,12 +158,6 @@ mouse-3: Remove current window from display"))
 mouse-2: Make current window occupy enitre frame
 mouse-3: Remove current window from display"))))
      mode-line-modes
-     (vc-mode
-      ("" vc-mode
-       #(" " 0 1
-         (help-echo "mouse-1: Select (drag to resize)
-mouse-2: Make current window occupy enitre frame
-mouse-3: Remove current window from display"))))
      (global-mode-string
       (#("-" 0 1
          (help-echo "mouse-1: Select (drag to resize)
@@ -207,7 +201,7 @@ mouse-3: Remove current window from display")))))
             (lambda nil
               (delete-trailing-whitespace)
               nil))
-           (require
+           (require-maybe
             (quote whitespace))
            "Sometimes the mode needs to be toggled off and on."
            (whitespace-mode 0)
@@ -242,6 +236,7 @@ mouse-3: Remove current window from display")))))
  '(truncate-lines t)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
  '(use-dialog-box nil)
+ '(vc-handled-backends nil)
  '(vc-ignore-dir-regexp
    "\"\\\\`\\\\(?:/mathworks\\\\|/mathworks/[A-Z]+\\\\|/mathworks/[^/]+\\\\|/mathworks/[A-Z]+/[^/]+\\\\|/mathworks/devel/[^/]+\\\\|/mathworks/[A-Z]+/devel/[^/]+\\\\|/mathworks/devel/bat/[^/]+\\\\|/mathworks/[A-Z]+/devel/bat/[^/]+\\\\|/mathworks/devel/jobarchive\\\\|/mathworks/[A-Z]+/devel/jobarchive\\\\|/mathworks/hub/[^/]+\\\\|/mathworks/[A-Z]+/hub/[^/]+\\\\|/mathworks/hub/scratch\\\\|/mathworks/[A-Z]+/hub/scratch\\\\|/mathworks/hub/site-local\\\\|/mathworks/[A-Z]+/hub/site-local\\\\|/sandbox\\\\|/home\\\\|/hub\\\\|/public\\\\|/src\\\\|/scratch\\\\|\\\\)/\\\\'\"
 ")

@@ -1341,7 +1341,9 @@ convert it to readonly/view-mode."
      "~/repos/doxygen"
      "~/repos/st"))
  '(magit-repository-directories-depth 0)
- '(magit-save-repository-buffers nil))
+ '(magit-save-repository-buffers nil)
+ ; drop git since I uniformly rely on magit
+ '(vc-handled-backends nil))
 
 (my/custom-set-faces
  '(magit-item-highlight             ((t (                                 :background "gray9"        ))))
