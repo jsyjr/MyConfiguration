@@ -1489,8 +1489,6 @@ convert it to readonly/view-mode."
  '(yas-global-mode t                       nil (yasnippet))
  '(yas-snippet-dirs '("~/emacs/yasnippet") nil (yasnippet)))
 
-(add-hook 'yas/minor-mode-hook 'yas-reload-all)
-
 ;; reload modified snippets
 (defun my/yasnippet-reload-on-save ()
   "Reload the entire collection of snippets when one gets modified."
@@ -1499,7 +1497,9 @@ convert it to readonly/view-mode."
       (yas-reload-all))) ; no mapc with just a single directory root
 
 (eval-after-load "yasnippet"
-    '(add-hook 'after-save-hook 'my/yasnippet-reload-on-save))
+  '(progn
+     (add-hook 'yas/minor-mode-hook 'yas-reload-all)
+     (add-hook 'after-save-hook 'my/yasnippet-reload-on-save)))
 
 ;;;; auto-mode-alist
 (add-to-list 'auto-mode-alist '("emacs/yasnippet/" . snippet-mode))
