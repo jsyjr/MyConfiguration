@@ -261,16 +261,16 @@ EOF
 
 # Install the Dina bitmapped font
 #
-sudo rm    -f /usr/local/share/fonts/Dina
-sudo mkdir -p /usr/local/share/fonts/Dina
+sudo rm    -rf /usr/local/share/fonts/Dina
+sudo mkdir -p  /usr/local/share/fonts/Dina
 sudo cp ~/.dinafont/dina/* /usr/local/share/fonts/Dina
 
 
 # Install the Droid Sana Mono (slashed zero) bitmapped font
 #
 cd /tmp
-sudo rm    -r /usr/local/share/fonts/DroidSansMonoSlashed
-sudo mkdir -p /usr/local/share/fonts/DroidSansMonoSlashed
+sudo rm    -rf /usr/local/share/fonts/DroidSansMonoSlashed
+sudo mkdir -p  /usr/local/share/fonts/DroidSansMonoSlashed
 wget http://www.cosmix.org/software/files/DroidSansMonoSlashed.zip
 unzip DroidSansMonoSlashed.zip
 sudo cp DroidSansMonoSlashed.ttf /usr/local/share/fonts/DroidSansMonoSlashed/DroidSansMonoSlashed.ttf
