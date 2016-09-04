@@ -3036,9 +3036,10 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (add-to-list 'el-get-sources
              '(:name graphviz-dot-mode
-                     :description "Edit AT&T's dot language."
-                     :type github
-                     :pkgname "ppareit/graphviz-dot-mode"))
+                     :description "Mode for the dot-language used by graphviz (att)."
+                     :type        github
+                     :pkgname     "ppareit/graphviz-dot-mode"
+                     :features    graphviz-dot-mode))
 (my/el-get-install "graphviz-dot-mode")
 
 ;;}}}
