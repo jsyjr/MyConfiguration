@@ -1007,7 +1007,7 @@ mouse-3: go to end")
 ;;                      :website     "https://github.com/kbkbkbkb1/guide-key.git"
 ;;                      :type        github
 ;;                      :pkgname     "kbkbkbkb1/guide-key"
-;;                      :features    (guide-key)))
+;;                      :features    guide-key))
 ;; (my/el-get-install "guide-key")
 
 ;;}}}
@@ -1294,7 +1294,7 @@ convert it to readonly/view-mode."
                      :description "Edit multiple regions with the same content simultaneously."
                      :type        github
                      :pkgname     "victorhge/iedit"
-                     :features iedit))
+                     :features    iedit))
 (my/el-get-install "iedit")
 
 ;;}}}
@@ -1622,7 +1622,7 @@ convert it to readonly/view-mode."
                      :description "XEmacs-ish hyper-apropos for GNUEmacs"
                      :type        http
                      :url         "http://www.cbrunzema.de/download/apropos-toc/apropos-toc.el"
-                     :features    (apropos-toc)))
+                     :features    apropos-toc))
 (my/el-get-install "apropos-toc")
 
 (defvar my/apropos-toc-font-lock-keywords
@@ -1905,7 +1905,7 @@ This command is designed to be used whether you are already in Info or not."
                      :description "Interactive locate-library (or source) with completion"
                      :type        http
                      :url         "file://localhost/home/jyates/emacs/patched/ilocate-library.el"
-                     :features    (ilocate-library)))
+                     :features    ilocate-library))
 (my/el-get-install "ilocate-library")
 
 ;;}}}
@@ -2059,7 +2059,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;; 		     :description "Minor mode cmds to selectively display code/comment blocks"
 ;; 		     :type        http
 ;; 		     :url         "file://localhost/home/jyates/emacs/patched/hideshow.el"
-;; 		     :features    (hideshow)))
+;; 		     :features    hideshow))
 ;; (my/el-get-install "hideshow")
 ;; (require 'hideshow)
 
@@ -2081,7 +2081,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
                      :description "Add fringe markers for hide/show foldable regions."
                      :type        emacswiki
                      :url         "http://www.emacswiki.org/emacs/download/hideshowvis.el"
-                     :features    (hideshowvis)))
+                     :features    hideshowvis))
 (my/el-get-install "hideshowvis")
 
 ;; (defun my/fringe-click-hs (event)
@@ -2137,7 +2137,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
                      :type        http
                      :url         "http://cc-mode.sourceforge.net/filladapt.el"
 ;;                   :url         "file://localhost/home/jyates/emacs/filladapt.el"
-                     :features    (filladapt)))
+                     :features    filladapt))
 (my/el-get-install "filladapt")
 
 
@@ -2292,7 +2292,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;                      :description "Edward Bishop's fork of emacs' etags"
 ;;                      :type        http
 ;;                      :url         "file://localhost/home/jyates/emacs/vtags/vtags.el"
-;;                      :features    (vtags)))
+;;                      :features    vtags))
 ;; (my/el-get-install "vtags")
 
 ;; (add-to-list 'el-get-sources
@@ -2301,7 +2301,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;                      :type        github
 ;;                      :pkgname     "Andersbakken/rtags"
 ;;                      :url         "https://github.com/Andersbakken/rtags"
-;;                      :features    (rtags)))
+;;                      :features    rtags))
 ;; (my/el-get-install "rtags")
 ;;
 ;; (require 'rtags)
