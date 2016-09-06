@@ -15,3 +15,8 @@ fi
 
 # Rewrite path per my own preferences
 . ~/.my_path
+export CCACHE_DIR=/ccc
+export CCACHE_LOGFILE=/tmp/ccache.log
+export CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
+export CCACHE_TEMPDIR=/tmp
+export USE_CCACHE=1
