@@ -59,6 +59,9 @@ export XDG_CONFIG_HOME="${SSD_HOME}/.config"
 
 # Specify emacs as default editor(?):
 export EDITOR=emacsclient
+export VISUAL=emacsclient
+export P4EDITOR=emacsclient
+
 export ALTERNATE_EDITOR=emacs
 export ESHELL=/bin/bash
 
@@ -96,12 +99,6 @@ if [ -d /mathworks ]; then
         . /mathworks/hub/share/sbtools/bash_setup.bash
     fi
 
-    # Use emacs as the merge/diff editor for p4
-    export   EDITOR='sbe -w'
-    export   VISUAL='sbe -w'
-    export P4EDITOR='sbe -w'
-    export   P4DIFF='sbe -sb-diff'
-    export  P4MERGE='sbe -sb-merge'
     alias sbn='sb -nodesktop -nosplash -r "opengl info"'
     alias sbnj='sb -nodesktop -nosplash -nojvm -r "opengl info"'
     alias sbf='    sbruntests -autofarm devel -rerunusing jobarchive'
