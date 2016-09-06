@@ -1,0 +1,8 @@
+#!/bin/dash
+
+# Make sure that Bear's den is up to date
+( cd ${HOME}/.bear/${CLUSTER} \
+; /mathworks/inside/labs/dev/matlab_coder_tools/bear/bear-watch-bat --once \
+)
+
+sbsyncmaster -C /local-ssd/lsb -r ${CLUSTER} -log-dir /local-ssd/lsb/logs/${CLUSTER} -cfg ${HOME}/.sbsyncmaster/jyates_syncmaster_BEAR.cfg

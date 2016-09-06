@@ -1,13 +1,12 @@
 # Emacs: type 'C-x #' when done
 
-# CCACHE_DIR=/ccc
-# CCACHE_TEMPDIR=/tmp
-# CCACHE_LOGFILE=/tmp/ccache.log
-# CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
+CCACHE_DIR=/ccc
+CCACHE_LOGFILE=/tmp/ccache.log
+CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
+CCACHE_TEMPDIR=/tmp
 USE_CCACHE=1
 
-# Every hour at 3(3) past the hour
-3  0,4,8,12,16,20 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_task sbsyncmaster -C /local-ssd/lsb -r Bcgir_task -log-dir /local-ssd/lsb/logs/Bcgir_task -cfg /local-ssd/lsb/jyates_syncmaster_BEAR.cfg
-3  1,5,9,13,17,21 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_thin sbsyncmaster -C /local-ssd/lsb -r Bcgir_thin -log-dir /local-ssd/lsb/logs/Bcgir_thin -cfg /local-ssd/lsb/jyates_syncmaster_BEAR.cfg
-3 2,6,10,14,18,22 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_task sbsyncmaster -C /local-ssd/lsb -r Bcgir_task -log-dir /local-ssd/lsb/logs/Bcgir_task -cfg /local-ssd/lsb/jyates_syncmaster_BEAR.cfg
-3 3,7,11,15,19,23 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_thin sbsyncmaster -C /local-ssd/lsb -r Bcgir_thin -log-dir /local-ssd/lsb/logs/Bcgir_thin -cfg /local-ssd/lsb/jyates_syncmaster_BEAR.cfg
+3  0,4,8,12,16,20 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_task /local/jyates/.sbsyncmaster/sync-and-build
+3  1,5,9,13,17,21 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_thin /local/jyates/.sbsyncmaster/sync-and-build
+3 2,6,10,14,18,22 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_task /local/jyates/.sbsyncmaster/sync-and-build
+3 3,7,11,15,19,23 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_thin /local/jyates/.sbsyncmaster/sync-and-build
