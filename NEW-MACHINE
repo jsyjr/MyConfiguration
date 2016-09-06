@@ -185,16 +185,16 @@ sudo apt-get install git
 #  Debian: http://superuser.com/questions/644586/how-to-upgrade-to-latest-git-on-debian-7
 #
 mkdir ~/devel && cd $_
-dget http://ftp.de.debian.org/debian/pool/main/g/git/git_2.8.1-1.dsc
-dpkg-source -x git_2.8.1-1.dsc
-cd git-2.8.1
+dget http://ftp.de.debian.org/debian/pool/main/g/git/git_2.9.3-1.dsc
+dpkg-source -x git_2.9.3-1.dsc
+cd git-2.9.3
 dpkg-checkbuilddeps
 dch --bpo
 # save changelog and exit emacs
 # in Makefile comment out body of ^test: all
 dpkg-buildpackage -uc -us -b  # takes a long time to run tests
 sudo dpkg -i ../*.deb
-rm -rf ~/git_2.8.1* ~/git-2.8.1
+rm -rf ~/git_2.9.3* ~/git-2.9.3
 
 
 
