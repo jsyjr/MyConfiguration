@@ -50,7 +50,12 @@ set -E
 # - always move it to most recent
 export HISTCONTROL=ignoredups
 
-export XDG_CONFIG_HOME="${HOME}/.config"
+if [ -d /mathworks ]; then
+    export SSD_HOME=/local-ssd/jyates
+else
+    export SSD_HOME=${HOME}
+fi
+export XDG_CONFIG_HOME="${SSD_HOME}/.config"
 
 # Specify emacs as default editor(?):
 export EDITOR=emacsclient
