@@ -469,3 +469,18 @@ none                                      /var/tmp    tmpfs   relatime,nodiratim
 #
 //10.1.1.2/homes   /net/whs/homes  cifs   defaults,username=Dad,password=paren eFy wed jSy   0 2
 EOF
+
+
+# Disk performance on Debian 8 at Mathworks:
+# - disable quotas
+sudo btrfs quota disable /local-ssd
+# - disable automatic balancing in sbrmtree and sbsyncmaster
+sudo touch /local-ssd/.skip-btrfs-balance
+# - remove 'discard' from /etc/fstab's /local-ssd entry
+sudo nano /etc/fstab
+# - perform a weekly TRIM on every volume that supports that operation
+sudo cp /usr/share/doc/util-linux/examples/fstrim.{service,timer} /etc/systemd/system
+sudo systemctl enable fstrim.timer
+# - adjust swappiness
+sudo bash -c "echo 'vm.swappiness = 15' >> /etc/sysctl.conf"
+sudo sysctl -p
