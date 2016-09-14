@@ -2711,6 +2711,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (require 'sbtools-locations)
 
   (require 'mathworks-maps)
+
   ;; C-x C-q         mathworks-toggle-read-only
   ;;
   ;; C-c m C-f       mathworks-sbfi
@@ -2801,6 +2802,12 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; C-x v ~         mathworks-vc-version-other-window
   (define-key mathworks-prefix-map "D" 'mathworks-sb-debug-many-windows)
   (define-key mathworks-prefix-map "T" 'mathworks-sb-debug-ut-many-windows)
+
+  (my/custom-set-variables
+   '(p4-global-key-prefix "\C-cp"))
+
+  (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/p4" t)
+  (require 'p4)
 
   (defun my/clean-up-gud-buffers (orig-fun &rest args)
     (dolist (buf (buffer-list))
@@ -3471,10 +3478,6 @@ use either \\[customize] or the function `phw-mode'." t)
 
 ;; Add this at the last moment to guarantee position at front of list
 (add-to-list 'load-path "~/emacs/patched")
-
-;; Now we can load our patched p4e
-(when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
-  (require 'p4e))
 
 ;;}}}
 
