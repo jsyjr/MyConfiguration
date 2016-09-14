@@ -246,7 +246,7 @@ sudo rm -f 70-no-bitmaps.conf 70-yes-bitmaps.conf
 sudo ln -s ../conf.avail/70-yes-bitmaps.conf .
 
 cd /etc/fonts/conf.avail
-sudo cat >70-yes-bitmaps.conf <<EOF
+sudo bash -c 'cat >70-yes-bitmaps.conf <<EOF
 <?xml version="1.0"?>
 <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
 <fontconfig>
@@ -257,7 +257,7 @@ sudo cat >70-yes-bitmaps.conf <<EOF
   </rejectfont>
  </selectfont>
 </fontconfig>
-EOF
+EOF'
 
 # Install the Dina bitmapped font
 #
