@@ -974,7 +974,7 @@ mouse-3: go to end")
 ;;{{{  Extra color themes
 
 (my/custom-set-variables
- '(custom-theme-directory "~/emacs/themes")
+ '(custom-theme-directory "~/emacs/themes/")
  )
 
 ;;}}}

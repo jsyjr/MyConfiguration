@@ -42,7 +42,7 @@
  '(cua-overwrite-cursor-color (quote (box . "HotPink1")))
  '(cua-read-only-cursor-color (quote (box . "SeaGreen1")))
  '(custom-buffer-done-kill t)
- '(custom-theme-directory "~/emacs/themes")
+ '(custom-theme-directory "~/emacs/themes/")
  '(default-frame-alist
     (quote
      ((foreground-color . "white")
