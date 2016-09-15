@@ -180,7 +180,7 @@ mouse-3: Remove current window from display")))))
    (quote
     (org-docview org-info org-habit org-inlinetask org-protocol org-mouse)))
  '(org-support-shift-select t)
- '(p4-global-key-prefix "\C-cp")
+ '(p4-global-key-prefix "p")
  '(package-selected-packages (quote (ace-window avy)))
  '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)))
  '(pretty-control-l-mode t)
