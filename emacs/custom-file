@@ -62,6 +62,7 @@
  '(ediff-split-window-function (quote split-window-horizontally))
  '(ediff-use-last-dir t)
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
+ '(el-get-git-shallow-clone t)
  '(eol-mnemonic-mac ":")
  '(eol-mnemonic-undecided "?")
  '(eol-mnemonic-unix "/")

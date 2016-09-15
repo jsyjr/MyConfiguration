@@ -334,6 +334,8 @@
 
 ;;}}}
 
+(my/custom-set-variables
+ '(el-get-git-shallow-clone t))
 ;;=== Protection =======================================================
 ;;{{{  Auto-save and backup
 
