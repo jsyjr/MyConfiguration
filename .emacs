@@ -1543,7 +1543,7 @@ convert it to readonly/view-mode."
                                                                  ;; ac-source-semantic
                                                                  ;; ac-source-semantic-raw
                                                                  ;; ac-source-gtags ; no "using namespace XX;"
-                                                                 ) ac-sources)
+                                                                 ))
                                       (setq ac-source-yasnippet nil))
 
                                     (add-hook 'c-mode-common-hook 'my/ac-cc-mode-setup)
