@@ -131,83 +131,7 @@
 
 ;;}}}
 
-;;=== Package management ===============================================
-;;{{{  ensure necessary directories
-
-(setq el-get-dir "/home/jyates/.emacs.d/el-get/")
-
-(mapc (lambda (path)
-	(unless (file-accessible-directory-p path)
-	  (make-directory path t)))
-      `("~/.emacs.d/autosave"
-        "~/.emacs.d/autosave-list"
-        "~/.emacs.d/backup"
-        "~/.emacs.d/semanticdb"
-        "~/.emacs.d/srecode"
-        "~/.emacs.d/url"
-;        "/Hub/share/sbtools/apps/emacs-add-ons/src/sb-tools"
-        ,el-get-dir
-	))
-
-;;}}}
-;;{{{  add installed packages to load-path
-
-; Various packages reference c-common-mode-hook.  Update load-path
-; early to ensure that we pick up the latest cc-mode sources.
-(add-to-list 'load-path "~/repos/cc-mode")
-
-;; (add-to-list 'load-path "~/repos/emacs-helm-p4locate")
-
-(add-to-list 'load-path "~/.emacs.d/el-get/magit/lisp")
-
-(add-to-list 'load-path "~/repos/phw")
-
-(let ((entries (reverse (directory-files el-get-dir t))))
-  (mapc (lambda (path)
-          (when (and (file-directory-p path)
-		     (/= ?. (aref path (1- (length path))))
-		     (not (memq path load-path)))
-            (add-to-list 'load-path path))) entries))
-
-;;}}}
-;;{{{  el-get
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; CAVEAT: functions in packages acquired via el-get cannot be invoked
-;; until (el-get 'sync) has completed in the el-get epilog toward the
-;; bottom of this file.
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(setq el-get-sources '(el-get)) ; built incrementally via add-to-list
-(setq el-get-git-shallow-clone t)
-
-(defalias 'seq-copy #'copy-sequence)
-
-;; Minimal bootstrap
-(unless (file-directory-p (concat el-get-dir "el-get"))
-  (url-retrieve "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
-                (lambda (s)
-		    (goto-char (point-max))
-		    (eval-print-last-sexp)))
-  (el-get-elpa-build-local-recipes)
-  (add-to-list 'load-path (concat el-get-dir "el-get"))
-  )
-
-(require 'el-get)
-
-(defvar my/missing-el-get-packages nil)
-(defvar my/all-el-get-packages nil)
-(defun my/el-get-install (pkg)
-  "Ensure that PKG has actually been installed."
-  (let ((path (concat el-get-dir pkg)))
-    (add-to-list 'my/all-el-get-packages pkg)
-    (unless (file-directory-p path)
-      (message "Package '%s' currently is missing" path)
-      (add-to-list 'my/missing-el-get-packages pkg))))
-
-;;}}}
+;;=== Customization ====================================================
 ;;{{{  require-maybe and when-available
 
 (defmacro require-maybe (feature &optional file)
@@ -219,20 +143,6 @@
   `(when (fboundp ,func) ,foo))
 
 ;;}}}
-;;{{{  John Wiegley's use-package
-
-(add-to-list 'el-get-sources
-             '(:name use-package
-                     :description "A use-package declaration for simplifying your .emacs."
-                     :website     "https://github.com/jwiegley/use-package"
-                     :type        github
-                     :pkgname     "jwiegley/use-package"
-                     :features    (use-package bind-key)))
-(my/el-get-install "use-package")
-
-;;}}}
-
-;;=== Customization ====================================================
 ;;{{{  Customization auditing framework
 
 (eval-when-compile (defvar my/accum-custom-variables nil
@@ -324,6 +234,30 @@
 				   host)))))
 
 ;;}}}
+;;{{{  ensure necessary directories
+
+;; even though we have loaded the custom-file we do not seem to be
+;; be able to see el-get-dir's value so we set it directly :-(
+(setq el-get-dir "~/.emacs.d/el-get/")
+
+;; (my/custom-set-variables
+;;  '(el-get-dir "~/.emacs.d/el-get/"))
+
+;; run through a list of directories and ensure that each exists
+(mapc (lambda (path)
+	(unless (file-accessible-directory-p path)
+	  (make-directory path t)))
+      (list "~/.emacs.d/autosave"
+            "~/.emacs.d/autosave-list"
+            "~/.emacs.d/backup"
+            "~/.emacs.d/semanticdb"
+            "~/.emacs.d/srecode"
+            "~/.emacs.d/url"
+;;          "/Hub/share/sbtools/apps/emacs-add-ons/src/sb-tools"
+            el-get-dir
+            ))
+
+;;}}}
 ;;{{{  List of packages installed from ELPA
 
 (my/custom-set-variables
@@ -334,8 +268,80 @@
 
 ;;}}}
 
+;;=== Package management ===============================================
+;;{{{  add installed packages to load-path
+
+; Various packages reference c-common-mode-hook.  Update load-path
+; early to ensure that we pick up the latest cc-mode sources.
+(add-to-list 'load-path "~/repos/cc-mode")
+
+;; (add-to-list 'load-path "~/repos/emacs-helm-p4locate")
+
+(add-to-list 'load-path "~/.emacs.d/el-get/magit/lisp")
+
+(add-to-list 'load-path "~/repos/phw")
+
+(let ((entries (reverse (directory-files el-get-dir t))))
+  (mapc (lambda (path)
+          (when (and (file-directory-p path)
+		     (/= ?. (aref path (1- (length path))))
+		     (not (memq path load-path)))
+            (add-to-list 'load-path path))) entries))
+
+;;}}}
+;;{{{  el-get
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; CAVEAT: functions in packages acquired via el-get cannot be invoked
+;; until (el-get 'sync) has completed in the el-get epilog toward the
+;; bottom of this file.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(setq el-get-sources '(el-get)) ; built incrementally via add-to-list
+
 (my/custom-set-variables
  '(el-get-git-shallow-clone t))
+
+(defalias 'seq-copy #'copy-sequence)
+
+;; Minimal bootstrap
+(unless (file-directory-p (concat el-get-dir "el-get"))
+  (url-retrieve "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+                (lambda (s)
+		    (goto-char (point-max))
+		    (eval-print-last-sexp)))
+  (el-get-elpa-build-local-recipes)
+  (add-to-list 'load-path (concat el-get-dir "el-get"))
+  )
+
+(require 'el-get)
+
+(defvar my/missing-el-get-packages nil)
+(defvar my/all-el-get-packages nil)
+(defun my/el-get-install (pkg)
+  "Ensure that PKG has actually been installed."
+  (let ((path (concat el-get-dir pkg)))
+    (add-to-list 'my/all-el-get-packages pkg)
+    (unless (file-directory-p path)
+      (message "Package '%s' currently is missing" path)
+      (add-to-list 'my/missing-el-get-packages pkg))))
+
+;;}}}
+;;{{{  John Wiegley's use-package
+
+(add-to-list 'el-get-sources
+             '(:name use-package
+                     :description "A use-package declaration for simplifying your .emacs."
+                     :website     "https://github.com/jwiegley/use-package"
+                     :type        github
+                     :pkgname     "jwiegley/use-package"
+                     :features    (use-package bind-key)))
+(my/el-get-install "use-package")
+
+;;}}}
+
 ;;=== Protection =======================================================
 ;;{{{  Auto-save and backup
 
