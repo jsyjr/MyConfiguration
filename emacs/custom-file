@@ -244,6 +244,7 @@ mouse-3: Remove current window from display")))))
  '(vc-make-backup-files t)
  '(version-control t)
  '(visible-bell t)
+ '(visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
  '(which-func-format
    (quote
     ("["
