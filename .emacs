@@ -1486,8 +1486,8 @@ convert it to readonly/view-mode."
 (my/el-get-install "yasnippet")
 
 (my/custom-set-variables
- '(yas-global-mode t                       nil (yasnippet))
- '(yas-snippet-dirs '("~/emacs/yasnippet") nil (yasnippet)))
+ '(yas-global-mode t)
+ '(yas-snippet-dirs '("~/emacs/yasnippet")))
 
 ;; reload modified snippets
 (defun my/yasnippet-reload-on-save ()
