@@ -2348,6 +2348,25 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (eval-after-load "yasnippet"
   '(add-hook 'after-save-hook 'my/yasnippet-reload-on-save))
 
+(defun my/compile-command ()
+  "Return a compile command for the current (.cpp) buffer.
+
+If not in a unittest directory compile only the single file.
+If in a unittest directory locate the module directory and
+run gmake there."
+  (let ((cwd (file-name-directory (buffer-file-name)))
+        (cmd (if (not (locate-dominating-file "." "unittest"))
+                 (concat "sbcc -mc " (buffer-name))
+               (while (cond
+                       ((string-suffix-p "unittest/" cwd)
+                        (setq cwd (substring cwd 0 -9)))
+                       ((string-suffix-p "my/" cwd)
+                        (setq cwd (substring cwd 0 -3)))
+                       (t
+                        nil)))
+               "gmake")))
+    (concat "cd " cwd "\n" cmd)))
+
 (defun my/compile (command &optional comint)
   "If within a Mathworks sandbox recompile most recent .cpp.
 A minor variant of the compile function shipped compile.el.
@@ -2384,9 +2403,7 @@ to a function that generates a unique name."
    (list
     (let ((command (progn
                      (if (string-suffix-p ".cpp" (buffer-name))
-                         (setq compile-command
-                               (concat "cd " (file-name-directory (buffer-file-name)) ";"
-                                       "sbcc -mc " (buffer-name))))
+                         (setq compile-command (my/compile-command)))
                      (eval compile-command))))
       (if (or compilation-read-command current-prefix-arg)
 	  (compilation-read-command command)
