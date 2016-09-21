@@ -6,8 +6,7 @@ if [ ! -f "src/doxygen.cpp" ]; then
    echo "Working directory ( $(pwd) ) is not the root of a doxygen source tree."; exit 1
 fi
 
-rm -rf build
-git reset --hard
+git clean -f
 git pull
 
 mkdir build
