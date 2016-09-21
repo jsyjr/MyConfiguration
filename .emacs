@@ -2352,19 +2352,23 @@ An alternate approach would be after-advice on isearch-other-meta-char."
   "Return a compile command for the current (.cpp) buffer.
 
 If not in a unittest directory compile only the single file.
-If in a unittest directory locate the module directory and
-run gmake there."
-  (let ((cwd (file-name-directory (buffer-file-name)))
-        (cmd (if (not (locate-dominating-file "." "unittest"))
-                 (concat "sbcc -mc " (buffer-name))
-               (while (cond
-                       ((string-suffix-p "unittest/" cwd)
-                        (setq cwd (substring cwd 0 -9)))
-                       ((string-suffix-p "my/" cwd)
-                        (setq cwd (substring cwd 0 -3)))
-                       (t
-                        nil)))
-               "gmake")))
+If in a unittest directory locate the module directory, run
+gmake there and if successful run the resulting image."
+  (let* ((cwd (file-name-directory (buffer-file-name)))
+         (exe nil)
+         (cmd (if (not (locate-dominating-file "." "unittest"))
+                  (concat "sbcc -mc " (buffer-name))
+                (while (cond
+                        ((string-suffix-p "unittest/" cwd)
+                         (setq exe "unittest")
+                         (setq cwd (substring cwd 0 -9)))
+                        ((string-suffix-p "my/" cwd)
+                         (setq exe "my_unittest")
+                         (setq cwd (substring cwd 0 -3)))
+                        (t
+                         nil)))
+                (let ((path (split-string cwd "matlab/src")))
+                  (concat "cgmake && " (nth 0 path) "matlab/derived/glnxa64/testbin/src" (nth 1 path) exe)))))
     (concat "cd " cwd "\n" cmd)))
 
 (defun my/compile (command &optional comint)
