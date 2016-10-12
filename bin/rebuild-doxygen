@@ -9,6 +9,7 @@ fi
 git clean -f
 git pull
 
+rm -rf build
 mkdir build
 cd build
 cmake -G "Unix Makefiles" english_only=1 use_libclang=1 ..
