@@ -27,20 +27,20 @@ git pull
 ./autogen.sh all
 
 set +e
-#CFLAGS='-march=native -mfpmath=387 -O3' ./configure  --prefix=/usr/local/emacs --enable-link-time-optimization
-CFLAGS='-march=native -mfpmath=387 -O3' ./configure  --prefix=/usr/local/emacs
+#CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' ./configure --prefix=/usr/local/emacs --enable-link-time-optimization
+CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' ./configure --prefix=/usr/local/emacs
 
-# CFLAGS='-march=native -mfpmath=387 -O3' make bootstrap
+# CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make bootstrap
 
 # Dependencies are not complete so parallel builds have sporadic failures.
 # Do a first parallel pass to build as much as possible.
-CFLAGS='-march=native -mfpmath=387 -O3' make -j24 -k
-CFLAGS='-march=native -mfpmath=387 -O3' make -j24 -k doc
+CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make -j24 -k
+CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make -j24 -k doc
 
 # Now do a non-parallel build to get things finished up.
 set -e
-CFLAGS='-march=native -mfpmath=387 -O3' make
-CFLAGS='-march=native -mfpmath=387 -O3' make doc
+CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make
+CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make doc
 
 (cd lisp ; make autoloads)
 
