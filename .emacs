@@ -1901,7 +1901,7 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  ilocate-library
 
-;; My changes from https://github.com/emacsmirror/ilocate-library.git
+;; My changes from github's emacsstatic/ilocate-library:
 ;;  - (require 'cl)
 ;;  - support gzipped files (adjust regexps and doc strings)
 ;;  - visit files in view mode
@@ -1911,6 +1911,8 @@ This command is designed to be used whether you are already in Info or not."
 (add-to-list 'el-get-sources
              '(:name ilocate-library
                      :description "Interactive locate-library (or source) with completion"
+                     ;; :type        github
+                     ;; :pkgname     "emacsattic/ilocate-library"
                      :type        http
                      :url         "file://localhost/home/jyates/emacs/patched/ilocate-library.el"
                      :features    ilocate-library))
