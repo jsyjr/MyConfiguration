@@ -2792,7 +2792,9 @@ Works with: arglist-cont, arglist-cont-nonempty."
     (shell WORKSPACE)))
 
 (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
-  (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools" t)
+  (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools/" t)
+  (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/matlab-emacs/matlab-emacs/" t)
+
   (require 'sbtools-locations)
 
   (require 'mathworks-maps)
