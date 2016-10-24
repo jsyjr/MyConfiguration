@@ -30,6 +30,7 @@ touch matlab/src/.gitignore
 cat >>matlab/src/.gitignore <<EOF
 /sl*/
 /sim*/
+suite_registration.cpp
 EOF
 
 chmod a+w matlab/toolbox/.gitignore
