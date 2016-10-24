@@ -104,12 +104,14 @@
 
 ;; TODO
 ;; - mode-line:
-;;   position-widget could change color is cursor exceeds limit column
+;;   position-widget could change color if cursor exceeds limit column
 ;;   see http://www.emacswiki.org/emacs/ModeLinePosition
 ;; - Searching:
 ;;   see https://github.com/nschum/highlight-symbol.el
 ;; - Window resizing:
 ;;   see https://github.com/roman/golden-ratio.el
+;; - Fonts
+;;   investigate Monoisome (https://larsenwork.com/monoid/)
 
 ;; swap caps lock and control
 ;; Sanjay Dixit's am package - add autoload cookies, use el-get
