@@ -266,6 +266,7 @@
  '(package-selected-packages
    '(ace-window
      avy
+     ivy
      )))
 
 ;;}}}
@@ -1491,6 +1492,18 @@ convert it to readonly/view-mode."
 ;;}}}
 
 ;;=== Abbreviation and expansion =======================================
+;;{{{  ivy, counsel and swiper
+
+(eval-after-load "ivy"
+  '(progn
+     (diminish 'ivy-mode "")))
+
+(my/custom-set-variables
+ '(ivy-use-virtual-buffers t)
+ '(ivy-count-format "(%d/%d) ")
+ )
+
+;;}}}
 ;;{{{  yasnippet
 
 (my/el-get-install "yasnippet")

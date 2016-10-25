@@ -181,7 +181,7 @@ mouse-3: Remove current window from display")))))
     (org-docview org-info org-habit org-inlinetask org-protocol org-mouse)))
  '(org-support-shift-select t)
  '(p4-global-key-prefix "p")
- '(package-selected-packages (quote (ace-window avy)))
+ '(package-selected-packages (quote (ace-window avy ivy)))
  '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)))
  '(pretty-control-l-mode t)
  '(recentf-mode t)
@@ -245,7 +245,7 @@ mouse-3: Remove current window from display")))))
  '(vc-make-backup-files t)
  '(version-control t)
  '(visible-bell t)
- '(visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
+ '(visual-line-fringe-indicators (quote (left-curly-arrow right-curly-arrow)))
  '(which-func-format
    (quote
     ("["
