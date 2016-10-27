@@ -1425,7 +1425,7 @@ convert it to readonly/view-mode."
  '(ediff-cmp-options '("diff --histogram"))
  '(ediff-keep-variants nil)
  '(ediff-make-buffers-readonly-at-startup t)
- '(ediff-split-window-function 'split-window-horizontally)
+ '(ediff-split-window-function 'split-window-horizontally t)
  '(ediff-use-last-dir t)
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
  )
@@ -3160,6 +3160,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
  '(gdb-create-source-file-list nil)
  '(gdb-many-windows t)
  '(gdb-stack-buffer-addresses t)
+ '(gdb-thread-buffer-arguments nil)
  '(gud-gdb-command-name "gdb -i=mi")
  )
 
