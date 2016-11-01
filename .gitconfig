@@ -20,10 +20,12 @@
 	undo = reset HEAD~1
 	strip = reset HEAD~1 --hard
 [transfer]
-        fsckObjects = true
+	fsckObjects = true
 [fetch]
-        fsckObjects = true
+	fsckObjects = true
 [receive]
-        fsckObjects = true
+	fsckObjects = true
 [core]
 	autocrlf = input
+[rebase]
+	autosquash = true
