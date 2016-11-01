@@ -109,6 +109,8 @@
  '(initial-scratch-message nil)
  '(isearch-mode-end-hook (quote my/enter-again-if-enter) t)
  '(ispell-personal-dictionary "~/emacs/aspell.en.pws")
+ '(ivy-count-format "(%d/%d) ")
+ '(ivy-use-virtual-buffers t)
  '(kept-old-versions 5)
  '(kill-whole-line t)
  '(list-directory-verbose-switches "-l --group-directories-first")
