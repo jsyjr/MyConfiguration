@@ -2370,7 +2370,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 If not in a unittest directory compile only the single file.
 If in a unittest directory locate the module directory, run
-gmake there and if successful run the resulting image."
+cgmake -no-distcc there and if successful run the test image."
   (let* ((cwd (file-name-directory (buffer-file-name)))
          (exe nil)
          (cmd (if (not (locate-dominating-file "." "unittest"))
@@ -2384,8 +2384,12 @@ gmake there and if successful run the resulting image."
                          (setq cwd (substring cwd 0 -3)))
                         (t
                          nil)))
-                (let ((path (split-string cwd "matlab/src")))
-                  (concat "cgmake && " (nth 0 path) "matlab/derived/glnxa64/testbin/src" (nth 1 path) exe)))))
+                (let* ((path (split-string cwd "matlab/src"))
+                       (target (concat (nth 0 path) "matlab/derived/glnxa64/testbin/src" (nth 1 path) exe)))
+                  (concat
+                   "rm -f " target "\n"
+                   "cgmake -no-distcc\n"
+                   target)))))
     (concat "cd " cwd "\n" cmd)))
 
 (defun my/compile (command &optional comint)
