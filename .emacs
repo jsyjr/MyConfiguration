@@ -260,12 +260,16 @@
             ))
 
 ;;}}}
-;;{{{  List of packages installed from ELPA
+;;{{{  Package archives and install packages
 
 (my/custom-set-variables
+ '(package-archives
+   '(("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa" . "https://melpa.org/packages/")))
  '(package-selected-packages
    '(ace-window
      avy
+     gxref
      ivy
      )))
 
@@ -1878,6 +1882,8 @@ This command is designed to be used whether you are already in Info or not."
  '(grep-template "grep <X> <C> -nH -e <R> <F>")
  '(grep-use-null-device nil)
  )
+
+(add-to-list 'xref-backend-functions 'gxref-xref-backend)
 
 ;;}}}
 ;;{{{  Chasing URL's. See:  browse-url.el
