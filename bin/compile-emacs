@@ -1,0 +1,25 @@
+#!/bin/dash
+
+# Dependencies are not complete so parallel builds have sporadic failures.
+# Do a first parallel pass to build as much as possible.
+CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make -j24 -k
+CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make -j24 -k doc
+
+# Now do a non-parallel build to get loose ends tied up
+set -e
+CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make
+CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make doc
+
+(cd lisp ; make autoloads)
+
+echo
+echo "Build is complete; performing very simple invocation"
+echo
+echo
+./src/emacs --version
+echo
+echo Starting emacs
+echo
+./src/emacs -Q &
+echo
+echo
