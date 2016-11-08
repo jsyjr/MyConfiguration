@@ -27,9 +27,9 @@ git pull --rebase
 ./autogen.sh all
 
 set +e
-#CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' ./configure --prefix=/usr/local/emacs --enable-link-time-optimization
-CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' ./configure --prefix=/usr/local/emacs
+#CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --enable-link-time-optimization
+CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs
 
-# CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make bootstrap
+# CFLAGS='-march=native -mfpmath=387 -O3' make bootstrap
 
 compile-emacs

@@ -645,6 +645,7 @@ Use a normal parenthesis if not inside any."
  '(mode-line-highlight      ((t (:background "wheat2" :box (:line-width -1 :style released-button)))))
  '(mode-line-highlight-bold ((t (:background "wheat2" :weight bold :box (:line-width -1 :style released-button)))))
  '(mode-line-inactive       ((t (:inherit mode-line :background "gray65"))))
+ '(header-line              ((t (:inherit mode-line-inactive :box nil :weight bold))))
  )
 
 (my/custom-set-variables
@@ -1757,37 +1758,37 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  Browsing and completion (helm, ido, smex)
 
-;; (add-to-list 'el-get-sources 'helm)
-;; (my/el-get-install "helm")
-
-;; (require 'helm)
-;; (require 'helm-config)
-;; (require 'helm-p4locate)
-
-(my/custom-set-variables
- '(helm-command-prefix-key "C-c h")
- '(helm-mode t)
- '(helm-move-to-line-cycle-in-source t)
- '(helm-split-window-default-side 'same)
- )
-
-;; (global-set-key (kbd "C-x C-l") 'helm-do-p4l)
-
-;; Repair helm "angry salad"
-(my/custom-set-faces
- '(header-line             ((t (:inherit mode-line-inactive :box nil :weight bold))))
- '(helm-buffer-not-saved   ((t (:foreground "plum1"))))
- '(helm-buffer-process     ((t (:foreground "DarkSeaGreen1"))))
- '(helm-buffer-size        ((t (:foreground "gray66"))))
- '(helm-ff-directory       ((t (:inherit dired-directory))))
- '(helm-ff-executable      ((t (:foreground "DarkSeaGreen1"))))
- '(helm-ff-file            ((t nil)))
- '(helm-ff-invalid-symlink ((t (:inherit dired-warning))))
- '(helm-ff-symlink         ((t (:inherit dired-symlink))))
- '(helm-header             ((t (:background "gray50" :foreground "black"))))
- '(helm-match              ((t (:background "#1c3850"))))
- '(helm-selection          ((t (:background "gray15"))))
- '(helm-source-header      ((t (:inherit default :foreground "RosyBrown4" :underline t :weight bold)))))
+;; ;; (add-to-list 'el-get-sources 'helm)
+;; ;; (my/el-get-install "helm")
+;;
+;; ;; (require 'helm)
+;; ;; (require 'helm-config)
+;; ;; (require 'helm-p4locate)
+;;
+;; (my/custom-set-variables
+;;  '(helm-command-prefix-key "C-c h")
+;;  '(helm-mode t)
+;;  '(helm-move-to-line-cycle-in-source t)
+;;  '(helm-split-window-default-side 'same)
+;;  )
+;;
+;; ;; (global-set-key (kbd "C-x C-l") 'helm-do-p4l)
+;;
+;; ;; Repair helm "angry salad"
+;; (my/custom-set-faces
+;;  '(header-line             ((t (:inherit mode-line-inactive :box nil :weight bold))))
+;;  '(helm-buffer-not-saved   ((t (:foreground "plum1"))))
+;;  '(helm-buffer-process     ((t (:foreground "DarkSeaGreen1"))))
+;;  '(helm-buffer-size        ((t (:foreground "gray66"))))
+;;  '(helm-ff-directory       ((t (:inherit dired-directory))))
+;;  '(helm-ff-executable      ((t (:foreground "DarkSeaGreen1"))))
+;;  '(helm-ff-file            ((t nil)))
+;;  '(helm-ff-invalid-symlink ((t (:inherit dired-warning))))
+;;  '(helm-ff-symlink         ((t (:inherit dired-symlink))))
+;;  '(helm-header             ((t (:background "gray50" :foreground "black"))))
+;;  '(helm-match              ((t (:background "#1c3850"))))
+;;  '(helm-selection          ((t (:background "gray15"))))
+;;  '(helm-source-header      ((t (:inherit default :foreground "RosyBrown4" :underline t :weight bold)))))
 
 
 ;; (my/custom-set-variables
@@ -3739,7 +3740,7 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "C-h L"         (info "elisp"))    ; was describe-language-environment
 (keydef "C-h R"         my/elisp-function-reference)
 
-(keydef "C-x C-b"       bs-show)           ; same binding as <f1>
+(keydef "C-x C-b"       bs-show)           ; same binding as S-<f1>
 
 ;; Kevin Rodgers <kevinr@ihs.com>
 ;;
@@ -3806,9 +3807,10 @@ use either \\[customize] or the function `phw-mode'." t)
 ;; (keydef "M-x"           smex)
 ;; (keydef "M-X"           smex-major-mode-commands)
 
-(keydef "<f1>"          bs-show)
+(keydef "<f1>"          ivy-switch-buffer)
+(keydef "S-<f1>"        bs-show)
 (keydef "C-<f1>"        my/named-shell)
-(keydef "S-<f1>"        my/local-ssd-workspace-shell)
+(keydef "C-S-<f1>"      my/local-ssd-workspace-shell)
 (keydef "M-<f1>"        menu-bar-mode)
 
 (keydef "<f2>"          disk)
@@ -3855,13 +3857,13 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "C-<f12>"       customize-group)
 (keydef "M-<f12>"       customize-apropos)
 
-(eval-after-load 'helm '(progn
-  (keydef "M-x"         helm-M-x)
-  (keydef "C-x C-f"     helm-find-files)
-  ;; Swap TAB and C-j
-  (define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
-  (define-key helm-map (kbd "C-j") 'helm-select-action)
-  ))
+;; (eval-after-load 'helm '(progn
+;;   (keydef "M-x"         helm-M-x)
+;;   (keydef "C-x C-f"     helm-find-files)
+;;   ;; Swap TAB and C-j
+;;   (define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
+;;   (define-key helm-map (kbd "C-j") 'helm-select-action)
+;;   ))
 
 
 (eval-after-load "bs"  '(keydef (bs "<f1>") (bs-kill)))

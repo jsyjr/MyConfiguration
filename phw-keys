@@ -1,0 +1,80 @@
+C-,             Prefix Command
+
+C-, ,           phw-select-PHW-or-edit-window
+C-, .           phw-select-edit-window-ring-pop
+C-, 0           phw-select-PHW
+C-, 1           phw-select-edit-window-1
+C-, 2           phw-select-edit-window-2
+C-, 3           phw-select-edit-window-3
+C-, 4           phw-select-edit-window-4
+C-, 5           phw-select-edit-window-5
+C-, 6           phw-select-edit-window-6
+C-, 7           phw-select-edit-window-7
+C-, 8           phw-select-edit-window-8
+C-, 9           phw-select-edit-window-9
+C-, b           phw-select-edit-window-prev
+C-, f           phw-select-edit-window-next
+C-, k           Prefix Command
+C-, m           Prefix Command
+C-, n           phw-select-edit-window-next
+C-, p           phw-select-edit-window-prev
+C-, x           Prefix Command
+C-, C-,         phw-select-PHW-or-edit-window
+C-, C-.         phw-select-edit-window-ring-pop
+
+C-, x ,         phw-exchange-PHW-or-edit-window
+C-, x .         phw-exchange-edit-window-ring-pop
+C-, x 0         phw-exchange-PHW
+C-, x 1         phw-exchange-edit-window-1
+C-, x 2         phw-exchange-edit-window-2
+C-, x 3         phw-exchange-edit-window-3
+C-, x 4         phw-exchange-edit-window-4
+C-, x 5         phw-exchange-edit-window-5
+C-, x 6         phw-exchange-edit-window-6
+C-, x 7         phw-exchange-edit-window-7
+C-, x 8         phw-exchange-edit-window-8
+C-, x 9         phw-exchange-edit-window-9
+C-, x b         phw-exchange-edit-window-prev
+C-, x f         phw-exchange-edit-window-next
+C-, x n         phw-exchange-edit-window-next
+C-, x p         phw-exchange-edit-window-prev
+C-, x C-,       phw-exchange-PHW-or-edit-window
+C-, x C-.       phw-exchange-edit-window-ring-pop
+
+C-, k ,         phw-kill-buffer-in-PHW-or-edit-window
+C-, k .         phw-kill-buffer-in-edit-window-ring-pop
+C-, k 0         phw-kill-buffer-in-PHW
+C-, k 1         phw-kill-buffer-in-edit-window-1
+C-, k 2         phw-kill-buffer-in-edit-window-2
+C-, k 3         phw-kill-buffer-in-edit-window-3
+C-, k 4         phw-kill-buffer-in-edit-window-4
+C-, k 5         phw-kill-buffer-in-edit-window-5
+C-, k 6         phw-kill-buffer-in-edit-window-6
+C-, k 7         phw-kill-buffer-in-edit-window-7
+C-, k 8         phw-kill-buffer-in-edit-window-8
+C-, k 9         phw-kill-buffer-in-edit-window-9
+C-, k b         phw-kill-buffer-in-edit-window-prev
+C-, k f         phw-kill-buffer-in-edit-window-next
+C-, k n         phw-kill-buffer-in-edit-window-next
+C-, k p         phw-kill-buffer-in-edit-window-prev
+C-, k C-,       phw-kill-buffer-in-PHW-or-edit-window
+C-, k C-.       phw-kill-buffer-in-edit-window-ring-pop
+
+C-, m ,         phw-move-buffer-to-PHW-or-edit-window
+C-, m .         phw-move-buffer-to-edit-window-ring-pop
+C-, m 0         phw-move-buffer-to-PHW
+C-, m 1         phw-move-buffer-to-edit-window-1
+C-, m 2         phw-move-buffer-to-edit-window-2
+C-, m 3         phw-move-buffer-to-edit-window-3
+C-, m 4         phw-move-buffer-to-edit-window-4
+C-, m 5         phw-move-buffer-to-edit-window-5
+C-, m 6         phw-move-buffer-to-edit-window-6
+C-, m 7         phw-move-buffer-to-edit-window-7
+C-, m 8         phw-move-buffer-to-edit-window-8
+C-, m 9         phw-move-buffer-to-edit-window-9
+C-, m b         phw-move-buffer-to-edit-window-prev
+C-, m f         phw-move-buffer-to-edit-window-next
+C-, m n         phw-move-buffer-to-edit-window-next
+C-, m p         phw-move-buffer-to-edit-window-prev
+C-, m C-,       phw-move-buffer-to-PHW-or-edit-window
+C-, m C-.       phw-move-buffer-to-edit-window-ring-pop
