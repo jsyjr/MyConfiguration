@@ -1005,7 +1005,7 @@ mouse-3: go to end")
   "Split the window horizontally for temp buffers."
   (when (and (one-window-p t)
      	     (not (active-minibuffer-window)))
-    (split-window-horizontally)))
+    (split-window-horizontally t)))
 
 ; (add-hook 'temp-buffer-setup-hook 'split-horizontally-for-temp-buffers)
 
