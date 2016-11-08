@@ -167,7 +167,7 @@ common to all directory paths is factored out.")
 ;;====================================================
 
 ;;;###autoload
-(defun sbf-find-file ()
+(defun HIDDEN-sbf-find-file ()
   "Find a file in a sandbox using a Emacs' traditional completion framework."
   (interactive)
   (sbf--current-completions)
@@ -175,6 +175,24 @@ common to all directory paths is factored out.")
          (completing-read
           (concat "Sandbox " sbf--sandbox " - find file: ")
           sbf--uniquified-list nil t nil sbf--find-file-history)))
+    (when (> (length filename) 0)
+      (find-file-read-only (sbf--reconstitute-file-path filename)))))
+
+;;;###autoload
+(defun sbf-find-file ()
+  "Find a file in a sandbox using a Emacs' traditional completion framework."
+  (interactive)
+  (sbf--current-completions)
+  (let ((filename
+         (ivy-read
+          (concat "Sandbox " sbf--sandbox " - find file: ")
+          sbf--uniquified-list
+          :preselect (file-name-nondirectory (thing-at-point 'filename))
+          ;; :keymap (let ((map (make-sparse-keymap)))
+          ;;           (define-key map (kbd "f1") #'keyboard-quit)
+          ;;           map)
+          :history 'sbf--find-file-history
+          )))
     (when (> (length filename) 0)
       (find-file-read-only (sbf--reconstitute-file-path filename)))))
 
