@@ -2307,7 +2307,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
              '(:name ggtags
                      :description "Use GNU Global in Emacs."
                      :type github
-                     :pkgname "jsyjr/ggtags"))
+                     :pkgname "leoliu/ggtags"))
 (my/el-get-install "ggtags")
 
 (my/custom-set-variables
