@@ -1222,6 +1222,9 @@ word."
 ;;}}}
 ;;{{{  Tabs
 
+;; Reference by graphviz-dot-mode
+(defconst default-tab-width 4)
+
 (my/custom-set-variables
  '(indent-tabs-mode nil)        ; no hard tabs
  '(tab-always-indent nil)       ; indent, complete else insert whitespace
