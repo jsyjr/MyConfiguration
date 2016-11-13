@@ -10,11 +10,19 @@ fi
 
 [ -e Makefile ] && make distclean
 
-./configure --with-exuberant-ctags=/usr/local/bin/ctags --with-sqlite3
+cd ${HOME}
+rm -rf global
+cvs -z3 -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/global co global
+cd ${HOME}/repos/global
+cvs update
 
-sed -i -e 's/-g -O2/-march=native -mfpmath=387 -O3/' libtool reconf.sh `find -name Makefile`
+sh reconf.sh
+./configure --prefix=/usr/local --with-exuberant-ctags=/usr/local/bin/ctags --with-sqlite3
+
+sed -i -e 's/-g -O2/-march=native -mfpmath=387 -O3/' `find -name "Makefile*"` `find -name "libtool*"`
 
 # mkdir -p lib bin objects/qtools html latex man docbook perlmod rtf xml
 
 make -kj8
 make
+sudo make install

@@ -99,6 +99,7 @@ sudo apt-get install \
   global \
   gnutls-dev \
   gparted \
+  gperf \
   graphviz \
   heirloom-mailx \
   imagemagick \

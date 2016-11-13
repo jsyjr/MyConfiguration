@@ -18,5 +18,6 @@ rebuild cc-mode
 rebuild ctags
 rebuild doxygen
 rebuild emacs
+rebuild global
 rebuild phw
 rebuild st
