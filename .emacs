@@ -3819,8 +3819,8 @@ use either \\[customize] or the function `phw-mode'." t)
 ;; (keydef "M-X"           smex-major-mode-commands)
 
 (keydef "<f1>"          ivy-switch-buffer)
-(keydef "S-<f1>"        bs-show)
-(keydef "C-<f1>"        my/named-shell)
+(keydef "C-<f1>"        bs-show)
+(keydef "S-<f1>"        my/named-shell)
 (keydef "C-S-<f1>"      my/local-ssd-workspace-shell)
 (keydef "M-<f1>"        menu-bar-mode)
 
