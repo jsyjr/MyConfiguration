@@ -304,7 +304,7 @@ common to all directory paths is factored out.")
     (message (concat "cat " sbf--path-full sbf--cmd-code-list sbf--path-code))
     (shell-command-to-string (concat "cat " sbf--path-full sbf--cmd-code-list sbf--path-code)))
   (when (sbf--can-reuse sbf--path-hash sbf--path-code)
-    ;; Reload hash tabke from disk (hopefully from a .elc)
+    ;; Reload hash tabke from disk (hopefully from an .elc)
     (load sbf--path-hash)
     ;; Reload buffer of unique strings and rebuild list
     (with-current-buffer sbf--uniquified-buffer
