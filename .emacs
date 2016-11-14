@@ -2283,27 +2283,6 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;}}}
 
 ;;=== Programming ======================================================
-;;{{{  Sandbox file access
-
-(add-to-list 'load-path "~/emacs/nz")
-
-(autoload 'sbf-helm-find-file "sbf"
-  "Return a HELM arglist to perform find-file in a sandbox."
-  t)
-
-(autoload 'sbf-helm-find-file-read-only "sbf"
-  "Return a HELM arglist to perform find-file-read-only in a sandbox."
-  t)
-
-(autoload 'sbf-helm-view-file "sbf"
-  "Return a HELM arglist to perform view-file in a sandbox."
-  t)
-
-(autoload 'sbf-find-file "sbf"
-  "Find a file in a sandbox using a completion framework."
-  t)
-
-;;}}}
 ;;{{{  Find file in project
 
 (add-to-list 'el-get-sources 'find-file-in-project)
@@ -2853,7 +2832,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; C-c m B         mathworks-sbbackup
   ;; C-c m D         mathworks-sb-debug-many-windows
   ;; C-c m E         mathworks-sbedits
-  ;; C-c m F         mathworks-sblocate-gendb
+  ;; C-c m F         sbf-force-from-scratch (was mathworks-sblocate-gendb)
   ;; C-c m G         mathworks-gen-gtags
   ;; C-c m I         mathworks-mkid
   ;; C-c m L         mathworks-mlog
@@ -2868,7 +2847,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; C-c m c         mathworks-compile-matlab
   ;; C-c m d         mathworks-sb-debug
   ;; C-c m e         mathworks-medit
-  ;; C-c m f         mathworks-sblocate
+  ;; C-c m f         sbf-ivy-find-file (was mathworks-sblocate)
   ;; C-c m g         mathworks-view-bearded-dragon-geck
   ;; C-c m h         browse-url-at-point
   ;; C-c m i         mathworks-gid
@@ -2925,6 +2904,29 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; C-x v ~         mathworks-vc-version-other-window
   (define-key mathworks-prefix-map "D" 'mathworks-sb-debug-many-windows)
   (define-key mathworks-prefix-map "T" 'mathworks-sb-debug-ut-many-windows)
+
+  ;;  Sandbox file access
+  (add-to-list 'load-path "~/emacs/nz")
+
+  (autoload 'sbf-ivy-find-file "sbf"
+    "Use IVY completion with find-file in a Mathworks sandbox."
+    t)
+
+  (autoload 'sbf-ivy-find-file-read-only "sbf"
+    "Use IVY completion with find-file-read-only in a Mathworks sandbox."
+    t)
+
+  (autoload 'sbf-ivy-view-file "sbf"
+    "Use IVY completion with view-file in a Mathworks sandbox."
+    t)
+
+  (autoload 'sbf-force-from-scratch "sbf"
+    "Recompute and reload all structures"
+    t)
+
+  ;; replace mathworks-sblocate and mathworks-sblocate-gendb
+  (define-key mathworks-prefix-map "f" 'sbf-ivy-find-file)
+  (define-key mathworks-prefix-map "F" 'sbf-force-from-scratch)
 
   (my/custom-set-variables
    '(p4-global-key-prefix "\C-cp"))
@@ -3821,6 +3823,7 @@ use either \\[customize] or the function `phw-mode'." t)
 
 (keydef "<f1>"          ivy-switch-buffer)
 (keydef "C-<f1>"        bs-show)
+(eval-after-load "bs"  '(keydef (bs "<f1>") (bs-kill)))
 (keydef "S-<f1>"        my/named-shell)
 (keydef "C-S-<f1>"      my/local-ssd-workspace-shell)
 (keydef "M-<f1>"        menu-bar-mode)
@@ -3849,7 +3852,7 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "S-<f8>"        my/gud-frame0)
 
 (keydef   "<f9>"        my/gud-step)    ; MS step into
-(keydef "C-<f9>"        my/gud-stepi)   ; step by instruction
+(keydef "C-<f9>"        my/gud-stepi)   ; step by instructi
 (keydef "S-<f9>"        my/gud-down)
 
 (keydef   "<f10>"       my/gud-next)    ; MS step over

@@ -1,7 +1,5 @@
 ;;; sbf.el --- Mathworks sandbox-based file finder  -*- lexical-binding: t -*-
 
-(require 'helm)
-
 ;;====================================================
 ;; Various magic strings and path fragments
 ;;====================================================
@@ -14,7 +12,12 @@
 (defconst sbf--HASH_TABLE  "path-hash.el")
 (defconst sbf--UNIQUIFIED  "uniquified.txt")
 
-(defconst sbf--BUF_UNIQUE  "*helm files*")
+(defconst sbf--BUF_UNIQUE  "*sandbox files*")
+
+;; Magic shell invocations
+(defconst sbf--cmd-add-files "p4 opened | grep '#1 - add ' | sed -e 's!//mw/B[^/]*/\\(matlab/.*\\)#1 - add .*$!\\1!' >")
+(defconst sbf--cmd-full-list " $(find .sbtools/global/matlab/ -name 'project-file-list.txt') | fgrep -v '/derived/' >")
+(defconst sbf--cmd-code-list " | grep -e '\\.\\([hHlycC]\\|h\\.in\\|hh\\|cc\\|[hc]\\(pp\\|xx\\)\\|lex\\|yacc\\|java\\)$' >")
 
 
 ;;====================================================
@@ -64,102 +67,56 @@ common to all directory paths is factored out.")
 (defvar sbf--vector-hash nil
   "")
 
+
 ;;====================================================
-;; Autoloaded entrypoints for HELM access
+;; Autoloaded entrypoints for IVY access
 ;;====================================================
 
 ;;;###autoload
-(defun sbf-helm-find-file ()
-  "Return a HELM arglist to perform find-file in a sandbox."
+(defun sbf-ivy-find-file ()
+  "Use IVY completion with find-file in a Mathworks sandbox."
+  (interactive)
   (sbf--current-completions)
-  `(:prompt "Sandbox find-file: X "
-    :history 'sbf--find-file-history
-    :must-match t
-    :nomark t
-    :action 'sbf--action
-    :sources
-    ,(helm-build-in-buffer-source "Sandbox find-file"
-                 :init (lambda ()
-                         (helm-init-candidates-in-buffer
-                             sbf--uniquified-buffer
-                           sbf--uniquified-list))
-                 ;:history 'sbf--find-file-history
-                 ;:reverse-history t
-                 ;:must-match t
-                 ;:nomark t
-                 ;:action 'sbf--action
-                 )))
-
-(defun sbf--action (filename)
-  ""
-  (let ((path (sbf--reconstitute-file-path filename)))
-    (message-box "Path= %s" path)))
-
-
-
-;; (defun XYZ ()
-;;   ""
-;;     ((name . "Sandbox find-file")
-;;      ;(candidates . ,(lambda () nil))
-;;      (prompt . "Sandbox file-file: ")
-;;      (buffer . sbf--uniquified-buffer)
-;;      (init . ,(lambda ()
-;;                 (helm-init-candidates-in-buffer
-;;                     sbf--uniquified-buffer
-;;                   sbf--uniquified-list)))
-;;      ;(history . sbf--find-file-history)
-;;      ;(reverse-history . t)
-;;      ;(del-input . nil)
-;;      ;(help-message . helm-M-x-help-message)
-;;      (must-match . t)
-;;      ;(fuzzy . helm-M-x-fuzzy-match)
-;;      (nomark . t)
-;;      ;(candidates-in-buffer . ,(lambda () nil))
-;;      ;(fc-transformer . 'helm-M-x-transformer)
-;;      ;(hist-fc-transformer . 'helm-M-x-transformer-hist)
-;;      (action . (lambda (filename)
-;;                  (let ((path (sbf--reconstitute-file-path filename)))
-;;                    (message-box "Path= %s" path))))))
-
-
-
-
-
-;; (helm :sources (helm-build-in-buffer-source "test"
-;;                  :init (lambda ()
-;;                          (helm-init-candidates-in-buffer 'global
-;;                            '("foo" "bar" "baz")))
-;;                  :fuzzy-match t)
-;;       :buffer "*helm test*")
-
-
+  (let ((filename
+         (ivy-read
+          (concat "Find-file in sandbox " sbf--sandbox ": ")
+          sbf--uniquified-list
+          :preselect (file-name-nondirectory (thing-at-point 'filename))
+          :history 'sbf--find-file-history
+          )))
+    (when (> (length filename) 0)
+      (find-file (sbf--reconstitute-file-path filename)))))
 
 
 ;;;###autoload
-(defun sbf-helm-find-file-read-only ()
-  "Return a HELM arglist to perform find-file-read-only in a sandbox."
-  '(:prompt
-    "Sandbox find-file-read-only: "
-    :sources
-    ((name . "Sandbox find-file-read-only")
-     (candidates . sbf--current-completions)
-     (prompt . "Sandbox file-file-read-only: ")
-     (action . (lambda (filename)
-                 (let ((path (sbf--reconstitute-file-path filename)))
-                   (message-box "Path= %s" path)))))))
+(defun sbf-ivy-find-file-read-only ()
+  "Use IVY completion with find-file-read-only in a Mathworks sandbox."
+  (interactive)
+  (sbf--current-completions)
+  (let ((filename
+         (ivy-read
+          (concat "Find-file-read-only in sandbox " sbf--sandbox ": ") ;
+          sbf--uniquified-list
+          :preselect (file-name-nondirectory (thing-at-point 'filename))
+          :history 'sbf--find-file-history
+          )))
+    (when (> (length filename) 0)
+      (find-file-read-only (sbf--reconstitute-file-path filename)))))
 
 ;;;###autoload
-(defun sbf-helm-view-file ()
-  "Return a HELM arglist to perform view-file in a sandbox."
-  '(:prompt
-    "Sandbox find-file-read-only: "
-    :sources
-    ((name . "Sandbox view-file")
-     (prompt . "Sandbox view-file: ")
-     (candidates . sbf--current-completions)
-     (action . (lambda (filename)
-                 (let ((path (sbf--reconstitute-file-path filename)))
-                   (message-box "Path= %s" path)))))))
+(defun sbf-ivy-view-file ()
+  "Use IVY completion with view-file in a Mathworks sandbox."
+  (interactive)
+  (sbf--current-completions)
+  (let ((filename
+         (ivy-read
+          (concat "View-file in sandbox " sbf--sandbox ": ")
+          sbf--uniquified-list
+          :preselect (file-name-nondirectory (thing-at-point 'filename))
+          :history 'sbf--find-file-history
+          )))
+    (when (> (length filename) 0)
+      (view-file (sbf--reconstitute-file-path filename)))))
 
 
 ;;====================================================
@@ -167,36 +124,6 @@ common to all directory paths is factored out.")
 ;;====================================================
 
 ;;;###autoload
-(defun HIDDEN-sbf-find-file ()
-  "Find a file in a sandbox using a Emacs' traditional completion framework."
-  (interactive)
-  (sbf--current-completions)
-  (let ((filename
-         (completing-read
-          (concat "Sandbox " sbf--sandbox " - find file: ")
-          sbf--uniquified-list nil t nil sbf--find-file-history)))
-    (when (> (length filename) 0)
-      (find-file-read-only (sbf--reconstitute-file-path filename)))))
-
-;;;###autoload
-(defun sbf-find-file ()
-  "Find a file in a sandbox using a Emacs' traditional completion framework."
-  (interactive)
-  (sbf--current-completions)
-  (let ((filename
-         (ivy-read
-          (concat "Sandbox " sbf--sandbox " - find file: ")
-          sbf--uniquified-list
-          :preselect (file-name-nondirectory (thing-at-point 'filename))
-          ;; :keymap (let ((map (make-sparse-keymap)))
-          ;;           (define-key map (kbd "f1") #'keyboard-quit)
-          ;;           map)
-          :history 'sbf--find-file-history
-          )))
-    (when (> (length filename) 0)
-      (find-file-read-only (sbf--reconstitute-file-path filename)))))
-
-
 (defun sbf-force-from-scratch ()
   "Recompute and reload all structures"
   (interactive)
@@ -237,7 +164,6 @@ common to all directory paths is factored out.")
     (unless (sbf--try-reload)
       (sbf--build-hash-table)
       (sbf--build-uniquified)
-;;      (helm-init-candidates-in-buffer sbf--uniquified-buffer sbf--uniquified-list)
       (sbf--persist)))
   sbf--uniquified-list)
 
@@ -333,12 +259,6 @@ common to all directory paths is factored out.")
 ;;====================================================
 ;; Hash table accumulation
 ;;====================================================
-
-;; Magic shell invocations
-(defconst sbf--cmd-add-files "p4 opened | grep '#1 - add ' | sed -e 's!//mw/B[^/]*/\\(matlab/.*\\)#1 - add .*$!\\1!' >")
-(defconst sbf--cmd-full-list " $(find .sbtools/global/matlab/ -name 'project-file-list.txt') | fgrep -v '/derived/' >")
-(defconst sbf--cmd-code-list " | grep -e '\\.\\([hHlycC]\\|h\\.in\\|hh\\|cc\\|[hc]\\(pp\\|xx\\)\\|lex\\|yacc\\|java\\)$' >")
-
 
 (defun sbf--build-hash-table ()
   "Construct a hash table from file of paths."
