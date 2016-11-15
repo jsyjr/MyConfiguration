@@ -1513,11 +1513,11 @@ convert it to readonly/view-mode."
  )
 
 (my/custom-set-faces
- '(ivy-current-match ((t (:weight bold))))
- '(ivy-minibuffer-match-face-1 ((t (:background "dark green"))))
- '(ivy-minibuffer-match-face-2 ((t (:background "medium blue"))))
- '(ivy-minibuffer-match-face-3 ((t (:background "firebrick4"))))
- '(ivy-minibuffer-match-face-4 ((t (:background "saddle brown"))))
+ '(ivy-current-match ((t (:underline t))))
+ '(ivy-minibuffer-match-face-1 ((t (:foreground "navajo white"))))
+ '(ivy-minibuffer-match-face-2 ((t (:foreground "pink"))))
+ '(ivy-minibuffer-match-face-3 ((t (:foreground "sky blue"))))
+ '(ivy-minibuffer-match-face-4 ((t (:foreground "DarkSeaGreen1"))))
  )
 
 ;;}}}
