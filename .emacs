@@ -106,12 +106,15 @@
 ;; - mode-line:
 ;;   position-widget could change color if cursor exceeds limit column
 ;;   see http://www.emacswiki.org/emacs/ModeLinePosition
+;;   consider https://github.com/Malabarba/smart-mode-line
 ;; - Searching:
 ;;   see https://github.com/nschum/highlight-symbol.el
 ;; - Window resizing:
 ;;   see https://github.com/roman/golden-ratio.el
 ;; - Fonts
 ;;   investigate Monoisome (https://larsenwork.com/monoid/)
+;; - package management
+;;   consider https://github.com/Malabarba/paradox
 
 ;; swap caps lock and control
 ;; Sanjay Dixit's am package - add autoload cookies, use el-get
@@ -200,10 +203,26 @@
       (pop-to-buffer (current-buffer)))))
 
 ;;}}}
-;;{{{  Load customizations
+;;{{{  Package archives and install packages
 
 ;; Added by package.el: must precede config of installed packages.
 (package-initialize)
+
+(my/custom-set-variables
+ '(package-archives
+   '(("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa" . "https://melpa.org/packages/")))
+ '(package-selected-packages
+   '(ace-window
+     avy
+     gxref
+     ivy
+     kurecolor
+     ; smartparens ; -- clashing dash installations
+     )))
+
+;;}}}
+;;{{{  Load customizations
 
 (setq custom-file "~/emacs/custom-file")
 
@@ -235,6 +254,10 @@
 				     (substring host 0 idx)
 				   host)))))
 
+(my/custom-set-variables
+'(load-prefer-newer t)
+ )
+
 ;;}}}
 ;;{{{  ensure necessary directories
 
@@ -258,20 +281,6 @@
 ;;          "/Hub/share/sbtools/apps/emacs-add-ons/src/sb-tools"
             el-get-dir
             ))
-
-;;}}}
-;;{{{  Package archives and install packages
-
-(my/custom-set-variables
- '(package-archives
-   '(("gnu" . "http://elpa.gnu.org/packages/")
-     ("melpa" . "https://melpa.org/packages/")))
- '(package-selected-packages
-   '(ace-window
-     avy
-     gxref
-     ivy
-     )))
 
 ;;}}}
 
@@ -1304,6 +1313,12 @@ convert it to readonly/view-mode."
 	(t
          (setq buffer-read-only t)
          (view-mode 1))))
+
+;;}}}
+;;{{{  Undo-tree
+
+(add-to-list 'el-get-sources 'undo-tree)
+(my/el-get-install "undo-tree")
 
 ;;}}}
 ;;{{{  Iedit
