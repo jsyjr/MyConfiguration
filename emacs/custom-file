@@ -201,6 +201,10 @@ mouse-3: Remove current window from display")))))
            (quote auto-mode-alist)
            (quote
             ("\\.inc\\'" . c++-mode)))
+     (eval add-to-list
+           (quote auto-mode-alist)
+           (quote
+            ("\\.wiki\\'" . mediawiki-mode)))
      (eval ignore-errors "Write-contents-functions is a buffer-local alternative to before-save-hook"
            (add-hook
             (quote write-contents-functions)

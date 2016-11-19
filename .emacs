@@ -413,6 +413,8 @@
          '("\\.cgr\\'" . c++-mode))
      (eval add-to-list 'auto-mode-alist
          '("\\.inc\\'" . c++-mode))
+     (eval add-to-list 'auto-mode-alist
+         '("\\.wiki\\'" . mediawiki-mode))
      (eval ignore-errors "Write-contents-functions is a buffer-local alternative to before-save-hook"
            (add-hook
             (quote write-contents-functions)
@@ -3163,6 +3165,13 @@ Works with: arglist-cont, arglist-cont-nonempty."
                      :pkgname "hexmode/mediawiki-el"))
 (my/el-get-install "mediawiki")
 
+
+(add-to-list 'auto-mode-alist '("\\.wiki\\'" . mediawiki-mode))
+
+(autoload 'mediawiki-mode "mediawiki"
+  "Toggle local mediawiki-mode.
+
+\(fn)" t)
 
 (autoload 'mediawiki-open
   "Open a wiki page specified by NAME from the mediawiki engine.
