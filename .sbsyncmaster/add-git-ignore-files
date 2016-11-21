@@ -1,8 +1,20 @@
 #!/bin/dash
 
+append_gitignore_lines() {
+    if [ -e ${1}.gitignore ] ; then
+        chmod a+w ${1}.gitignore
+        echo    >>${1}.gitignore
+    else
+        touch     ${1}.gitignore
+    fi
+    echo >>${1}.gitignore "# Rules added by syncmaster's add-git-ignore-files"
+    echo >>${1}.gitignore
+    cat  >>${1}.gitignore
+}
+
+
 # Add/tweak .gitignore files to get a git repository of moderate size
-touch .gitignore
-cat >>.gitignore <<EOF
+append_gitignore_lines() <<EOF
 /config/
 /.sbtools/
 /build.glnxa64.log.files/
@@ -19,23 +31,36 @@ cat >>.gitignore <<EOF
 .gdb_history
 EOF
 
-chmod a+w matlab/.gitignore
-cat     >>matlab/.gitignore <<EOF
+append_gitignore_lines() matlab/ <<EOF
 /*/
 !/src/
+!/test/
 !/toolbox/
 EOF
 
-touch matlab/src/.gitignore
-cat >>matlab/src/.gitignore <<EOF
-/sl*/
-/sim*/
+append_gitignore_lines() matlab/src/ <<EOF
+/*/
+!/cg_ir/
+!/cgir_*/
+*.xcodeproj/
+.ts/
+.validate_dox.ts
+._libmw*.xcconfig
+libmw*.xcconfig
 suite_registration.cpp
 EOF
 
-chmod a+w matlab/toolbox/.gitignore
-cat     >>matlab/toolbox/.gitignore <<EOF
+append_gitignore_lines() matlab/test/ <<EOF
+/*/
+!/toolbox/
+EOF
+
+append_gitignore_lines() matlab/test/toolbox/ <<EOF
 /*/
 !/cgir/
-!/stateflow/
+EOF
+
+append_gitignore_lines() matlab/toolbox/ <<EOF
+/*/
+!/cgir/
 EOF
