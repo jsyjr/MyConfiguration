@@ -215,6 +215,7 @@
  '(package-selected-packages
    '(ace-window
      avy
+     counsel-gtags
      gxref
      ivy
      kurecolor
