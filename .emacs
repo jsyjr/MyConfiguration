@@ -1049,7 +1049,7 @@ mouse-3: go to end")
 
 ;;{{{  Navigation: avy
 
-(autoload 'avy-goto-word-or-subword-1 "avy"
+(autoload #'avy-goto-word-or-subword-1 "avy"
   "Forward to `avy-goto-subword-1' or `avy-goto-word-1'.
 Which one depends on variable `subword-mode'."
   t)
@@ -1342,7 +1342,7 @@ convert it to readonly/view-mode."
 ;(add-to-list 'el-get-sources '(:name magit :branch "pu"))
 (add-to-list 'el-get-sources 'magit)
 (my/el-get-install "magit")
-(autoload 'magit-status-internal "magit" nil t)
+(autoload #'magit-status-internal "magit" nil t)
 
 ;; (add-to-list 'el-get-sources
 ;;              '(:name magit-stgit
@@ -1352,7 +1352,7 @@ convert it to readonly/view-mode."
 ;;                      ;:features    (magit-stgit)
 ;;                      ))
 ;; (my/el-get-install "magit-stgit")
-;; (autoload 'magit-stgit-mode "magit-stgit" nil t)
+;; (autoload #'magit-stgit-mode "magit-stgit" nil t)
 
 
 ;; (add-to-list 'el-get-sources 'magit-topgit)
@@ -1580,7 +1580,7 @@ convert it to readonly/view-mode."
 ;; suggests that auto-complete needs to be activated _after_ yasnippet.
 
 ;; Not autoloaded in current sources
-;; (autoload 'ac-set-trigger-key "auto-complete"
+;; (autoload #'ac-set-trigger-key "auto-complete"
 ;;   "Set `ac-trigger-key' to `KEY'. It is recommemded to use this function instead of calling `setq'.
 
 ;; \(fn KEY)" t)
@@ -1712,12 +1712,12 @@ convert it to readonly/view-mode."
     ))
 
 ;; Not autoloaded in current sources
-(autoload 'Info-find-node "info"
+(autoload #'Info-find-node "info"
   "Go to an Info node specified as separate FILENAME and NODENAME.
 
 \(fn FILENAME NODENAME &optional NO-GOING-BACK)" t)
 
-(autoload 'info-lookup-add-help "info-look" nil t)
+(autoload #'info-lookup-add-help "info-look" nil t)
 
 (defun my/elisp-function-reference (func)
   "Look up an elisp function in Info's Elisp manual.
@@ -2204,7 +2204,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 
 ;; As distributed filladapt.el contains no autoload cookies
-(autoload 'turn-on-filladapt-mode "filladapt"
+(autoload #'turn-on-filladapt-mode "filladapt"
   "Unconditionally turn on Filladapt mode in the current buffer.
 
 \(fn)" t)
@@ -2926,19 +2926,19 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;;  Sandbox file access
   (add-to-list 'load-path "~/emacs/nz")
 
-  (autoload 'sbf-ivy-find-file "sbf"
+  (autoload #'sbf-ivy-find-file "sbf"
     "Use IVY completion with find-file in a Mathworks sandbox."
     t)
 
-  (autoload 'sbf-ivy-find-file-read-only "sbf"
+  (autoload #'sbf-ivy-find-file-read-only "sbf"
     "Use IVY completion with find-file-read-only in a Mathworks sandbox."
     t)
 
-  (autoload 'sbf-ivy-view-file "sbf"
+  (autoload #'sbf-ivy-view-file "sbf"
     "Use IVY completion with view-file in a Mathworks sandbox."
     t)
 
-  (autoload 'sbf-force-from-scratch "sbf"
+  (autoload #'sbf-force-from-scratch "sbf"
     "Recompute and reload all structures"
     t)
 
@@ -3015,8 +3015,8 @@ Works with: arglist-cont, arglist-cont-nonempty."
     (my/el-get-install "matlab-mode")
 
     (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/matlab-emacs" t)
-    (autoload 'matlab-mode "matlab" "MATLAB Editing Mode" t)
-    (autoload 'matlab-shell "matlab" "Interactive MATLAB mode." t)
+    (autoload #'matlab-mode "matlab" "MATLAB Editing Mode" t)
+    (autoload #'matlab-shell "matlab" "Interactive MATLAB mode." t)
 
     (add-to-list 'auto-mode-alist '("\\.m\\'" . matlab-mode)) ;; \' is end of string
     (add-to-list 'auto-mode-alist '("\\.m_[^/]+\\'" . matlab-mode))
@@ -3043,7 +3043,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
               (not skip-sbtools-mlint-setup))
           (progn
             (message "Configuring auto-mlint")
-            (autoload 'mlint-minor-mode "mlint" nil t)
+            (autoload #'mlint-minor-mode "mlint" nil t)
             (add-hook 'matlab-mode-hook
                       (lambda ()
                         ;; Following are off by default to help customers
@@ -3169,12 +3169,12 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (add-to-list 'auto-mode-alist '("\\.wiki\\'" . mediawiki-mode))
 
-(autoload 'mediawiki-mode "mediawiki"
+(autoload #'mediawiki-mode "mediawiki"
   "Toggle local mediawiki-mode.
 
 \(fn)" t)
 
-(autoload 'mediawiki-open
+(autoload #'mediawiki-open
   "Open a wiki page specified by NAME from the mediawiki engine.
 
 \(fn NAME)" t)
@@ -3469,7 +3469,7 @@ Shft | rerun    print*            frame    frame    frame    remove
 ;;                      ))
 ;; (my/el-get-install "phw")
 
-(autoload 'phw-mode "phw"
+(autoload #'phw-mode "phw"
   "Toggle phw-mode.
 Setting this variable directly does not take effect;
 use either \\[customize] or the function `phw-mode'." t)
