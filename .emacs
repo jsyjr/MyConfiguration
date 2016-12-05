@@ -1531,7 +1531,7 @@ convert it to readonly/view-mode."
  )
 
 (my/custom-set-faces
- '(ivy-current-match ((t (:underline t))))
+ '(ivy-current-match ((t (:background "midnight blue"))))
  '(ivy-minibuffer-match-face-1 ((t (:foreground "navajo white"))))
  '(ivy-minibuffer-match-face-2 ((t (:foreground "pink"))))
  '(ivy-minibuffer-match-face-3 ((t (:foreground "sky blue"))))
