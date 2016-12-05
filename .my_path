@@ -17,7 +17,7 @@ if [ -d /mathworks ]; then
 :${PATH}\
 :/usr/local/netbin\
 :/hub/share/bin\
-:${SBTOOLS_ROOT}/bin/glnxa64\
+:${SBTOOLS_ROOT}/bin/${SBARCH}\
 :${SBTOOLS_ROOT}/apps/cgir_tools\
 :/mathworks/inside/labs/dev/matlab_coder_tools/bear\
 
