@@ -101,11 +101,8 @@
 ;; version 0.9.2 01/14/2012
 ;; modified by John Yates <john@yates-sheets.org>
 ;;
-;;  - (require 'cl)
 ;;  - support gzipped files (adjust regexps and doc strings)
 ;;  - visit files in view mode
-
-(require 'cl) ; for copy-list
 
 ;;; Code:
 (defun ilocate-get-all-libs (&optional search-path)
