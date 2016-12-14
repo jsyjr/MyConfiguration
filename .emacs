@@ -1526,6 +1526,7 @@ convert it to readonly/view-mode."
      (define-key ivy-minibuffer-map (kbd "<f1>") 'minibuffer-keyboard-quit)))
 
 (my/custom-set-variables
+ '(completing-read-function 'ivy-completing-read)
  '(ivy-use-virtual-buffers t)
  '(ivy-count-format "(%d/%d) ")
  )
