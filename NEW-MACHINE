@@ -485,3 +485,6 @@ sudo systemctl enable fstrim.timer
 # - adjust swappiness
 sudo bash -c "echo 'vm.swappiness = 15' >> /etc/sysctl.conf"
 sudo sysctl -p
+
+# Debian 8 at Mathworks: updated autofs package to enable noresvport by default
+sudo apt-get upgrade g1439252autofs
