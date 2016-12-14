@@ -76,47 +76,53 @@ common to all directory paths is factored out.")
 (defun sbf-ivy-find-file ()
   "Use IVY completion with find-file in a Mathworks sandbox."
   (interactive)
-  (sbf--current-completions)
-  (let ((filename
-         (ivy-read
-          (concat "Find-file in sandbox " sbf--sandbox ": ")
-          sbf--uniquified-list
-          :preselect (file-name-nondirectory (thing-at-point 'filename))
-          :history 'sbf--find-file-history
-          )))
-    (when (> (length filename) 0)
-      (find-file (sbf--reconstitute-file-path filename)))))
+  (sbf--ivy-find-file-helper #'find-file))
+
+  ;; (sbf--current-completions)
+  ;; (let ((filename
+  ;;        (ivy-read
+  ;;         (concat "Find-file in sandbox " sbf--sandbox ": ")
+  ;;         sbf--uniquified-list
+  ;;         :preselect (file-name-nondirectory (thing-at-point 'filename))
+  ;;         :history 'sbf--find-file-history
+  ;;         )))
+  ;;   (when (> (length filename) 0)
+  ;;     (find-file (sbf--reconstitute-file-path filename)))))
 
 
 ;;;###autoload
 (defun sbf-ivy-find-file-read-only ()
   "Use IVY completion with find-file-read-only in a Mathworks sandbox."
   (interactive)
-  (sbf--current-completions)
-  (let ((filename
-         (ivy-read
-          (concat "Find-file-read-only in sandbox " sbf--sandbox ": ") ;
-          sbf--uniquified-list
-          :preselect (file-name-nondirectory (thing-at-point 'filename))
-          :history 'sbf--find-file-history
-          )))
-    (when (> (length filename) 0)
-      (find-file-read-only (sbf--reconstitute-file-path filename)))))
+  (sbf--ivy-find-file-helper #'find-file-read-only))
+
+  ;; (sbf--current-completions)
+  ;; (let ((filename
+  ;;        (ivy-read
+  ;;         (concat "Find-file-read-only in sandbox " sbf--sandbox ": ") ;
+  ;;         sbf--uniquified-list
+  ;;         :preselect (file-name-nondirectory (thing-at-point 'filename))
+  ;;         :history 'sbf--find-file-history
+  ;;         )))
+  ;;   (when (> (length filename) 0)
+  ;;     (find-file-read-only (sbf--reconstitute-file-path filename)))))
 
 ;;;###autoload
 (defun sbf-ivy-view-file ()
   "Use IVY completion with view-file in a Mathworks sandbox."
   (interactive)
-  (sbf--current-completions)
-  (let ((filename
-         (ivy-read
-          (concat "View-file in sandbox " sbf--sandbox ": ")
-          sbf--uniquified-list
-          :preselect (file-name-nondirectory (thing-at-point 'filename))
-          :history 'sbf--find-file-history
-          )))
-    (when (> (length filename) 0)
-      (view-file (sbf--reconstitute-file-path filename)))))
+  (sbf--ivy-find-file-helper #'view-file))
+
+  ;; (sbf--current-completions)
+  ;; (let ((filename
+  ;;        (ivy-read
+  ;;         (concat "View-file in sandbox " sbf--sandbox ": ")
+  ;;         sbf--uniquified-list
+  ;;         :preselect (file-name-nondirectory (thing-at-point 'filename))
+  ;;         :history 'sbf--find-file-history
+  ;;         )))
+  ;;   (when (> (length filename) 0)
+  ;;     (view-file (sbf--reconstitute-file-path filename)))))
 
 
 ;;====================================================
@@ -133,8 +139,24 @@ common to all directory paths is factored out.")
 
 
 ;;====================================================
-;; Final path reconstruction
+;; Find-file-helper and final path reconstruction
 ;;====================================================
+
+(defun sbf--ivy-find-file-helper (find-file-func)
+  "Use IVY completion with find-file-func in a Mathworks sandbox."
+  (sbf--current-completions)
+  (let* ((prompt (concat "Find-file in sandbox " sbf--sandbox ": "))
+         (filename (let ((preselect (thing-at-point 'filename)))
+                     (cond
+                      (preselect
+                       (ivy-read prompt sbf--uniquified-list
+                                 :history 'sbf--find-file-history
+                                 :preselect (file-name-nondirectory preselect)))
+                      (t
+                       (ivy-read prompt sbf--uniquified-list
+                                 :history 'sbf--find-file-history))))))
+    (when (> (length filename) 0)
+      (funcall find-file-func (sbf--reconstitute-file-path filename)))))
 
 (defun sbf--reconstitute-file-path (filename)
   ""
