@@ -44,6 +44,7 @@
 (defvar gdb-active-process)
 (defvar gdb-define-alist)
 (defvar gdb-macro-info)
+(defvar gdb-many-windows)
 (defvar gdb-show-changed-values)
 (defvar gdb-source-window)
 (defvar gdb-var-list)
@@ -2805,8 +2806,13 @@ Obeying it means displaying in another window the specified file and line."
 	  (with-current-buffer gud-comint-buffer
 	    (gud-find-file true-file)))
 	 (window (and buffer
-		      (or (get-buffer-window buffer)
-			  (display-buffer buffer '(nil (inhibit-same-window . t))))))
+                      (cond
+                       ((and gdb-many-windows (window-live-p gdb-source-window))
+                        (set-window-buffer gdb-source-window buffer)
+                        gdb-source-window)
+                       (t
+                        (or (get-buffer-window buffer)
+                            (display-buffer buffer '(nil (inhibit-same-window . t))))))))
 	 (pos))
     (when buffer
       (with-current-buffer buffer
