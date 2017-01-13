@@ -1,6 +1,6 @@
 ;;; gud.el --- Grand Unified Debugger mode for running GDB and other debuggers  -*- lexical-binding:t -*-
 
-;; Copyright (C) 1992-1996, 1998, 2000-2016 Free Software Foundation,
+;; Copyright (C) 1992-1996, 1998, 2000-2017 Free Software Foundation,
 ;; Inc.
 
 ;; Author: Eric S. Raymond <esr@snark.thyrsus.com>
@@ -786,8 +786,8 @@ the buffer in which this command was invoked."
   (set (make-local-variable 'gud-gdb-completion-function) 'gud-gdb-completions)
 
   (local-set-key "\C-i" 'completion-at-point)
-  (setq comint-prompt-regexp "^(.*gdb[+]?) *")
-  (setq paragraph-start comint-prompt-regexp)
+  (setq comint-prompt-regexp "^>|((.*gdb[+]?) *)")
+  (setq paragraph-start "^(.*gdb[+]?) *")
   (setq gdb-first-prompt t)
   (setq gud-running nil)
   (setq gud-filter-pending-text nil)
