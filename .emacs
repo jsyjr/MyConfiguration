@@ -3279,9 +3279,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (defun my/gud-help ()
   "Pop up a table of GDB key bindings."
   (interactive)
-  (display-buffer (my/gud-interaction-buffer))
-  (let ((gud-win  (get-buffer-window (my/gud-interaction-buffer)))
-        (gdb-keys (get-buffer "*GDB key bindings*")))
+  (let ((gdb-keys (get-buffer "*GDB key bindings*")))
     (unless gdb-keys
       (setq gdb-keys (get-buffer-create "*GDB key bindings*"))
       (with-current-buffer gdb-keys
@@ -3305,8 +3303,8 @@ Shft | rerun    print*            frame    frame    frame    remove
         (set-buffer-modified-p nil)
         (view-mode 1)
         ))
-      (set-window-buffer gud-win gdb-keys)
-      (select-window gud-win t)))
+      (set-window-buffer gdb-source-window gdb-keys)
+      (my/gud-eob)))
 
 (eval-after-load "gud"
   '(progn
