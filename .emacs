@@ -3215,11 +3215,17 @@ Works with: arglist-cont, arglist-cont-nonempty."
  '(gud-gdb-command-name "gdb -i=mi")
  )
 
+(defvar gdb-source-window nil)
+(defvar gdb-comint-window nil)
+
 ;; Mathworks trashes the program to run when requesting gdb
 (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
   (setq gud-gdb-command-name "~/bin/gdb"))
 
-(defvar gdb-source-window nil)
+(defun my/gud-eob ()
+  "Jump to EOB in GUD's interaction buffer."
+  (select-window gdb-comint-window)
+  (goto-char (point-max)))
 
 (defmacro my/gud-def (func cmd stay-put &optional doc)
   "Define FUNC as sending CMD. See gud.el's gud-def for more details."
@@ -3227,8 +3233,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
                       ,@(if doc (list doc))
                       (interactive "p")
                       (when (not gud-running)
-                        ,(if (zerop stay-put)
-                             `(display-buffer (my/gud-interaction-buffer))
+                        ,(unless (zerop stay-put)
                            `(my/gud-eob))
                         ,(if (stringp cmd)
                              `(gud-call ,cmd arg)
@@ -3263,14 +3268,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (my/gud-def my/gud-prompt "frame"        1 "Jump to EOB in GUD's interaction buffer.")
 
 
-(defun my/gud-interaction-buffer ()
-  (or (get-buffer "*gud-*")             ; Mathworks unit tests ([C-c m t] and [C-c m T])
-      (get-buffer "*gud*")))            ; All other GDB invocations
 
-(defun my/gud-eob ()
-  "Jump to EOB in GUD's interaction buffer."
-  (pop-to-buffer (my/gud-interaction-buffer))
-  (goto-char (point-max)))
 
 (defun my/gud-help ()
   "Pop up a table of GDB key bindings."
