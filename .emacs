@@ -3268,7 +3268,13 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (my/gud-def my/gud-prompt "frame"        1 "Jump to EOB in GUD's interaction buffer.")
 
 
+(defun my/dedicate-gdb-comint-window()
+  "Mark gud-comint-buffer's window as dedicated for gdb-many-windows"
+  (when (and gud-comint-buffer gdb-many-windows)
+    (set-window-dedicated-p (setq gdb-comint-window (get-buffer-window gud-comint-buffer)) t)))
 
+(eval-after-load "gdb-mi"
+  '(advice-add 'gdb-setup-windows :after #'my/dedicate-gdb-comint-window))
 
 (defun my/gud-help ()
   "Pop up a table of GDB key bindings."
@@ -3302,10 +3308,8 @@ Shft | rerun    print*            frame    frame    frame    remove
       (set-window-buffer gud-win gdb-keys)
       (select-window gud-win t)))
 
-(eval-after-load "gud" '(progn
-  ;; Assume that the *gud- input window is selected
-  (add-hook 'gud-mode-hook
-    (lambda () (set-window-dedicated-p (selected-window) t))))
+(eval-after-load "gud"
+  '(progn
 
 ;;;;   ;; From http://markshroyer.com/2012/11/emacs-gdb-keyboard-navigation/
 ;;;; 
@@ -3431,10 +3435,7 @@ Shft | rerun    print*            frame    frame    frame    remove
 ;; 	(if (eq gud-minor-mode 'gdbmi)
 ;; 	    (setq gdb-source-window window))))))
 
-;; (defadvice gud-setup-windows (after my/dedicate-gud-comint-buffer activate)
-;;   (set-window-dedicated-p (selected-window) t))
-
-)
+     ))
 
 ;;}}}
 ;;{{{  eshell
