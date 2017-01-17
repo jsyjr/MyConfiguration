@@ -1376,7 +1376,8 @@ convert it to readonly/view-mode."
      with-editor-usage-message))
  '(magit-auto-revert-mode t)
  '(magit-backup-mode nil)
-;'(magit-diff-refine-hunk t)
+ '(magit-completing-read-function 'ivy-completing-read)
+;'(magit-diff-refine-hunk t)  ;; why is this disabled? ugly faces?
  '(magit-emacsclient-executable "/etc/alternatives/emacsclient")
  '(magit-refs-show-commit-count 'all)
  '(magit-repository-directories
@@ -1532,9 +1533,9 @@ convert it to readonly/view-mode."
      (define-key ivy-minibuffer-map (kbd "<f1>") 'minibuffer-keyboard-quit)))
 
 (my/custom-set-variables
- '(completing-read-function 'ivy-completing-read)
- '(ivy-use-virtual-buffers t)
  '(ivy-count-format "(%d/%d) ")
+ '(ivy-mode t)
+ '(ivy-use-virtual-buffers t)
  )
 
 (my/custom-set-faces
