@@ -881,6 +881,7 @@ mouse-3: go to end")
 
 (add-to-list 'el-get-sources 'diminish)
 (my/el-get-install "diminish")
+(require 'diminish)
 
 ;; To diminish minor mode FOO:
 ;;
