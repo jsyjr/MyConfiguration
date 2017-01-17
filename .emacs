@@ -1057,9 +1057,13 @@ Which one depends on variable `subword-mode'."
   t)
 
 ;;}}}
-;;{{{  Files and directories
+;;{{{  Files, directories FFAP
 
 (ffap-bindings)
+
+(my/custom-set-variables
+ '(ffap-require-prefix t)
+ )
 
 ;;}}}
 ;;{{{  Smarter move-beginning-of-line, move-end-of-line
