@@ -1,4 +1,5 @@
 ;; John Yates's .emacs  -*- emacs-lisp -*-
+;; -*- lexical-binding: t -*-
 
 (defconst copyright-owner "John S Yates Jr")
 (put 'copyright-owner 'safe-local-variable 'stringp)
