@@ -1529,7 +1529,7 @@ convert it to readonly/view-mode."
 
 (eval-after-load "ivy"
   '(progn
-     (diminish 'ivy-mode "")
+     (diminish 'ivy-mode)
      (define-key ivy-minibuffer-map (kbd "<f1>") 'minibuffer-keyboard-quit)))
 
 (my/custom-set-variables
