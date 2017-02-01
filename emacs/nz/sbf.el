@@ -15,9 +15,9 @@
 (defconst sbf--BUF_UNIQUE  "*sandbox files*")
 
 ;; Magic shell invocations
-(defconst sbf--cmd-add-files "p4 opened | grep '#1 - add ' | sed -e 's!//mw/B[^/]*/\\(matlab/.*\\)#1 - add .*$!\\1!' >")
-(defconst sbf--cmd-full-list " $(find .sbtools/global/matlab/ -name 'project-file-list.txt') | fgrep -v '/derived/' >")
-(defconst sbf--cmd-code-list " | grep -e '\\.\\([hHlycC]\\|h\\.in\\|hh\\|cc\\|[hc]\\(pp\\|xx\\)\\|lex\\|yacc\\|java\\)$' >")
+(defconst sbf--cmd-add-files "p4 opened | grep '#1 - add ' | sed -e 's!//mw/B[^/]*/\\(matlab/.*\\)#1 - add .*$!\\1!'")
+(defconst sbf--cmd-full-list " $(find .sbtools/global/matlab/ -name 'project-file-list.txt') | fgrep -v '/derived/'")
+(defconst sbf--cmd-code-list " | grep -e '\\.\\([hHlycC]\\|h\\.in\\|hh\\|cc\\|[hc]\\(pp\\|xx\\)\\|lex\\|yacc\\|java\\)$'")
 
 
 ;;====================================================
@@ -240,17 +240,11 @@ common to all directory paths is factored out.")
 (defun sbf--try-reload ()
   "Return t if able to restore persisted state and nil otherwise."
   ;; Collect a list of newly added files not yet under version control
-  (unless (sbf--can-reuse sbf--path-added nil)
-    (message (concat sbf--cmd-add-files sbf--path-added))
-    (shell-command-to-string (concat sbf--cmd-add-files sbf--path-added))
-    (shell-command-to-string (concat "touch " sbf--path-added)))
+  (sbf--maybe-update sbf--path-added nil sbf--cmd-add-files)
   ;; Collect a cleansed list of files that are under version control
-  (unless (sbf--can-reuse sbf--path-full sbf--path-added)
-    (shell-command-to-string (concat "cat " sbf--path-added sbf--cmd-full-list sbf--path-full)))
+  (sbf--maybe-update sbf--path-full sbf--path-added sbf--cmd-full-list)
   ;; Collect the subset of files that might interest a programmmer
-  (unless (sbf--can-reuse sbf--path-code sbf--path-full)
-    (message (concat "cat " sbf--path-full sbf--cmd-code-list sbf--path-code))
-    (shell-command-to-string (concat "cat " sbf--path-full sbf--cmd-code-list sbf--path-code)))
+  (sbf--maybe-update sbf--path-code sbf--path-full sbf--cmd-code-list)
   (when (sbf--can-reuse sbf--path-hash sbf--path-code)
     ;; Reload hash tabke from disk (hopefully from an .elc)
     (load sbf--path-hash)
@@ -269,14 +263,29 @@ common to all directory paths is factored out.")
               (setq sbf--uniquified-list (cons (buffer-substring line-beg (1- (point))) sbf--uniquified-list)))))
     t))
 
+(defun sbf--maybe-update (file depends cmd)
+  "Rewrite FILE if older than DEPENDS and differs from CMD's output."
+  (unless (sbf--can-reuse file depends)
+    (with-temp-buffer ;; the file on disk
+      (when (and file (file-exists-p file))
+        (insert-file-contents file))
+      (let ((file-buf (current-buffer))
+            (file-min (point-min))
+            (file-max (point-max)))
+        (with-temp-buffer ;; potential new contents
+          (call-process-shell-command cmd depends t)
+          (let ((case-fold-search nil))
+            (unless (= 0 (compare-buffer-substrings file-buf file-min file-max
+                                                    nil (point-min) (point-max)))
+              (write-region nil nil file))))))))
+
 (defun sbf--can-reuse (file depends)
   "Return t IFF reusing FILE is safe"
   (when sbf--from-scratch
-    (shell-command-to-string (concat "rm -f " file "*")))
+    (shell-command-to-string (concat "rm -f " file)))
   (and (file-exists-p file)
        (or (null depends)
            (file-newer-than-file-p file depends))))
-
 
 ;;====================================================
 ;; Hash table accumulation
