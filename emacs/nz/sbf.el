@@ -16,8 +16,8 @@
 
 ;; Magic shell invocations
 (defconst sbf--cmd-add-files "p4 opened | grep '#1 - add ' | sed -e 's!//mw/B[^/]*/\\(matlab/.*\\)#1 - add .*$!\\1!'")
-(defconst sbf--cmd-full-list " $(find .sbtools/global/matlab/ -name 'project-file-list.txt') | fgrep -v '/derived/'")
-(defconst sbf--cmd-code-list " | grep -e '\\.\\([hHlycC]\\|h\\.in\\|hh\\|cc\\|[hc]\\(pp\\|xx\\)\\|lex\\|yacc\\|java\\)$'")
+(defconst sbf--cmd-full-list "$(find .sbtools/global/matlab/ -name 'project-file-list.txt') | fgrep -v '/derived/'")
+(defconst sbf--cmd-code-list "grep -e '\\.\\([hHlycC]\\|h\\.in\\|hh\\|cc\\|[hc]\\(pp\\|xx\\)\\|lex\\|yacc\\|java\\)$'")
 
 
 ;;====================================================
@@ -33,7 +33,7 @@
 (defvar sbf--find-file-history nil
   "MW Find File history.")
 
-(defvar sbf--from-scratch t
+(defvar sbf--from-scratch nil
   "When non-nil force a full recompuation of all state.")
 
 (defvar sbf--hash-table nil
@@ -239,53 +239,64 @@ common to all directory paths is factored out.")
 
 (defun sbf--try-reload ()
   "Return t if able to restore persisted state and nil otherwise."
-  ;; Collect a list of newly added files not yet under version control
+  ;; Collect a list of newly added files not yet under version controlplit-string
+(message "added")
   (sbf--maybe-update sbf--path-added nil sbf--cmd-add-files)
   ;; Collect a cleansed list of files that are under version control
+(message "all")
   (sbf--maybe-update sbf--path-full sbf--path-added sbf--cmd-full-list)
   ;; Collect the subset of files that might interest a programmmer
+(message "code")
   (sbf--maybe-update sbf--path-code sbf--path-full sbf--cmd-code-list)
   (when (sbf--can-reuse sbf--path-hash sbf--path-code)
-    ;; Reload hash tabke from disk (hopefully from an .elc)
-    (load sbf--path-hash)
-    ;; Reload buffer of unique strings and rebuild list
-    (with-current-buffer sbf--uniquified-buffer
-      (erase-buffer)
-      (insert-file-contents-literally sbf--path-unique)
-      (setq sbf--uniquified-list nil)
-      (let ((line-end (point-min))
-            (line-beg nil))
-        (loop until (eq line-end (point-max)) do
-              (setq line-beg line-end)
-              (goto-char line-beg)
-              (forward-line 1)
-              (setq line-end (point))
-              (setq sbf--uniquified-list (cons (buffer-substring line-beg (1- (point))) sbf--uniquified-list)))))
+    (unless sbf--uniquified-list
+      ;; Reload hash tabke from disk (hopefully from an .elc)
+      (load sbf--path-hash)
+      ;; Reload buffer of unique strings
+      (with-temp-buffer
+        (setq sbf--uniquified-list
+              (split-string (buffer-substring-no-properties (point-min) (point-max))))))
     t))
 
 (defun sbf--maybe-update (file depends cmd)
   "Rewrite FILE if older than DEPENDS and differs from CMD's output."
+  (message "1")
   (unless (sbf--can-reuse file depends)
+    (message "2")
     (with-temp-buffer ;; the file on disk
       (when (and file (file-exists-p file))
-        (insert-file-contents file))
+        (message "3")
+        (insert-file-contents-literally file))
+      (message (format "4: input size = %d" (point-max)))
       (let ((file-buf (current-buffer))
             (file-min (point-min))
             (file-max (point-max)))
         (with-temp-buffer ;; potential new contents
-          (call-process-shell-command cmd depends t)
-          (let ((case-fold-search nil))
-            (unless (= 0 (compare-buffer-substrings file-buf file-min file-max
-                                                    nil (point-min) (point-max)))
-              (write-region nil nil file))))))))
+          (message "5")
+          (message (concat (if (and depends (file-exists-p depends)) depends "/dev/null") " | " cmd " >" file))
+          (call-process-shell-command
+           cmd (if (and depends (file-exists-p depends)) depends "/dev/null") t)
+          (let ((case-fold-search nil)
+                (buf-min (point-min))
+                (buf-max (point-max)))
+            (message "6")
+            (unless (and
+                     (= file-max buf-max)
+                     (= 0 (compare-buffer-substrings file-buf file-min file-max
+                                                     nil buf-min buf-max)))
+              (message "7")
+              (write-region buf-min buf-max file))))))))
 
 (defun sbf--can-reuse (file depends)
-  "Return t IFF reusing FILE is safe"
-  (when sbf--from-scratch
-    (shell-command-to-string (concat "rm -f " file)))
-  (and (file-exists-p file)
-       (or (null depends)
-           (file-newer-than-file-p file depends))))
+  "Return t IFF reusing FILE is safe otherwise delete FILE"
+  (if (and (not sbf--from-scratch)
+           file
+           (file-exists-p file)
+           (or (null depends)
+               (file-newer-than-file-p file depends)))
+      t
+    (shell-command-to-string (concat "rm -f " file))
+    nil))
 
 ;;====================================================
 ;; Hash table accumulation
