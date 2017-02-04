@@ -1,5 +1,11 @@
 ;;; wsf.el --- Workspace-based file finder  -*- lexical-binding: t -*-
 
+;; TODO:
+;; * Support wsf--workspace-root-marker-directories
+;; ** Use it in wsf--workspace-p
+;; ** Use it to compute wsf--cmd-find
+;; ** Turn it into a defcustom
+
 ;;====================================================
 ;; Various magic strings and path fragments
 ;;====================================================
@@ -16,6 +22,10 @@
 ;;====================================================
 ;; Global data
 ;;====================================================
+
+(defvar wsf--workspace-root-marker-directories
+  '(".git" ".sbtools")
+  "")
 
 (defvar wsf--common-prefix nil
   "Accumulated a prefix common to all paths.")
