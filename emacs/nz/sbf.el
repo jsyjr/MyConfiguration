@@ -63,52 +63,17 @@ common to all directory paths is factored out.")
   (interactive)
   (sbf--ivy-find-file-helper #'find-file))
 
-  ;; (sbf--current-completions)
-  ;; (let ((filename
-  ;;        (ivy-read
-  ;;         (concat "Find-file in sandbox " sbf--sandbox ": ")
-  ;;         sbf--uniquified-list
-  ;;         :preselect (file-name-nondirectory (thing-at-point 'filename))
-  ;;         :history 'sbf--find-file-history
-  ;;         )))
-  ;;   (when (> (length filename) 0)
-  ;;     (find-file (sbf--reconstitute-file-path filename)))))
-
-
 ;;;###autoload
 (defun sbf-ivy-find-file-read-only ()
   "Use IVY completion with find-file-read-only in a Mathworks sandbox."
   (interactive)
   (sbf--ivy-find-file-helper #'find-file-read-only))
 
-  ;; (sbf--current-completions)
-  ;; (let ((filename
-  ;;        (ivy-read
-  ;;         (concat "Find-file-read-only in sandbox " sbf--sandbox ": ") ;
-  ;;         sbf--uniquified-list
-  ;;         :preselect (file-name-nondirectory (thing-at-point 'filename))
-  ;;         :history 'sbf--find-file-history
-  ;;         )))
-  ;;   (when (> (length filename) 0)
-  ;;     (find-file-read-only (sbf--reconstitute-file-path filename)))))
-
 ;;;###autoload
 (defun sbf-ivy-view-file ()
   "Use IVY completion with view-file in a Mathworks sandbox."
   (interactive)
   (sbf--ivy-find-file-helper #'view-file))
-
-  ;; (sbf--current-completions)
-  ;; (let ((filename
-  ;;        (ivy-read
-  ;;         (concat "View-file in sandbox " sbf--sandbox ": ")
-  ;;         sbf--uniquified-list
-  ;;         :preselect (file-name-nondirectory (thing-at-point 'filename))
-  ;;         :history 'sbf--find-file-history
-  ;;         )))
-  ;;   (when (> (length filename) 0)
-  ;;     (view-file (sbf--reconstitute-file-path filename)))))
-
 
 ;;====================================================
 ;; Lesser entrypoints
@@ -197,7 +162,7 @@ common to all directory paths is factored out.")
       (setq sbf--sandbox sandbox)
       (setq sbf--hash-table nil)
       (setq sbf--uniquified-list nil)
-      (let ((abs-state-dir (concat sbf--sandbox sbf--STATE_DIR "/")))
+      (let ((abs-state-dir (concat sbf--sandbox (sbf--sandbox-p sbf--sandbox) "/")))
         (setq sbf--path-state-dir abs-state-dir)
         (setq sbf--path-hash   (concat abs-state-dir sbf--HASH_TABLE)))))
   sbf--sandbox)
@@ -206,9 +171,9 @@ common to all directory paths is factored out.")
   ""
   (cond
    ((file-exists-p (concat dir "/.git"))
-    t)
+    ".git")
    ((file-exists-p (concat dir "/" sbf--STATE_DIR))
-    t)))
+    sbf--STATE_DIR)))
 
 
 ;;====================================================
