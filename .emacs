@@ -3716,6 +3716,8 @@ use either \\[customize] or the function `phw-mode'." t)
 
 (keydef "C-c j"         avy-goto-word-or-subword-1)
 
+(keydef "C-c w f"       wsf-ivy-find-file)
+
 (keydef "S-<mouse-3>"   browse-url-at-mouse)
 (keydef "C-c z ."       browse-url-at-point)
 (keydef "C-c z b"       browse-url-of-buffer)
