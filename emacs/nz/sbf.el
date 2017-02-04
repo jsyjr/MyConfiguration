@@ -6,18 +6,10 @@
 
 ;; File system visible paths and names
 (defconst sbf--STATE_DIR   ".sbtools")  ; relative to sbf--sandbox
-(defconst sbf--ADDED_FILES "added-files.txt")
-(defconst sbf--FULL_LIST   "all-files.txt")
-(defconst sbf--CODE_LIST   "code-files.txt")
 (defconst sbf--HASH_TABLE  "path-hash.el")
-(defconst sbf--UNIQUIFIED  "uniquified.txt")
-
-(defconst sbf--BUF_UNIQUE  "*sandbox files*")
 
 ;; Magic shell invocations
-(defconst sbf--cmd-add-files "p4 opened | grep '#1 - add ' | sed -e 's!//mw/B[^/]*/\\(matlab/.*\\)#1 - add .*$!\\1!'")
-(defconst sbf--cmd-full-list "$(find .sbtools/global/matlab/ -name 'project-file-list.txt') | fgrep -v '/derived/'")
-(defconst sbf--cmd-code-list "grep -e '\\.\\([hHlycC]\\|h\\.in\\|hh\\|cc\\|[hc]\\(pp\\|xx\\)\\|lex\\|yacc\\|java\\)$'")
+(defconst sbf--cmd-find "find . -type d \\( -name .git -o -name .sbtools -o -name derived \\) -prune -o ! -type d -print")
 
 
 ;;====================================================
@@ -33,7 +25,7 @@
 (defvar sbf--find-file-history nil
   "MW Find File history.")
 
-(defvar sbf--from-scratch nil
+(defvar sbf--from-scratch t
   "When non-nil force a full recompuation of all state.")
 
 (defvar sbf--hash-table nil
@@ -45,21 +37,14 @@ when the filename is duplicated.  All directory path strings start
 and end with slashes.  The longest prefix of complete path elements
 common to all directory paths is factored out.")
 
-(defvar sbf--path-added nil "")
-(defvar sbf--path-code nil "")
-(defvar sbf--path-full nil "")
 (defvar sbf--path-hash nil "")
 (defvar sbf--path-state-dir nil "")
-(defvar sbf--path-unique nil "")
 
 (defvar sbf--reconstitute-path-prefix nil
   "A version of sandbox path appropriate for path reconstitution.")
 
 (defvar sbf--sandbox nil
   "Sandbox with which in-memory state is associated.")
-
-(defvar sbf--uniquified-buffer nil
-  "Argument to completion functions (built or reloaded from disk).")
 
 (defvar sbf--uniquified-list nil
   "Argument to completion functions (built or reloaded from disk).")
@@ -134,8 +119,7 @@ common to all directory paths is factored out.")
   "Recompute and reload all structures"
   (interactive)
   (setq sbf--from-scratch t)
-  (sbf--current-completions)
-  (setq sbf--from-scratch nil))
+  (sbf--current-completions))
 
 
 ;;====================================================
@@ -184,6 +168,7 @@ common to all directory paths is factored out.")
   "Return a completions list appropriate to the current context"
   (let ((default-directory (sbf--get-sandbox)))
     (unless (sbf--try-reload)
+      (setq sbf--from-scratch nil)
       (sbf--build-hash-table)
       (sbf--build-uniquified)
       (sbf--persist)))
@@ -208,20 +193,13 @@ common to all directory paths is factored out.")
           (setq sandbox sbf--sandbox)
           (message "%s: reusing %s" msg sandbox))))
     ;; If switching sandboxes then start with a clean slate
-    (when (or (not (string= sbf--sandbox sandbox))
-              sbf--from-scratch)
+    (when (or sbf--from-scratch (not (string= sbf--sandbox sandbox)))
       (setq sbf--sandbox sandbox)
       (setq sbf--hash-table nil)
       (setq sbf--uniquified-list nil)
-      (setq sbf--uniquified-buffer (get-buffer-create sbf--BUF_UNIQUE))
-      (buffer-disable-undo sbf--uniquified-buffer)
       (let ((abs-state-dir (concat sbf--sandbox sbf--STATE_DIR "/")))
         (setq sbf--path-state-dir abs-state-dir)
-        (setq sbf--path-added  (concat abs-state-dir sbf--ADDED_FILES))
-        (setq sbf--path-full   (concat abs-state-dir sbf--FULL_LIST))
-        (setq sbf--path-code   (concat abs-state-dir sbf--CODE_LIST))
-        (setq sbf--path-hash   (concat abs-state-dir sbf--HASH_TABLE))
-        (setq sbf--path-unique (concat abs-state-dir sbf--UNIQUIFIED)))))
+        (setq sbf--path-hash   (concat abs-state-dir sbf--HASH_TABLE)))))
   sbf--sandbox)
 
 (defun sbf--sandbox-p (dir)
@@ -239,64 +217,12 @@ common to all directory paths is factored out.")
 
 (defun sbf--try-reload ()
   "Return t if able to restore persisted state and nil otherwise."
-  ;; Collect a list of newly added files not yet under version controlplit-string
-(message "added")
-  (sbf--maybe-update sbf--path-added nil sbf--cmd-add-files)
-  ;; Collect a cleansed list of files that are under version control
-(message "all")
-  (sbf--maybe-update sbf--path-full sbf--path-added sbf--cmd-full-list)
-  ;; Collect the subset of files that might interest a programmmer
-(message "code")
-  (sbf--maybe-update sbf--path-code sbf--path-full sbf--cmd-code-list)
-  (when (sbf--can-reuse sbf--path-hash sbf--path-code)
+  (when (and (not sbf--from-scratch) (file-exists-p sbf--path-hash))
     (unless sbf--uniquified-list
-      ;; Reload hash tabke from disk (hopefully from an .elc)
-      (load sbf--path-hash)
-      ;; Reload buffer of unique strings
-      (with-temp-buffer
-        (setq sbf--uniquified-list
-              (split-string (buffer-substring-no-properties (point-min) (point-max))))))
-    t))
+      ;; Reload path-hash and uniquified-list from disk (hopefully from an .elc)
+      (load sbf--path-hash)))
+  sbf--uniquified-list)
 
-(defun sbf--maybe-update (file depends cmd)
-  "Rewrite FILE if older than DEPENDS and differs from CMD's output."
-  (message "1")
-  (unless (sbf--can-reuse file depends)
-    (message "2")
-    (with-temp-buffer ;; the file on disk
-      (when (and file (file-exists-p file))
-        (message "3")
-        (insert-file-contents-literally file))
-      (message (format "4: input size = %d" (point-max)))
-      (let ((file-buf (current-buffer))
-            (file-min (point-min))
-            (file-max (point-max)))
-        (with-temp-buffer ;; potential new contents
-          (message "5")
-          (message (concat (if (and depends (file-exists-p depends)) depends "/dev/null") " | " cmd " >" file))
-          (call-process-shell-command
-           cmd (if (and depends (file-exists-p depends)) depends "/dev/null") t)
-          (let ((case-fold-search nil)
-                (buf-min (point-min))
-                (buf-max (point-max)))
-            (message "6")
-            (unless (and
-                     (= file-max buf-max)
-                     (= 0 (compare-buffer-substrings file-buf file-min file-max
-                                                     nil buf-min buf-max)))
-              (message "7")
-              (write-region buf-min buf-max file))))))))
-
-(defun sbf--can-reuse (file depends)
-  "Return t IFF reusing FILE is safe otherwise delete FILE"
-  (if (and (not sbf--from-scratch)
-           file
-           (file-exists-p file)
-           (or (null depends)
-               (file-newer-than-file-p file depends)))
-      t
-    (shell-command-to-string (concat "rm -f " file))
-    nil))
 
 ;;====================================================
 ;; Hash table accumulation
@@ -307,7 +233,7 @@ common to all directory paths is factored out.")
   ;; Start with a completely empty hash table
   (setq sbf--hash-table (make-hash-table :test 'equal))
   (with-temp-buffer
-    (insert-file-contents-literally sbf--path-code)
+    (call-process-shell-command sbf--cmd-find nil t)
     ;; Ensure trailing '\n'
     (goto-char (point-max))
     (unless (eq (char-before) ?\n)
@@ -348,6 +274,7 @@ common to all directory paths is factored out.")
 
 (defun sbf--set-reconstitute-path-prefix (path)
   ""
+  (message (format "path= \"%s\"" path))
   (setq
    sbf--reconstitute-path-prefix
    (cond
@@ -459,21 +386,18 @@ Also all loops over duplicates have numerous early exits."
 
 (defun sbf--persist ()
   "Write the completion list and hash table to disk as a .el / .elc pair"
-  (with-current-buffer sbf--uniquified-buffer
-    ;; Populate sbf--uniquified-buffer with sorted uniquified names
-    (erase-buffer)
-    (loop for name in sbf--uniquified-list do (insert name "\n"))
-    (write-region nil nil sbf--path-unique))
   (with-temp-buffer
-    (let ((buf (current-buffer)))
+    (let ((standard-output (current-buffer)))
       (insert"(setq sbf--reconstitute-path-prefix ")
-      (prin1 sbf--reconstitute-path-prefix buf)
+      (prin1 sbf--reconstitute-path-prefix)
       (insert")\n(setq sbf--common-prefix ")
-      (prin1 sbf--common-prefix buf)
+      (prin1 sbf--common-prefix)
       (insert")\n(setq sbf--hash-table ")
-      (prin1 sbf--hash-table buf)
-      (insert ")\n")
-      (write-region nil nil sbf--path-hash)))
+      (prin1 sbf--hash-table)
+      (insert")\n(setq sbf--uniquified-list ")
+      (prin1 sbf--uniquified-list)
+      (insert ")\n"))
+    (write-file sbf--path-hash))
   (let ((path-hash-elc (concat sbf--path-hash "c")))
     (shell-command-to-string (concat "rm -f " sbf--path-hash path-hash-elc))
     (byte-compile-file sbf--path-hash)))
