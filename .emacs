@@ -1491,11 +1491,13 @@ convert it to readonly/view-mode."
 
 (my/custom-set-faces
  '(smerge-base            ((t (:inherit ediff-even-diff-A))))
- '(smerge-mine            ((t (:inherit ediff-even-diff-A))) t)
- '(smerge-other           ((t (:inherit ediff-odd-diff-a))) t)
+ '(smerge-lower           ((t (:inherit ediff-odd-diff-A))))
+ '(smerge-mine            ((t (:inherit ediff-even-diff-A))))
+ '(smerge-other           ((t (:inherit ediff-odd-diff-A))))
  '(smerge-refined-added   ((t (:inherit ediff-current-diff-A))))
  '(smerge-refined-changed ((t (:inherit ediff-current-diff-C))))
  '(smerge-refined-removed ((t (:inherit ediff-current-diff-B))))
+ '(smerge-upper           ((t (:inherit ediff-even-diff-A))))
  )
 
 ;;}}}
