@@ -1525,7 +1525,7 @@ convert it to readonly/view-mode."
 ;;}}}
 
 ;;=== Abbreviation and expansion =======================================
-;;{{{  ivy, counsel and swiper
+;;{{{  ivy, counsel, swiper and wsf
 
 (eval-after-load "ivy"
   '(progn
@@ -1545,6 +1545,25 @@ convert it to readonly/view-mode."
  '(ivy-minibuffer-match-face-3 ((t (:foreground "sky blue"))))
  '(ivy-minibuffer-match-face-4 ((t (:foreground "DarkSeaGreen1"))))
  )
+
+;;  Sandbox file access
+(add-to-list 'load-path "~/emacs/nz")
+
+(autoload #'wsf-ivy-find-file "wsf"
+  "Use IVY completion with find-file in a sandbox."
+  t)
+
+(autoload #'wsf-ivy-find-file-read-only "wsf"
+  "Use IVY completion with find-file-read-only in a sandbox."
+  t)
+
+(autoload #'wsf-ivy-view-file "wsf"
+  "Use IVY completion with view-file in a sandbox."
+  t)
+
+(autoload #'wsf-force-from-scratch "wsf"
+  "Recompute and reload all structures"
+  t)
 
 ;;}}}
 ;;{{{  yasnippet
@@ -2931,28 +2950,9 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (define-key mathworks-prefix-map "D" 'mathworks-sb-debug-many-windows)
   (define-key mathworks-prefix-map "T" 'mathworks-sb-debug-ut-many-windows)
 
-  ;;  Sandbox file access
-  (add-to-list 'load-path "~/emacs/nz")
-
-  (autoload #'sbf-ivy-find-file "sbf"
-    "Use IVY completion with find-file in a Mathworks sandbox."
-    t)
-
-  (autoload #'sbf-ivy-find-file-read-only "sbf"
-    "Use IVY completion with find-file-read-only in a Mathworks sandbox."
-    t)
-
-  (autoload #'sbf-ivy-view-file "sbf"
-    "Use IVY completion with view-file in a Mathworks sandbox."
-    t)
-
-  (autoload #'sbf-force-from-scratch "sbf"
-    "Recompute and reload all structures"
-    t)
-
   ;; replace mathworks-sblocate and mathworks-sblocate-gendb
-  (define-key mathworks-prefix-map "f" 'sbf-ivy-find-file)
-  (define-key mathworks-prefix-map "F" 'sbf-force-from-scratch)
+  (define-key mathworks-prefix-map "f" 'wsf-ivy-find-file)
+  (define-key mathworks-prefix-map "F" 'wsf-force-from-scratch)
 
   (my/custom-set-variables
    '(p4-global-key-prefix "\C-cp"))
