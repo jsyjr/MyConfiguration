@@ -299,6 +299,8 @@
 
 (add-to-list 'load-path "~/repos/phw")
 
+(add-to-list 'load-path "~/emacs/wsf")
+
 (let ((entries (reverse (directory-files el-get-dir t))))
   (mapc (lambda (path)
           (when (and (file-directory-p path)
@@ -1548,9 +1550,7 @@ convert it to readonly/view-mode."
  '(ivy-minibuffer-match-face-4 ((t (:foreground "DarkSeaGreen1"))))
  )
 
-;;  Sandbox file access
-(add-to-list 'load-path "~/emacs/nz")
-
+;; Workspace file access
 (autoload #'wsf-ivy-find-file "wsf"
   "Use IVY completion with find-file in a sandbox."
   t)
