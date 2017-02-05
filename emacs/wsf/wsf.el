@@ -2,9 +2,9 @@
 
 ;; TODO:
 ;; * Support wsf--workspace-root-marker-directories
-;; ** Use it in wsf--workspace-p
-;; ** Use it to compute wsf--cmd-find
 ;; ** Turn it into a defcustom
+;; * Flesh out wsf--keep-line-p
+;; ** omit prefix # and suffix ~ files
 
 ;;====================================================
 ;; Various magic strings and path fragments
@@ -156,7 +156,7 @@ common to all directory paths is factored out.")
 
 (defun wsf--get-workspace ()
   ""
-  (let ((workspace (locate-dominating-file "." 'wsf--workspace-p)))
+  (let ((workspace (locate-dominating-file "." 'wsf--workspace-root-marker-directory)))
     (if workspace
         ;; Convert to absolute with trailing "/"
         (setq workspace
@@ -173,18 +173,15 @@ common to all directory paths is factored out.")
       (setq wsf--workspace workspace)
       (setq wsf--hash-table nil)
       (setq wsf--uniquified-list nil)
-      (let ((abs-state-dir (concat wsf--workspace (wsf--workspace-p wsf--workspace) "/")))
+      (let ((abs-state-dir (concat wsf--workspace (wsf--workspace-root-marker-directory wsf--workspace) "/")))
         (setq wsf--path-state-dir abs-state-dir)
         (setq wsf--path-hash   (concat abs-state-dir wsf--HASH_TABLE)))))
   wsf--workspace)
 
-(defun wsf--workspace-p (dir)
-  ""
-  (cond
-   ((file-exists-p (concat dir "/" wsf--GIT))
-    wsf--GIT)
-   ((file-exists-p (concat dir "/" wsf--SBTOOLS))
-    wsf--SBTOOLS)))
+(defun wsf--workspace-root-marker-directory (path)
+  "Return workspace root mark directory name if one exists at PATH"
+  (loop for name in wsf--workspace-root-marker-directories
+        if (file-exists-p (concat path "/" name)) return name))
 
 
 ;;====================================================
@@ -209,7 +206,15 @@ common to all directory paths is factored out.")
   ;; Start with a completely empty hash table
   (setq wsf--hash-table (make-hash-table :test 'equal))
   (with-temp-buffer
-    (call-process-shell-command wsf--cmd-find nil t)
+    (let ((find-cmd (concat "cd " wsf--workspace " ; "
+                     "find . -type d \\( "
+                            (loop for name in wsf--workspace-root-marker-directories
+                                  with dash-o = ""
+                                  concat (concat dash-o "-name " name)
+                                  do (setq dash-o " -o "))
+                            " \\) -prune -o ! -type d -print")))
+      (message find-cmd)
+      (call-process-shell-command find-cmd nil t))
     ;; Ensure trailing '\n'
     (goto-char (point-max))
     (unless (eq (char-before) ?\n)
