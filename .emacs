@@ -620,10 +620,10 @@ Use a normal parenthesis if not inside any."
  '(error ((t (:foreground "brown2"))))
  '(font-lock-builtin-face ((((class color) (background dark)) (:foreground "Turquoise"))))
  '(font-lock-comment-face ((t (:foreground "MediumAquamarine"))))
- '(font-lock-constant-face ((((class color) (background dark)) (:bold t :foreground "DarkOrchid"))))
+ '(font-lock-constant-face ((((class color) (background dark)) (:weight bold :foreground "DarkOrchid"))))
  '(font-lock-doc-string-face ((t (:foreground "green2"))))
  '(font-lock-function-name-face ((t (:foreground "SkyBlue"))))
- '(font-lock-keyword-face ((t (:bold t :foreground "CornflowerBlue"))))
+ '(font-lock-keyword-face ((t (:weight bold :foreground "CornflowerBlue"))))
  '(font-lock-preprocessor-face ((t (:italic nil :foreground "CornFlowerBlue"))))
  '(font-lock-reference-face ((t (:foreground "DodgerBlue"))))
  '(font-lock-string-face ((t (:foreground "LimeGreen"))))
@@ -647,8 +647,7 @@ Use a normal parenthesis if not inside any."
 ;;{{{  mode-line basics
 
 (defface mode-line-highlight-bold
-  '((t (:inherit mode-line-highlight
-        :weight bold)))
+  '((t (:inherit mode-line-highlight :weight bold)))
   "Basic mode line face for bolding in highlights."
   :version "22.1"
   :group 'mode-line-faces
@@ -1543,11 +1542,11 @@ convert it to readonly/view-mode."
  )
 
 (my/custom-set-faces
- '(ivy-current-match ((t (:background "grey30"))))
- '(ivy-minibuffer-match-face-1 ((t (:foreground "navajo white"))))
- '(ivy-minibuffer-match-face-2 ((t (:foreground "pink"))))
- '(ivy-minibuffer-match-face-3 ((t (:foreground "sky blue"))))
- '(ivy-minibuffer-match-face-4 ((t (:foreground "DarkSeaGreen1"))))
+ '(ivy-current-match           ((t (:background "grey30" :weight bold))))
+ '(ivy-minibuffer-match-face-1 ((t (:foreground "navajo white"       ))))
+ '(ivy-minibuffer-match-face-2 ((t (:foreground "pink"               ))))
+ '(ivy-minibuffer-match-face-3 ((t (:foreground "sky blue"           ))))
+ '(ivy-minibuffer-match-face-4 ((t (:foreground "DarkSeaGreen1"      ))))
  )
 
 ;; Workspace file access
