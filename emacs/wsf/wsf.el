@@ -11,21 +11,18 @@
 ;;====================================================
 
 ;; File system visible paths and names
-(defconst wsf--GIT        ".git")      ; relative to wsf--workspace
-(defconst wsf--SBTOOLS    ".sbtools")  ; relative to wsf--workspace
 (defconst wsf--HASH_TABLE "path-hash.el")
 
-;; Magic shell invocations
-(defconst wsf--cmd-find "find . -type d \\( -name .git -o -name .sbtools -o -name derived \\) -prune -o ! -type d -print")
-
+(defconst wsf--exclude-path-re "/matlab/derived/\|\(~$\)")
 
 ;;====================================================
 ;; Global data
 ;;====================================================
 
-(defvar wsf--workspace-root-marker-directories
-  '(".git" ".sbtools")
-  "")
+(defvar wsf--workspace-root-marker-alist
+  '((".sbtools" . ( "matlab/src" "matlab/test" ))
+    ( ".git"    . ( "." )))
+  "An alist of STATE-DIR names and associated SEARCH-ROOTS.")
 
 (defvar wsf--common-prefix nil
   "Accumulated a prefix common to all paths.")
@@ -167,7 +164,7 @@ common to all directory paths is factored out.")
         (if (null wsf--workspace)
             (user-error "%s; no prior workspace available" msg)
           (setq workspace wsf--workspace)
-          (message "%s: reusing %s" msg workspace))))
+          (message "(WSF) %s: reusing %s" msg workspace))))
     ;; If switching workspacees then start with a clean slate
     (when (or wsf--from-scratch (not (string= wsf--workspace workspace)))
       (setq wsf--workspace workspace)
@@ -180,8 +177,8 @@ common to all directory paths is factored out.")
 
 (defun wsf--workspace-root-marker-directory (path)
   "Return workspace root mark directory name if one exists at PATH"
-  (loop for name in wsf--workspace-root-marker-directories
-        if (file-exists-p (concat path "/" name)) return name))
+  (loop for (state-dir _search-roots) in wsf--workspace-root-marker-alist
+        if (file-exists-p (concat path "/" state-dir)) return state-dir))
 
 
 ;;====================================================
@@ -205,15 +202,22 @@ common to all directory paths is factored out.")
   "Construct a hash table from file of paths."
   ;; Start with a completely empty hash table
   (setq wsf--hash-table (make-hash-table :test 'equal))
-  (with-temp-buffer
-    (let ((find-cmd (concat "cd " wsf--workspace " ; "
-                     "find . -type d \\( "
-                            (loop for name in wsf--workspace-root-marker-directories
-                                  with dash-o = ""
-                                  concat (concat dash-o "-name " name)
-                                  do (setq dash-o " -o "))
-                            " \\) -prune -o ! -type d -print")))
-      (message find-cmd)
+  (with-current-buffer (get-buffer-create "*WSF: files-list*")
+    (buffer-disable-undo)
+    (erase-buffer)
+    ;; find <search-roots> -type d ( -name <state-dir> / -o ) -prune -o ! -type d -print
+    (let* ((search-roots (cdr (assoc (wsf--workspace-root-marker-directory wsf--workspace)
+                                     wsf--workspace-root-marker-alist)))
+           (find-cmd (concat "cd " wsf--workspace " ; "
+                             "find"
+                             (loop for dir in search-roots concat (concat " " dir))
+                             " -type d \\( "
+                             (loop for (state-dir _search-roots) in wsf--workspace-root-marker-alist
+                                   with dash-o = ""
+                                   concat (concat dash-o "-name " state-dir)
+                                   do (setq dash-o " -o "))
+                             " \\) -prune -o ! -type d -print")))
+      (message (format "(WSF) find-cmd= \"%s\"" find-cmd))
       (call-process-shell-command find-cmd nil t))
     ;; Ensure trailing '\n'
     (goto-char (point-max))
@@ -236,7 +240,7 @@ common to all directory paths is factored out.")
             (setq line-end (point))
             (backward-char 1)
             (setq name-end (point))
-            (when (wsf--keep-line-p path-beg (point))
+            (unless (wsf--exclude-path-p path-beg)
               (search-backward "/" path-beg)
               (forward-char 1)
               (let ((path (buffer-substring path-beg (point))))
@@ -255,7 +259,7 @@ common to all directory paths is factored out.")
 
 (defun wsf--set-reconstitute-path-prefix (path)
   ""
-  (message (format "path= \"%s\"" path))
+  (message (format "(WSF) path= \"%s\"" path))
   (setq
    wsf--reconstitute-path-prefix
    (cond
@@ -268,9 +272,11 @@ common to all directory paths is factored out.")
     (t
      (user-error "Cannot determine relative or absolute nature of non-existent file: %s" path)))))
 
-(defun wsf--keep-line-p (_line-beg _line-end)
-  ;; check for /derived/ and well-formedness (distinct path and file)
-  t)
+(defun wsf--exclude-path-p (_bol)
+  "Return true IFF path should not be retained in final result"
+  (save-excursion
+;;    (re-search-backward wsf--exclude-path-re bol t)
+  nil))
 
 (defun wsf--adjust-common-prefix (path)
   "If necessary shorten the current notion of the common prefix"
@@ -375,7 +381,7 @@ Also all loops over duplicates have numerous early exits."
       (prin1 wsf--common-prefix)
       (insert")\n(setq wsf--hash-table ")
       (prin1 wsf--hash-table)
-      (insert")\n(setq wsf--uniquified-list ")
+      (insert")\n(setq wsf--uniquified-list '")
       (prin1 wsf--uniquified-list)
       (insert ")\n"))
     (write-file wsf--path-hash))
