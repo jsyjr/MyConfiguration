@@ -1542,11 +1542,11 @@ convert it to readonly/view-mode."
  )
 
 (my/custom-set-faces
- '(ivy-current-match           ((t (:background "grey30" :weight bold))))
- '(ivy-minibuffer-match-face-1 ((t (:foreground "navajo white"       ))))
- '(ivy-minibuffer-match-face-2 ((t (:foreground "pink"               ))))
- '(ivy-minibuffer-match-face-3 ((t (:foreground "sky blue"           ))))
- '(ivy-minibuffer-match-face-4 ((t (:foreground "DarkSeaGreen1"      ))))
+ '(ivy-current-match           ((t (:underline  "white"        ))))
+ '(ivy-minibuffer-match-face-1 ((t (:foreground "navajo white" ))))
+ '(ivy-minibuffer-match-face-2 ((t (:foreground "pink"         ))))
+ '(ivy-minibuffer-match-face-3 ((t (:foreground "sky blue"     ))))
+ '(ivy-minibuffer-match-face-4 ((t (:foreground "DarkSeaGreen1"))))
  )
 
 ;; Workspace file access
