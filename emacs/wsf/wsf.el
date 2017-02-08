@@ -13,7 +13,7 @@
 ;; File system visible paths and names
 (defconst wsf--HASH_TABLE "path-hash.el")
 
-(defconst wsf--exclude-path-re "/matlab/derived/\|\(~$\)")
+(defconst wsf--exclude-path-re "'/matlab/derived/\\|/\\._\\|\\.#\\|~$'")
 
 ;;====================================================
 ;; Global data
@@ -208,17 +208,19 @@ common to all directory paths is factored out.")
     ;; find <search-roots> -type d ( -name <state-dir> / -o ) -prune -o ! -type d -print
     (let* ((search-roots (cdr (assoc (wsf--workspace-root-marker-directory wsf--workspace)
                                      wsf--workspace-root-marker-alist)))
-           (find-cmd (concat "cd " wsf--workspace " ; "
-                             "find"
+           (find-cmd (concat "cd " wsf--workspace
+                             " ; find"
                              (loop for dir in search-roots concat (concat " " dir))
                              " -type d \\( "
                              (loop for (state-dir _search-roots) in wsf--workspace-root-marker-alist
                                    with dash-o = ""
                                    concat (concat dash-o "-name " state-dir)
                                    do (setq dash-o " -o "))
-                             " \\) -prune -o ! -type d -print")))
+                             " \\) -prune -o ! -type d -print"
+                             " | grep -v " (shell-quote-argument wsf--exclude-path-re))))
       (message (format "(WSF) find-cmd= \"%s\"" find-cmd))
-      (call-process-shell-command find-cmd nil t))
+      (call-process-shell-command find-cmd nil t)
+      (write-file (concat wsf--path-state-dir "wsf-file-list.txt")))
     ;; Ensure trailing '\n'
     (goto-char (point-max))
     (unless (eq (char-before) ?\n)
@@ -240,12 +242,11 @@ common to all directory paths is factored out.")
             (setq line-end (point))
             (backward-char 1)
             (setq name-end (point))
-            (unless (wsf--exclude-path-p path-beg)
-              (search-backward "/" path-beg)
-              (forward-char 1)
-              (let ((path (buffer-substring path-beg (point))))
-                (wsf--adjust-common-prefix path)
-                (wsf--puthash-initial (buffer-substring (point) name-end) path)))))
+            (search-backward "/" path-beg)
+            (forward-char 1)
+            (let ((path (buffer-substring path-beg (point))))
+              (wsf--adjust-common-prefix path)
+              (wsf--puthash-initial (buffer-substring (point) name-end) path))))
     ;; Strip common prefix back to a path element boundary
     (erase-buffer)
     (insert wsf--common-prefix)
@@ -257,26 +258,21 @@ common to all directory paths is factored out.")
     (maphash 'wsf--convert-list-to-vector wsf--hash-table)
     (setq wsf--vector-hash nil)))
 
-(defun wsf--set-reconstitute-path-prefix (path)
-  ""
-  (message (format "(WSF) path= \"%s\"" path))
+(defun wsf--set-reconstitute-path-prefix (find-result)
+  "Given examplar FIND-RESULT get prefix to generate absolute paths."
+  (message (format "(WSF) examplar find-result= \"%s\"" find-result))
   (setq
    wsf--reconstitute-path-prefix
    (cond
-    ((not (string= "/" (substring path 0 1)))
+    ((not (string= "/" (substring find-result 0 1)))
      wsf--workspace)
-    ((file-exists-p path)
+    ((file-exists-p find-result)
      "")
-    ((file-exists-p (concat "." path))
+    ((file-exists-p (concat "." find-result))
      (substring wsf--workspace 0 -1))
     (t
-     (user-error "Cannot determine relative or absolute nature of non-existent file: %s" path)))))
-
-(defun wsf--exclude-path-p (_bol)
-  "Return true IFF path should not be retained in final result"
-  (save-excursion
-;;    (re-search-backward wsf--exclude-path-re bol t)
-  nil))
+     (user-error "Cannot determine relative or absolute nature of non-existent file: %s" find-result))))
+  (message (format "(WSF) prefix paths with \"%s\"" wsf--reconstitute-path-prefix)))
 
 (defun wsf--adjust-common-prefix (path)
   "If necessary shorten the current notion of the common prefix"
