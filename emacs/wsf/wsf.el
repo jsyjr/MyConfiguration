@@ -48,8 +48,8 @@ common to all directory paths is factored out.")
 (defvar wsf--path-hash nil "")
 (defvar wsf--path-state-dir nil "")
 
-(defvar wsf--reconstitute-path-prefix nil
-  "A version of workspace path appropriate for path reconstitution.")
+(defvar wsf--reconstitute-path-rule nil
+  "")
 
 (defvar wsf--workspace nil
   "Workspace with which in-memory state is associated.")
@@ -117,7 +117,16 @@ common to all directory paths is factored out.")
 
 (defun wsf--reconstitute-file-path (filename)
   ""
-  (let ((space (string-match-p " " filename))
+  (let ((prefix (cond
+                 ((eq wsf--reconstitute-path-rule 'workspace-relative)
+                  wsf--workspace)
+                 ((eq wsf--reconstitute-path-rule 'absolute)
+                  "")
+                 ((eq wsf--reconstitute-path-rule 'workspace-relative-no-final-slash)
+                  (substring wsf--workspace 0 -1))
+                 (t
+                  (error "(WSF) Unrecognized wsf--reconstitute-path-rule: %s" wsf--reconstitute-path-rule))))
+        (space (string-match-p " " filename))
         (tag nil))
     (when space
       (setq tag (concat "/" (substring filename (1+ space)) "/"))
@@ -129,8 +138,8 @@ common to all directory paths is factored out.")
                 (when (string-match-p tag path)
                   (setq value path)
                   (throw 'found-match nil)))
-          (error "Could not locate matching directory path: filename= %s, tag= %s" filename tag)))
-      (concat wsf--reconstitute-path-prefix wsf--common-prefix value filename))))
+          (error "(WSF) No matching directory path: filename= %s, tag= %s" filename tag)))
+      (concat prefix wsf--common-prefix value filename))))
 
 
 ;;====================================================
@@ -202,9 +211,8 @@ common to all directory paths is factored out.")
   "Construct a hash table from file of paths."
   ;; Start with a completely empty hash table
   (setq wsf--hash-table (make-hash-table :test 'equal))
-  (with-current-buffer (get-buffer-create "*WSF: files-list*")
+  (with-temp-buffer
     (buffer-disable-undo)
-    (erase-buffer)
     ;; find <search-roots> -type d ( -name <state-dir> / -o ) -prune -o ! -type d -print
     (let* ((search-roots (cdr (assoc (wsf--workspace-root-marker-directory wsf--workspace)
                                      wsf--workspace-root-marker-alist)))
@@ -220,7 +228,8 @@ common to all directory paths is factored out.")
                              " | grep -v " (shell-quote-argument wsf--exclude-path-re))))
       (message (format "(WSF) find-cmd= \"%s\"" find-cmd))
       (call-process-shell-command find-cmd nil t)
-      (write-file (concat wsf--path-state-dir "wsf-file-list.txt")))
+      ;(write-file (concat wsf--path-state-dir "wsf-file-list.txt"))
+      )
     ;; Ensure trailing '\n'
     (goto-char (point-max))
     (unless (eq (char-before) ?\n)
@@ -262,17 +271,16 @@ common to all directory paths is factored out.")
   "Given examplar FIND-RESULT get prefix to generate absolute paths."
   (message (format "(WSF) examplar find-result= \"%s\"" find-result))
   (setq
-   wsf--reconstitute-path-prefix
+   wsf--reconstitute-path-rule
    (cond
     ((not (string= "/" (substring find-result 0 1)))
-     wsf--workspace)
+     'workspace-relative)
     ((file-exists-p find-result)
-     "")
+     'absolute)
     ((file-exists-p (concat "." find-result))
-     (substring wsf--workspace 0 -1))
+     'workspace-relative-no-final-slash)
     (t
-     (user-error "Cannot determine relative or absolute nature of non-existent file: %s" find-result))))
-  (message (format "(WSF) prefix paths with \"%s\"" wsf--reconstitute-path-prefix)))
+     (user-error "Cannot determine relative or absolute nature of non-existent file: %s" find-result)))))
 
 (defun wsf--adjust-common-prefix (path)
   "If necessary shorten the current notion of the common prefix"
@@ -371,8 +379,8 @@ Also all loops over duplicates have numerous early exits."
   "Write the completion list and hash table to disk as a .el / .elc pair"
   (with-temp-buffer
     (let ((standard-output (current-buffer)))
-      (insert"(setq wsf--reconstitute-path-prefix ")
-      (prin1 wsf--reconstitute-path-prefix)
+      (insert"(setq wsf--reconstitute-path-rule '")
+      (prin1 wsf--reconstitute-path-rule)
       (insert")\n(setq wsf--common-prefix ")
       (prin1 wsf--common-prefix)
       (insert")\n(setq wsf--hash-table ")
