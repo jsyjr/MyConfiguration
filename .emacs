@@ -1537,6 +1537,7 @@ convert it to readonly/view-mode."
 
 (my/custom-set-variables
  '(ivy-count-format "(%d/%d) ")
+ '(ivy-magic-tilde nil)
  '(ivy-mode t)
  '(ivy-use-virtual-buffers t)
  )

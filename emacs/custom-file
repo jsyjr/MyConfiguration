@@ -107,6 +107,7 @@
  '(isearch-mode-end-hook (quote my/enter-again-if-enter) t)
  '(ispell-personal-dictionary "~/emacs/aspell.en.pws")
  '(ivy-count-format "(%d/%d) ")
+ '(ivy-magic-tilde nil)
  '(ivy-mode t)
  '(ivy-use-virtual-buffers t)
  '(kept-old-versions 5)
