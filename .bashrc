@@ -85,6 +85,8 @@ fi
 #alias l='ls -CF'
 alias env='env | sort'
 alias cgir-02='rdesktop -g 1920x1600 -d mathworks -u jyates cgir-02-win64 &'
+alias dff='df -h /sandbox/jyates /local-ssd /local /home/jyates'
+
 ###################################
 
 ########## START MATHWORKS SPECIFIC ##########
