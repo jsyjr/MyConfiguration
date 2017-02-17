@@ -115,6 +115,23 @@ if [ -d /mathworks ]; then
     #         . /sandbox/savadhan/sbtools/_bash_functions
     #     fi
     # fi
+
+    testWs() {
+        if [ -d /local-ssd/lsb/$1 ]; then
+            sbcopyandrun -s /local-ssd/lsb/$1 -to-dst /sandbox/jyates/$1 -num-threads 16 -no-perforce -opened -- -autofarm devel -lockup-minutes 120 -rerunusing jobarchive -testsuites $2
+        else
+            echo Workspace name is missing.
+        fi
+    }
+
+    testFull() {
+        testWs $1 Acgir_Aslrtw
+    }
+
+    testFast() {
+        testWs $1 Acgir_fast
+    }
+
 fi
 #
 ########### END MATHWORKS SPECIFIC ###########
