@@ -1539,6 +1539,9 @@ convert it to readonly/view-mode."
  '(ivy-count-format "(%d/%d) ")
  '(ivy-magic-tilde nil)
  '(ivy-mode t)
+ '(ivy-sort-matches-functions-alist
+   '((t . ivy--prefix-sort)
+     (ivy-switch-buffer . ivy-sort-function-buffer)))
  '(ivy-use-virtual-buffers t)
  )
 

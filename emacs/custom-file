@@ -109,6 +109,10 @@
  '(ivy-count-format "(%d/%d) ")
  '(ivy-magic-tilde nil)
  '(ivy-mode t)
+ '(ivy-sort-matches-functions-alist
+   (quote
+    ((t . ivy--prefix-sort)
+     (ivy-switch-buffer . ivy-sort-function-buffer))))
  '(ivy-use-virtual-buffers t)
  '(kept-old-versions 5)
  '(kill-whole-line t)
