@@ -3860,8 +3860,8 @@ use either \\[customize] or the function `phw-mode'." t)
 
 (keydef "<f1>"          bs-show)
 (eval-after-load "bs"  '(keydef (bs "<f1>") (bs-kill)))
-(keydef "C-<f1>"        my/named-shell)
-(keydef "S-<f1>"        my/local-ssd-workspace-shell)
+(keydef "C-<f1>"        my/local-ssd-workspace-shell)
+(keydef "S-<f1>"        my/named-shell)
 (keydef "M-<f1>"        menu-bar-mode)
 
 (keydef "<f2>"          disk)
