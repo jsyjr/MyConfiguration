@@ -137,6 +137,7 @@ sudo apt-get install \
   network-manager-openconnect-gnome \
   pavucontrol \
   python-software-properties \
+  silversearcher-ag \
   texinfo \
   texlive-fonts-extra \
   texlive-latex-base \
