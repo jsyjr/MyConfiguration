@@ -33,7 +33,7 @@
 (defvar wsf--find-file-history nil
   "MW Find File history.")
 
-(defvar wsf--from-scratch t
+(defvar wsf--from-scratch nil
   "When non-nil force a full recompuation of all state.")
 
 (defvar wsf--hash-table nil
