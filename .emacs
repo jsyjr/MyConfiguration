@@ -481,15 +481,19 @@
 (setq frame-title-format
       '((((winring-show-names
            (" " winring-name))))
-        "Emacs:  %b"
-        (buffer-file-name
-         ("  [ "
-          (:eval
-           (file-name-directory
-            (abbreviate-file-name
-             (file-truename buffer-file-name))))
-          " ]")
-         nil)))
+        ("Emacs:  ")
+        ((:eval (buffer-name
+                 (if (minibufferp)
+                     (window-buffer (minibuffer-selected-window))
+                   (current-buffer)))))
+        ((:eval (if buffer-file-name
+                  (concat
+                   "  [ "
+                   (file-name-directory
+                    (abbreviate-file-name
+                     (file-truename buffer-file-name)))
+                   " ]")
+                  "")))))
 
 ;;}}}
 ;;{{{  Frame appearance
