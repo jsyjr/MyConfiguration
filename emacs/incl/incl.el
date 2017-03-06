@@ -1,7 +1,7 @@
 (defun finc--hdr-cleanup (hdr)
-  ""
-  (load-file)
-  (create-unit-test)
+  "Do clean-ups; return t IFF one or more header dropped."
+  (finc--load-file)
+  (finc--create-unit-test)
   (finc--strip-copyright)
   (finc--strip-pragma-once)
   (finc--strip-guard)
@@ -17,12 +17,22 @@
   (sbsmartbuild))
 
 (defun finc--main-hdr-flow ()
-  (locate-all-headers)
+  (finc--locate-all-headers)
   (for h
        (finc--strip-common)
        (finc--expand-rollup-headers)
-       (addToList (#includes, pathToHdr)))
+       (addToList (#includes, PATH)))
+  (sbsmartbuild)
   (sortBasedOnNumberOfIncludes)
   (for h
-       (if (finc--hdr-clean
-   
+       (when (finc--hdr-cleanup h)
+         (compile-implementation)
+         (sbsmartbuild)
+         )))
+
+(defun finc--locate-all-headers (headers-mk-path)
+  "Read headers.mk and construct (0, PATH) list."
+  (with-temp-buffer
+    (buffer-disable-undo)
+    (insert-file-contents-literally headers-mk-path)
+    (
