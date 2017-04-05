@@ -5,4 +5,4 @@
 ; /mathworks/inside/labs/dev/matlab_coder_tools/bear/bear-watch-bat --once \
 )
 
-sbsyncmaster -C /local-ssd/lsb -r ${CLUSTER} -log-dir /local-ssd/lsb/logs/${CLUSTER} -cfg ${HOME}/.sbsyncmaster/jyates_syncmaster_BEAR.cfg
+sbsyncmaster -C /local-ssd/lsb -r ${CLUSTER} -log-dir ${HOME}/.bear/logs/${CLUSTER} -cfg ${HOME}/.sbsyncmaster/jyates_syncmaster_BEAR.cfg
