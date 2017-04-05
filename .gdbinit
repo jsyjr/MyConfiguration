@@ -8,18 +8,16 @@
 # I have yet to sort out.  In the interim here is the non-python portion
 # the above file:
 
-source /mathworks/hub/share/sbtools/.gdbinit
-
 define sb
-run -r "opengl info" -nosplash
+run -r "opengl info;slprivate('disableRunCustomization',1)" -nosplash
 end
 
 define sbn
-run -r "opengl info" -nosplash -nodesktop
+run -r "opengl info;slprivate('disableRunCustomization',1)" -nosplash -nodesktop
 end
 
 define sbnj
-run -r "opengl info" -nosplash -nodesktop -nojvm
+run -r "opengl info;slprivate('disableRunCustomization',1)" -nosplash -nodesktop -nojvm
 end
 
 define segv
