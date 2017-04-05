@@ -2860,12 +2860,16 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (let ((default-directory (concat "/local-ssd/lsb/" WORKSPACE "/")))
     (shell WORKSPACE)))
 
+(defun mathworks-sbroot-for-directory (dir)
+  "Get the sandbox root for DIR."
+  (locate-dominating-file dir ".sbtools"))
+
 (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools/" t)
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/matlab-emacs/matlab-emacs/" t)
 
   (require 'sbtools-locations)
-
+  (require 'sb-prompt)
   (require 'mathworks-maps)
 
   ;; C-x C-q         mathworks-toggle-read-only
