@@ -181,3 +181,46 @@ end
 # define nosegv
 # handle SIGSEGV noprint nostop
 # end
+
+#------------------#
+# MATLAB debugging #
+#------------------#
+define faststart
+  echo \n\n\033[30;46mRunning with deferred symbol loading (set auto-solib-add off)\033[0m\n
+  echo \033[30;46mRun loadsyms after Simulink starts using slopen\033[0m\n\n
+  set auto-solib-add off
+end
+# faststart    # comment-out to load all symbols at startup
+define loadsyms
+  # libraries needed so breaksegv works:
+  sharedlibrary libmwmcr.so
+  sharedlibrary libmwfl.so
+  # libraries I work on:
+  sharedlibrary libmwcg_ir.so
+  sharedlibrary libmwcgir_algorithm.so
+  sharedlibrary libmwcgir_analysis.so
+  sharedlibrary libmwcgir_cgel.so
+  sharedlibrary libmwcgir_clair.so
+  sharedlibrary libmwcgir_construct.so
+  sharedlibrary libmwcgir_cpp_emitter.so
+  sharedlibrary libmwcgir_dvir.so
+  sharedlibrary libmwcgir_fixpt.so
+  sharedlibrary libmwcgir_float2fixed.so
+  sharedlibrary libmwcgir_gpu.so
+  sharedlibrary libmwcgir_hdl.so
+  sharedlibrary libmwcgir_interp.so
+  sharedlibrary libmwcgir_mi.so
+  sharedlibrary libmwcgir_plc.so
+  sharedlibrary libmwcgir_polly.so
+  sharedlibrary libmwcgir_spike.so
+  sharedlibrary libmwcgir_support.so
+  sharedlibrary libmwcgir_tests.so
+  sharedlibrary libmwcgir_tfl.so
+  sharedlibrary libmwcgir_vm.so
+  sharedlibrary libmwcgir_vm_rt.so
+  sharedlibrary libmwcgir_xform.so
+  # display breakpoint status, so one knows symbols were loaded
+  info break
+end
+
+source /mathworks/hub/share/sbtools/.gdbinit
