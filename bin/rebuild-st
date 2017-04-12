@@ -6,14 +6,196 @@ if [ ! -f "st.info" ]; then
    echo "Working directory ( $(pwd) ) is not the root of an st source tree."; exit 1
 fi
 
-rm -f *.diff*
+git reset --hard
+git pull
+rm -f config.h *.diff* *.bak
+make clean
 
-cat >st-no-bold-colors.diff <<EOF
+cat >st-solarize-both.diff <<EOF
+diff --git a/config.def.h b/config.def.h
+index 877afab..1623999 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -41,6 +41,9 @@ unsigned int tripleclicktimeout = 600;
+ /* alt screens */
+ int allowaltscreen = 1;
+ 
++/* 1 to use alternate palette */
++int usealtcolors = 1;
++
+ /* frames per second st should at maximum draw to the screen */
+ unsigned int xfps = 120;
+ unsigned int actionfps = 30;
+@@ -84,42 +87,54 @@ static unsigned int tabspaces = 8;
+ 
+ /* Terminal colors (16 first used in escape sequence) */
+ const char *colorname[] = {
+-	/* 8 normal colors */
+-	"black",
+-	"red3",
+-	"green3",
+-	"yellow3",
+-	"blue2",
+-	"magenta3",
+-	"cyan3",
+-	"gray90",
+-
+-	/* 8 bright colors */
+-	"gray50",
+-	"red",
+-	"green",
+-	"yellow",
+-	"#5c5cff",
+-	"magenta",
+-	"cyan",
+-	"white",
+-
+-	[255] = 0,
+-
+-	/* more colors can be added after 255 to use with DefaultXX */
+-	"#cccccc",
+-	"#555555",
++	/* solarized dark */
++	"#073642",  /*	0: black    */
++	"#dc322f",  /*	1: red	    */
++	"#859900",  /*	2: green    */
++	"#b58900",  /*	3: yellow   */
++	"#268bd2",  /*	4: blue	    */
++	"#d33682",  /*	5: magenta  */
++	"#2aa198",  /*	6: cyan	    */
++	"#eee8d5",  /*	7: white    */
++	"#002b36",  /*	8: brblack  */
++	"#cb4b16",  /*	9: brred    */
++	"#586e75",  /* 10: brgreen  */
++	"#657b83",  /* 11: bryellow */
++	"#839496",  /* 12: brblue   */
++	"#6c71c4",  /* 13: brmagenta*/
++	"#93a1a1",  /* 14: brcyan   */
++	"#fdf6e3",  /* 15: brwhite  */
+ };
+ 
++/* Terminal colors for alternate (light) palette */
++const char *altcolorname[] = {
++	/* solarized light */
++	"#eee8d5",  /*	0: black    */
++	"#dc322f",  /*	1: red	    */
++	"#859900",  /*	2: green    */
++	"#b58900",  /*	3: yellow   */
++	"#268bd2",  /*	4: blue	    */
++	"#d33682",  /*	5: magenta  */
++	"#2aa198",  /*	6: cyan	    */
++	"#073642",  /*	7: white    */
++	"#fdf6e3",  /*	8: brblack  */
++	"#cb4b16",  /*	9: brred    */
++	"#93a1a1",  /* 10: brgreen  */
++	"#839496",  /* 11: bryellow */
++	"#657b83",  /* 12: brblue   */
++	"#6c71c4",  /* 13: brmagenta*/
++	"#586e75",  /* 14: brcyan   */
++	"#002b36",  /* 15: brwhite  */
++};
+ 
+ /*
+  * Default colors (colorname index)
+  * foreground, background, cursor, reverse cursor
+  */
+-unsigned int defaultfg = 7;
+-unsigned int defaultbg = 0;
+-unsigned int defaultcs = 256;
+-unsigned int defaultrcs = 257;
++unsigned int defaultfg = 12;
++unsigned int defaultbg = 8;
++unsigned int defaultcs = 14;
++unsigned int defaultrcs = 15;
+ 
+ /*
+  * Default shape of cursor
+@@ -170,6 +185,7 @@ Shortcut shortcuts[] = {
+ 	{ ControlMask,          XK_Print,       toggleprinter,  {.i =  0} },
+ 	{ ShiftMask,            XK_Print,       printscreen,    {.i =  0} },
+ 	{ XK_ANY_MOD,           XK_Print,       printsel,       {.i =  0} },
++	{ XK_ANY_MOD,           XK_F6,          swapcolors,     {.i =  0} },
+ 	{ TERMMOD,              XK_Prior,       zoom,           {.f = +1} },
+ 	{ TERMMOD,              XK_Next,        zoom,           {.f = -1} },
+ 	{ TERMMOD,              XK_Home,        zoomreset,      {.f =  0} },
 diff --git a/st.c b/st.c
-index 64e2cec..13ceadc 100644
+index ae93ade..65e952f 100644
 --- a/st.c
 +++ b/st.c
-@@ -3680,7 +3680,7 @@ xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len, int x, i
+@@ -130,6 +130,7 @@ static void clipcopy(const Arg *);
+ static void clippaste(const Arg *);
+ static void numlock(const Arg *);
+ static void selpaste(const Arg *);
++static void swapcolors(const Arg *);
+ static void zoom(const Arg *);
+ static void zoomabs(const Arg *);
+ static void zoomreset(const Arg *);
+@@ -2628,6 +2629,15 @@ numlock(const Arg *dummy)
+ 	term.numlock ^= 1;
+ }
+ 
++void
++swapcolors(const Arg *dummy)
++{
++	usealtcolors = !usealtcolors;
++	xloadcols();
++	redraw();
++}
++
++
+ char*
+ kmap(KeySym k, uint state)
+ {
+diff --git a/st.h b/st.h
+index 44d4938..a1aa37f 100644
+--- a/st.h
++++ b/st.h
+@@ -250,6 +250,8 @@ extern unsigned int cursorthickness;
+ extern unsigned int blinktimeout;
+ extern char termname[];
+ extern const char *colorname[];
++extern const char *altcolorname[];
++extern int usealtcolors;
+ extern size_t colornamelen;
+ extern unsigned int defaultfg;
+ extern unsigned int defaultbg;
+diff --git a/x.c b/x.c
+index fbfd350..f7ec250 100644
+--- a/x.c
++++ b/x.c
+@@ -573,6 +573,11 @@ sixd_to_16bit(int x)
+ 	return x == 0 ? 0 : 0x3737 + 0x2828 * x;
+ }
+ 
++const char* getcolorname(int i)
++{
++    return (usealtcolors) ?  altcolorname[i] : colorname[i];
++}
++
+ int
+ xloadcolor(int i, const char *name, Color *ncolor)
+ {
+@@ -591,7 +596,7 @@ xloadcolor(int i, const char *name, Color *ncolor)
+ 			return XftColorAllocValue(xw.dpy, xw.vis,
+ 			                          xw.cmap, &color, ncolor);
+ 		} else
+-			name = colorname[i];
++			name = getcolorname(i);
+ 	}
+ 
+ 	return XftColorAllocName(xw.dpy, xw.vis, xw.cmap, name, ncolor);
+@@ -614,8 +619,8 @@ xloadcols(void)
+ 
+ 	for (i = 0; i < dc.collen; i++)
+ 		if (!xloadcolor(i, NULL, &dc.col[i])) {
+-			if (colorname[i])
+-				die("Could not allocate color '%s'\n", colorname[i]);
++			if (getcolorname(i))
++				die("Could not allocate color '%s'\n", getcolorname(i));
+ 			else
+ 				die("Could not allocate color %d\n", i);
+ 		}
+@@ -1158,7 +1163,7 @@ xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len, int x, i
  
  	/* Change basic system colors [0-7] to bright system colors [8-15] */
  	if ((base.mode & ATTR_BOLD_FAINT) == ATTR_BOLD && BETWEEN(base.fg, 0, 7))
@@ -23,171 +205,19 @@ index 64e2cec..13ceadc 100644
  	if (IS_SET(MODE_REVERSE)) {
  		if (fg == &dc.col[defaultfg]) {
 -- 
-2.4.2
+2.11.0
 EOF
 
+echo "Apply: st-solarize-both.diff"
+git apply st-solarize-both.diff
+
+echo "Use Dina instead of Liberation Mono"
 sed -i.bak \
-    -e 's/if(BETWEEN(base.fg, 0, 7))/if(BETWEEN(base.fg, 0, 7) \&\& !(base.mode \& ATTR_FAINT))/g' \
-    -e 's/-3164,7 +3164,7/-3224,7 +3224,7/g' \
-    st-no-bold-colors.diff
+    -e 's/Liberation Mono/Dina/g' \
+    -e 's/:pixelsize=12/:pixelsize=16/g' \
+    -e 's/:antialias=false/:antialias=false/g' \
+    -e 's/:autohint=false/:autohint=false/g' \
+    config.def.h
 
-
-# wget http://st.suckless.org/patches/st-solarized-light.diff  # config.def.h
-# wget http://st.suckless.org/patches/st-solarized-dark.diff   # config.def.h
-#
-# sed -i.bak \
-#     -e 's/#073642/#000000/g' \
-#     -e 's/#eee8d5/#f0f0f0/g' \
-#     -e 's/#002b36/#202020/g' \
-#     -e 's/#fdf6e3/#fefefe/g' \
-#     -e 's/defaultfg = 12;/defaultfg = 7;/g' \
-#     -e 's/defaultbg = 8;/defaultbg = 0;/g' \
-#     st-solarized-light.diff st-solarized-dark.diff
-
-cat >st-solarized-light.diff <<EOF
-diff --git a/config.def.h b/config.def.h
-index 930e468..19f33b5 100644
---- a/config.def.h
-+++ b/config.def.h
-@@ -70,25 +70,23 @@ static unsigned int tabspaces = 8;
- 
- /* Terminal colors (16 first used in escape sequence) */
- static const char *colorname[] = {
--	/* 8 normal colors */
--	"black",
--	"red3",
--	"green3",
--	"yellow3",
--	"blue2",
--	"magenta3",
--	"cyan3",
--	"gray90",
--
--	/* 8 bright colors */
--	"gray50",
--	"red",
--	"green",
--	"yellow",
--	"#5c5cff",
--	"magenta",
--	"cyan",
--	"white",
-+	/* solarized light */
-+	"#f0f0f0",  /*	0: black    */
-+	"#dc322f",  /*	1: red	    */
-+	"#859900",  /*	2: green    */
-+	"#b58900",  /*	3: yellow   */
-+	"#268bd2",  /*	4: blue	    */
-+	"#d33682",  /*	5: magenta  */
-+	"#2aa198",  /*	6: cyan	    */
-+	"#000000",  /*	7: white    */
-+	"#fefefe",  /*	8: brblack  */
-+	"#cb4b16",  /*	9: brred    */
-+	"#93a1a1",  /* 10: brgreen  */
-+	"#839496",  /* 11: bryellow */
-+	"#657b83",  /* 12: brblue   */
-+	"#6c71c4",  /* 13: brmagenta*/
-+	"#586e75",  /* 14: brcyan   */
-+	"#202020",  /* 15: brwhite  */
- 
- 	[255] = 0,
- 
-@@ -103,7 +101,7 @@ static const char *colorname[] = {
-  */
- static unsigned int defaultfg = 7;
- static unsigned int defaultbg = 0;
--static unsigned int defaultcs = 256;
-+static unsigned int defaultcs = 14;
- static unsigned int defaultrcs = 257;
- 
- /*
--- 
-2.1.4
-EOF
-
-cat >st-solarized-dark.diff <<EOF
-diff --git a/config.def.h b/config.def.h
-index 930e468..650fc13 100644
---- a/config.def.h
-+++ b/config.def.h
-@@ -70,25 +70,23 @@ static unsigned int tabspaces = 8;
- 
- /* Terminal colors (16 first used in escape sequence) */
- static const char *colorname[] = {
--	/* 8 normal colors */
--	"black",
--	"red3",
--	"green3",
--	"yellow3",
--	"blue2",
--	"magenta3",
--	"cyan3",
--	"gray90",
--
--	/* 8 bright colors */
--	"gray50",
--	"red",
--	"green",
--	"yellow",
--	"#5c5cff",
--	"magenta",
--	"cyan",
--	"white",
-+	/* solarized dark */
-+	"#000000",  /*	0: black    */
-+	"#dc322f",  /*	1: red	    */
-+	"#859900",  /*	2: green    */
-+	"#b58900",  /*	3: yellow   */
-+	"#268bd2",  /*	4: blue	    */
-+	"#d33682",  /*	5: magenta  */
-+	"#2aa198",  /*	6: cyan	    */
-+	"#f0f0f0",  /*	7: white    */
-+	"#202020",  /*	8: brblack  */
-+	"#cb4b16",  /*	9: brred    */
-+	"#586e75",  /* 10: brgreen  */
-+	"#657b83",  /* 11: bryellow */
-+	"#839496",  /* 12: brblue   */
-+	"#6c71c4",  /* 13: brmagenta*/
-+	"#93a1a1",  /* 14: brcyan   */
-+	"#fefefe",  /* 15: brwhite  */
- 
- 	[255] = 0,
- 
-@@ -103,7 +101,7 @@ static const char *colorname[] = {
-  */
- static unsigned int defaultfg = 7;
- static unsigned int defaultbg = 0;
--static unsigned int defaultcs = 256;
-+static unsigned int defaultcs = 14;
- static unsigned int defaultrcs = 257;
- 
- /*
--- 
-2.1.4
-EOF
-
-makeSt() {
-  git reset --hard
-  git pull
-  make clean
-  echo "Apply: st-no-bold-colors.diff"
-  git apply st-no-bold-colors.diff
-  echo "Apply: st-solarized-$1.diff"
-  git apply st-solarized-$1.diff
-  cp config.def.h config.h
-  sed -i.bak \
-      -e 's/Liberation Mono/Dina/g' \
-      -e 's/:pixelsize=12/:pixelsize=16/g' \
-      -e 's/:antialias=false/:antialias=false/g' \
-      -e 's/:autohint=false/:autohint=false/g' \
-    config.h
-  CFLAGS='-march=native -mfpmath=387' make
-  cp st ~/bin/st-$1
-}
-
-makeSt light
-makeSt dark
-
-cp config.h st-solarized-light.diff st-solarized-dark.diff /tmp
-
-rm -f *.diff *.bak
+CFLAGS='-march=native -mfpmath=387' make
+cp st ~/bin/st
