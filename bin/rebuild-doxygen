@@ -12,11 +12,12 @@ git pull
 rm -rf build
 mkdir build
 cd build
-cmake -G "Unix Makefiles" english_only=1 use_libclang=1 ..
+cmake -G "Unix Makefiles" -Denglish_only:BOOL=ON -Duse_libclang:BOOL=ON ..
 sed -i -e 's/-O2/-march=native -mfpmath=387 -O3/' `find -name Makefile`
 
 # mkdir -p lib bin objects/qtools html latex man docbook perlmod rtf xml
 
+make clean
 make -kj8
 make -kj8
 make
