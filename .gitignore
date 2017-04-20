@@ -48,6 +48,7 @@ st-light
 /.bash_logout
 /.bzr.log
 /.cache
+/.ccache
 /.config
 /.dmrc
 /.esd_auth
@@ -58,12 +59,14 @@ st-light
 /.gtk-bookmarks
 /.icons
 /.install4j
+/.lastModified
 /.lesshst
 /.login
 /.logout
 /.nano_history
 /.nfs*
 /.nvidia-settings-rc
+/.p4config
 /.p4enviro
 /.pinerc
 /.pki
@@ -98,11 +101,15 @@ st-light
 #/.*/ -- Same rationale as for /.* (see previous comment).
 /.AndroidStudio1.2/
 /.BullseyeCoverage/
+/.Xilinx/
 /.adobe/
 /.android/
 /.aptitude/
+/.arduino15/
+/.bear/
 /.cache/
 /.ccache/
+/.ccache-sbinfo/
 /.cgtools/
 /.compiz/
 /.config/
@@ -112,8 +119,10 @@ st-light
 /.elinks/
 /.emacs.d/
 /.felix/
+/.fltk/
 /.fontconfig/
 /.freerdp/
+/.gephi/
 /.gimp-2.8/
 /.gnome/
 /.gnome2/
@@ -123,12 +132,14 @@ st-light
 /.icedove/
 /.java/
 /.jmc/
+/.jssc/
 /.kde/
 /.local/
 /.macromedia/
 /.matlab/
 /.mission-control/
 /.mozilla/
+/.nedit/
 /.nv/
 /.oracle_jre_usage/
 /.p4merge/
@@ -148,6 +159,7 @@ st-light
 /.thumbnails/
 /.thunderbird/
 /.tin/
+/.vim/
 /.vmware/
 /.vnc/
 /.webex/
