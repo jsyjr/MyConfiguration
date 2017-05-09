@@ -10,10 +10,11 @@ fi
 
 [ -e Makefile ] && make distclean
 
-cd ${HOME}
-rm -rf global
-cvs -z3 -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/global co global
-cd ${HOME}/repos/global
+# cd ${HOME}
+# rm -rf global
+# cvs -z3 -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/global co global
+# cd ${HOME}/repos/global
+
 cvs update
 
 sh reconf.sh
