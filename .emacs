@@ -3385,7 +3385,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (my/gud-def my/gud-nexti  (progn (gud-call "nexti %p")
                                  (gud-call "x/i $pc"))
             1 "Step one or more instructions (skip over calls).")
-(my/gud-def my/gud-cont   (progn (gud-go))
+(my/gud-def my/gud-cont   (progn (gud-go nil))
             1 "Continue with display.")
 (my/gud-def my/gud-finish "finish"       1 "Finish executing current function.")
 (my/gud-def my/gud-jump   (progn (gud-call "tbreak %f:%l")
