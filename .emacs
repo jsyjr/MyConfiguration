@@ -3843,6 +3843,8 @@ use either \\[customize] or the function `phw-mode'." t)
 ;(keydef "M-D"           my/delete-whitespace-forward)
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
+(keydef "M-o"           other-window) ; simple repetition
+
 (keydef "C-c C-k"       kill-compilation)
 
 (keydef "C-c j"         avy-goto-word-or-subword-1)
