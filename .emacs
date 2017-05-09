@@ -3412,7 +3412,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   '(advice-add 'gdb-setup-windows :after #'my/dedicate-gdb-comint-window))
 
 (defun my/gud-help ()
-  "Pop up a table of GDB key bindings."
+  "Toggle display of a table of GDB key bindings."
   (interactive)
   (let ((gdb-keys (get-buffer "*GDB key bindings*")))
     (unless gdb-keys
@@ -3429,8 +3429,8 @@ fier | <F5>     <F6>     <F7>     <F8>     <F9>     <F10>    <F11>
      | run      print*   goto     print    step     next     set
      |                   prompt                              break
      |
-Ctrl | run to   help              print    stepi    finish   temp
-     | cursor                     via pp                     break
+Ctrl | run to   toggle            print    stepi    frame    temp
+     | cursor   help              via pp            return   break
      |
 Shft | rerun    print*            frame    frame    frame    remove
      |          via pp            zero     down     up       break
@@ -3438,8 +3438,13 @@ Shft | rerun    print*            frame    frame    frame    remove
         (set-buffer-modified-p nil)
         (view-mode 1)
         ))
-      (set-window-buffer gdb-source-window gdb-keys)
-      (my/gud-eob)))
+    (with-current-buffer gdb-keys
+      (let ((win (get-buffer-window)))
+        (if (not win)
+            (set-window-buffer gdb-source-window gdb-keys)
+          (select-window win)
+          (bury-buffer))))
+    (my/gud-eob)))
 
 (eval-after-load "gud"
   '(progn
