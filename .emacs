@@ -3398,7 +3398,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (my/gud-def my/gud-print  "print %e"     0 "Evaluate C expression at point.")
 (my/gud-def my/gud-pstar  "print* %e"    0 "Evaluate C dereferenced pointer expression at point.")
 (my/gud-def my/gud-until  "until %f:%l"  0 "Continue to current line.")
-(my/gud-def my/gud-run    "run"          1 "Run the program.")
+(my/gud-def my/gud-run    "run"          1 "Run/restart program.")
 (my/gud-def my/gud-frame0 "frame 0"      0 "Return to stack frame 0 in source window.")
 (my/gud-def my/gud-prompt "frame"        1 "Jump to EOB in GUD's interaction buffer.")
 
