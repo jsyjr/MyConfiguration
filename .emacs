@@ -2472,7 +2472,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
  )
 
 (when (require-maybe 'ggtags)
-  (add-hook 'buffer-list-update-hook (lambda () (ggtags-mode 1))))
+  (add-hook 'prog-mode-hook (lambda () (ggtags-mode 1))))
 
 ;; For idutils:
 ;; /hub/share/sbtools/external-apps/idutils/idutils-4.6-sbmod1/install/share/id-lang.map
