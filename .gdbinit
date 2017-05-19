@@ -8,20 +8,33 @@
 # I have yet to sort out.  In the interim here is the non-python portion
 # the above file:
 
+define segv
+handle SIGSEGV print stop
+end
+document segv
+turn on segv processing
+end
+
+define nosegv
+handle SIGSEGV nostop noprint pass
+end
+document nosegv
+ignore segv's while debugging
+end
+
 define sb
-run -r "opengl info;slprivate('disableRunCustomization',1)" -nosplash
+nosegv
+run -r "opengl info;evil_purgedir all" -nosplash
 end
 
 define sbn
-run -r "opengl info;slprivate('disableRunCustomization',1)" -nosplash -nodesktop
+nosegv
+run -r "opengl info;evil_purgedir all" -nosplash -nodesktop
 end
 
 define sbnj
-run -r "opengl info;slprivate('disableRunCustomization',1)" -nosplash -nodesktop -nojvm
-end
-
-define segv
-handle SIGSEGV stop
+segv
+run -r "opengl info;evil_purgedir all" -nosplash -nodesktop -nojvm
 end
 
 # Don't display the thread creation/deletion/switch messages
@@ -74,20 +87,6 @@ b client_assertion_failed
 #b std::__throw_logic_error
 #b std::__throw_runtime_error
 #b MATLABAssertFcn
-end
-
-define segv
-handle SIGSEGV print stop
-end
-document segv
-turn on segv processing
-end
-
-define nosegv
-handle SIGSEGV noprint nostop
-end
-document segv
-ignore segv's while debugging
 end
 
 define ppe
