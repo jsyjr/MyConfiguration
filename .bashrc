@@ -110,7 +110,7 @@ if [ -d /mathworks ]; then
     alias sbl_sf=' sbruntests -local    all   -rerunusing jobarchive -runallunder test/toolbox/stateflow'
     alias sbl_all='sbruntests -local    all   -rerunusing jobarchive -testsuites Acgir_Aslrtw'
 
-    alias new-task='(cd /local-ssd/lsb; sbrmtree TASK; sbclone -no-perfoce Bcgir_task.latest_pass TASK)'
+    alias new-task='(cd /local-ssd/lsb; sbrmtree TASK; sbclone -no-perforce Bcgir_task.latest_pass TASK)'
 
     # if [ -d /sandbox/savadhan/sbtools ]; then
     #     if [ -f /sandbox/savadhan/sbtools/_bash_functions ]; then
