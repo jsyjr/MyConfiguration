@@ -753,10 +753,6 @@ mouse-3: Remove current window from display"))))
   "Accumulate max column visited to prevent mode-line jitter.")
 (make-variable-buffer-local 'buffer-max-column-visited)
 
-;; (defface mode-line-bold-highlight
-;;   '((t (:group 'modeline :inherit mode-line-highlight :weight bold)))
-;;   "")
-
 (defun my/position-widget ()
   (let*
       ((c-n-m column-number-mode)
