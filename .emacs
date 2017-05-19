@@ -748,6 +748,8 @@ mouse-3: Remove current window from display"))))
 ;;
 ;; Further learnings from Lennart Borgman's sml-modeline.el
 ;;   https://www.emacswiki.org/emacs/sml-modeline.el
+;;
+;; TODO: Change color if cursor exceeds limit column
 
 (defvar buffer-max-column-visited 1
   "Accumulate max column visited to prevent mode-line jitter.")
