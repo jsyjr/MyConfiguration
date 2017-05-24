@@ -1229,7 +1229,7 @@ toggle between real end and logical end of the buffer."
      (my/end-of-buffer
       vc-dir (vc-dir-previous-line 1))))
 
-(eval-after-load "dired"
+(eval-after-load "bs"
   '(progn
      (my/beginning-of-buffer
       bs (bs-down 2))
@@ -1250,7 +1250,7 @@ toggle between real end and logical end of the buffer."
       org-agenda (org-agenda-next-item 1))
      (my/end-of-buffer org-agenda (org-agenda-previous-item 1))))
 
-(eval-after-load "dired"
+(eval-after-load "ag"
   '(progn
      (my/beginning-of-buffer
       ag (compilation-next-error 1))
