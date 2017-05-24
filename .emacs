@@ -2090,6 +2090,28 @@ This command is designed to be used whether you are already in Info or not."
  '(ls-lisp-ignore-case t)
  )
 
+;; Lifted from Mattias Bengtsson's dired-hide-dotfiles
+;; https://github.com/mattiasb/dired-hide-dotfiles
+
+(define-minor-mode dired-hide-dotfiles-mode
+  "Toggle `dired-hide-dotfiles-mode'"
+  :init-value nil
+  :lighter " !."
+  :group 'dired
+  (if dired-hide-dotfiles-mode
+      (dired-hide-dotfiles--hide)
+    (revert-buffer)))
+
+(defun dired-hide-dotfiles--hide ()
+  "Hide all dot-files in the current `dired' buffer."
+  (when dired-hide-dotfiles-mode
+    (dired-mark-files-regexp "^\\.")
+    (dired-do-kill-lines)))
+
+(eval-after-load "dired"
+  '(progn
+     (add-hook 'dired-after-readin-hook 'dired-hide-dotfiles--hide)))
+
 ;;}}}
 ;;{{{  Recent files
 
