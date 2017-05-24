@@ -3966,12 +3966,14 @@ use either \\[customize] or the function `phw-mode'." t)
 
 ;; The manual recommends C-c for user keys, but C-x t is
 ;; always free, whereas C-c t is used by some modes.
+(keydef "C-x t ." dired-hide-dotfiles-mode)
 (keydef "C-x t c" column-number-mode)
 (keydef "C-x t d" toggle-debug-on-error)
 (keydef "C-x t e" toggle-debug-on-error)
 (keydef "C-x t f" auto-fill-mode)
 (keydef "C-x t l" toggle-truncate-lines)
 (keydef "C-x t q" toggle-debug-on-quit)
+(keydef "C-x t r" read-only-mode)
 (keydef "C-x t w" whitespace-mode)
 (keydef "C-x t D" dired-toggle-read-only) (autoload 'dired-toggle-read-only "dired" nil t)
 
