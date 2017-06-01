@@ -1501,8 +1501,8 @@ convert it to readonly/view-mode."
    '("~/repos/awesome"
      "~/repos/doxygen"
      "~/repos/st"))
- '(magit-repository-directories-depth 0)
  '(magit-save-repository-buffers nil)
+ '(magit-repository-directories-depth 0 t)
  ; drop git since I uniformly rely on magit
  '(vc-handled-backends nil))
 
@@ -1575,7 +1575,7 @@ convert it to readonly/view-mode."
  '(ediff-cmp-options '("diff --histogram"))
  '(ediff-keep-variants nil)
  '(ediff-make-buffers-readonly-at-startup t)
- '(ediff-split-window-function 'split-window-horizontally)
+ '(ediff-split-window-function 'split-window-horizontally t)
  '(ediff-use-last-dir t)
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
  )
@@ -1630,8 +1630,8 @@ convert it to readonly/view-mode."
 (my/custom-set-faces
  '(smerge-base            ((t (:inherit ediff-even-diff-A))))
  '(smerge-lower           ((t (:inherit ediff-odd-diff-A))))
- '(smerge-mine            ((t (:inherit ediff-even-diff-A))))
- '(smerge-other           ((t (:inherit ediff-odd-diff-A))))
+ '(smerge-mine            ((t (:inherit ediff-even-diff-A))) t)
+ '(smerge-other           ((t (:inherit ediff-odd-diff-A))) t)
  '(smerge-refined-added   ((t (:inherit ediff-current-diff-A))))
  '(smerge-refined-changed ((t (:inherit ediff-current-diff-C))))
  '(smerge-refined-removed ((t (:inherit ediff-current-diff-B))))
@@ -2093,8 +2093,6 @@ This command is designed to be used whether you are already in Info or not."
  '(grep-template "grep <X> <C> -nH -e <R> <F>")
  '(grep-use-null-device nil)
  )
-
-(add-to-list 'xref-backend-functions 'gxref-xref-backend)
 
 ;;}}}
 ;;{{{  Chasing URL's. See:  browse-url.el
