@@ -1,4 +1,4 @@
-;; John Yates's .emacs  -*- emacs-lisp -*-
+;; John Yates's .emacs
 ;; -*- lexical-binding: t -*-
 
 (defconst copyright-owner "John S Yates Jr")
@@ -15,9 +15,6 @@
 ;; Set to t when bringing up a new machine or reinstalling the full
 ;; complement of packages.  (When t customizations get suppressed.)
 (defvar my/el-get-refetch-all-packages nil)
-
-;; Too many false alarms
-;; (setq debug-on-error t)
 
 ;; Suppress redefinition warnings during startup
 (setq ad-redefinition-action 'accept)
@@ -354,7 +351,6 @@
 (add-to-list 'el-get-sources
              '(:name use-package
                      :description "A use-package declaration for simplifying your .emacs."
-                     :website     "https://github.com/jwiegley/use-package"
                      :type        github
                      :pkgname     "jwiegley/use-package"
                      :features    (use-package bind-key)))
@@ -1037,7 +1033,6 @@ mouse-3: go to end")
 ;; (add-to-list 'el-get-sources
 ;;              '(:name guide-key
 ;;                      :description "Guide the following key bindings automatically and dynamically"
-;;                      :website     "https://github.com/kbkbkbkb1/guide-key.git"
 ;;                      :type        github
 ;;                      :pkgname     "kbkbkbkb1/guide-key"
 ;;                      :features    guide-key))
@@ -1762,7 +1757,6 @@ convert it to readonly/view-mode."
 
 ;; (add-to-list 'el-get-sources
 ;;              (:name auto-complete-c-headers
-;;                     :website "https://github.com/mooz/auto-complete-c-headers"
 ;;                     :description "An auto-complete source for C/C++ header files."
 ;;                     :type github
 ;;                     :pkgname "mooz/auto-complete-c-headers"
