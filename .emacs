@@ -495,6 +495,11 @@
 ;;{{{  Frame appearance
 
 (my/custom-set-variables
+ '(initial-frame-alist
+    '((foreground-color . "white")
+      (background-color . "black")
+      (font . "dina-13")
+      (cursor-type . bar)))
  '(default-frame-alist
     '((foreground-color . "white")
       (background-color . "black")

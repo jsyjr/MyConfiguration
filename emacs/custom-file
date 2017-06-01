@@ -103,6 +103,12 @@
  '(indicate-buffer-boundaries (quote right))
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
+ '(initial-frame-alist
+   (quote
+    ((foreground-color . "white")
+     (background-color . "black")
+     (font . "dina-13")
+     (cursor-type . bar))))
  '(initial-scratch-message nil)
  '(isearch-mode-end-hook (quote my/enter-again-if-enter) t)
  '(ispell-personal-dictionary "~/emacs/aspell.en.pws")
