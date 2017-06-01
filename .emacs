@@ -2072,6 +2072,18 @@ This command is designed to be used whether you are already in Info or not."
 ;;}}}
 ;;{{{  grep
 
+(add-to-list 'el-get-sources 'ag)
+(my/el-get-install "ag")
+
+(add-to-list 'el-get-sources
+             '(:name ripgrep
+                     :description "Emacs front-end for ripgrep, a command line search tool."
+                     :type        github
+                     :pkgname     "nlamirault/ripgrep.el"
+                     :features    ripgrep))
+(my/el-get-install "ripgrep")
+
+
 (my/custom-set-variables
  '(grep-command "grep --color -nH -e ")
  '(grep-find-command
