@@ -187,7 +187,9 @@ define faststart
   echo \033[30;46mRun loadsyms after Simulink starts using slopen\033[0m\n\n
   set auto-solib-add off
 end
+
 # faststart    # comment-out to load all symbols at startup
+
 define loadsyms
   # libraries needed so breaksegv works:
   sharedlibrary libmwmcr.so
@@ -216,8 +218,12 @@ define loadsyms
   sharedlibrary libmwcgir_vm.so
   sharedlibrary libmwcgir_vm_rt.so
   sharedlibrary libmwcgir_xform.so
-  # display breakpoint status, so one knows symbols were loaded
+  # display breakpoint status, so that user knows symbols were loaded
   info break
 end
+
+# comment-out to load all symbols at startup
+faststart
+loadsyms
 
 source /mathworks/hub/share/sbtools/.gdbinit
