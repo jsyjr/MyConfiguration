@@ -2512,21 +2512,13 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;{{{  Find a "tag" in a project
 
 (add-to-list 'el-get-sources
-             '(:name ggtags
-                     :description "Use GNU Global in Emacs."
+             '(:name gxref
+                     :description "xref backend using GNU Global."
                      :type github
-                     :pkgname "leoliu/ggtags"))
-(my/el-get-install "ggtags")
+                     :pkgname "dedi/gxref"))
+(my/el-get-install "gxref")
 
-(my/custom-set-variables
- '(ggtags-auto-jump-to-match nil)
- '(ggtags-sort-by-nearness t)
- '(ggtags-use-sqlite3 t)
- '(tags-revert-without-query t)
- )
-
-(when (require-maybe 'ggtags)
-  (add-hook 'prog-mode-hook (lambda () (ggtags-mode 1))))
+(add-hook 'xref-backend-functions 'gxref-xref-backend)
 
 ;; For idutils:
 ;; /hub/share/sbtools/external-apps/idutils/idutils-4.6-sbmod1/install/share/id-lang.map
