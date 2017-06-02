@@ -453,6 +453,18 @@
 ;; Emacs.verticalScrollBars: off
 
 ;;}}}
+;;{{{  Color tools
+
+(add-to-list 'el-get-sources
+             '(:name kurecolor
+                     :description "Color editing goodies for Emacs."
+                     :type github
+                     :pkgname "emacsfodder/kurecolor"
+                     :depends (s)))
+(my/el-get-install "kurecolor")
+
+
+;;}}}
 ;;{{{  Proportional fonts
 
 (mapc
