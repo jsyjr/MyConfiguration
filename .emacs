@@ -204,21 +204,23 @@
 ;;{{{  Package archives and install packages
 
 ;; Added by package.el: must precede config of installed packages.
-(package-initialize)
+;; (package-initialize)
 
 (my/custom-set-variables
  '(package-archives
    '(("gnu" . "http://elpa.gnu.org/packages/")
-     ("melpa" . "https://melpa.org/packages/")))
- '(package-selected-packages
-   '(ace-window
-     avy
-     counsel-gtags
-     gxref
-     ivy
-     kurecolor
-     ; smartparens ; -- clashing dash installations
-     )))
+     ("melpa" . "https://melpa.org/packages/"))))
+
+;; (my/custom-set-variables
+;;  '(package-selected-packages
+;;    '(ace-window
+;;      avy
+;;      counsel-gtags
+;;      gxref
+;;      ivy
+;;      kurecolor
+;;      ; smartparens ; -- clashing dash installations
+;;      )))
 
 ;;}}}
 ;;{{{  Load customizations
