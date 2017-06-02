@@ -2303,7 +2303,11 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;=== Minor modes ======================================================
 ;;{{{  folding
 
-(add-to-list 'el-get-sources 'folding)
+(add-to-list 'el-get-sources
+             '(:name folding
+                     :description "A folding-editor-like minor mode."
+                     :type github
+                     :pkgname "jaalto/project-emacs--folding-mode"))
 (my/el-get-install "folding")
 
 (my/custom-set-variables
