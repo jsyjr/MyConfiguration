@@ -463,7 +463,6 @@
                      :depends (s)))
 (my/el-get-install "kurecolor")
 
-
 ;;}}}
 ;;{{{  Proportional fonts
 
@@ -1685,7 +1684,8 @@ convert it to readonly/view-mode."
              '(:name ivy
                      :description "Incremental Vertical completYon."
                      :type github
-                     :pkgname "abo-abo/swiper"))
+                     :pkgname "abo-abo/swiper"
+                     :after (ivy-mode)))
 (my/el-get-install "ivy")
 
 (add-to-list 'el-get-sources
