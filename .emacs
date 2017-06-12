@@ -3508,13 +3508,13 @@ Modi |
 fier | <F5>     <F6>     <F7>     <F8>     <F9>     <F10>    <F11>
 ---- | ------   ------   ------   ------   ------   ------   ------
      | run      print*   goto     print    step     next     set
-     |                   prompt                              break
-     |
-Ctrl | run to   toggle            print    stepi    frame    temp
-     | cursor   help              via pp            return   break
+     |                   prompt            into     stmt     break
      |
 Shft | rerun    print*            frame    frame    frame    remove
      |          via pp            zero     down     up       break
+     |
+Ctrl | run to   toggle            print    step     frame    temp
+     | cursor   help              via pp   instr    return   break
 ")
         (set-buffer-modified-p nil)
         (view-mode 1)
