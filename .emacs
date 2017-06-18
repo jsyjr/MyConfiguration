@@ -4142,6 +4142,20 @@ use either \\[customize] or the function `phw-mode'." t)
 (eval-after-load "bs"  '(keydef (bs "<f1>") (bs-kill)))
 
 ;;}}}
+;;{{{  Make sure .emacs.elc and custom-file.elc are up to date
+
+(defun my/check-startup-file-status (rel-path)
+  ""
+  (let* ((src (concat "/home/jyates/" rel-path))
+         (elc (concat src ".elc")))
+    (when (file-newer-than-file-p src elc)
+      (message "Using out-of-date .elc: \"%s\" is more recent" rel-path)
+      (byte-compile-file src))))
+
+(my/check-startup-file-status ".emacs")
+(my/check-startup-file-status "emacs/custom-file")
+
+;;}}}
 
 (message "Completed .emacs")
 
@@ -4150,7 +4164,3 @@ use either \\[customize] or the function `phw-mode'." t)
 ;; comment-column: 40
 ;; folded-file: t
 ;; End:
-
-;;---------------------------------------------------------------------
-
-;; Experimental trash... do not commit if there is anything here!
