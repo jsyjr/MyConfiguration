@@ -1588,7 +1588,7 @@ convert it to readonly/view-mode."
  '(ediff-cmp-options '("diff --histogram"))
  '(ediff-keep-variants nil)
  '(ediff-make-buffers-readonly-at-startup t)
- '(ediff-split-window-function 'split-window-horizontally t)
+ '(ediff-split-window-function 'split-window-horizontally)
  '(ediff-use-last-dir t)
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
  )

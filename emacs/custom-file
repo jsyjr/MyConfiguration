@@ -59,7 +59,7 @@
  '(ediff-cmp-program "git")
  '(ediff-keep-variants nil)
  '(ediff-make-buffers-readonly-at-startup t)
- '(ediff-split-window-function (quote split-window-horizontally) t)
+ '(ediff-split-window-function (quote split-window-horizontally))
  '(ediff-use-last-dir t)
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(el-get-git-shallow-clone t)
