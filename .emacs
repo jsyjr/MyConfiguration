@@ -3430,6 +3430,11 @@ Works with: arglist-cont, arglist-cont-nonempty."
  '(gud-gdb-command-name "gdb -i=mi")
  )
 
+(defun my/gdb-new-frame ()
+  (interactive)
+  (select-frame (make-frame))
+  (call-interactively 'gdb))
+
 (defvar gdb-source-window nil)
 (defvar gdb-comint-window nil)
 
