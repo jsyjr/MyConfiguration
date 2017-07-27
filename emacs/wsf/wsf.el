@@ -20,7 +20,10 @@
 ;;====================================================
 
 (defvar wsf--workspace-root-marker-alist
-  '((".sbtools" . ( "matlab/src" "matlab/test" ))
+  '((".sbtools" . ( "matlab/src"
+                    "matlab/test"
+                    "matlab/toolbox/shared/cgir_fe"
+                    "matlab/toolbox/shared/cgxe" ))
     ( ".git"    . ( "." )))
   "An alist of STATE-DIR names and associated SEARCH-ROOTS.")
 
