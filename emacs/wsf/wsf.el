@@ -268,7 +268,7 @@ common to all directory paths is factored out.")
     (setq wsf--vector-hash nil)))
 
 (defun wsf--set-reconstitute-path-prefix (find-result)
-  "Given examplar FIND-RESULT get prefix to generate absolute paths."
+  "Given exemplar FIND-RESULT get prefix to generate absolute paths."
   (message (format "(WSF) examplar find-result= \"%s\"" find-result))
   (setq
    wsf--reconstitute-path-rule
