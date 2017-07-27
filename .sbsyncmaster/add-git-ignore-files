@@ -1,66 +1,213 @@
 #!/bin/dash
+echo BANG
+
+set -x
 
 append_gitignore_lines() {
-    if [ -e ${1}.gitignore ] ; then
-        chmod a+w ${1}.gitignore
-        echo    >>${1}.gitignore
+    if [ ! -d .git ] ; then exit -1 ; fi
+
+    GITIGNORE_PATH=${1}.gitignore
+    if [ -e ${GITIGNORE_PATH} ] ; then
+        chmod a+w ${GITIGNORE_PATH}
+        echo    >>${GITIGNORE_PATH}
     else
-        touch     ${1}.gitignore
+        touch     ${GITIGNORE_PATH}
     fi
-    echo >>${1}.gitignore "# Rules added by syncmaster's add-git-ignore-files"
-    echo >>${1}.gitignore
-    cat  >>${1}.gitignore
+    echo >>${GITIGNORE_PATH} "# Rules added by syncmaster's add-git-ignore-files"
+    echo >>${GITIGNORE_PATH}
+    cat  >>${GITIGNORE_PATH}
+    # chmod a-w ${GITIGNORE_PATH}
+    if [ ! -z $1 ] ; then
+        git add --force ${GITIGNORE_PATH}
+    fi
 }
 
 
 # Add/tweak .gitignore files to get a git repository of moderate size
-append_gitignore_lines() <<EOF
+append_gitignore_lines <<EOF
+# Directories (top level)
+#
 /config/
 /.sbtools/
 /build.glnxa64.log.files/
 /build.log.files/
 
-/*.log
+# Files (top level)
+#
+/.clusterdestination
+/.last_sunc
+/.perforce
+/.sbcheck.*
+/build.glnxa64.log
 /changes.sbsmartbuild.mk
+/force.txt*
 /GPATH
 /GRTAGS
 /GTAGS
 /ID
+/mw_anchor
+/sbpatch_history.txt
 /sbrestore_*.txt
-/.sbcheck.*
+/*.log
+/*.sbsmartbuild.mk
+
+# Directories (anywhere)
+#
+.ts/
+*.xcodeproj/
+
+# Files (anywhere)
+#
 .gdb_history
+.validate_dox.ts
+jar_extract_*
+LKG_*
+suite_registration.cpp
+
+# Extensions typically signalling binary data (anywhere)
+*.0*
+*.1*
+*.2*
+*.3*
+*.4*
+*.5*
+*.6*
+*.7*
+*.8*
+*.9*
+*.a
+*.bz2
+*.chm
+*.CHM
+*.exe
+*.EXE
+*.fmt
+*.fnt
+*.FNT
+*.gif
+*.GIF
+*.htm
+*.html
+*.HTML
+*.html_template
+*.htmt
+*.HTMT
+*.htmtx
+*.HTMTX
+*.htmx
+*.ico
+*.ICO
+*.jar
+*.jp2
+*.jpeg
+*.JPEG
+*.jpg
+*.JPG
+*.lib
+*.LIB
+*.mdzip
+*.mexa64
+*.mexmaci64
+*.mextest
+*.mexw64
+*.mov
+*.mp3
+*.mp4
+*.mpa
+*.mpeg
+*.mpg
+*.msi
+*.o
+*.obj
+*.OBJ
+*.ocx
+*.ogg
+*.otf
+*.p
+*.P
+*.pcf
+*.pch
+*.pcm
+*.pcx
+*.pdb
+*.pdf
+*.pdfdocsource.ts
+*.pdfpp
+*.pdftx
+*.PDFTX
+*.png
+*.PNG
+*.ppt
+*.pptx
+*.prj
+*.ps
+*.so
+*.svg
+*.svgz
+*.tar
+*.tgz
+*.thumbnail
+*.tif
+*.tiff
+*.TIFF
+*.tiff2dib
+*.Tiffile
+*.ttf
+*.TTF
+*.vcproj
+*.vcwin32
+*.vcxproj
+*.vcXproj
+*.wixproj
+*.wma
+*.wmf
+*.wmt
+*.wmv
+*.xcconfig
+*.xls
+*.xlsb
+*.xlsm
+*.xlsx
+*.xltm
+*.xltx
+*.zip
+*.z
+*.Z
 EOF
 
-append_gitignore_lines() matlab/ <<EOF
+# These rules simply define which parts of the directory tree we want to track in git
+
+append_gitignore_lines matlab/ <<EOF
 /*/
 !/src/
 !/test/
 !/toolbox/
 EOF
 
-append_gitignore_lines() matlab/src/ <<EOF
+append_gitignore_lines matlab/src/ <<EOF
 /*/
 !/cg_ir/
 !/cgir_*/
-*.xcodeproj/
-.ts/
-.validate_dox.ts
-._libmw*.xcconfig
-libmw*.xcconfig
-suite_registration.cpp
 EOF
 
-append_gitignore_lines() matlab/test/ <<EOF
+append_gitignore_lines matlab/test/ <<EOF
 /*/
 !/toolbox/
 EOF
 
-append_gitignore_lines() matlab/test/toolbox/ <<EOF
+append_gitignore_lines matlab/test/toolbox/ <<EOF
 /*/
 !/cgir/
 EOF
 
-append_gitignore_lines() matlab/toolbox/ <<EOF
+append_gitignore_lines matlab/toolbox/ <<EOF
 /*/
 !/cgir/
+!/shared/
+EOF
+
+append_gitignore_lines matlab/toolbox/shared/ <<EOF
+/*/
+!/cgir_fe/
+!/cgxe/
 EOF
