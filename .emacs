@@ -2621,7 +2621,7 @@ cgmake -no-distcc there and if successful run the test image."
   (let* ((cwd (file-name-directory (buffer-file-name)))
          (exe nil)
          (cmd (if (not (locate-dominating-file "." "unittest"))
-                  (concat "sbcc -mc " (buffer-name))
+                  (concat "sbcc -mc DEBUG=1 " (buffer-name))
                 (while (cond
                         ((string-suffix-p "unittest/" cwd)
                          (setq exe "unittest")
@@ -2635,7 +2635,7 @@ cgmake -no-distcc there and if successful run the test image."
                        (target (concat (nth 0 path) "matlab/derived/glnxa64/testbin/src" (nth 1 path) exe)))
                   (concat
                    "rm -f " target "\n"
-                   "cgmake -no-distcc\n"
+                   "cgmake -no-distcc DEBUG=1\n"
                    target)))))
     (concat "cd " cwd "\n" cmd)))
 
