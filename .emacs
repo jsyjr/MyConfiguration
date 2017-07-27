@@ -3049,10 +3049,10 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;}}}
 ;;{{{  Mathworks stuff
 
-(defun my/local-ssd-workspace-shell (WORKSPACE)
+(defun my/workspace-shell (WORKSPACE)
   "Create or switch to a running shell process in WORKSPACE."
   (interactive "BWorkspace: ")
-  (let ((default-directory (concat "/local-ssd/lsb/" WORKSPACE "/")))
+  (let ((default-directory (concat "/ws/" WORKSPACE "/")))
     (shell WORKSPACE)))
 
 (defun mathworks-sbroot-for-directory (dir)
@@ -4087,7 +4087,7 @@ use either \\[customize] or the function `phw-mode'." t)
 
 (keydef "<f1>"          bs-show)
 (eval-after-load "bs"  '(keydef (bs "<f1>") (bs-kill)))
-(keydef "C-<f1>"        my/local-ssd-workspace-shell)
+(keydef "C-<f1>"        my/workspace-shell)
 (keydef "S-<f1>"        my/named-shell)
 (keydef "M-<f1>"        menu-bar-mode)
 

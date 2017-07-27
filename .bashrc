@@ -85,7 +85,7 @@ fi
 #alias l='ls -CF'
 alias env='env | sort'
 alias cgir-02='rdesktop -g 1920x1600 -d mathworks -u jyates cgir-02-win64 &'
-alias dff='df -h /local-ssd /local /home/jyates /sandbox/jyates'
+alias dff='df -h /ws /sandbox/jyates / /home/jyates'
 
 ###################################
 
@@ -95,11 +95,13 @@ if [ -d /mathworks ]; then
 
     # Customize DEFAULT_SANDBOX to where you normally work
     # (This must be defined before sourcing bash_setup.bash)
-    export DEFAULT_SANDBOX=/local-ssd/lsb/Bcgir_task.latest_pass/
+    export DEFAULT_SANDBOX=/ws/Bcgir_task.latest_pass/
     export x=$DEFAULT_SANDBOX
     if [ -f /mathworks/hub/share/sbtools/bash_setup.bash ]; then
         . /mathworks/hub/share/sbtools/bash_setup.bash
     fi
+
+    export SBRT_FULL_CFG="-cfg Acgir_Aslrtw -cfg cgir_ui_test_exclude -cfg /mathworks/hub/share/sbtools/apps/cgir_tools/latest_source_to_test_mapping/excludefile_noCgCtxCreate_Aslrtw_Acgir.txt"
 
     alias sbn='sb -nodesktop -nosplash -r "opengl info"'
     alias sbnj='sb -nodesktop -nosplash -nojvm -r "opengl info"'
@@ -110,7 +112,7 @@ if [ -d /mathworks ]; then
     alias sbl_sf=' sbruntests -local    all   -rerunusing jobarchive -runallunder test/toolbox/stateflow'
     alias sbl_all='sbruntests -local    all   -rerunusing jobarchive -testsuites Acgir_Aslrtw'
 
-    alias new-task='(cd /local-ssd/lsb; sbrmtree TASK; sbclone -no-perforce Bcgir_task.latest_pass TASK)'
+    alias new-task='(cd /ws; sbrmtree TASK; sbclone -no-perforce Bcgir_task.latest_pass TASK)'
 
     # if [ -d /sandbox/savadhan/sbtools ]; then
     #     if [ -f /sandbox/savadhan/sbtools/_bash_functions ]; then
@@ -119,8 +121,8 @@ if [ -d /mathworks ]; then
     # fi
 
     testWs() {
-        if [ -d /local-ssd/lsb/$1 ]; then
-            sbcopyandrun -s /local-ssd/lsb/$1 -to-dst /sandbox/jyates/$1 -num-threads 16 -no-perforce -opened -- -autofarm devel -lockup-minutes 120 -rerunusing jobarchive -testsuites $2
+        if [ -d /ws/$1 ]; then
+            sbcopyandrun -s /ws/$1 -to-dst /sandbox/jyates/SBRT -num-threads 16 -no-perforce -opened -- -autofarm devel -lockup-minutes 120 -rerunusing jobarchive -testsuites $2
         else
             echo Workspace name is missing.
         fi
