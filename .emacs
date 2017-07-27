@@ -1878,6 +1878,14 @@ convert it to readonly/view-mode."
 ;;=== Utilities ========================================================
 ;;{{{  Help (apropos, info, etc)
 
+;; (add-to-list 'el-get-sources
+;;              '(:name helpful
+;;                      :description "A better *help* buffer"
+;;                      :type        github
+;;                      :pkgname     "Wilfred/helpful"
+;;                      :features    helpful))
+;; (my/el-get-install "helpful")
+
 (add-to-list 'el-get-sources
              '(:name apropos-toc
                      :description "XEmacs-ish hyper-apropos for GNUEmacs"
