@@ -3184,6 +3184,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
             (if (or (string= prefix "*gud*")
                     (string= prefix "*gud-"))
                 (kill-buffer buf))))))
+    ;(select-frame (display-buffer (current-buffer) display-buffer--other-frame-action t))
     (apply orig-fun args))
 
   (advice-add 'mathworks-sb-debug                 :around #'my/clean-up-gud-buffers)
