@@ -14,7 +14,8 @@ sed -i.bak \
 
 
 set +e
-sudo chmod -R o+w ./.build-*
+sudo chown -Rf jyates:users ./.build-*
+sudo chmod -Rf o+w ./.build-*
 set -e
 rm -rf ./.build-*
 sudo make clean
