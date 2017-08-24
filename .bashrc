@@ -51,7 +51,7 @@ set -E
 export HISTCONTROL=ignoredups
 
 if [ -d /mathworks ]; then
-    export SSD_HOME=/local-ssd/jyates
+    export SSD_HOME=/jyates
 else
     export SSD_HOME=${HOME}
 fi
