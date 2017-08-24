@@ -6,7 +6,7 @@
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it as you will.  I place it in the public domain.  I do
-;; not need to credited in anyway.
+;; not need to be credited in anyway.
 ;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
