@@ -2221,7 +2221,8 @@ This command is designed to be used whether you are already in Info or not."
  '(before-save-hook '(copyright-update
                       time-stamp
 ;                      my/modified-line-cleanup-after-leaving
-                      )))
+                      ))
+ '(copyright-year-ranges t))
 
 ;;}}}
 ;;{{{  Comint

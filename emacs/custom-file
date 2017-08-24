@@ -35,6 +35,7 @@
  '(completion-ignored-extensions
    (quote
     (".a" ".aux" ".bak" ".bbl" ".bin" ".blg" ".class" ".cp" ".cps" ".dvi" ".elc" ".fas" ".fmt" ".fn" ".fns" ".glo" ".idx" ".ky" ".kys" ".lib" ".ln" ".lof" ".log" ".lot" ".map" ".o" ".obj" ".pg" ".pgs" ".pyc" ".toc" ".tp" ".tps" ".vr" ".vrs" ".x86f" "~")))
+ '(copyright-year-ranges t)
  '(cua-enable-cua-keys nil)
  '(cua-enable-cursor-indications t)
  '(cua-mode t nil (cua-base))
