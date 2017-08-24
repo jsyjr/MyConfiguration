@@ -201,6 +201,7 @@ mouse-3: Remove current window from display")))))
  '(recentf-mode t)
  '(recentf-save-file "~/.emacs.d/recentf")
  '(require-final-newline (quote query))
+ '(ripgrep-arguments (quote ("--no-ignore")))
  '(safe-local-variable-values
    (quote
     ((eval add-to-list

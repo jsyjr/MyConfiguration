@@ -2135,6 +2135,7 @@ This command is designed to be used whether you are already in Info or not."
  '(grep-highlight-matches nil)
  '(grep-template "grep <X> <C> -nH -e <R> <F>")
  '(grep-use-null-device nil)
+ '(ripgrep-arguments '("--no-ignore"))
  )
 
 ;;}}}
