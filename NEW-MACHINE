@@ -421,6 +421,7 @@ sudo apt-get install \
   libxcb-util0-dev \
   libxcb-xinerama0-dev \
   libxcb-xkb-dev \
+  libxcb-xrm-dev \
   libxcb-xtest0-dev \
   libxdg-basedir-dev \
   libxkbcommon-dev \
@@ -429,9 +430,8 @@ sudo apt-get install \
   lua-lgi \
 
 cd ~/repos
+sudo chown -R jyates:users ~/repos/awesome
 rm -rf ~/repos/awesome
-git clone https://github.com/awesomeWM/awesome.git
-cd ~/repos/awesome
 
 # follow: https://awesome.naquadah.org/wiki/Awesome-3-git-debian
 
