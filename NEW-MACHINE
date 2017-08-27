@@ -388,6 +388,9 @@ cd cc-mode
 
 # Download and build doxygen
 #
+sudo apt-get install \
+  libclang-dev \
+
 cd ~/repos
 rm -rf ~/repos/doxygen
 git clone https://github.com/doxygen/doxygen.git
