@@ -399,6 +399,9 @@ cd doxygen
 make -j8
 # sudo make install
 
+# These AwesomeWM instructions are very out-of-date.  See this page:
+#  https://github.com/awesomeWM/awesome/blob/master/docs/01-readme.md
+
 # Unavailable on Debian at Mathworks
 sudo apt-get install \
   libxkbcommon-dev \
