@@ -256,6 +256,27 @@ sudo cp /tmp/Hack-*.ttf /usr/local/share/fonts/Hack
 rm /tmp/Hack*
 
 
+# Install the Dina bitmapped font
+#
+sudo rm    -rf /usr/local/share/fonts/Dina
+sudo mkdir -p  /usr/local/share/fonts/Dina
+sudo cp ~/.dinafont/dina/* /usr/local/share/fonts/Dina
+
+
+# Install the Droid Sana Mono (slashed zero) bitmapped font
+#
+cd /tmp
+sudo rm    -rf /usr/local/share/fonts/DroidSansMonoSlashed
+sudo mkdir -p  /usr/local/share/fonts/DroidSansMonoSlashed
+wget http://www.cosmix.org/software/files/DroidSansMonoSlashed.zip
+unzip DroidSansMonoSlashed.zip
+sudo cp DroidSansMonoSlashed.ttf /usr/local/share/fonts/DroidSansMonoSlashed/DroidSansMonoSlashed.ttf
+rm -rf /tmp/DroidSansMonoSlashed*
+
+# Update system font databases
+#
+sudo dpkg-reconfigure fontconfig-config
+
 # Turn on bitmap fonts but exclude X11's crummy Helvetica
 #
 cd /etc/fonts/conf.d
@@ -276,26 +297,8 @@ sudo bash -c 'cat >70-yes-bitmaps.conf <<EOF
 </fontconfig>
 EOF'
 
-# Install the Dina bitmapped font
+# Update and verify font caches
 #
-sudo rm    -rf /usr/local/share/fonts/Dina
-sudo mkdir -p  /usr/local/share/fonts/Dina
-sudo cp ~/.dinafont/dina/* /usr/local/share/fonts/Dina
-
-
-# Install the Droid Sana Mono (slashed zero) bitmapped font
-#
-cd /tmp
-sudo rm    -rf /usr/local/share/fonts/DroidSansMonoSlashed
-sudo mkdir -p  /usr/local/share/fonts/DroidSansMonoSlashed
-wget http://www.cosmix.org/software/files/DroidSansMonoSlashed.zip
-unzip DroidSansMonoSlashed.zip
-sudo cp DroidSansMonoSlashed.ttf /usr/local/share/fonts/DroidSansMonoSlashed/DroidSansMonoSlashed.ttf
-rm -rf /tmp/DroidSansMonoSlashed*
-
-# Update system font databases and caches
-#
-sudo dpkg-reconfigure fontconfig-config
 sudo dpkg-reconfigure fontconfig
 sudo fc-cache
 fc-list | grep Dina
