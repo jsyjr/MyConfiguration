@@ -438,10 +438,10 @@ rm -rf ~/repos/awesome
 
 sudo mkdir -p /net/whs/homes
 
-# At Mathworks add a line to /etc/fstab for /local-ssd
+# At Mathworks add a line to /etc/fstab for /ws
 # (Use blkid to find the UUID)
 cat >>/tmp/fstab <<EOF
-UUID=xx	/local-ssd	btrfs	rw,noatime,discard,compress=lzo,user_subvol_rm_allowed	0	0
+UUID=xx	/ws	btrfs	rw,noatime,nofail,discard,compress=lzo,user_subvol_rm_allowed	0	0
 EOF
 
 
@@ -496,10 +496,10 @@ EOF
 
 # Disk performance on Debian 8 at Mathworks:
 # - disable quotas
-sudo btrfs quota disable /local-ssd
+sudo btrfs quota disable /ws
 # - disable automatic balancing in sbrmtree and sbsyncmaster
-sudo touch /local-ssd/.skip-btrfs-balance
-# - remove 'discard' from /etc/fstab's /local-ssd entry
+sudo touch /ws/.skip-btrfs-balance
+# - remove 'discard' from /etc/fstab's /ws entry
 sudo nano /etc/fstab
 # - perform a weekly TRIM on every volume that supports that operation
 sudo cp /usr/share/doc/util-linux/examples/fstrim.{service,timer} /etc/systemd/system
