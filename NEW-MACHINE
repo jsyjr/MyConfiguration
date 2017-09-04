@@ -64,16 +64,6 @@ sudo update-alternatives \
  --slave   /usr/share/man/man7/cmake-variables.7.gz             cmake-variables.7.gz             /usr/local/cmake/cmake-${RELEASE}/man/man7/cmake-variables.7.gz \
 EOF
 
-# Install most recent autoconf tools (emacs currently wants at least 2.65)
-cd /tmp
-wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.xz
-tar -xJf autoconf-2.69.tar.xz
-cd /tmp/autoconf-2.69
-./configure
-make
-sudo make install
-
-
 # Enable apt-get Spotify installation
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886
 echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
@@ -121,6 +111,7 @@ sudo apt-get install \
   libbison-dev \
   libboost-all-dev \
   libcgi-pm-perl 
+  libclang-dev \
   libcurl4-gnutls-dev \
   libdbd-sqlite3-perl \
   libdbus-1-dev \
@@ -129,15 +120,17 @@ sudo apt-get install \
   libgconf2-dev \
   libgif-dev \
   libgpm-dev \
-  libgtk2.0-dev \
+  libgtk-3-dev \
   libjna-java \
   libjpeg-dev \
   libm17n-dev \
   libmagick++-dev \
   libmagickwand-dev \
+  libmailutils5-dev \
   libncurses5-dev \
   libotf-dev \
   librsvg2-dev \
+  libsystemd-dev \
   libtinfo-dev \
   libx11-dev \
   libxml2-dev \
@@ -152,7 +145,6 @@ sudo apt-get install \
   pavucontrol \
   python-software-properties \
   silversearcher-ag \
-  spotify-client \
   texinfo \
   texlive-fonts-extra \
   texlive-latex-base \
@@ -160,6 +152,16 @@ sudo apt-get install \
   unison-all-gtk \
   xmlto \
   zlib1g-dev \
+
+
+# Install most recent autoconf tools (emacs currently wants at least 2.65)
+cd /tmp
+wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.xz
+tar -xJf autoconf-2.69.tar.xz
+cd /tmp/autoconf-2.69
+./configure
+make
+sudo make install
 
 
 
@@ -355,7 +357,7 @@ rm -rf ~/repos/emacs
 git clone git://git.savannah.gnu.org/emacs.git
 cd emacs
 ./autogen.sh
-~/bin/rebuild-emacs
+PATH=${PATH}:${HOME}/bin ${HOME}/bin/rebuild-emacs
 xrdb ~/.Xresources
 
 # sudo make install
