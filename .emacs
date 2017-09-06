@@ -4074,6 +4074,7 @@ use either \\[customize] or the function `phw-mode'." t)
 ;;
 (keydef "M-g b"         bookmark-jump)
 (keydef "M-g e"         el-get-find-recipe-file)
+(keydef "M-g g"         ripgrep-regexp)
 (keydef "M-g l"         ilocate-library-find-source)
 (keydef "M-g m"         my/magit-status)
 (keydef "M-g r"         jump-to-register)
