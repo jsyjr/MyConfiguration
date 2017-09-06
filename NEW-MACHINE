@@ -159,6 +159,27 @@ sudo apt-get install \
   zlib1g-dev \
 
 
+# Install RipGrep
+#  [Really should script somehow. Code is in rust so get binary from tarball.]
+#
+#  On Ubuntu
+sudo add-apt-repository ppa:x4121/ripgrep
+sudo apt-get update
+# On Debian: determine latest release X.Y.Z at https://github.com/BurntSushi/ripgrep/releases
+cd /tmp
+cat >/tmp/ripgrep.sh <<EOF
+#!/bin/dash
+
+RELEASE=$1
+
+wget https://github.com/BurntSushi/ripgrep/releases/download/${RELEASE}/ripgrep-${RELEASE}-x86_64-unknown-linux-musl.tar.gz
+tar -xzf ripgrep-${RELEASE}-x86_64-unknown-linux-musl.tar.gz
+cp ripgrep-${RELEASE}-x86_64-unknown-linux-musl/rg ~/bin/rg
+EOF
+
+./ripgrep X.Y.Z
+
+
 # Install most recent autoconf tools (emacs currently wants at least 2.65)
 cd /tmp
 wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.xz
