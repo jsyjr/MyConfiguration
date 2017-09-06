@@ -13,7 +13,7 @@ sudo apt-get install google-chrome-stable
 
 
 
-# Install most recent cmake (awesome currently wants at least 3.0.0)
+# Script to install most recent cmake (awesome currently wants at least 3.0.0)
 cat >/tmp/cmake.sh <<EOF
 #!/bin/dash
 
@@ -63,6 +63,11 @@ sudo update-alternatives \
  --slave   /usr/share/man/man7/cmake-toolchains.7.gz            cmake-toolchains.7.gz            /usr/local/cmake/cmake-${RELEASE}/man/man7/cmake-toolchains.7.gz \
  --slave   /usr/share/man/man7/cmake-variables.7.gz             cmake-variables.7.gz             /usr/local/cmake/cmake-${RELEASE}/man/man7/cmake-variables.7.gz \
 EOF
+
+# Check https://cmake.org/files/LatestRelease/ for latest version; then run
+chmod a+x /tmp/cmake.sh
+/tmp/cmake.sh X.Y.Z
+
 
 # Enable apt-get Spotify installation
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886
