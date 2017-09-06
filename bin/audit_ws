@@ -1,0 +1,13 @@
+#!/bin/dash
+
+# run sbver in every sandbox beneath /ws
+
+( cd /ws \
+; for DIR in * ; do \
+     [ -d $DIR ] && [ -d $DIR/.sbtools ] && \
+       ( cd /ws/$DIR \
+       ; echo -n "$DIR:  " \
+       ; sbver | grep 'SyncFrom:' \
+       ) \
+  done \
+)
