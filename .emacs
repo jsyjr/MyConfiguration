@@ -1073,7 +1073,17 @@ Which one depends on variable `subword-mode'."
   t)
 
 ;;}}}
-;;{{{  Files, directories FFAP
+;;{{{  Buffer selection: ibuffer
+
+(add-to-list 'el-get-sources
+             '(:name ibuffer-vc
+                     :description "Group ibuffer's list by VC project, or show VC status"
+                     :type github
+                     :pkgname "purcell/ibuffer-vc"))
+(my/el-get-install "ibuffer-vc")
+
+;;}}}
+;;{{{  Files, directories, FFAP
 
 (ffap-bindings)
 
