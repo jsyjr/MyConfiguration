@@ -1,0 +1,28 @@
+#!/bin/dash
+
+DOT=/tmp/XX.dot
+PNG=/tmp/XX.png
+
+# trap 'rm -f ${PNG}' INT QUIT 0
+
+echo "digraph X {" >${DOT}
+
+echo "  subgraph CPPs {" >>${DOT}
+echo "    rank=same;" >>${DOT}
+find -name *.cpp | grep -v suite_registration | sed -e 's|^\([A-Za-z_.]\+/\)*\([A-Za-z_]\+\.cpp\)| "\2";|' >>${DOT}
+echo "  }" >>${DOT}
+echo >>${DOT}
+
+echo "node[shape=box];" >>${DOT}
+
+grep -rH '^ *#include *[<"][A-Za-z_./]*[">]' * | grep '\.cpp:' | grep -v suite_registration \
+    | sed -e 's|^\([A-Za-z_.]\+/\)*\([A-Za-z_]\+\.cpp\):#include *"\?\(<\?\)\([A-Za-z_.]\+/\)*\([A-Za-z_]\+\)[.hpinc]*\(>\?\)"\?| "\2" -> "\3\5\6";|' \
+    >>${DOT}
+
+grep -rH '^ *#include *[<"][A-Za-z_./]*[">]' * | grep '\.hpp:' \
+    | sed -e 's|^\([A-Za-z_.]\+/\)*\([A-Za-z_]\+\)\.hpp:#include *"\?\(<\?\)\([A-Za-z_.]\+/\)*\([A-Za-z_]\+\)[.hpinc]*\(>\?\)"\?| "\2" -> "\3\5\6";|' \
+    >>${DOT}
+
+echo "}" >>${DOT}
+dot -Tpng ${DOT} -o ${PNG}
+feh ${PNG}
