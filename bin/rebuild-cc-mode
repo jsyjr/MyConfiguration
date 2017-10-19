@@ -8,4 +8,7 @@ fi
 
 hg pull
 # hg update -c c++11-0-1
-~/repos/emacs/src/emacs --batch --eval '(batch-byte-recompile-directory 0)' .
+rm -f *.elc
+~/repos/emacs/src/emacs -batch -no-site-file -f batch-byte-compile cc-*.el
+
+makeinfo cc-mode.texi
