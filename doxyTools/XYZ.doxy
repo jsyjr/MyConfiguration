@@ -1,0 +1,16 @@
+# This file marks this directory as processed by the doxygen.sh script.
+# It will form the last set of configuration specifications fed to the
+# doxygen image:
+#
+#    doxygen -g                  ${DOXYFILE}
+#    cat <doxygen.sh settings> >>${DOXYFILE}
+#    cat <this file>           >>${DOXYFILE}
+#    cat ${DOXYFILE} | doxygen
+#
+# At the very least this file should include PROJECT_BRIEF specification.
+# Other obvious possibilities are:
+#
+# * INCLUDE_PATH        should be self-relative
+# * ALIASES             must use += so as not to lose earlier aliases
+
+PROJECT_BRIEF = "XYZ abstraction"

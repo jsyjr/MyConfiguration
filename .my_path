@@ -13,7 +13,7 @@ if [ -d /mathworks ]; then
     export SBTOOLS_ROOT=/hub/share/sbtools
 
     PATH=\
-/usr/local/apps/bat/perl/perl-5.8.8-tmw-025/bin\
+/usr/local/apps/bat/perl/perl-5.20.2-mw-020/bin\
 :${PATH}\
 :/usr/local/netbin\
 :/hub/share/bin\
@@ -23,11 +23,5 @@ if [ -d /mathworks ]; then
 
 fi
 
-# if [ -d /sandbox/savadhan/sbtools ]; then
-#     PATH=${PATH}\
-# :/sandbox/savadhan/sbtools\
-
-# fi
-
 # Put my ~/bin at the front so that I can override random commands
-export PATH=${HOME}/bin:${PATH}
+export PATH=${HOME}/bin:${HOME}/doxyTools:${PATH}
