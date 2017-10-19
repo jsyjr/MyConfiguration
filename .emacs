@@ -2661,7 +2661,7 @@ cgmake -no-distcc there and if successful run the test image."
 
 (defun my/compile (command &optional comint)
   "If within a Mathworks sandbox recompile most recent .cpp.
-A minor variant of the compile function shipped compile.el.
+A minor variant of the compile function shipped in compile.el.
 Here is the doc-string for that original function:
 
 Compile the program including the current buffer.  Default: run `make'.
