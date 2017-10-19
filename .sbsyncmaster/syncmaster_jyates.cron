@@ -1,6 +1,6 @@
 # Emacs: type 'C-x #' when done
 
-# Should mathc ${HOME}/.profile
+# Should match ${HOME}/.profile
 CCACHE_DIR=/ccc
 CCACHE_LOGFILE=/ccc/LOGFILE
 CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
