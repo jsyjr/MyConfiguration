@@ -3083,104 +3083,28 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools/" t)
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/matlab-emacs/matlab-emacs/" t)
 
-  (require 'sbtools-locations)
+  (require 'sb-tools-root)
   (require 'sb-prompt)
-  (require 'mathworks-maps)
+  (require 'sb)
 
-  ;; C-x C-q         mathworks-toggle-read-only
-  ;;
-  ;; C-c m C-f       mathworks-sbfi
-  ;; C-c m C-g       mathworks-view-gecko
-  ;; C-c m SPC       mathworks-do-next-thing
-  ;; C-c m !         mathworks-ediff-versions
-  ;; C-c m &         mathworks-ediff-sync-src
-  ;; C-c m *         mathworks-ediff
-  ;; C-c m ,         gtags-find-symbol
-  ;; C-c m -         w80
-  ;; C-c m .         gtags-find-tag
-  ;; C-c m 1         w100
-  ;; C-c m 2         w200
-  ;; C-c m =         mathworks-diff
-  ;; C-c m @         mathworks-ediff-subsystem-version
-  ;; C-c m B         mathworks-sbbackup
-  ;; C-c m D         mathworks-sb-debug-many-windows
-  ;; C-c m E         mathworks-sbedits
-  ;; C-c m F         sbf-force-from-scratch (was mathworks-sblocate-gendb)
-  ;; C-c m G         mathworks-gen-gtags
-  ;; C-c m I         mathworks-mkid
-  ;; C-c m L         mathworks-mlog
-  ;; C-c m Q         mathworks-local-edit
-  ;; C-c m R         mathworks-sb-matlab
-  ;; C-c m S         mathworks-mstatus
-  ;; C-c m T         mathworks-sb-debug-ut-many-windows
-  ;; C-c m U         mathworks-revert-to-version
-  ;; C-c m V         mathworks-submit-visit-submit-file
-  ;; C-c m ^         mathworks-ediff-latest-pass
-  ;; C-c m `         mathworks-ediff-version
-  ;; C-c m c         mathworks-compile-matlab
-  ;; C-c m d         mathworks-sb-debug
-  ;; C-c m e         mathworks-medit
-  ;; C-c m f         sbf-ivy-find-file (was mathworks-sblocate)
-  ;; C-c m g         mathworks-view-bearded-dragon-geck
-  ;; C-c m h         browse-url-at-point
-  ;; C-c m i         mathworks-gid
-  ;; C-c m j         gtags-pop-stack
-  ;; C-c m l         mathworks-sblocate-grep
-  ;; C-c m m         mathworks-man-page
-  ;; C-c m n         mathworks-toggle-line-num
-  ;; C-c m p         sbperldb
-  ;; C-c m q         mathworks-batq
-  ;; C-c m r         Prefix Command
-  ;; C-c m s         Prefix Command
-  ;; C-c m t         mathworks-sb-debug-ut
-  ;; C-c m u         mathworks-revert-to-ancestor
-  ;; C-c m v         mathworks-submit-add-entry
-  ;; C-c m x         mathworks-sbext
-  ;; C-c m |         w160
-  ;; C-c m ~         mathworks-fetch-version
-  ;;
-  ;; C-c m s b       mathworks-sbscanlog
-  ;; C-c m s d       mathworks-sbscanlog-dir
-  ;; C-c m s f       mathworks-sbscanlog-fonly
-  ;;
-  ;; C-c m r b       mathworks-sbcheck-file
-  ;; C-c m r c       mathworks-sbcc-file
-  ;; C-c m r l       mathworks-sbcc-lint-file
-  ;; C-c m r s       mathworks-sbcheck-submit-file
-  ;; C-c m r t       mathworks-sbspell-file-external
-  ;; C-c m r v       mathworks-sbcc-view-lint-msg
-  ;;
-  ;; C-c M *         ediff
-  ;; C-c M =         diff
-  ;; C-c M @@@       getHaveVersion
-  ;; C-c M @@@       my-changes
-  ;; C-c M @@@       my-pending-changes
-  ;; C-c M a         add
-  ;; C-c M c         change
-  ;; C-c M C         client
-  ;; C-c M \C-c      wclients
-  ;; C-c M e         edit
-  ;; C-c M f         files
-  ;; C-c M h         have
-  ;; C-c M H         help
-  ;; C-c M i         info
-  ;; C-c M l         log
-  ;; C-c M o         opened
-  ;; C-c M v         submit
-  ;; C-c M U         revert
-  ;;
-  ;; C-x v =         mathworks-vc-diff
-  ;; C-x v g         mathworks-vc-annotate
-  ;; C-x v l         mathworks-vc-print-log
-  ;; C-x v u         mathworks-vc-revert-buffer
-  ;; C-x v v         mathworks-vc-next-action
-  ;; C-x v ~         mathworks-vc-version-other-window
-  (define-key mathworks-prefix-map "D" 'mathworks-sb-debug-many-windows)
-  (define-key mathworks-prefix-map "T" 'mathworks-sb-debug-ut-many-windows)
+  (defun sb-debug-ut-gdb ()
+    "'sb -debug-ut' in selected directory via GDB/MI (2 windows)"
+    (interactive)
+    (sb-debug "gdb" t))
+
+  (defun sb-debug-ut-gdb-many-windows ()
+    "'sb -debug-ut' in selected directory via GDB/MI (many windows)"
+    (interactive)
+    (sb-debug "gdb-many-windows" t))
+
+  (require 'sb-maps)
 
   ;; replace mathworks-sblocate and mathworks-sblocate-gendb
-  (define-key mathworks-prefix-map "f" 'wsf-ivy-find-file)
-  (define-key mathworks-prefix-map "F" 'wsf-force-from-scratch)
+  (define-key sb-prefix-map "f" 'wsf-ivy-find-file)
+  (define-key sb-prefix-map "F" 'wsf-force-from-scratch)
+
+  ;; (define-key c-mode-base-map (kbd "TAB") 'c-indent-command)
+  ;; (define-key c-mode-base-map (kbd "RET") 'newline)
 
   (my/custom-set-variables
    '(p4-global-key-prefix "\C-cp"))
@@ -3199,49 +3123,52 @@ Works with: arglist-cont, arglist-cont-nonempty."
     ;(select-frame (display-buffer (current-buffer) display-buffer--other-frame-action t))
     (apply orig-fun args))
 
-  (advice-add 'mathworks-sb-debug                 :around #'my/clean-up-gud-buffers)
-  (advice-add 'mathworks-sb-debug-many-windows    :around #'my/clean-up-gud-buffers)
-  (advice-add 'mathworks-sb-debug-ut              :around #'my/clean-up-gud-buffers)
-  (advice-add 'mathworks-sb-debug-ut-many-windows :around #'my/clean-up-gud-buffers)
+  (advice-add 'sb-debug                     :around #'my/clean-up-gud-buffers)
+  (advice-add 'sb-debug-gdb                 :around #'my/clean-up-gud-buffers)
+  (advice-add 'sb-debug-gdb-many-windows    :around #'my/clean-up-gud-buffers)
+  (advice-add 'sb-debug-ut                  :around #'my/clean-up-gud-buffers)
+  (advice-add 'sb-debug-ut-gdb              :around #'my/clean-up-gud-buffers)
+  (advice-add 'sb-debug-ut-gdb-many-windows :around #'my/clean-up-gud-buffers)
 
   (setq locate-dominating-stop-dir-regexp
 	(concat
-	 "\\`" ;; start of string
-         "\\(?:"
-         "/mathworks"                                                    "\\|"
-         ;; Handle /mathworks/AH, etc.
-         "/mathworks/[A-Z]+"                                             "\\|"
+         "\\`" ;; start of string
+         "\\(?:" "[\\/][\\/][^\\/]+[\\/]"
+         "\\|"   "/\\(?:net\\|afs\\|\\.\\.\\.\\)/"
+         ;; Anything under /mathworks /mathworks/SITE needs to be skipped
+         "\\|"   "/mathworks/"
+         "\\|"   "/mathworks/[A-Z]+/"
          ;; /mathworks/home, /mathworks/hub, /mathworks/public, etc.
-         "/mathworks/[^/]+"                                              "\\|"
-         "/mathworks/[A-Z]+/[^/]+"                                       "\\|"
-         ;; /mathworks/devel/{sandbox,jobarchive}, etc.
-         "/mathworks/devel/[^/]+"                                        "\\|"
-         "/mathworks/[A-Z]+/devel/[^/]+"                                 "\\|"
+         ;; /mathworks/SITE/home/ ...
+         "\\|"   "/mathworks/[^/]+/"
+         "\\|"   "/mathworks/[A-Z]+/[^/]+/"
+         ;; /mathworks/devel/blah, /mathworks/SITE/devel/blah
+         "\\|"   "/mathworks/devel/[^/]+/"
+         "\\|"   "/mathworks/[A-Z]+/devel/[^/]+/"
          ;; /mathworks/devel/bat/Aslrtw, etc.
-         "/mathworks/devel/bat/[^/]+"                                    "\\|"
-         "/mathworks/[A-Z]+/devel/bat/[^/]+"                             "\\|"
+         "\\|"   "/mathworks/devel/bat/[^/]+/"
+         "\\|"   "/mathworks/[A-Z]+/devel/bat/[^/]+/"
          ;; /mathworks/AH/devel/jobarchive, etc.
-         "/mathworks/devel/jobarchive"                                   "\\|"
-         "/mathworks/[A-Z]+/devel/jobarchive"                            "\\|"
-         ;; /mahtworks/hub/{blah}
-         "/mathworks/hub/[^/]+"                                          "\\|"
-         "/mathworks/[A-Z]+/hub/[^/]+"                                   "\\|"
+         "\\|"   "/mathworks/devel/jobarchive/"
+         "\\|"   "/mathworks/[A-Z]+/devel/jobarchive/"
+         ;; /mathworks/hub/{blah}
+         "\\|"   "/mathworks/hub/[^/]+/"
+         "\\|"   "/mathworks/[A-Z]+/hub/[^/]+/"
          ;; /mathworks/hub/scratch
-         "/mathworks/hub/scratch"                                        "\\|"
-         "/mathworks/[A-Z]+/hub/scratch"                                 "\\|"
+         "\\|"   "/mathworks/hub/scratch/"
+         "\\|"   "/mathworks/[A-Z]+/hub/scratch/"
          ;; /mathworks/AH/hub/site-local, etc.
-         "/mathworks/hub/site-local"                                     "\\|"
-         "/mathworks/[A-Z]+/hub/site-local"                              "\\|"
+         "\\|"   "/mathworks/hub/site-local/"
+         "\\|"   "/mathworks/[A-Z]+/hub/site-local/"
          ;; symlinks
-	 "/sandbox"   "\\|"              ;; symlink to /mathworks/devel/sandbox
-	 "/home"      "\\|"              ;; symlink to /mathworks/home
-	 "/hub"       "\\|"              ;; symlink to /mathworks/hub
-	 "/public"    "\\|"              ;; symlink to /mathworks/public
-	 "/src"       "\\|"              ;; symlink to /mathworks/devel/src
-         "/scratch"   "\\|"              ;; symlink to /mathworks/hub/scratch
-	 "\\)"
-	 "/"   ;; end of directory, see vc-find-root
-	 "\\'" ;; end of string
+         "\\|"   "/sandbox/"                 ;; symlink to /mathworks/devel/sandbox
+         "\\|"   "/home/"                    ;; symlink to /mathworks/home
+         "\\|"   "/hub/"                     ;; symlink to /mathworks/hub
+         "\\|"   "/public/"                  ;; symlink to /mathworks/public
+         "\\|"   "/src/"                     ;; symlink to /mathworks/devel/src
+         "\\|"   "/scratch/"                 ;; symlink to /mathworks/hub/scratch
+         "\\)"
+         "\\'"  ;; end of string
 	 ))
 
   (defvar skip-sbtools-matlab-mode-setup t)
@@ -3321,6 +3248,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
           matlab-auto-fill nil
           matlab-fill-code nil
           matlab-indent-function-body 'MathWorks-Standard
+          matlab-functions-have-end t
           ))
 
 
@@ -3750,7 +3678,8 @@ use either \\[customize] or the function `phw-mode'." t)
   "Pop most recent filename from the history."
   (setq file-name-history (cdr file-name-history)))
 
-;; Code lifted from Mathwork's load-sb-tools.el
+;; Code lifted from Mathwork's / sbtools:
+;; /hub/share/sbtools/apps/emacs-add-ons/src/sb-tools/load-sb-tools.el
 ;;=======
 ;; - On UNIX, name server based on desktop id - 0 is the main with name
 ;;   "server" and others have name "serverId", Id = desktop number - 1.
