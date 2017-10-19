@@ -87,6 +87,7 @@
  '(global-auto-complete-mode t)
  '(global-font-lock-mode t)
  '(global-hl-line-mode t)
+ '(graphviz-dot-preview-extension "svg")
  '(grep-command "grep --color -nH -e ")
  '(grep-find-command
    (quote

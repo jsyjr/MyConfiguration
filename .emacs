@@ -3438,6 +3438,9 @@ Works with: arglist-cont, arglist-cont-nonempty."
                      :features    graphviz-dot-mode))
 (my/el-get-install "graphviz-dot-mode")
 
+(my/custom-set-variables
+ '(graphviz-dot-preview-extension "svg"))
+
 ;;}}}
 ;;{{{  GDB support
 
