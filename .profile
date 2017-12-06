@@ -11,6 +11,7 @@
 # Setup minimal sbtools environment (sets PATH, LOCATION, HOST, USER, ...)
 if [ -d /mathworks ]; then
     . /mathworks/hub/share/sbtools/bash_setup_env.bash
+    export q=/mathworks/devel/sandbox/$USER/qualify
 fi
 
 # Rewrite path per my own preferences
