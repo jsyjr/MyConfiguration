@@ -20,3 +20,5 @@ export CCACHE_LOGFILE=/ccc/LOGFILE
 export CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
 export CCACHE_TEMPDIR=/huge/ccache
 export USE_CCACHE=1
+
+# xrdb ~/.Xresources

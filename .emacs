@@ -525,7 +525,9 @@
       (fullscreen . maximized)
       (minibuffer . t)
       ;; Replaced by 'Emacs.verticalScrollBars: off' in ~/.Xresources
-      ;; (vertical-scroll-bars . right)
+      (vertical-scroll-bars . nil)
+      (menu-bar-lines . 0)
+      (tool-bar-lines . 0)
       (icon-type)))
  '(indicate-buffer-boundaries 'right) ; graphics in fringe
  )
