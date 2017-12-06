@@ -3085,6 +3085,16 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools/" t)
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/matlab-emacs/matlab-emacs/" t)
 
+  ;; Kill SBTools' heavy-handed attempt to manage my windows
+  (defun w100 () "" (interactive) nil)
+  (defun W100 () "" (interactive) nil)
+  (defun w200 () "" (interactive) nil)
+  (defun W200 () "" (interactive) nil)
+  (defun w300 () "" (interactive) nil)
+  (defun W300 () "" (interactive) nil)
+  (provide 'sb-frame-config)
+
+
   (require 'sb-tools-root)
   (require 'sb-prompt)
   (require 'sb)
