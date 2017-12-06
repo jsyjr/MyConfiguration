@@ -1,8 +1,0 @@
---langdef=matlab
---langmap=matlab:.m.cdr
---regex-matlab=/^\s*function.*=*[ \t]([,a-zA-Z0-9_]+)/\1/f,function/
---regex-matlab=/^\s*classdef\s*(\w+)/\1/c,class/
-
---langdef=tlc
---langmap=tlc:.tlc
---regex-tlc=/^\%function\s+(\w+)/\1/f,function/

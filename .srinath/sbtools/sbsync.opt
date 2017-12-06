@@ -1,3 +1,0 @@
--include Aslrtw
-SBSYNC_SWITCHES: -gentags
-SBSYNC_SWITCHES: -gensbid

@@ -1,5 +1,0 @@
-#!/bin/bash
-pushd `sbroot` 
-sbsmartbuild -build-logger build.log -distcc -F `cat submitList`
-popd
-
