@@ -3468,7 +3468,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
     (unless gdb-keys
       (setq gdb-keys (get-buffer-create "*GDB key bindings*"))
       (with-current-buffer gdb-keys
-        (setq-local buffer-undo-list t)
+        (buffer-disable-undo)
         (read-only-mode -1)
         (erase-buffer)
         (insert

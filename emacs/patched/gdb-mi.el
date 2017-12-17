@@ -1478,6 +1478,7 @@ this trigger is subscribed to `gdb-buf-publisher' and called with
       (let ((rules (assoc buffer-type gdb-buffer-rules))
             (new (generate-new-buffer "limbo")))
 	(with-current-buffer new
+          (buffer-disable-undo)
 	  (let ((mode (gdb-rules-buffer-mode rules))
                 (trigger (gdb-rules-update-trigger rules)))
 	    (when mode (funcall mode))
