@@ -327,6 +327,7 @@ Uses `gud-<MINOR-MODE>-directories' to find the source files."
     (when buf
       ;; Copy `gud-minor-mode' to the found buffer to turn on the menu.
       (with-current-buffer buf
+        (setq buffer-read-only t)
 	(setq-local gud-minor-mode minor-mode)
 	(if (boundp 'tool-bar-map)      ; not --without-x
 	    (setq-local tool-bar-map gud-tool-bar-map))
