@@ -120,22 +120,6 @@ if [ -d /mathworks ]; then
     #     fi
     # fi
 
-    testWs() {
-        if [ -d /ws/$1 ]; then
-            sbcopyandrun -s /ws/$1 -to-dst /sandbox/jyates/SBRT -num-threads 16 -no-perforce -opened -- -autofarm devel -lockup-minutes 120 -rerunusing jobarchive -testsuites $2
-        else
-            echo Workspace name is missing.
-        fi
-    }
-
-    testFull() {
-        testWs $1 Acgir_Aslrtw
-    }
-
-    testFast() {
-        testWs $1 Acgir_fast
-    }
-
 fi
 #
 ########### END MATHWORKS SPECIFIC ###########
