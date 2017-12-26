@@ -1062,6 +1062,26 @@ mouse-3: go to end")
 ;; (my/el-get-install "guide-key")
 
 ;;}}}
+;;{{{  Frames-only-mode
+
+(add-to-list 'el-get-sources
+	     '(:name frames-only-mode
+		     :description "Make emacs play nicely with tiling window managers by setting it up to use frames rather than windows"
+		     :type	  github
+		     :pkgname	  "davidshepherd7/frames-only-mode"
+		     :features	  frames-only-mode))
+(my/el-get-install "frames-only-mode")
+
+(autoload #'frames-only-mode "frames-only-mode" nil t)
+
+;(frames-only-mode t)
+
+(my/custom-set-variables
+ '(frames-only-mode t)
+ '(frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
+ )
+
+;;}}}
 
 ;;=== Moving, searching and editing ====================================
 
@@ -2245,6 +2265,7 @@ This command is designed to be used whether you are already in Info or not."
 
 (my/custom-set-variables
  '(tramp-default-method "ssh" nil (tramp))  ; uses ControlMaster
+ '(tramp-syntax 'default nil (tramp))
  '(comint-scroll-to-bottom-on-input t)      ; always insert at the bottom
 ;; '(comint-scroll-to-bottom-on-output nil) ; [DEF] always add output at the bottom
 ;; '(comint-scroll-show-maximum-output t)   ; [DEF] scroll to show max output
