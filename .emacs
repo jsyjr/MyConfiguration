@@ -508,28 +508,31 @@
 ;;{{{  Frame appearance
 
 (my/custom-set-variables
- '(initial-frame-alist
-    '((foreground-color . "white")
-      (background-color . "black")
-      (font . "dina-13")
-      (cursor-type . bar)))
  '(default-frame-alist
     '((foreground-color . "white")
       (background-color . "black")
       (font . "dina-13")
       (cursor-type . bar)
-      ;; (width . 100)
-      ;; (height . 60)
-      ;; (top . 0)
-      ;; (left . 0)
       (fullscreen . maximized)
       (minibuffer . t)
-      ;; Replaced by 'Emacs.verticalScrollBars: off' in ~/.Xresources
+      ;; Previously replaced by 'Emacs.verticalScrollBars: off' in ~/.Xresources
+      ;; Restore because X2Go does not read ~/.Xresources
       (vertical-scroll-bars . nil)
       (menu-bar-lines . 0)
       (tool-bar-lines . 0)
-      (icon-type)))
+      (icon-type . nill)))
  '(indicate-buffer-boundaries 'right) ; graphics in fringe
+ '(initial-frame-alist                ; match default-frame-alist settings (above)
+    '((foreground-color . "white")
+      (background-color . "black")
+      (font . "dina-13")
+      (cursor-type . bar)
+      (fullscreen . maximized)
+      (minibuffer . t)
+      (vertical-scroll-bars . nil)
+      (menu-bar-lines . 0)
+      (tool-bar-lines . 0)
+      (icon-type . nill)))
  )
 
 (my/custom-set-faces
