@@ -5,21 +5,26 @@ PNG=/tmp/XX.png
 
 # trap 'rm -f ${PNG}' INT QUIT 0
 
+# Basic header
 echo "digraph X {" >${DOT}
 
+# "Unprecedented" .cpp files displayed as ovals acros the top of the graph
 echo "  subgraph CPPs {" >>${DOT}
 echo "    rank=same;" >>${DOT}
-find -name *.cpp | grep -v suite_registration | sed -e 's|^\([A-Za-z_.]\+/\)*\([A-Za-z_]\+\.cpp\)| "\2";|' >>${DOT}
+find -name "*.cpp" | grep -v "pkgtest\|unittest" | sed -e 's|^\([A-Za-z_.]\+/\)*\([A-Za-z_]\+\.cpp\)| "\2";|' >>${DOT}
 echo "  }" >>${DOT}
 echo >>${DOT}
 
+# Included files are shown in boxes
 echo "node[shape=box];" >>${DOT}
 
-grep -rH '^ *#include *[<"][A-Za-z_./]*[">]' * | grep '\.cpp:' | grep -v suite_registration \
+# Edges induced by #include statements in .cpp files
+grep -rH '^ *#include *[<"][A-Za-z_./]*[">]' * | grep '\.cpp:' | grep -v "pkgtest\|unittest" \
     | sed -e 's|^\([A-Za-z_.]\+/\)*\([A-Za-z_]\+\.cpp\):#include *"\?\(<\?\)\([A-Za-z_.]\+/\)*\([A-Za-z_]\+\)\(\.inc\)\?[.hp]*\(>\?\)"\?| "\2" -> "\3\5\6\7";|' \
     >>${DOT}
 
-grep -rH '^ *#include *[<"][A-Za-z_./]*[">]' * | grep '\.hpp:' \
+# Edges induced by #include statements in .hpp headers
+grep -rH '^ *#include *[<"][A-Za-z_./]*[">]' * | grep '\.hpp:' | grep -v export_defs.hpp \
     | sed -e 's|^\([A-Za-z_.]\+/\)*\([A-Za-z_]\+\)\.hpp:#include *"\?\(<\?\)\([A-Za-z_.]\+/\)*\([A-Za-z_]\+\)\(\.inc\)\?[.hp]*\(>\?\)"\?| "\2" -> "\3\5\6\7";|' \
     >>${DOT}
 
