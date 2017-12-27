@@ -1478,7 +1478,7 @@ this trigger is subscribed to `gdb-buf-publisher' and called with
       (let ((rules (assoc buffer-type gdb-buffer-rules))
             (new (generate-new-buffer "limbo")))
 	(with-current-buffer new
-          (buffer-disable-undo)
+          (setq-local buffer-undo-list t)
 	  (let ((mode (gdb-rules-buffer-mode rules))
                 (trigger (gdb-rules-update-trigger rules)))
 	    (when mode (funcall mode))
@@ -1536,7 +1536,7 @@ this trigger is subscribed to `gdb-buf-publisher' and called with
   "Generic mode to derive all other GDB buffer modes from."
   (kill-all-local-variables)
   (setq buffer-read-only t)
-  (buffer-disable-undo)
+  (setq-local buffer-undo-list t)
   ;; Delete buffer from gdb-buf-publisher when it's killed
   ;; (if it has an associated update trigger)
   (add-hook
@@ -2396,6 +2396,7 @@ file names include non-ASCII characters."
                (gdb-get-buffer-create 'gdb-partial-output-buffer)
              buffer-file-coding-system))))
     (with-temp-buffer
+      (setq-local buffer-undo-list t)
       (set-buffer-multibyte nil)
       (prin1 string (current-buffer))
       (goto-char (point-min))
@@ -2737,6 +2738,7 @@ FIX-KEY and FIX-LIST work as in `gdb-jsonify-buffer'."
 
 FIX-KEY and FIX-LIST work as in `gdb-jsonify-buffer'."
   (with-temp-buffer
+    (setq-local buffer-undo-list t)
     (insert string)
     (gdb-json-read-buffer fix-key fix-list)))
 
