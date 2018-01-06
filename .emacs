@@ -1065,19 +1065,17 @@ mouse-3: go to end")
 ;;{{{  Frames-only-mode
 
 (add-to-list 'el-get-sources
-	     '(:name frames-only-mode
+	     '(:name frames-only
 		     :description "Make emacs play nicely with tiling window managers by setting it up to use frames rather than windows"
-		     :type	  github
-		     :pkgname	  "davidshepherd7/frames-only-mode"
-		     :features	  frames-only-mode))
-(my/el-get-install "frames-only-mode")
-
-(autoload #'frames-only-mode "frames-only-mode" nil t)
-
-;(frames-only-mode t)
+;;                   :type	  github
+;;                   :pkgname	  "davidshepherd7/frames-only-mode"
+                     :type        http
+                     :url         "file://localhost/home/jyates/emacs/frames-only.el"
+;;                   :after       (frames-only-mode t)
+		     :features	  frames-only))
+(my/el-get-install "frames-only")
 
 (my/custom-set-variables
- '(frames-only-mode t)
  '(frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
  )
 

@@ -79,7 +79,6 @@
  '(folding-advice-instantiate nil)
  '(folding-goto-key "\347f")
  '(folding-mode-prefix-key ",")
- '(frames-only-mode t)
  '(frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
  '(gc-cons-threshold 50000000)
  '(gdb-create-source-file-list nil)
