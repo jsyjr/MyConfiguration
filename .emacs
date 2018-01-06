@@ -2481,8 +2481,8 @@ An alternate approach would be after-advice on isearch-other-meta-char."
              '(:name filladapt
                      :description "Adaptively set fill-prefix and overload filling functions"
                      :type        http
-                     :url         "http://cc-mode.sourceforge.net/filladapt.el"
-;;                   :url         "file://localhost/home/jyates/emacs/filladapt.el"
+;;                   :url         "http://cc-mode.sourceforge.net/filladapt.el"
+                     :url         "file://localhost/home/jyates/emacs/filladapt.el"
                      :features    filladapt))
 (my/el-get-install "filladapt")
 
