@@ -1848,7 +1848,7 @@ convert it to readonly/view-mode."
                      :depends (yasnippet popup fuzzy)))
 
 (my/el-get-install "auto-complete")
-(require-maybe 'auto-completet)
+(require-maybe 'auto-complete)
 
 ;; (add-to-list 'el-get-sources
 ;;              (:name auto-complete-c-headers
