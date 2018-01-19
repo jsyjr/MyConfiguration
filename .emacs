@@ -2658,6 +2658,16 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (eval-after-load "yasnippet"
   '(add-hook 'after-save-hook 'my/yasnippet-reload-on-save))
 
+
+;;; File is in a test directory if it contains a suite_registration.cpp
+;;; Should locate dominating module directory by looking for Makefile
+;;; Name of image is path from module directory to test directory with '/' replaced by '_'
+;;;
+;;;   cd /ws/WARP/matlab/src/<MODULE>/
+;;;   rm -f /ws/WARP/matlab/derived/glnxa64/testbin/src/<MODULE>/<TEST_IMAGE>
+;;;   cgmake -no-distcc DEBUG=1
+;;;   /ws/WARP/matlab/derived/glnxa64/testbin/src/<MODULE>/<TEST_IMAGE>
+
 (defun my/compile-command ()
   "Return a compile command for the current (.cpp) buffer.
 
@@ -2667,7 +2677,7 @@ cgmake -no-distcc there and if successful run the test image."
   (let* ((cwd (file-name-directory (buffer-file-name)))
          (exe nil)
          (cmd (if (not (locate-dominating-file "." "unittest"))
-                  (concat "sbcc -mc DEBUG=1 " (buffer-name))
+                  (concat "sbcc -mc " (buffer-name))
                 (while (cond
                         ((string-suffix-p "unittest/" cwd)
                          (setq exe "unittest")
