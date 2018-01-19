@@ -1,3 +1,0 @@
-#!/bin/sh
-(cd ~/asd/ \
-&& scp $1 paraccel@ws-jyates:asd/$1 )

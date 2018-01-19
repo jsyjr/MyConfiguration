@@ -1,5 +1,0 @@
-# "source-able" fragment to verify working directory is root of source tree
-
-if [ ! -d "src/amake" ]; then
-   echo "Working directory ( $(pwd) ) is not the root of a source tree."; exit 1
-fi

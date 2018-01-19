@@ -1,8 +1,0 @@
-#!/bin/sh
-
-( cd ~/asd \
-&& scp paraccel@ws-jyates:asd/$1 /tmp/$$ \
-&& diff /tmp/$$ $1 \
-&& if [ $? -ne 0 ] ; then echo "------" ; echo "$1" ; echo ; cat /tmp/$$- ; fi )
-
-rm /tmp/$$* &>/dev/null
