@@ -33,6 +33,7 @@ st-light
 # slow network to local-ssd and replaced with symbolic links:
 # ~/.cache
 # ~/.config
+cd ~
 # ~/.fontconfig
 # ~/.icons
 # ~/.pki
@@ -68,6 +69,7 @@ st-light
 /.nvidia-settings-rc
 /.p4config
 /.p4enviro
+/.p4tickets
 /.pinerc
 /.pki
 /.plan
@@ -81,8 +83,8 @@ st-light
 /.vimrc
 /.xsession-errors
 /.xsession-errors.old
+/.xsession-x2go-errors
 /.zgrviewer
-/runLogs
 
 # For completeness here are the currently tracked dot-files
 !/.bashrc
@@ -115,6 +117,7 @@ st-light
 /.config/
 /.cpan/
 /.dbus/
+/.ddd/
 /.eclipse/
 /.elinks/
 /.emacs.d/
@@ -146,6 +149,7 @@ st-light
 /.p4qt/
 /.pki/
 /.pulse/
+/.purple/
 /.remmina/
 /.repoconfig/
 /.sbtools/
@@ -154,6 +158,8 @@ st-light
 /.ssh/
 /.subversion/
 /.synaptic/
+.sbsyncmaster/Bcgir_task.logs/
+.sbsyncmaster/Bcgir_thin.logs/
 /.terminfo/
 /.texmf-var/
 /.thumbnails/
@@ -164,7 +170,8 @@ st-light
 /.vnc/
 /.webex/
 /.winswitch/
-/.xpra/
+/.x2go/
+/.x2goclient//.xpra/
 /.yEd/
 #
 /Android/
@@ -173,9 +180,12 @@ st-light
 /Documents/
 /Downloads/
 /Favorites/
+/GECKS/
 /Links/
 /Pictures/
 /fontconfig/
+/logs/
+/mathworks-bug/
 /repos/
 /runLogs/
 
