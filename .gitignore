@@ -33,7 +33,6 @@ st-light
 # slow network to local-ssd and replaced with symbolic links:
 # ~/.cache
 # ~/.config
-cd ~
 # ~/.fontconfig
 # ~/.icons
 # ~/.pki
@@ -85,6 +84,7 @@ cd ~
 /.xsession-errors.old
 /.xsession-x2go-errors
 /.zgrviewer
+/MATLABDesktopCreateError.log
 
 # For completeness here are the currently tracked dot-files
 !/.bashrc
@@ -171,7 +171,8 @@ cd ~
 /.webex/
 /.winswitch/
 /.x2go/
-/.x2goclient//.xpra/
+/.x2goclient/
+/.xpra/
 /.yEd/
 #
 /Android/
