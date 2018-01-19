@@ -1,3 +1,0 @@
-If file will be sourced then it should clean up the namespace
-
-run CMD in same directory as current script: ${0%${0##*/}}CMD
