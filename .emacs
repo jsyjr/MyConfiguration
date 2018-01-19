@@ -3709,6 +3709,16 @@ use either \\[customize] or the function `phw-mode'." t)
 
 ;; Support the Chrome Browser's Edit with Emacs extension
 (add-to-list 'el-get-sources 'edit-server)
+
+
+(add-to-list 'el-get-sources
+	     '(:name edit-server
+		     :description "Respond to requests from the Chrome Emacs_Chrome plugin."
+                     :type        github
+                     :pkgname     "emacsfodder/kurecolor"
+		     :after	  (edit-server-start)
+		     :features	  edit-server))
+
 (my/el-get-install "edit-server")
 
 
