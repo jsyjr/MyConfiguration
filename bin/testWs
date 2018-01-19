@@ -1,54 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
-IGNORE="tVariantsTransformationGecks\\|"
-
-WSNAME=$1
-WORKSPACE=/ws/${WSNAME}
-
-QUALIFY=/mathworks/devel/sandbox/${USER}/qualify
-QUALFAIL=${QUALIFY}_sbruntests/glnxa64/sbtest/failed_testsuites.txt
-ALLFAILS=${WORKSPACE}/failed_testsuites.txt
-FAILFAIL=/tmp/failfail.$$
-HANG=${WORKSPACE}/hang.txt
-NO_MEM=${WORKSPACE}/no_mem.txt
-RETEST=${WORKSPACE}/retest.txt
-
-if [ -z "${WSNAME}" ]; then
-    echo Required workspace name is missing.
-    exit 1
-elif [ ! -d ${WORKSPACE} ] ; then
-    echo Workspace "${WORKSPACE}" does not exist.
-    exit 1
-fi
-
-trap "{ rm -f $\{FAILFAIL\}; }" EXIT
-
-echo Testing "${WORKSPACE}".
-
-( cd ${WORKSPACE} \
-; ln -sf ${WORKSPACE} ${QUALIFY}/COPIED_FROM \
-; sbcopyandrun -to-dst ${QUALIFY} -num-threads 16 -no-perforce -- -autofarm devel -lockup-minutes 20 -rerunusing jobarchive ${SBRT_FULL_CFG} \
-; cp ${QUALFAIL} ${ALLFAILS} \
-; cat ${ALLFAILS} | \
-  sed -n $( cat ${ALLFAILS} | \
-            grep -n -E -e '^[#] fclass' | \
-            head -n 2 | \
-            cut -d: -f1 | \
-            tr '\n' ',' | \
-            sed -r -e 's/,$//' -e 's/^//' -e 's/$/p/' \
-          ) >${FAILFAIL} \
-; cat ${FAILFAIL} | sed -n '/^[#] test: LockupDetected$/,/^$/p' >${HANG} \
-; cat ${FAILFAIL} | sed -n '/^[#] test: NoMem AbnormalExitDetected$/,/^$/p' >${NO_MEM} \
-; cat ${FAILFAIL} | sed -n '/^[#] test: \(LockupDetected\|NoMem AbnormalExitDetected\)$/,/^$/!p' >${RETEST} \
-; sbruntests -delete-previous-test-log-area -test-log-area retest.area -local all -lockup-minutes 10 -noretryfailedtests -rerunusing /ws/TASK -cfg ${RETEST} \
-; echo \
-; echo Retesting of ${WORKSPACE} is complete. \
-; echo \
-; echo Not retested - no_mem: $(grep --count '[-]runsuite' ${NO_MEM}) \
-; echo '  ' sbruntests -delete-previous-test-log-area -test-log-area no_mem.area -local 4 -lockup-minutes 20 -noretryfailedtests -rerunusing /ws/TASK -mlswitches -no-vmemorylimit -cfg ${NO_MEM} \
-; echo \
-; echo Not retested - hang: '' $(grep --count '[-]runsuite' ${HANG}) \
-; echo '  ' sbruntests -delete-previous-test-log-area -test-log-area hang.area -local 8 -lockup-minutes 40 -noretryfailedtests -rerunusing /ws/TASK -cfg ${HANG} \
-)
+BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SRCDIR=${BINDIR}/source
+. ${SRCDIR}/get_WORKSPACE
+. ${SRCDIR}/sbtEnv
+. ${SRCDIR}/sbtRun
+. ${SRCDIR}/sbtRerun
 
 exit 0

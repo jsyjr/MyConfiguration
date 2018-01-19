@@ -1,0 +1,19 @@
+# Dash source to establish a various symbols
+
+QUALIFY=/mathworks/devel/sandbox/${USER}/qualify
+QUALFAIL=${QUALIFY}_sbruntests/glnxa64/sbtest/failed_testsuites.txt
+
+RETEST=${WORKSPACE}_retest
+ALLFAILS=${RETEST}/all_fail.txt
+FAILFAIL=${RETEST}/failfail.text
+RERUN=${RETEST}/rerun.txt
+HANG=${RETEST}/hang.txt
+NO_MEM=${RETEST}/no_mem.txt
+
+if [ -z "${WSNAME}" ]; then
+    echo Required workspace name is missing.
+    exit 1
+elif [ ! -d ${WORKSPACE} ] ; then
+    echo Workspace "${WORKSPACE}" does not exist.
+    exit 1
+fi

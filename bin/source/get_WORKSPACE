@@ -1,0 +1,31 @@
+# Establish WORKSPACE and WSNAME; cd to WORKSPACE; strip $1 if present
+
+if [ -z "$1" ]; then
+    WORKSPACE=${PWD}
+elif [ -d $(realpath $1) ] ; then
+    WORKSPACE=$(realpath $1)
+elif [ -d /ws/$1 ] ; then
+     WORKSPACE=/ws/$1
+elif [ -d $s/$1 ] ; then
+     WORKSPACE=$s/$1
+else
+    echo
+    echo "Unable to locate workspace \"$1\"."
+    echo
+    exit 1
+fi
+
+shift
+
+if [ ! -d ${WORKSPACE}/matlab/src ] || [ ! -d ${WORKSPACE}/.sbtools ] ; then
+    echo
+    echo "\"${WORKSPACE}\" does not appear to be a a workspace."
+    echo
+    exit 1
+fi
+
+WSNAME=${WORKSPACE##*/}
+
+trap "cd ${PWD}" EXIT
+
+cd ${WORKSPACE}
