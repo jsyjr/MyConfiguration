@@ -14,13 +14,13 @@
 ; cat ${FAILFAIL} | sed -n '/^[#] test: LockupDetected$/,/^$/p' >${HANG} \
 ; cat ${FAILFAIL} | sed -n '/^[#] test: NoMem AbnormalExitDetected$/,/^$/p' >${NO_MEM} \
 ; cat ${FAILFAIL} | sed -n '/^[#] test: \(LockupDetected\|NoMem AbnormalExitDetected\)$/,/^$/!p' >${RERUN} \
-; sbruntests -delete-previous-test-log-area -test-log-area ${RETEST}/rerun.area -local all -lockup-minutes 10 -sbscanlog-final-user-patterns cgir_profiling -noretryfailedtests -rerunusing /ws/TASK -cfg ${RERUN} \
+;           sbruntests -delete-previous-test-log-area -test-log-area ${TESTDIR}/rerun.area  ${SBTFLAGS} ${RERUNFLAGS} -local all -lockup-minutes 10 -cfg ${RERUN} \
 ; echo \
 ; echo Retesting of ${WORKSPACE} is complete. \
 ; echo \
 ; echo Not retested - no_mem: $(grep --count '[-]runsuite' ${NO_MEM}) \
-; echo '  ' sbruntests -delete-previous-test-log-area -test-log-area ${RETEST}/no_mem.area -local 4 -lockup-minutes 20 -sbscanlog-final-user-patterns cgir_profiling -noretryfailedtests -rerunusing /ws/TASK -mlswitches -no-vmemorylimit -cfg ${NO_MEM} \
+; echo '  ' sbruntests -delete-previous-test-log-area -test-log-area ${TESTDIR}/no_mem.area ${SBTFLAGS} ${RERUNFLAGS} -local 4   -lockup-minutes 20 -cfg ${NO_MEM} -mlswitches -no-vmemorylimit \
 ; echo \
 ; echo Not retested - hang: '' $(grep --count '[-]runsuite' ${HANG}) \
-; echo '  ' sbruntests -delete-previous-test-log-area -test-log-area ${RETEST}/hang.area -local 8 -lockup-minutes 40 -sbscanlog-final-user-patterns cgir_profiling -noretryfailedtests -rerunusing /ws/TASK -cfg ${HANG} \
+; echo '  ' sbruntests -delete-previous-test-log-area -test-log-area ${TESTDIR}/hang.area   ${SBTFLAGS} ${RERUNFLAGS} -local 8   -lockup-minutes 40  -cfg ${HANG} \
 )

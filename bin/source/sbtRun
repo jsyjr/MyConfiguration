@@ -3,11 +3,13 @@
 echo Testing "${WORKSPACE}".
 
 ( cd ${WORKSPACE} \
+; sbcopyandrun -to-dst ${QUALIFY} -num-threads 16 -no-perforce -- ${SBTFLAGS} -autofarm devel -lockup-minutes 20 -rerunusing jobarchive ${SBRT_FULL_CFG} \
 ; ln -Tsf ${WORKSPACE} ${QUALIFY}/COPIED_FROM \
-; sbcopyandrun -to-dst ${QUALIFY} -num-threads 16 -no-perforce -- -autofarm devel -lockup-minutes 20 -sbscanlog-final-user-patterns cgir_profiling -rerunusing jobarchive ${SBRT_FULL_CFG} \
 ; echo \
 ; echo Initial testing of ${WORKSPACE} is complete. \
-; mkdir -p ${RETEST} \
+; mkdir -p ${TESTDIR} \
 ; cp ${QUALFAIL} ${ALLFAILS} \
-; echo Status saved as ${ALLFAILS}. \
+; cp -r $s/qualify_sbruntests ${SAVERUN} \
+; echo Testing status in text form:   ${ALLFAILS} \
+; echo Full result directory:         ${SAVERUN} \
 )
