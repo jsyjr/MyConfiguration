@@ -9,8 +9,7 @@
 %*
 am.dmp
 gdb
-gdb-7.9
-gdb-7.10
+gdb-*
 .gdb_history
 java.log.*
 jogl.ex.*
