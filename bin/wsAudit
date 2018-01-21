@@ -9,7 +9,7 @@
     [ $DIR != "Bcgir_thin.latest_pass" ] &&  \
        ( cd /ws/$DIR \
        ; echo -n "$DIR:  " \
-       ; sbver | grep 'SyncFrom:' \
+       ; sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom: /*mathworks/devel/||' \
        ) \
   done \
 )
