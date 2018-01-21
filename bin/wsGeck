@@ -1,0 +1,33 @@
+#!/bin/bash
+
+BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SRCDIR=${BINDIR}/source
+
+if [[ $1 =~ g[0-9]+ ]] ; then
+    GECK=$1
+    shift
+fi
+
+. ${SRCDIR}/get_WORKSPACE
+
+if [ -z ${GECK} ] && [[ $1 =~ g[0-9]+ ]] ; then
+    GECK=$1
+    shift
+fi
+
+if [ -z ${GECK} ] ; then
+    echo
+    echo "No geck number available"
+    echo
+    exit 1
+fi
+
+echo
+echo GECK= ${GECK}
+echo
+
+KANBAN_NOTES=${WORKSPACE}/KANBAN_NOTES
+
+
+touch ${KANBAN_NOTES}
+echo "https://inside.mathworks.com/wiki/Kanban:_${GECK}" >>${KANBAN_NOTES}
