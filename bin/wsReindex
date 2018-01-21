@@ -1,0 +1,30 @@
+#!/bin/dash
+
+. ${HOME}/bin/source/get_WORKSPACE
+
+# Make workspace writeable and clean out obvious trash
+chmod -R u+w *
+rm -rf .sbtools/global .sbtools/path-hash.el* GPATH GRTAGS GTAGS ID
+
+# Regenerate matlab/toolbox/local/toolbox_cache-ARCH.xml
+sbgentbxcache
+
+# Generate the per component lists of files maintained in a parallel
+# directory tree beneath matlab/.sbtools/global but drop the nearly
+# useless list of derived files
+sblocate -gendb
+rm -rf .sbtools/global/matlab/derived
+
+# Use remaining files database to generate the tags database
+sbglobal -num-threads 12 -gentags matlab/src matlab/toolbox
+
+# Use my newer versions of GNU global and gtags if available
+if [ -e ${HOME}/bin/mathworks-global ]
+then
+    PATH=/usr/local/bin:${PATH} ${HOME}/bin/mathworks-global
+fi
+
+# Build emacs' WorkSpace Files index (for my wsf.el package)
+/usr/bin/emacs --batch --load ${HOME}/.emacs --eval='(load-library \"wsf\")' -f wsf--current-completions -f save-buffers-kill-emacs
+
+exit 0
