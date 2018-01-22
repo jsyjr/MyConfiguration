@@ -3,13 +3,31 @@
 echo Testing "${WORKSPACE}".
 
 ( cd ${WORKSPACE} \
-; sbcopyandrun -to-dst ${QUALIFY} -num-threads 16 -no-perforce -- ${SBTFLAGS} -autofarm devel -lockup-minutes 20 -rerunusing jobarchive ${SBRT_FULL_CFG} \
+; sbcopyandrun -to-dst ${QUALIFY} -num-threads 16 -no-perforce -- ${SBTFLAGS} -farm devel -lockup-minutes 20 -rerunusing jobarchive ${SBRT_FULL_CFG} \
 ; ln -Tsf ${WORKSPACE} ${QUALIFY}/COPIED_FROM \
 ; echo \
 ; echo Initial testing of ${WORKSPACE} is complete. \
 ; mkdir -p ${TESTDIR} \
 ; cp ${QUALFAIL} ${ALLFAILS} \
-; cp -r $s/qualify_sbruntests ${SAVERUN} \
-; echo Testing status in text form:   ${ALLFAILS} \
-; echo Full result directory:         ${SAVERUN} \
+; cat ${ALLFAILS} | sed >${FAILFAIL}   -n $( cat ${ALLFAILS} | \
+                                             grep -n -E -e '^[#] fclass' | \
+                                             head -n 2 | \
+                                             cut -d: -f1 | \
+                                             tr '\n' ',' | \
+                                             sed -r -e 's/,$//' -e 's/^//' -e 's/$/p/' \
+                                           ) \
+; cat ${FAILFAIL} | sed >${HANG}.txt   -n '/^[#] test: LockupDetected$/,/^$/p' \
+; cat ${FAILFAIL} | sed >${NO_MEM}.txt -n '/^[#] test: NoMem AbnormalExitDetected$/,/^$/p' \
+; cat ${FAILFAIL} | sed >${RERUN}.txt  -n '/^[#] test: \(LockupDetected\|NoMem AbnormalExitDetected\)$/,/^$/!p' \
+; cp -rf $s/qualify_sbruntests ${SAVERUN} \
+; echo \
+; echo Full result directory: ${SAVERUN} \
+; echo \
+; echo Text files...
+; echo All failures:          ${ALLFAILS} \
+; echo All PASS-PASS-FAILs:   ${FAILFAIL} \
+; echo Out of memories:       ${NO_MEM}.txt \
+; echo Hangs:                 ${HANG}.txt \
+; echo Selected for rerun:    ${RERUN}.txt \
+; echo \
 )
