@@ -4,7 +4,6 @@ BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SRCDIR=${BINDIR}/source
 . ${SRCDIR}/get_WORKSPACE
 . ${SRCDIR}/sbrtEnv
-. ${SRCDIR}/sbrtRun
 . ${SRCDIR}/sbrtRerun
 
 exit 0
