@@ -23,7 +23,7 @@ echo Testing "${WORKSPACE}".
 ; echo \
 ; echo Full result directory: ${SAVERUN} \
 ; echo \
-; echo Text files...
+; echo Text files... \
 ; echo All failures:          ${ALLFAILS} \
 ; echo All PASS-PASS-FAILs:   ${FAILFAIL} \
 ; echo Out of memories:       ${NO_MEM}.txt \
