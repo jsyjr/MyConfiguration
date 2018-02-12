@@ -1,0 +1,37 @@
+#!/bin/bash
+
+BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SRCDIR=${BINDIR}/source
+. ${SRCDIR}/get_WORKSPACE
+
+echo
+
+CLONED=$(sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom: /*mathworks/devel/jobarchive/\([^/]*\)/.*$|\1|').latest_pass
+echo ${CLONED}
+
+BACKUP=$(echo ${WORKSPACE} | sed -e 's|/|_|')_backup/latest
+echo ${BACKUP}
+
+echo
+
+sbbackup -opened
+cd ..
+sbrmtree ${WORKSPACE}
+sbclone ${CLONED} ${WORKSPACE}
+cd ${WORKSPACE}
+sbrestore -no-prompt -f -r $s/_sbbackup/*{BACKUP}
+
+# SAVE=/tmp/REFRESH.$$
+# RESTORE_GIT=
+
+# if [ -d .git ] ; then
+#     # What about uncommited changes?
+#     git format-patch origin/master.. -o ${SAVE}
+#     git format-patch master~2.. -o /tmp/IDIV
+#     RESTORE_GIT=1
+
+#     count=$(($(git rev-list --count BASE..HEAD) - 1))
+#     git format-patch -${count}
+
+# fi
+
