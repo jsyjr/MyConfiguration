@@ -374,6 +374,7 @@
  '(kept-old-versions 5)
  '(vc-make-backup-files t)
  '(version-control t)                   ; add version # to backup
+ '(x-select-enable-clipboard-manager nil)
  )
 
 ;;}}}
