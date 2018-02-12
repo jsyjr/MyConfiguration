@@ -5,6 +5,7 @@ SRCDIR=${BINDIR}/source
 . ${SRCDIR}/get_WORKSPACE
 . ${SRCDIR}/sbrtEnv
 . ${SRCDIR}/sbrtRun
+. ${SRCDIR}/sbrtSave
 . ${SRCDIR}/sbrtRerun
 
 exit 0

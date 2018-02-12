@@ -1,5 +1,8 @@
 #!/bin/dash
 
+BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SRCDIR=${BINDIR}/source
+. ${SRCDIR}/get_WORKSPACE
 . ${HOME}/bin/source/get_WORKSPACE
 
 # Make workspace writeable and clean out obvious trash

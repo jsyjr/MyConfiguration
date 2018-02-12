@@ -1,15 +1,33 @@
 # Dash source - rerun non-HANG / non-NO_MEM double failures
 
 ( cd ${WORKSPACE} \
+; ln -sf ${SAVERUN}/glnxa64/sbtest/failed_testsuites.txt ${ALLFAILS} \
+; echo Triaging failures... \
+; cat ${ALLFAILS} | sed >${FAILFAIL}   -n $( cat ${ALLFAILS} \
+                                           | grep -n -E -e '^[#] fclass' \
+                                           | head -n 2 \
+                                           | cut -d: -f1 \
+                                           | tr '\n' ',' \
+                                           | sed -r -e 's/,$//' -e 's/^//' -e 's/$/p/' \
+                                           ) \
+; cat ${FAILFAIL} | sed >${HANG}.txt   -n '/^[#] test: LockupDetected$/,/^$/p' \
+; cat ${FAILFAIL} | sed >${NO_MEM}.txt -n '/^[#] test: NoMem AbnormalExitDetected$/,/^$/p' \
+; cat ${FAILFAIL} | sed >${RERUN}.txt  -n '/^[#] test: \(LockupDetected\|NoMem AbnormalExitDetected\)$/,/^$/!p' \
+; echo '  ' All failures:'       ' ${ALLFAILS} \
+; echo '  ' All PASS-PASS-FAILs:'' ${FAILFAIL} \
+; echo '  ' Out of memories:'    ' ${NO_MEM}.txt \
+; echo '  ' Hangs:'              ' ${HANG}.txt \
+; echo '  ' Rerunning:'          ' ${RERUN}.txt \
+; echo \
 ; echo 'Rerunning double failures (apart from hang and out of memory cases).' \
 ; echo \
-;           sbruntests -delete-previous-test-log-area -test-log-area ${RERUN}.area  ${SBTFLAGS} ${RERUNFLAGS} -local all -lockup-minutes 10 -cfg ${RERUN}.txt \
+;           sbruntests -delete-previous-test-log-area -test-log-area ${RERUN}.area  ${SBRTFLAGS} ${RERUNFLAGS} -local all -lockup-minutes 10 -cfg ${RERUN}.txt \
 ; echo \
 ; echo Retesting of ${WORKSPACE} is complete. \
 ; echo \
-; echo Not retested - no_mem: $(grep --count '[-]runsuite' ${NO_MEM}) \
-; echo '  ' sbruntests -delete-previous-test-log-area -test-log-area ${NO_MEM}.area ${SBTFLAGS} ${RERUNFLAGS} -local 4   -lockup-minutes 20 -cfg ${NO_MEM}.txt -mlswitches -no-vmemorylimit \
+; echo Not retested - no_mem: $(grep --count '[-]runsuite' ${NO_MEM}.txt) \
+; echo '  ' sbruntests -delete-previous-test-log-area -test-log-area ${NO_MEM}.area ${SBRTFLAGS} ${RERUNFLAGS} -local 4   -lockup-minutes 20 -cfg ${NO_MEM}.txt -mlswitches -no-vmemorylimit \
 ; echo \
-; echo Not retested - hang: '' $(grep --count '[-]runsuite' ${HANG}) \
-; echo '  ' sbruntests -delete-previous-test-log-area -test-log-area ${HANG}.area   ${SBTFLAGS} ${RERUNFLAGS} -local 8   -lockup-minutes 40  -cfg ${HANG}.txt \
+; echo Not retested - hang: '' $(grep --count '[-]runsuite' ${HANG}.txt) \
+; echo '  ' sbruntests -delete-previous-test-log-area -test-log-area ${HANG}.area   ${SBRTFLAGS} ${RERUNFLAGS} -local 8   -lockup-minutes 40 -cfg ${HANG}.txt \
 )
