@@ -19,7 +19,7 @@ shift
 
 if [ ! -d ${WORKSPACE}/matlab/src ] || [ ! -d ${WORKSPACE}/.sbtools ] ; then
     echo
-    echo "\"${WORKSPACE}\" does not appear to be a a workspace."
+    echo "\"${WORKSPACE}\" does not appear to be an actual workspace."
     echo
     exit 1
 fi

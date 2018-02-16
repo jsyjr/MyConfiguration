@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. ${HOME}/bin/source/get_WORKSPACE
+echo
+echo WORKSPACE= ${WORKSPACE}
+
+CLONED=$(sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom: /*mathworks/devel/jobarchive/\([^/]*\)/.*$|\1|').latest_pass
+echo CLONED= ${CLONED}
+
+BACKUP=local_$(hostname)$(echo ${WORKSPACE} | sed -e 's|/|_|g')_backup/latest
+echo BACKUP= ${BACKUP}
+
+echo

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SRCDIR=${BINDIR}/source
+. ${SRCDIR}/get_WORKSPACE
+
+echo
+
+BACKUP=local_$(hostname)$(echo ${WORKSPACE} | sed -e 's|/|_|g')_backup/latest
+echo BACKUP= ${BACKUP}
+
+echo
+
+cd ${WORKSPACE}
+sbrestore -no-prompt -f -r $s/_sbbackup/${BACKUP}

@@ -7,10 +7,10 @@ SRCDIR=${BINDIR}/source
 echo
 
 CLONED=$(sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom: /*mathworks/devel/jobarchive/\([^/]*\)/.*$|\1|').latest_pass
-echo ${CLONED}
+echo CLONED= ${CLONED}
 
-BACKUP=$(echo ${WORKSPACE} | sed -e 's|/|_|')_backup/latest
-echo ${BACKUP}
+BACKUP=local_$(hostname)$(echo ${WORKSPACE} | sed -e 's|/|_|g')_backup/latest
+echo BACKUP= ${BACKUP}
 
 echo
 
@@ -19,7 +19,7 @@ cd ..
 sbrmtree ${WORKSPACE}
 sbclone ${CLONED} ${WORKSPACE}
 cd ${WORKSPACE}
-sbrestore -no-prompt -f -r $s/_sbbackup/*{BACKUP}
+sbrestore -no-prompt -f -r $s/_sbbackup/${BACKUP}
 
 # SAVE=/tmp/REFRESH.$$
 # RESTORE_GIT=
@@ -34,4 +34,3 @@ sbrestore -no-prompt -f -r $s/_sbbackup/*{BACKUP}
 #     git format-patch -${count}
 
 # fi
-

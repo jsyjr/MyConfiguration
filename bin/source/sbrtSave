@@ -1,9 +1,8 @@
 # Dash source - copy all run artifacts from network qualification area to local workspace
 
-echo Saving to "${WORKSPACE}".
+echo Saving to "${SAVERUN}".
 
-( cd ${WORKSPACE} \
-; mkdir -p ${TESTDIR} \
+( mkdir -p ${TESTDIR} \
 ; rm -rf  ${SAVERUN} \
 ; cp -rf $s/qualify_sbruntests ${SAVERUN} \
 ; echo  $s/qualify_sbruntests copied to ${SAVERUN} \
