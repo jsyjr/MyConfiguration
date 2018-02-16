@@ -2,10 +2,8 @@
 
 echo Testing "${WORKSPACE}".
 
-( cd ${WORKSPACE} \
-; rm -f COPIED_FROM \
-; ln -s ${WORKSPACE} COPIED_FROM \
-; sbcopyandrun -to-dst ${QUALIFY} -num-threads 16 -no-perforce -- ${SBRTFLAGS} -farm devel -lockup-minutes 20 -rerunusing jobarchive ${SBRT_FULL_CFG} \
-; echo \
-; echo Initial testing of ${WORKSPACE} is complete. \
-)
+rm -f COPIED_FROM
+ln -s ${WORKSPACE} COPIED_FROM
+sbcopyandrun -to-dst ${QUALIFY} -num-threads 16 -no-perforce -- ${SBRTFLAGS} -farm devel -lockup-minutes 20 -rerunusing jobarchive ${SBRT_FULL_CFG}
+echo
+echo Initial testing of ${WORKSPACE} is complete.

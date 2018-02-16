@@ -1,11 +1,15 @@
 # Establish WORKSPACE and WSNAME; cd to WORKSPACE; strip $1 if present
 
+# Use PWD when command-line is blank
 if [ -z "$1" ]; then
     WORKSPACE=${PWD}
+# Non-blank command-line, check for an absolute path
 elif [ -d $(realpath $1) ] ; then
     WORKSPACE=$(realpath $1)
+# Non-blank command-line, check for a local workspace
 elif [ -d /ws/$1 ] ; then
      WORKSPACE=/ws/$1
+# Non-blank command-line, check for a /sandbox workspace
 elif [ -d $s/$1 ] ; then
      WORKSPACE=$s/$1
 else
@@ -29,3 +33,33 @@ WSNAME=${WORKSPACE##*/}
 trap "cd ${PWD}" EXIT
 
 cd ${WORKSPACE}
+
+# Determine any attached gecks
+GECKS=$( p4 opened \
+       | grep 'edit change' \
+       | sed -r -e 's/.*edit change ([0-9]+).*/\1/g' \
+       | sort \
+       | uniq \
+       | xargs p4 describe \
+       | sed -n -r -e '/^g[0-9]+/ { s/(g[0-9]+).*/\1/gp }' \
+       )
+
+# Determine source cluster
+CLUSTER=$( sbver \
+         | grep 'SyncFrom:' \
+         | sed -e 's|SyncFrom: /*mathworks/devel/jobarchive/\([^/]*\)/.*$|\1|' \
+         )
+
+PREQUALINFO=$s/$( echo ${GECKS} | sed -r -e 's/ /_/g' )_sfbPrequalInfo_${CLUSTER}
+PREQUALFAIL=${PREQUALINFO}/testsuite_sbruntests/sbtest/failed_testsuites.txt
+
+# Zap PREQUALFAIL if it is not a true file
+if [ ! -e ${PREQUALFAIL} ]; then
+   PREQUALFAIL=
+fi
+
+# echo GECKS= ${GECKS}
+# echo CLUSTER= ${CLUSTER}
+# echo PREQUALINFO= ${PREQUALINFO}
+# echo PREQUALFAIL= ${PREQUALFAIL}
+# echo

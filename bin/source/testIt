@@ -1,13 +1,34 @@
 #!/bin/bash
 
 . ${HOME}/bin/source/get_WORKSPACE
+
 echo
-echo WORKSPACE= ${WORKSPACE}
 
-CLONED=$(sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom: /*mathworks/devel/jobarchive/\([^/]*\)/.*$|\1|').latest_pass
-echo CLONED= ${CLONED}
+# Determine any attached gecks
+GECKS=$( p4 opened \
+       | grep 'edit change' \
+       | sed -r -e 's/.*edit change ([0-9]+).*/\1/g' \
+       | sort \
+       | uniq \
+       | xargs p4 describe \
+       | sed -n -r -e '/^g[0-9]+/ { s/(g[0-9]+).*/\1/gp }' \
+       )
 
-BACKUP=local_$(hostname)$(echo ${WORKSPACE} | sed -e 's|/|_|g')_backup/latest
-echo BACKUP= ${BACKUP}
+# Determine source cluster
+CLUSTER=$( sbver \
+         | grep 'SyncFrom:' \
+         | sed -e 's|SyncFrom: /*mathworks/devel/jobarchive/\([^/]*\)/.*$|\1|' \
+         )
 
+PREQUALINFO=$s/$( echo ${GECKS} | sed -r -e 's/ /_/g' )_sfbPrequalInfo_${CLUSTER}
+PREQUALFAIL=${PREQUALINFO}/testsuite_sbruntests/sbtest/failed_testsuites.txt
+
+if [ ! -e ${PREQUALFAIL} ]; then
+   PREQUALFAIL=
+fi
+
+echo GECKS= ${GECKS}
+echo CLUSTER= ${CLUSTER}
+echo PREQUALINFO= ${PREQUALINFO}
+echo PREQUALFAIL= ${PREQUALFAIL}
 echo
