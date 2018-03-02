@@ -29,6 +29,7 @@ if [ ! -d ${WORKSPACE}/matlab/src ] || [ ! -d ${WORKSPACE}/.sbtools ] ; then
 fi
 
 WSNAME=${WORKSPACE##*/}
+WORKGIT=${WORKSPACE}/.git
 
 trap "cd ${PWD}" EXIT
 

@@ -3,6 +3,7 @@
 BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SRCDIR=${BINDIR}/source
 . ${SRCDIR}/get_WORKSPACE
+. ${SRCDIR}/sbrtEnv
 
 echo
 
@@ -14,23 +15,49 @@ echo BACKUP= ${BACKUP}
 
 echo
 
+set -x
+
 sbbackup -opened
+
+# If local git repo is still within the workspace and if it
+# contains commits then move it to the sibling save area.
+if [ -d ${WORKGIT} ] && [ $(git rev-list --count BASE..HEAD) != "0" ]; then
+    # Ensure existence of the sibling directory
+    mkdir -p ${SAVEDIR}
+    mv ${WORKGIT} ${SAVEGIT}
+    ln -s ${SAVEGIT} ${WORKGIT}
+fi
+
+# If actually using the saved git repository then...
+if [ -h ${WORKGIT} ]; then
+    # Save any outstand work (both modified and untracked files)
+    git stash save --include-untracked
+    # Set up the repository to import the new perforce state
+    git checkout perforce
+fi
+
+# Discard the old workspace and reclone it from the current .latest_pass
 cd ..
 sbrmtree ${WORKSPACE}
-sbclone ${CLONED} ${WORKSPACE}
+sbclone -no-pdb ${CLONED} ${WORKSPACE}
 cd ${WORKSPACE}
+
+# If the sibling save area contains a git repository then...
+if [ -d ${SAVEGIT} ]; then
+    # Use that in favor of the fresh repo from sbsyncmaster.
+    rm -rf ${WORKGIT}
+    ln -s ${SAVEGIT} ${WORKGIT}
+    git add -A matlab >/dev/null 2>&1
+    JOB=$( sbver | sed -nre '{ /SyncFrom/ s|^.*/mathworks/devel/jobarchive/([^/]*/[^/]*)$|\1|gp }' )
+    # Commit this .latest_pass as newest perforce state
+    git commit -m "${JOB}" >/dev/null 2>&1
+
+    # Back to master and merge newest changes from perforce
+    git checkout master
+    git merge --commit -m "-> ${JOB}" perforce
+
+    # Apply any stashed changes
+    git stash apply --index
+fi
+
 sbrestore -no-prompt -f -r $s/_sbbackup/${BACKUP}
-
-# SAVE=/tmp/REFRESH.$$
-# RESTORE_GIT=
-
-# if [ -d .git ] ; then
-#     # What about uncommited changes?
-#     git format-patch origin/master.. -o ${SAVE}
-#     git format-patch master~2.. -o /tmp/IDIV
-#     RESTORE_GIT=1
-
-#     count=$(($(git rev-list --count BASE..HEAD) - 1))
-#     git format-patch -${count}
-
-# fi

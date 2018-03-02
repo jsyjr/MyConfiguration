@@ -6,13 +6,15 @@ RERUNFLAGS="-noretryfailedtests -rerunusing nothing"
 QUALIFY=/mathworks/devel/sandbox/${USER}/qualify
 QUALFAIL=${QUALIFY}_sbruntests/glnxa64/sbtest/failed_testsuites.txt
 
-TESTDIR=${WORKSPACE}_test
-SAVERUN=${TESTDIR}/sbruntests.area
-ALLFAILS=${TESTDIR}/all_fail.txt
-FAILFAIL=${TESTDIR}/failfail.txt
-RERUN=${TESTDIR}/rerun
-HANG=${TESTDIR}/hang
-NO_MEM=${TESTDIR}/no_mem
+SAVEDIR=${WORKSPACE}_test
+SAVEGIT=${SAVEDIR}/git
+SAVERUN=${SAVEDIR}/sbruntests.area
+
+ALLFAILS=${SAVEDIR}/all_fail.txt
+FAILFAIL=${SAVEDIR}/failfail.txt
+RERUN=${SAVEDIR}/rerun
+HANG=${SAVEDIR}/hang
+NO_MEM=${SAVEDIR}/no_mem
 
 if [ -z "${WSNAME}" ]; then
     echo Required workspace name is missing.

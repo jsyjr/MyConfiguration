@@ -4,8 +4,11 @@ BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SRCDIR=${BINDIR}/source
 . ${SRCDIR}/get_WORKSPACE
 . ${SRCDIR}/sbrtEnv
-. ${SRCDIR}/sbrtRun
-. ${SRCDIR}/sbrtSave
-. ${SRCDIR}/sbrtRerun
 
+if [ -d ${WORKSPACE}/.git ] && [ $(git rev-list --count BASE..HEAD) -gt 0 ]; then
+    echo Ensure existence of the sibling directory
+    mkdir -p ${SAVEDIR}
+    # mv ${WORKSPACE}/.git ${SAVEDIR}/git
+    # ln -s ${SAVEDIR}/git ${WORKSPACE}/.git
+fi
 exit 0

@@ -1,8 +1,8 @@
 # Dash source - rerun non-HANG / non-NO_MEM double failures
 
 # Ensure existence of the sibling test directory
-if [ ! -d ${TESTDIR} ]; then
-  mkdir -p ${TESTDIR}
+if [ ! -d ${SAVEDIR} ]; then
+  mkdir -p ${SAVEDIR}
 fi
 
 # Figure out where the list of failures resides
@@ -25,11 +25,11 @@ cat ${ALLFAILS} | sed >${FAILFAIL}   -n $( cat ${ALLFAILS} \
 cat ${FAILFAIL} | sed >${HANG}.txt   -n '/^[#] test: LockupDetected$/,/^$/p'
 cat ${FAILFAIL} | sed >${NO_MEM}.txt -n '/^[#] test: NoMem AbnormalExitDetected$/,/^$/p'
 cat ${FAILFAIL} | sed >${RERUN}.txt  -n '/^[#] test: \(LockupDetected\|NoMem AbnormalExitDetected\)$/,/^$/!p'
-echo '  ' All failures:'    ' ${ALLFAILS}
-echo '  ' All FAIL-FAIL-PASS: ${FAILFAIL}
-echo '  ' Out of memories:' ' ${NO_MEM}.txt
-echo '  ' Hangs:'           ' ${HANG}.txt
-echo '  ' Rerunning:'       ' ${RERUN}.txt
+echo '  ' All failures:'      ' ${ALLFAILS}
+echo '  ' All FAIL-FAIL-PASS:'' ${FAILFAIL}
+echo '  ' Out of memories:'   ' ${NO_MEM}.txt
+echo '  ' Hangs:'             ' ${HANG}.txt
+echo '  ' Rerunning:'         ' ${RERUN}.txt
 echo
 echo 'Rerunning double failures (apart from hang and out of memory cases).'
 echo

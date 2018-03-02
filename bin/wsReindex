@@ -1,12 +1,11 @@
-#!/bin/dash
+#!/bin/bash
 
 BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SRCDIR=${BINDIR}/source
 . ${SRCDIR}/get_WORKSPACE
 . ${HOME}/bin/source/get_WORKSPACE
 
-# Make workspace writeable and clean out obvious trash
-chmod -R u+w *
+# Clean out obvious trash
 rm -rf .sbtools/global .sbtools/path-hash.el* GPATH GRTAGS GTAGS ID
 
 # Regenerate matlab/toolbox/local/toolbox_cache-ARCH.xml
@@ -26,6 +25,10 @@ if [ -e ${HOME}/bin/mathworks-global ]
 then
     PATH=/usr/local/bin:${PATH} ${HOME}/bin/mathworks-global
 fi
+
+# Use src/cg_ir/ez.mk to derive a list of modules to index via sbcpptags
+cat matlab/src/cg_ir/ez.mk | sed -nre '/\$\(MAKE\) -s -C / s|^.* -s -C ../([^ ]*) .*$|matlab/src/\1|p' | sort >matlab/sbcpptags.cfg
+time -p sbcpptags -mods matlab/sbcpptags.cfg
 
 # Build emacs' WorkSpace Files index (for my wsf.el package)
 /usr/bin/emacs --batch --load ${HOME}/.emacs --eval='(load-library \"wsf\")' -f wsf--current-completions -f save-buffers-kill-emacs

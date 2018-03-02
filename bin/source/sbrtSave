@@ -2,7 +2,7 @@
 
 echo Saving to "${SAVERUN}".
 
-( mkdir -p ${TESTDIR} \
+( mkdir -p ${SAVEDIR} \
 ; rm -rf  ${SAVERUN} \
 ; cp -rf $s/qualify_sbruntests ${SAVERUN} \
 ; echo  $s/qualify_sbruntests copied to ${SAVERUN} \

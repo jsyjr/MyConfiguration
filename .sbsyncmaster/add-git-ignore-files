@@ -1,8 +1,6 @@
 #!/bin/dash
 echo BANG
 
-set -x
-
 append_gitignore_lines() {
     if [ ! -d .git ] ; then exit -1 ; fi
 
@@ -37,6 +35,7 @@ append_gitignore_lines <<EOF
 /.clusterdestination
 /.last_sunc
 /.perforce
+/.rtags-config
 /.sbcheck.*
 /build.glnxa64.log
 /changes.sbsmartbuild.mk
