@@ -181,6 +181,7 @@ append_gitignore_lines matlab/ <<EOF
 !/src/
 !/test/
 !/toolbox/
+sbcpptags.cfg
 EOF
 
 append_gitignore_lines matlab/src/ <<EOF
