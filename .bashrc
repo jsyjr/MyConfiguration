@@ -86,6 +86,7 @@ fi
 alias env='env | sort'
 alias cgir-02='rdesktop -g 1920x1600 -d mathworks -u jyates cgir-02-win64 &'
 alias dff='df -h /ws /sandbox/jyates / /home/jyates'
+alias changes='/mathworks/inside/labs/dev/matlab_coder_tools/bear/versions/0.1.x/bear-p4-changes.py -s'
 
 ###################################
 
@@ -112,7 +113,7 @@ if [ -d /mathworks ]; then
     alias sbl_sf=' sbruntests -local    all   -rerunusing jobarchive -runallunder test/toolbox/stateflow'
     alias sbl_all='sbruntests -local    all   -rerunusing jobarchive -testsuites Acgir_Aslrtw'
 
-    alias new-task='(cd /ws; sbrmtree TASK; sbclone -no-perforce Bcgir_task.latest_pass TASK)'
+    alias nws='sbclone -no-pdb'
 
     # if [ -d /sandbox/savadhan/sbtools ]; then
     #     if [ -f /sandbox/savadhan/sbtools/_bash_functions ]; then
