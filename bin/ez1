@@ -1,0 +1,10 @@
+#!/bin/bash
+
+BINDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SRCDIR=${BINDIR}/source
+. ${SRCDIR}/get_WORKSPACE
+
+cd ${WORKSPACE}/matlab/src/cg_ir
+cgmake DEBUG=1 -f ez.mk -ki -no-distcc -j24
+
+exit 0
