@@ -15,20 +15,21 @@ echo BACKUP= ${BACKUP}
 
 echo
 
-set -x
-
 sbbackup -opened
 
-# If local git repo is still within the workspace and if it
-# contains commits then move it to the sibling save area.
-if [ -d ${WORKGIT} ] && [ $(git rev-list --count BASE..HEAD) != "0" ]; then
+# If local git repo is local to the workspace and if it contains both
+# commits and a perforce branch then move it to the sibling save area.
+if [ -d ${WORKGIT} ] && \
+   [ $(git rev-list --count BASE..HEAD) != "0" ] && \
+   [ git branch --list | grep -q perforce ]; \
+then
     # Ensure existence of the sibling directory
     mkdir -p ${SAVEDIR}
     mv ${WORKGIT} ${SAVEGIT}
     ln -s ${SAVEGIT} ${WORKGIT}
 fi
 
-# If actually using the saved git repository then...
+# If actually using the saved git repository via a symbolic link then...
 if [ -h ${WORKGIT} ]; then
     # Save any outstand work (both modified and untracked files)
     git stash save --include-untracked
@@ -42,15 +43,22 @@ sbrmtree ${WORKSPACE}
 sbclone -no-pdb ${CLONED} ${WORKSPACE}
 cd ${WORKSPACE}
 
-# If the sibling save area contains a git repository then...
-if [ -d ${SAVEGIT} ]; then
-    # Use that in favor of the fresh repo from sbsyncmaster.
+# Check for a git repository in a sibling save area
+if [ ! -d ${SAVEGIT} ]; then
+    # No git repository found, simple restore the sbbackup
+    sbrestore -no-prompt -f -r $s/_sbbackup/${BACKUP}
+else
+    # Use sibling save area's git repo rather than syncmaster's fresh repo
     rm -rf ${WORKGIT}
     ln -s ${SAVEGIT} ${WORKGIT}
     git add -A matlab >/dev/null 2>&1
     JOB=$( sbver | sed -nre '{ /SyncFrom/ s|^.*/mathworks/devel/jobarchive/([^/]*/[^/]*)$|\1|gp }' )
     # Commit this .latest_pass as newest perforce state
     git commit -m "${JOB}" >/dev/null 2>&1
+
+    # Restore the backup
+    # sbrestore -no-prompt -f -r $s/_sbbackup/${BACKUP}
+    # git commit -m "_sbbackup/${BACKUP}" >/dev/null 2>&1
 
     # Back to master and merge newest changes from perforce
     git checkout master
@@ -59,5 +67,3 @@ if [ -d ${SAVEGIT} ]; then
     # Apply any stashed changes
     git stash apply --index
 fi
-
-sbrestore -no-prompt -f -r $s/_sbbackup/${BACKUP}

@@ -37,8 +37,12 @@ echo
 echo
 echo Retesting of ${WORKSPACE} is complete.
 echo
+echo Retested'     '- rerun: '' $(grep --count '[-]runsuite' ${RERUN}.txt)
+echo '  ' sbruntests -delete-previous-test-log-area -test-log-area ${RERUN}.area  ${SBRTFLAGS} ${RERUNFLAGS} -local all -lockup-minutes 10 -cfg ${RERUN}.txt
+echo
 echo Not retested - no_mem: $(grep --count '[-]runsuite' ${NO_MEM}.txt)
 echo '  ' sbruntests -delete-previous-test-log-area -test-log-area ${NO_MEM}.area ${SBRTFLAGS} ${RERUNFLAGS} -local 4   -lockup-minutes 20 -cfg ${NO_MEM}.txt -mlswitches -no-vmemorylimit
 echo
-echo Not retested - hang: '' $(grep --count '[-]runsuite' ${HANG}.txt)
+echo Not retested - hang: ' ' $(grep --count '[-]runsuite' ${HANG}.txt)
 echo '  ' sbruntests -delete-previous-test-log-area -test-log-area ${HANG}.area   ${SBRTFLAGS} ${RERUNFLAGS} -local 8   -lockup-minutes 40 -cfg ${HANG}.txt
+echo

@@ -54,6 +54,11 @@ CLUSTER=$( sbver \
 PREQUALINFO=$s/$( echo ${GECKS} | sed -r -e 's/ /_/g' )_sfbPrequalInfo_${CLUSTER}
 PREQUALFAIL=${PREQUALINFO}/testsuite_sbruntests/sbtest/failed_testsuites.txt
 
+echo
+echo PREQUALINFO= ${PREQUALINFO}
+echo PREQUALFAIL= ${PREQUALFAIL}
+echo
+
 # Zap PREQUALFAIL if it is not a true file
 if [ ! -e ${PREQUALFAIL} ]; then
    PREQUALFAIL=
