@@ -85,7 +85,9 @@ fi
 #alias l='ls -CF'
 alias env='env | sort'
 alias cgir-02='rdesktop -g 1920x1600 -d mathworks -u jyates cgir-02-win64 &'
-alias dff='df -h /ws /sandbox/jyates / /home/jyates'
+alias dff='df -h /ws /sandbox/jyates / /jyates /home/jyates'
+alias sma='ls -ltr /jyates/.sbsyncmaster/Bcgir_task.logs | tail'
+alias smh='ls -ltr /jyates/.sbsyncmaster/Bcgir_thin.logs | tail'
 alias changes='/mathworks/inside/labs/dev/matlab_coder_tools/bear/versions/0.1.x/bear-p4-changes.py -s'
 
 ###################################
