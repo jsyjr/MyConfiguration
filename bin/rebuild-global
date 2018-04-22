@@ -8,21 +8,18 @@ if [ ! -f "globash/globash.in" ]; then
   exit 1
 fi
 
+rm -rf *
+( cd /tmp ;  cvs -z3 -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/global co global )
+cp -r /tmp/global/* .
+rm -rf /tmp/global
+
 [ -e Makefile ] && make distclean
 
-# cd ${HOME}
-# rm -rf global
-# cvs -z3 -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/global co global
-# cd ${HOME}/repos/global
-
-cvs update
-
-sh reconf.sh
+chmod +x reconf.sh
+./reconf.sh
 ./configure --prefix=/usr/local --with-exuberant-ctags=/usr/local/bin/ctags --with-sqlite3
 
 sed -i -e 's/-g -O2/-march=native -mfpmath=387 -O3/' `find -name "Makefile*"` `find -name "libtool*"`
-
-# mkdir -p lib bin objects/qtools html latex man docbook perlmod rtf xml
 
 make -kj8
 make
