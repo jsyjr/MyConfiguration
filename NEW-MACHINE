@@ -14,6 +14,7 @@ sudo apt-get install google-chrome-stable
 
 
 # Script to install most recent cmake (awesome currently wants at least 3.0.0)
+# !! Add logic to detect and report missing $1
 cat >/tmp/cmake.sh <<EOF
 #!/bin/dash
 
@@ -21,7 +22,8 @@ RELEASE=$1
 
 cd /tmp
 sudo mkdir -p /usr/local/cmake/cmake-${RELEASE}
-wget https://cmake.org/files/v${RELEASE%.*}/cmake-${RELEASE}.tar.gz
+wget https://cmake.org/files/LatestRelease/cmake-${RELEASE}.tar.gz
+rm -rf cmake-${RELEASE}
 tar -xzf cmake-${RELEASE}.tar.gz
 cd /tmp/cmake-${RELEASE}
 ./bootstrap --prefix=/usr/local/cmake/cmake-${RELEASE} && make
@@ -115,7 +117,7 @@ sudo apt-get install \
   libappindicator1 \
   libbison-dev \
   libboost-all-dev \
-  libcgi-pm-perl 
+  libcgi-pm-perl \
   libclang-dev \
   libcurl4-gnutls-dev \
   libdbd-sqlite3-perl \
@@ -131,7 +133,7 @@ sudo apt-get install \
   libm17n-dev \
   libmagick++-dev \
   libmagickwand-dev \
-  libmailutils5-dev \
+  libmusl-dev \
   libncurses5-dev \
   libotf-dev \
   librsvg2-dev \
@@ -147,7 +149,6 @@ sudo apt-get install \
   msmtp \
   m4 \
   network-manager-openconnect-gnome \
-  pavucontrol \
   python-software-properties \
   silversearcher-ag \
   texinfo \
