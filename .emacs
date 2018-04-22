@@ -114,6 +114,12 @@
 ;; - package management
 ;;   consider https://github.com/Malabarba/paradox
 
+;; ;; See the Misc[ellaneous System] Events node of the Emacs Lisp manual:
+;; (global-set-key [usr1-signal]
+;;               (lambda ()
+;;                 (interactive)
+;;                 (save-buffers-kill-emacs t)))
+
 ;; swap caps lock and control
 ;; Sanjay Dixit's am package - add autoload cookies, use el-get
 ;; align
