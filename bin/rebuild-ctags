@@ -28,9 +28,9 @@ make
 rm -rf config.log
 
 sudo mkdir -p  /usr/local/bin /usr/local/share/man/man1 /usr/local/libexec/ctags/drivers
-sudo chmod a+w /usr/local/bin /usr/local/share/man/man1 /usr/local/libexec/ctags/drivers
+sudo chmod -R a+w /usr/local
 make install
-sudo chmod o-w /usr/local/bin /usr/local/share/man/man1 /usr/local/libexec/ctags/drivers
+sudo chmod -R o-w /usr/local
 
 sudo update-alternatives \
  --install /usr/bin/ctags                 ctags      /usr/local/bin/ctags 1 \
