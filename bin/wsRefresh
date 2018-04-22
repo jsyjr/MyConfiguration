@@ -5,16 +5,6 @@ SRCDIR=${BINDIR}/source
 . ${SRCDIR}/get_WORKSPACE
 . ${SRCDIR}/sbrtEnv
 
-echo
-
-CLONED=$(sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom: /*mathworks/devel/jobarchive/\([^/]*\)/.*$|\1|').latest_pass
-echo CLONED= ${CLONED}
-
-BACKUP=local_$(hostname)$(echo ${WORKSPACE} | sed -e 's|/|_|g')_backup/latest
-echo BACKUP= ${BACKUP}
-
-echo
-
 sbbackup -opened
 
 # If local git repo is local to the workspace and if it contains both
