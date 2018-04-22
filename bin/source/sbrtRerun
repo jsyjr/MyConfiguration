@@ -6,11 +6,11 @@ if [ ! -d ${SAVEDIR} ]; then
 fi
 
 # Figure out where the list of failures resides
-if [ -z "${PREQUALFAIL}" ]; then
-    ln -sf ${SAVERUN}/glnxa64/sbtest/failed_testsuites.txt ${ALLFAILS}
-else
+#if [ -z "${PREQUALFAIL}" ] || [${SAVERUN}/glnxa64/sbtest/failed_testsuites.txt -nt ${PREQUALFAIL}]; then
+#    ln -sf ${SAVERUN}/glnxa64/sbtest/failed_testsuites.txt ${ALLFAILS}
+#else
     ln -sf ${PREQUALFAIL} ${ALLFAILS}
-fi
+#fi
 
 echo Triaging failures...
 

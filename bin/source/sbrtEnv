@@ -1,12 +1,20 @@
 # Dash source to establish a various symbols
 
+if [ -z "${WSNAME}" ]; then
+    echo Required workspace name is missing.
+    exit 1
+elif [ ! -d ${WORKSPACE} ] ; then
+    echo Workspace "${WORKSPACE}" does not exist.
+    exit 1
+fi
+
 SBRTFLAGS="-max-exec-minutes 60 -sbscanlog-final-user-patterns cgir_profiling"
 RERUNFLAGS="-noretryfailedtests -rerunusing nothing"
 
-QUALIFY=/mathworks/devel/sandbox/${USER}/qualify
-QUALFAIL=${QUALIFY}_sbruntests/glnxa64/sbtest/failed_testsuites.txt
+# QUALIFY=/mathworks/devel/sandbox/${USER}/qualify
+# QUALFAIL=${QUALIFY}_sbruntests/glnxa64/sbtest/failed_testsuites.txt
 
-SAVEDIR=${WORKSPACE}_test
+SAVEDIR=${LOCALWS}_test
 SAVEGIT=${SAVEDIR}/git
 SAVERUN=${SAVEDIR}/sbruntests.area
 
@@ -15,11 +23,3 @@ FAILFAIL=${SAVEDIR}/failfail.txt
 RERUN=${SAVEDIR}/rerun
 HANG=${SAVEDIR}/hang
 NO_MEM=${SAVEDIR}/no_mem
-
-if [ -z "${WSNAME}" ]; then
-    echo Required workspace name is missing.
-    exit 1
-elif [ ! -d ${WORKSPACE} ] ; then
-    echo Workspace "${WORKSPACE}" does not exist.
-    exit 1
-fi
