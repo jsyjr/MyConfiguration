@@ -5,6 +5,7 @@ SRCDIR=${BINDIR}/source
 . ${SRCDIR}/get_WORKSPACE
 
 cd ${WORKSPACE}/matlab/src/cg_ir
+cgmake -no-distcc -j10 prebuild
 cgmake DEBUG=1 -f ez.mk -ki -no-distcc -j24
 
 exit 0

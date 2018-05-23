@@ -184,13 +184,15 @@ append_gitignore_lines matlab/ <<EOF
 sbcpptags.cfg
 EOF
 
-# These rules reflect the contents of cg_ir/ez.mk
+# These rules reflect the contents of cg_ir/ez.mk (/include/... has mfl stuff)
 
 append_gitignore_lines matlab/src/ <<EOF
 /*/
 !/cg_ir/
 !/cgir_*/
 !/eml/
+!/half_precision/
+!/include/
 !/rtw_core/
 EOF
 

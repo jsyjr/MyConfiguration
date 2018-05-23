@@ -25,7 +25,7 @@ WSNAME=${WORKSPACE##*/}
 
 LOCALWS=${WORKSPACE}
 if [ -L ${WORKSPACE}/SBSredirect ] ; then
-    WORKSPACE=$(readlink -f SBSredirect)
+    WORKSPACE=$(readlink -f ${WORKSPACE}/SBSredirect)
 fi
 
 if [ ! -d ${WORKSPACE}/matlab/src ] ; then
@@ -43,7 +43,7 @@ fi
 # Before changing directory ensure that we return to ${PWD}
 trap "cd ${PWD}" EXIT
 
-cd ${WORKSPACE}
+cd ${LOCALWS}
 
 CLONED=$(sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom: /*mathworks/devel/jobarchive/\([^/]*\)/.*$|\1|').latest_pass
 BACKUP=local_$(hostname)$(echo ${WORKSPACE} | sed -e 's|/|_|g')_backup/latest

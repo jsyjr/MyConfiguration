@@ -4,7 +4,7 @@
 
 ( cd /ws \
 ; for DIR in * ; do \
-    [ -d $DIR ] && [ -d $DIR/.sbtools ] && \
+    [ -d $DIR ] && [ -f $DIR/mw_anchor ] && \
     [ $DIR != "Bcgir_task.latest_pass" ] &&  \
     [ $DIR != "Bcgir_thin.latest_pass" ] &&  \
        ( cd /ws/$DIR \

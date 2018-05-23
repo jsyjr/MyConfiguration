@@ -108,12 +108,6 @@ if [ -d /mathworks ]; then
 
     alias sbn='sb -nodesktop -nosplash -r "opengl info"'
     alias sbnj='sb -nodesktop -nosplash -nojvm -r "opengl info"'
-    alias sbf='    sbruntests -autofarm devel -rerunusing jobarchive'
-    alias sbf_sf=' sbruntests -autofarm devel -rerunusing jobarchive -runallunder test/toolbox/stateflow'
-    alias sbf_all='sbruntests -autofarm devel -rerunusing jobarchive -testsuites Acgir_Aslrtw'
-    alias sbl='    sbruntests -local    all   -rerunusing jobarchive'
-    alias sbl_sf=' sbruntests -local    all   -rerunusing jobarchive -runallunder test/toolbox/stateflow'
-    alias sbl_all='sbruntests -local    all   -rerunusing jobarchive -testsuites Acgir_Aslrtw'
 
     alias nws='sbclone -no-pdb TASK'
 

@@ -5,6 +5,12 @@ SRCDIR=${BINDIR}/source
 . ${SRCDIR}/get_WORKSPACE
 . ${SRCDIR}/sbrtEnv
 
+if [ -L ${LOCALWS}/SBSredirect ] ; then
+    echo "SBSreditect -> $(readlink -f ${LOCALWS}/SBSredirect)"
+    mw sbs clone discard
+    rm ${LOCALWS}/SBSreditect
+fi
+
 sbbackup -opened
 
 # If local git repo is local to the workspace and if it contains both
@@ -28,10 +34,10 @@ if [ -h ${WORKGIT} ]; then
 fi
 
 # Discard the old workspace and reclone it from the current .latest_pass
-cd ..
-sbrmtree ${WORKSPACE}
-sbclone -no-pdb ${CLONED} ${WORKSPACE}
-cd ${WORKSPACE}
+cd /ws
+sbrmtree ${LOCALWS}
+sbclone -no-pdb ${CLONED} ${LOCALWS}
+cd ${LOCALWS}
 
 # Check for a git repository in a sibling save area
 if [ ! -d ${SAVEGIT} ]; then

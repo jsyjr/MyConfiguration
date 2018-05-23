@@ -1337,6 +1337,8 @@ word."
     (re-search-forward regexp nil t)
     (replace-match "" nil nil)))
 
+(put 'narrow-to-region 'disabled nil)
+
 ;;}}}
 ;;{{{  White space hygiene
 
