@@ -2,4 +2,4 @@
 SMDIR=${HOME}/.sbsyncmaster
 LOGDIR=${SMDIR}/${CLUSTER}.logs
 
-sbsyncmaster -sbstop -C /ws -r ${CLUSTER} -no-perforce -log-dir ${LOGDIR} -cfg ${SMDIR}/git-enabled-workspace.cfg
+nice sbsyncmaster -sbstop -C /ws -r ${CLUSTER} -no-perforce -log-dir ${LOGDIR} -cfg ${SMDIR}/git-enabled-workspace.cfg
