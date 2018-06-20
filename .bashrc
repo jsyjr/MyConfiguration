@@ -88,7 +88,10 @@ alias cgir-02='rdesktop -g 1920x1600 -d mathworks -u jyates cgir-02-win64 &'
 alias dff='df -h /ws /sandbox/jyates / /jyates /home/jyates'
 alias sma='ls -ltr /jyates/.sbsyncmaster/Bcgir_task.logs | tail'
 alias smh='ls -ltr /jyates/.sbsyncmaster/Bcgir_thin.logs | tail'
-alias changes='/mathworks/inside/labs/dev/matlab_coder_tools/bear/versions/0.1.x/bear-p4-changes.py -s'
+alias cn="p4 opened|grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|uniq|xargs p4 changelist -o|sed -nre '/^Change:/ { s/Change:.([0-9]+).*/\1/gp }'"
+alias changelist="p4 opened|grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|uniq|xargs p4 changelist -o"
+alias gecks="p4 opened|grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|uniq|xargs p4 describe|sed -nre '/^g[0-9]+/ { s/(g[0-9]+).*/\1/gp }'"
+alias submit="sbsubmit -no-clickable-shell -skip toptesters -skip indent -skip sbedits -cn \$(p4 opened|grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|uniq|xargs p4 changelist -o|sed -nre '/^Change:/ { s/Change:.([0-9]+).*/\1/gp }')"
 
 ###################################
 
