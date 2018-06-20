@@ -193,7 +193,7 @@ append_gitignore_lines matlab/src/ <<EOF
 !/eml/
 !/half_precision/
 !/include/
-!/rtw_core/
+!/rtw*/
 EOF
 
 append_gitignore_lines matlab/test/ <<EOF
