@@ -50,8 +50,8 @@ BACKUP=local_$(hostname)$(echo ${WORKSPACE} | sed -e 's|/|_|g')_backup/latest
 
 # Determine any gecks attached to the workspace
 GECKS=$( p4 opened \
-       | grep 'edit change' \
-       | sed -r -e 's/.*edit change ([0-9]+).*/\1/g' \
+       | grep ' change' \
+       | sed -r -e 's/.* change ([0-9]+).*/\1/g' \
        | sort \
        | uniq \
        | xargs p4 describe \
