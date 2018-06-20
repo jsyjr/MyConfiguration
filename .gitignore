@@ -40,6 +40,7 @@ st-light
 # access during distributed builds:
 # ~/runLogs
 #
+/.*fakexinerama
 /.ICEauthority
 /.Xauthority
 /.Xconfig*
@@ -51,8 +52,8 @@ st-light
 /.config
 /.dmrc
 /.esd_auth
-/.*fakexinerama
 /.fehbg
+/.flexlmrc
 /.fontconfig
 /.gksu.lock
 /.gtk-bookmarks
@@ -68,17 +69,21 @@ st-light
 /.p4config
 /.p4enviro
 /.p4tickets
+/.pdfbox.cache
 /.pinerc
 /.pki
 /.plan
 /.post-review-cookies.txt
 /.pulse-cookie
+/.recently-used
 /.repo_.gitconfig.json
 /.repopickle_.gitconfig
 /.sudo_as_admin_successful
 /.viminfo
 /.vimproj.xml
 /.vimrc
+/.wget-hsts
+/.xfce4-session.verbose-log
 /.xsession-errors
 /.xsession-errors.old
 /.xsession-x2go-errors
@@ -100,6 +105,8 @@ st-light
 
 # Hidden directories in the root of the home directory
 #/.*/ -- Same rationale as for /.* (see previous comment).
+.sbsyncmaster/Bcgir_task.logs/
+.sbsyncmaster/Bcgir_thin.logs/
 /.AndroidStudio1.2/
 /.BullseyeCoverage/
 /.Xilinx/
@@ -109,8 +116,8 @@ st-light
 /.arduino15/
 /.bear/
 /.cache/
-/.ccache/
 /.ccache-sbinfo/
+/.ccache/
 /.cgtools/
 /.compiz/
 /.config/
@@ -123,6 +130,7 @@ st-light
 /.felix/
 /.fltk/
 /.fontconfig/
+/.fr-72lRIo/
 /.freerdp/
 /.gephi/
 /.gimp-2.8/
@@ -141,9 +149,11 @@ st-light
 /.matlab/
 /.mission-control/
 /.mozilla/
+/.nano/
 /.nedit/
 /.nv/
 /.oracle_jre_usage/
+/.p4admin/
 /.p4merge/
 /.p4qt/
 /.pki/
@@ -156,9 +166,8 @@ st-light
 /.speech-dispatcher/
 /.ssh/
 /.subversion/
+/.swt/
 /.synaptic/
-.sbsyncmaster/Bcgir_task.logs/
-.sbsyncmaster/Bcgir_thin.logs/
 /.terminfo/
 /.texmf-var/
 /.thumbnails/
@@ -167,6 +176,7 @@ st-light
 /.vim/
 /.vmware/
 /.vnc/
+/.vscode/
 /.webex/
 /.winswitch/
 /.x2go/
