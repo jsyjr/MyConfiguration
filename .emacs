@@ -3403,6 +3403,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
  '(mediawiki-pop-buffer-hook nil)
  '(mediawiki-site-alist
  '(("Wikipedia" "http://en.wikipedia.org/w/" "username" "password" "" "Main Page")
+   ("Mathworks User:Jyates" "http://inside.mathworks.com/wiki/" "jyates" "" "" "User:Jyates")
    ("Mathworks CGIR" "http://inside.mathworks.com/wiki/" "jyates" "" "" "Category:CGIR")))
  '(mediawiki-site-default "Mathworks CGIR")
  )
