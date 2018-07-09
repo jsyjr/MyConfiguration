@@ -4073,7 +4073,7 @@ use either \\[customize] or the function `phw-mode'." t)
 
 ;; amake supported find-file, grep and
 
-;;(keydef    "C-x , f"    (sbf-find-file))
+;; (keydef "C-x , f"       (sbf-find-file))
 ;; (keydef "C-x , f"       am-find-file)
 ;; (keydef "C-x , 4 f"     am-find-file-other-window)
 ;; (keydef "C-x , g"       am-grep)
