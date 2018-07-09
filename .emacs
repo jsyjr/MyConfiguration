@@ -2491,6 +2491,11 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;}}}
 ;;{{{  auto-fill and filladapt
 
+;; More recent version from Stefan Monnier here:
+;;   http://elpa.gnu.org/packages/filladapt.html
+;; Seems to still lack this patch:
+;;   http://cc-mode.sourceforge.net/filladapt.el.diff
+
 ;; Redirect to a patched version more compatible with cc-mode
 (add-to-list 'el-get-sources
              '(:name filladapt
