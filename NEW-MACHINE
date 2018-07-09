@@ -171,14 +171,15 @@ cd /tmp
 cat >/tmp/ripgrep.sh <<EOF
 #!/bin/dash
 
-RELEASE=$1
+RELEASE=\$1
 
-wget https://github.com/BurntSushi/ripgrep/releases/download/${RELEASE}/ripgrep-${RELEASE}-x86_64-unknown-linux-musl.tar.gz
-tar -xzf ripgrep-${RELEASE}-x86_64-unknown-linux-musl.tar.gz
-cp ripgrep-${RELEASE}-x86_64-unknown-linux-musl/rg ~/bin/rg
+wget https://github.com/BurntSushi/ripgrep/releases/download/\${RELEASE}/ripgrep-\${RELEASE}-x86_64-unknown-linux-musl.tar.gz
+tar -xzf ripgrep-\${RELEASE}-x86_64-unknown-linux-musl.tar.gz
+cp ripgrep-\${RELEASE}-x86_64-unknown-linux-musl/rg ~/bin/rg
 EOF
+chmod a+x ./ripgrep.sh
 
-./ripgrep X.Y.Z
+./ripgrep.sh X.Y.Z
 
 
 # Install most recent autoconf tools (emacs currently wants at least 2.65)
