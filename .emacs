@@ -309,6 +309,8 @@
 
 (add-to-list 'load-path "~/emacs/wsf")
 
+;; (add-to-list 'load-path "~/emacs/rtags")
+
 (let ((entries (reverse (directory-files el-get-dir t))))
   (mapc (lambda (path)
           (when (and (file-directory-p path)
@@ -3160,6 +3162,29 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; replace mathworks-sblocate and mathworks-sblocate-gendb
   (define-key sb-prefix-map "f" 'wsf-ivy-find-file)
   (define-key sb-prefix-map "F" 'wsf-force-from-scratch)
+
+  ;; (add-to-list 'el-get-sources
+  ;;              '(:name rtags
+  ;;       	       :description "Mathworks in-house version of rtags"
+  ;;                      :type        http
+  ;;                      :url         "file://localhost/hub/share/sbtools/apps/emacs-add-ons/src/rtags/rtags.el"
+  ;;       	       :features    rtags))
+  ;; (my/el-get-install "rtags")
+
+  ;; (require 'load-rtags)
+
+  ;; (defvar tags-prefix-map
+  ;;   (let ((map (make-sparse-keymap)))
+  ;;     (define-key map "."   'rtags-find-symbol)
+  ;;     (define-key map ">"   'rtags-find-symbol)
+  ;;     (define-key map ","   'rtags-find-references)
+  ;;     (define-key map "<"   'rtags-find-references)
+  ;;     (define-key map ";"   'rtags-find-file)
+  ;;     (define-key map "C-c" 'sbcpptags)
+  ;;     (define-key map "?"   'sbcpptags-quick-help)
+  ;;     map)
+  ;;   "The prefix map for tags-oriented commands.")
+  ;; (global-set-key "\C-ct" tags-prefix-map)
 
   ;; (define-key c-mode-base-map (kbd "TAB") 'c-indent-command)
   ;; (define-key c-mode-base-map (kbd "RET") 'newline)
