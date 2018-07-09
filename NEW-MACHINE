@@ -82,6 +82,9 @@ echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sourc
 # sudo add-apt-repository ppa:webupd8team/java
 sudo apt-get update
 sudo apt-get install fonts-dejavu # TEMPORARY: http://httpredir.debian.org/debian/ jessie main as a repository
+#  heirloom-mailx \
+#  libmusl-dev \
+#  python-software-properties \
 sudo apt-get install \
   apache2 \
   asciidoc \
@@ -111,7 +114,6 @@ sudo apt-get install \
   gparted \
   gperf \
   graphviz \
-  heirloom-mailx \
   imagemagick \
   inotify-tools \
   libappindicator1 \
@@ -133,7 +135,6 @@ sudo apt-get install \
   libm17n-dev \
   libmagick++-dev \
   libmagickwand-dev \
-  libmusl-dev \
   libncurses5-dev \
   libotf-dev \
   librsvg2-dev \
@@ -149,7 +150,6 @@ sudo apt-get install \
   msmtp \
   m4 \
   network-manager-openconnect-gnome \
-  python-software-properties \
   silversearcher-ag \
   texinfo \
   texlive-fonts-extra \
