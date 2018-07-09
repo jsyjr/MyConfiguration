@@ -3258,10 +3258,14 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (when (or (not (boundp 'skip-sbtools-matlab-mode-setup))
             (not skip-sbtools-matlab-mode-setup))
 
-    (add-to-list 'el-get-sources 'matlab-mode)
-    (my/el-get-install "matlab-mode")
+    (add-to-list 'el-get-sources
+	         '(:name matlab
+		         :description "Mathworks in-house version of matlab-mode"
+                         :type        http
+                         :url         "file://localhost/hub/share/sbtools/apps/emacs-add-ons/src/matlab-emacs/matlab-emacs/matlab.el"
+		         :features    matlab))
+    (my/el-get-install "matlab")
 
-    (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/matlab-emacs" t)
     (autoload #'matlab-mode "matlab" "MATLAB Editing Mode" t)
     (autoload #'matlab-shell "matlab" "Interactive MATLAB mode." t)
 
