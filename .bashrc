@@ -80,12 +80,14 @@ if [ "$TERM" != "dumb" ]; then
 fi
 
 # some more ls aliases
-#alias ll='ls -l'
-#alias la='ls -A'
-#alias l='ls -CF'
+#alias ll='ls -lhF'
+#alias lla='ls -lhFA'
+#alias la='ls -hA'
+#alias l='ls -F'
 alias env='env | sort'
 alias cgir-02='rdesktop -g 1920x1600 -d mathworks -u jyates cgir-02-win64 &'
 alias dff='df -h /ws /sandbox/jyates / /jyates /home/jyates'
+alias sshmw='ssh jyates@jyates-deb9-64.dhcp.mathworks.com'
 alias sma='ls -ltr /jyates/.sbsyncmaster/Bcgir_task.logs | tail'
 alias smh='ls -ltr /jyates/.sbsyncmaster/Bcgir_thin.logs | tail'
 alias cn="p4 opened|grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|uniq|xargs p4 changelist -o|sed -nre '/^Change:/ { s/Change:.([0-9]+).*/\1/gp }'"
