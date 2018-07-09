@@ -120,6 +120,8 @@
 ;;                 (interactive)
 ;;                 (save-buffers-kill-emacs t)))
 
+;; See Emanuel Berg's error.el: http://user.it.uu.se/~embe8573/emacs-init/error.el
+
 ;; swap caps lock and control
 ;; Sanjay Dixit's am package - add autoload cookies, use el-get
 ;; align
