@@ -7,22 +7,21 @@
  '(ac-auto-start nil)
  '(ac-comphist-file "~/.emacs.d/auto-complete/history.dat")
  '(ac-delay 0.5)
- '(ac-dictionary-directories (quote ("~/emacs/auto-complete/mode-dicts")))
- '(ac-dictionary-files (quote ("~/emacs/auto-complete/user-dict")))
+ '(ac-dictionary-directories '("~/emacs/auto-complete/mode-dicts"))
+ '(ac-dictionary-files '("~/emacs/auto-complete/user-dict"))
  '(ac-use-menu-map t)
- '(activate-mark-hook (quote my/turn-on-delete-selection-mode) t)
+ '(activate-mark-hook 'my/turn-on-delete-selection-mode t)
  '(ansi-color-names-vector
    ["black" "#ee9090" "pale green" "khaki" "steelblue1" "dark violet" "DarkSlateGray1" "white"])
  '(apropos-do-all t)
  '(asm-comment-char 35)
  '(auto-save-file-name-transforms
-   (quote
-    (("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'" "/tmp/\\2" t)
-     (".*" "~/.emacs.d/autosave/\\1" t))))
+   '(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'" "/tmp/\\2" t)
+     (".*" "~/.emacs.d/autosave/\\1" t)))
  '(auto-save-list-file-prefix "~/.emacs.d/autosave-list/saves-")
  '(backup-by-copying t)
- '(backup-directory-alist (quote ((".*" . "/home/jyates/.emacs.d/backup/"))))
- '(before-save-hook (quote (copyright-update time-stamp)))
+ '(backup-directory-alist '((".*" . "/home/jyates/.emacs.d/backup/")))
+ '(before-save-hook '(copyright-update time-stamp))
  '(blink-cursor-blinks 0)
  '(blink-cursor-delay 0)
  '(c-tab-always-indent nil)
@@ -31,22 +30,20 @@
  '(comint-input-ignoredups t)
  '(comint-input-ring-size 5000)
  '(comint-scroll-to-bottom-on-input t)
- '(compilation-scroll-output (quote first-error))
+ '(compilation-scroll-output 'first-error)
  '(completion-ignored-extensions
-   (quote
-    (".a" ".aux" ".bak" ".bbl" ".bin" ".blg" ".class" ".cp" ".cps" ".dvi" ".elc" ".fas" ".fmt" ".fn" ".fns" ".glo" ".idx" ".ky" ".kys" ".lib" ".ln" ".lof" ".log" ".lot" ".map" ".o" ".obj" ".pg" ".pgs" ".pyc" ".toc" ".tp" ".tps" ".vr" ".vrs" ".x86f" "~")))
+   '(".a" ".aux" ".bak" ".bbl" ".bin" ".blg" ".class" ".cp" ".cps" ".dvi" ".elc" ".fas" ".fmt" ".fn" ".fns" ".glo" ".idx" ".ky" ".kys" ".lib" ".ln" ".lof" ".log" ".lot" ".map" ".o" ".obj" ".pg" ".pgs" ".pyc" ".toc" ".tp" ".tps" ".vr" ".vrs" ".x86f" "~"))
  '(copyright-year-ranges t)
  '(cua-enable-cua-keys nil)
  '(cua-enable-cursor-indications t)
  '(cua-mode t nil (cua-base))
- '(cua-normal-cursor-color (quote (bar . "Orange")))
- '(cua-overwrite-cursor-color (quote (box . "HotPink1")))
- '(cua-read-only-cursor-color (quote (box . "SeaGreen1")))
+ '(cua-normal-cursor-color '(bar . "Orange"))
+ '(cua-overwrite-cursor-color '(box . "HotPink1"))
+ '(cua-read-only-cursor-color '(box . "SeaGreen1"))
  '(custom-buffer-done-kill t)
  '(custom-theme-directory "~/emacs/themes/")
  '(default-frame-alist
-    (quote
-     ((foreground-color . "white")
+    '((foreground-color . "white")
       (background-color . "black")
       (font . "dina-13")
       (cursor-type . bar)
@@ -55,25 +52,24 @@
       (vertical-scroll-bars)
       (menu-bar-lines . 0)
       (tool-bar-lines . 0)
-      (icon-type . nill))))
+      (icon-type . nill)))
  '(delete-old-versions t)
  '(dired-listing-switches "-agGh --group-directories-first")
  '(display-buffer-reuse-frames t)
- '(ediff-cmp-options (quote ("diff --histogram")))
+ '(ediff-cmp-options '("diff --histogram"))
  '(ediff-cmp-program "git")
  '(ediff-keep-variants nil)
  '(ediff-make-buffers-readonly-at-startup t)
- '(ediff-split-window-function (quote split-window-horizontally))
+ '(ediff-split-window-function 'split-window-horizontally)
  '(ediff-use-last-dir t)
- '(ediff-window-setup-function (quote ediff-setup-windows-plain))
+ '(ediff-window-setup-function 'ediff-setup-windows-plain)
  '(el-get-git-shallow-clone t)
  '(eol-mnemonic-mac ":")
  '(eol-mnemonic-undecided "?")
  '(eol-mnemonic-unix "/")
  '(eshell-aliases-file "/home/jyates/emacs/eshell/alias")
  '(eshell-modules-list
-   (quote
-    (eshell-alias eshell-banner eshell-basic eshell-cmpl eshell-dirs eshell-glob eshell-hist eshell-ls eshell-pred eshell-prompt eshell-script eshell-term)))
+   '(eshell-alias eshell-banner eshell-basic eshell-cmpl eshell-dirs eshell-glob eshell-hist eshell-ls eshell-pred eshell-prompt eshell-script eshell-term))
  '(explicit-shell-file-name "/bin/bash")
  '(ffap-require-prefix t)
  '(folding-advice-instantiate nil)
@@ -86,16 +82,13 @@
  '(gdb-stack-buffer-addresses t)
  '(gdb-thread-buffer-arguments nil)
  '(git-commit-setup-hook
-   (quote
-    (git-commit-save-message git-commit-setup-changelog-support git-commit-turn-on-auto-fill git-commit-propertize-diff with-editor-usage-message)))
+   '(git-commit-save-message git-commit-setup-changelog-support git-commit-turn-on-auto-fill git-commit-propertize-diff with-editor-usage-message))
  '(global-auto-complete-mode t)
  '(global-font-lock-mode t)
  '(global-hl-line-mode t)
  '(graphviz-dot-preview-extension "svg")
  '(grep-command "grep --color -nH -e ")
- '(grep-find-command
-   (quote
-    ("find . -type f -exec grep --color -nH -e  {} +" . 42)))
+ '(grep-find-command '("find . -type f -exec grep --color -nH -e  {} +" . 42))
  '(grep-find-template "find <D> <X> -type f <F> -exec grep <C> -nH -e <R> {} +")
  '(grep-highlight-matches nil)
  '(grep-template "grep <X> <C> -nH -e <R> <F>")
@@ -103,12 +96,11 @@
  '(gud-gdb-command-name "gdb -i=mi")
  '(hl-line-sticky-flag nil)
  '(indent-tabs-mode nil)
- '(indicate-buffer-boundaries (quote right))
+ '(indicate-buffer-boundaries 'right)
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
  '(initial-frame-alist
-   (quote
-    ((foreground-color . "white")
+   '((foreground-color . "white")
      (background-color . "black")
      (font . "dina-13")
      (cursor-type . bar)
@@ -117,17 +109,16 @@
      (vertical-scroll-bars)
      (menu-bar-lines . 0)
      (tool-bar-lines . 0)
-     (icon-type . nill))))
+     (icon-type . nill)))
  '(initial-scratch-message nil)
- '(isearch-mode-end-hook (quote my/enter-again-if-enter) t)
+ '(isearch-mode-end-hook 'my/enter-again-if-enter t)
  '(ispell-personal-dictionary "~/emacs/aspell.en.pws")
  '(ivy-count-format "(%d/%d) ")
  '(ivy-magic-tilde nil)
  '(ivy-mode t)
  '(ivy-sort-matches-functions-alist
-   (quote
-    ((t . ivy--prefix-sort)
-     (ivy-switch-buffer . ivy-sort-function-buffer))))
+   '((t . ivy--prefix-sort)
+     (ivy-switch-buffer . ivy-sort-function-buffer)))
  '(ivy-use-virtual-buffers t)
  '(kept-old-versions 5)
  '(kill-whole-line t)
@@ -137,30 +128,28 @@
  '(ls-lisp-ignore-case t)
  '(magit-auto-revert-mode t)
  '(magit-backup-mode nil)
- '(magit-completing-read-function (quote ivy-completing-read))
+ '(magit-completing-read-function 'ivy-completing-read)
  '(magit-emacsclient-executable "/etc/alternatives/emacsclient")
- '(magit-refs-show-commit-count (quote all))
- '(magit-repository-directories (quote ("~/repos/awesome" "~/repos/doxygen" "~/repos/st")))
+ '(magit-refs-show-commit-count 'all)
+ '(magit-repository-directories '("~/repos/awesome" "~/repos/doxygen" "~/repos/st"))
  '(magit-repository-directories-depth 0 t)
  '(magit-save-repository-buffers nil)
  '(mediawiki-pop-buffer-hook nil)
  '(mediawiki-site-alist
-   (quote
-    (("Wikipedia" "http://en.wikipedia.org/w/" "username" "password" "" "Main Page")
-     ("Mathworks CGIR" "http://inside.mathworks.com/wiki/" "jyates" "" "" "Category:CGIR"))))
+   '(("Wikipedia" "http://en.wikipedia.org/w/" "username" "password" "" "Main Page")
+     ("Mathworks User:Jyates" "http://inside.mathworks.com/wiki/" "jyates" "" "" "User:Jyates")
+     ("Mathworks CGIR" "http://inside.mathworks.com/wiki/" "jyates" "" "" "Category:CGIR")))
  '(mediawiki-site-default "Mathworks CGIR")
  '(message-log-max 10000)
  '(minibuffer-frame-alist
-   (quote
-    ((height . 2)
+   '((height . 2)
      (fullscreen . fullwidth)
      (user-size . t)
      (top - 0)
      (left . 0)
-     (user-position . t))))
+     (user-position . t)))
  '(mode-line-format
-   (quote
-    ("%e" mode-line-window-id
+   '("%e" mode-line-window-id
      #("-" 0 1
        (help-echo "mouse-1: Select (drag to resize)
 mouse-2: Make current window occupy enitre frame
@@ -191,65 +180,55 @@ mouse-3: Remove current window from display"))
      #("-%-" 0 3
        (help-echo "mouse-1: Select (drag to resize)
 mouse-2: Make current window occupy enitre frame
-mouse-3: Remove current window from display")))))
- '(mode-line-position (quote (:eval (my/position-widget))) t)
- '(next-error-hook (quote compile-goto-error))
- '(next-error-recenter (quote (4)))
+mouse-3: Remove current window from display"))))
+ '(mode-line-position '(:eval (my/position-widget)) t)
+ '(next-error-hook 'compile-goto-error)
+ '(next-error-recenter '(4))
  '(org-default-notes-file "~/org/capture.org")
  '(org-hide-leading-stars t)
  '(org-mobile-directory "~/Dropbox/MobileOrg")
- '(org-mobile-files (quote (org-agenda-files "~/org")))
+ '(org-mobile-files '(org-agenda-files "~/org"))
  '(org-modules
-   (quote
-    (org-docview org-info org-habit org-inlinetask org-protocol org-mouse)))
+   '(org-docview org-info org-habit org-inlinetask org-protocol org-mouse))
  '(org-support-shift-select t)
  '(p4-global-key-prefix "p")
  '(package-archives
-   (quote
-    (("gnu" . "http://elpa.gnu.org/packages/")
-     ("melpa" . "https://melpa.org/packages/"))))
+   '(("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa" . "https://melpa.org/packages/")))
+ '(package-selected-packages '(async))
  '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)))
  '(pretty-control-l-mode t)
  '(recentf-mode t)
  '(recentf-save-file "~/.emacs.d/recentf")
- '(require-final-newline (quote query))
- '(ripgrep-arguments (quote ("--no-ignore")))
+ '(require-final-newline 'query)
+ '(ripgrep-arguments '("--no-ignore"))
  '(safe-local-variable-values
-   (quote
-    ((eval add-to-list
-           (quote auto-mode-alist)
-           (quote
-            ("\\.cgr\\'" . c++-mode)))
-     (eval add-to-list
-           (quote auto-mode-alist)
-           (quote
-            ("\\.inc\\'" . c++-mode)))
-     (eval add-to-list
-           (quote auto-mode-alist)
-           (quote
-            ("\\.wiki\\'" . mediawiki-mode)))
+   '((eval add-to-list 'auto-mode-alist
+           '("\\.cgr\\'" . c++-mode))
+     (eval add-to-list 'auto-mode-alist
+           '("\\.inc\\'" . c++-mode))
+     (eval add-to-list 'auto-mode-alist
+           '("\\.wiki\\'" . mediawiki-mode))
      (eval ignore-errors "Write-contents-functions is a buffer-local alternative to before-save-hook"
-           (add-hook
-            (quote write-contents-functions)
-            (lambda nil
-              (delete-trailing-whitespace)
-              nil))
-           (require-maybe
-            (quote whitespace))
+           (add-hook 'write-contents-functions
+                     (lambda nil
+                       (delete-trailing-whitespace)
+                       nil))
+           (require-maybe 'whitespace)
            "Sometimes the mode needs to be toggled off and on."
            (whitespace-mode 0)
            (whitespace-mode 1))
      (whitespace-line-column . 80)
      (whitespace-style face tabs trailing lines-tail)
      (folded-file . t)
-     (folding-mode . t))))
+     (folding-mode . t)))
  '(scalable-fonts-allowed t)
  '(scroll-conservatively 1)
- '(send-mail-function (quote mailclient-send-it))
- '(server-switch-hook (quote (my/pop-file-name-history)))
+ '(send-mail-function 'mailclient-send-it)
+ '(server-switch-hook '(my/pop-file-name-history))
  '(server-temp-file-regexp "^/tmp/\\|.*\\.tmp")
- '(server-window (quote pop-to-buffer))
- '(shell-mode-hook (quote (ansi-color-for-comint-mode-on)))
+ '(server-window 'pop-to-buffer)
+ '(shell-mode-hook '(ansi-color-for-comint-mode-on))
  '(show-paren-delay 0)
  '(show-paren-mode t)
  '(show-trailing-whitespace t)
@@ -259,15 +238,14 @@ mouse-3: Remove current window from display")))))
  '(split-height-threshold nil)
  '(tab-always-indent nil)
  '(tab-stop-list
-   (quote
-    (4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120 124 128 132 136 140 144 148 152 165 160 164 168 172 176 180 184 188 192 196 200 204 208 212 216 220 224 228 232 236 240 244 248 252 265 260 264 268 272 276 280 284 288 292 296 300 304 308 312 316 320)))
- '(text-mode-hook (quote (my/text-mode)))
+   '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120 124 128 132 136 140 144 148 152 165 160 164 168 172 176 180 184 188 192 196 200 204 208 212 216 220 224 228 232 236 240 244 248 252 265 260 264 268 272 276 280 284 288 292 296 300 304 308 312 316 320))
+ '(text-mode-hook '(my/text-mode))
  '(tooltip-delay 0.3)
  '(tramp-default-method "ssh" nil (tramp))
- '(tramp-syntax (quote default) nil (tramp))
+ '(tramp-syntax 'default nil (tramp))
  '(transient-mark-mode t)
  '(truncate-lines t)
- '(uniquify-buffer-name-style (quote forward) nil (uniquify))
+ '(uniquify-buffer-name-style 'forward nil (uniquify))
  '(use-dialog-box nil)
  '(vc-handled-backends nil)
  '(vc-ignore-dir-regexp
@@ -276,10 +254,9 @@ mouse-3: Remove current window from display")))))
  '(vc-make-backup-files t)
  '(version-control t)
  '(visible-bell t)
- '(visual-line-fringe-indicators (quote (left-curly-arrow right-curly-arrow)))
+ '(visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
  '(which-func-format
-   (quote
-    ("["
+   '("["
      (:propertize which-func-current local-map
                   (keymap
                    (mode-line keymap
@@ -293,13 +270,13 @@ mouse-3: Remove current window from display")))))
 mouse-1: go to beginning
 mouse-2: toggle function narrowing
 mouse-3: go to end")
-     "]")))
+     "]"))
  '(which-function-mode t nil (which-func))
  '(whitespace-global-mode t)
  '(x-select-enable-clipboard-manager nil)
  '(x-stretch-cursor t)
  '(yas-global-mode t)
- '(yas-snippet-dirs (quote ("~/emacs/yasnippet"))))
+ '(yas-snippet-dirs '("~/emacs/yasnippet")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
