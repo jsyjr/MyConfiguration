@@ -12,6 +12,7 @@
 if [ -d /mathworks ]; then
     . /mathworks/hub/share/sbtools/bash_setup_env.bash
     export q=/mathworks/devel/sandbox/$USER/qualify
+    /hub/share/sbtools/bin/glnxa64/sbvncserver -vnctype tigervnc -plainUsers=jyates -alwaysshared
 fi
 
 # Rewrite path per my own preferences
