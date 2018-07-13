@@ -141,6 +141,7 @@ sudo apt-get install \
   libsystemd-dev \
   libtinfo-dev \
   libx11-dev \
+  libxaw7-dev \
   libxml2-dev \
   libxpm-dev \
   llvm \
