@@ -1,0 +1,261 @@
+#!/bin/bash
+
+# TODO
+#   Confirm that pwd is sandbox root
+#   Source sandbox: nothing on the default change list
+#   Source sandbox: only one numbered change list
+#   Source sandbox: warn if behind, prompt to continue
+#   Cloned sandbox should mimic source sandbox's use of a PDB
+#     Initialization of REVIEW_CNUM is probably broken if source has a PDB
+#   Add the help message
+
+### Help ############################################################
+
+if [[ "$1" =~ "-?-h(elp)?" ]]; then
+    cat <<HELP
+This tools facilitate preparing "slider-based" ReviewBoard requests.
+It does so by running a replay script to execute p4 commands against
+a temporary copy of the job from which your sandbox was cloned.
+
+Script commands execute in sequence.  (There is no flow of control.)
+The commands are
+
+  TITLE  'slider-detent-title-string'
+
+  ADD    <path>
+
+  EDIT   <path>
+
+  MOVE   <from-path> <to-path>
+
+  DELETE <path>
+
+  TEXT   <<EOF
+  arbitrary descriptive text
+  EOF
+
+Since this script is really just a sourced fragment of shell code
+the TEXT command uses "here-document" syntax; similarly blank lines
+and those starting with '#' get ignored.
+
+The script creates a SLIDERS.txt file in the root of the sandbox.
+As the script executes every command appends text to that file.
+The intension is that the contents of that file will become part
+of the review request.  As such it will be rendered by reviewboard
+and hence can incorporate any supported markup.
+
+If the latest sbbackup was produced via
+
+  sbbackup -opened
+
+then one way to obtain an ADD/EDIT/MOVE/DELETE actions list is via
+
+  sbrestore -list -v -r <path> | sed -nre '/^  [AEMD]/ s/^  ([^#]*).*$/\1/p'
+
+
+
+HELP
+    exit 0
+fi
+
+### Configuration ###################################################
+
+SCRIPT=SLIDERS.txt
+PASTE=SLIDERS.paste
+
+SANDBOX=$(pwd -P)
+MSG=${SANDBOX}/${PASTE}
+REVIEW=${SANDBOX}_review
+
+if [[ $1 =~ [-]-d[ebug] ]]; then
+    P4_DEBUG=
+else
+    P4_DEBUG="-q"
+fi
+
+### Validation ######################################################
+
+# Missing checks:
+
+SANDBOX_CNUM=$( p4 opened                                        \
+              | grep ' change '                                  \
+              | sed -re 's/.* change ([0-9]+).*/\1/g'            \
+              | sort                                             \
+              | uniq                                             \
+              | xargs p4 changelist -o                           \
+              | sed -nre '/^Change:/ s/Change:.([0-9]+).*/\1/gp' \
+              )
+
+if [ ! ${SANDBOX_CNUM} ]; then
+    echo
+    echo "Sandbox ${SANDBOX} lacks a numbered change list."
+    echo
+    exit 1
+fi
+
+# The workspace must have a SLIDERS.txt files
+
+if [ ! -f ${SANDBOX}/${SCRIPT} ]; then
+    echo
+    echo "Sandbox ${SANDBOX} lacks a ${SCRIPT} file.  Try the [-]-h[elp] flag."
+    echo
+    exit 1
+fi
+
+
+### Script interpretation ###########################################
+
+# Create previous review; append the title of the next slider to ${MSG}
+SKIP=1
+NUM=0
+REVIEWERS="-reviewers $(whoami)"
+
+TITLE() {
+    if [ ${SKIP} ]; then
+        SKIP=
+    else
+        sbreviewboard -cn ${REVIEW_CNUM} -no-open-browser -update-fields all ${REVIEWERS} -publish >RB
+        if [ "${REVIEWERS}" ]; then
+            REVIEW_URL=$(cat RB | sed -nre "/RB:/ s/.*'RB:.*(https:[^']*)'/\1/p")
+            echo
+            echo "@@@@"
+            echo
+            cat RB
+            echo
+            echo "@@@@"
+            echo "@@@@ URL= ${REVIEW_URL}"
+            echo "@@@@"
+            echo
+        fi
+        REVIEWERS=
+    fi
+    TITLE_LINE="**[${NUM}-$((NUM+1))] $1**"
+    NUM=$((NUM+1))
+    echo
+    echo ${TITLE_LINE}
+    echo >>${MSG}
+    echo >>${MSG} ${TITLE_LINE}
+}
+
+# Append an extended comment describing the current slider to ${MSG}
+TEXT() {
+    echo >>${MSG}
+    cat >>${MSG}
+}
+
+ADD() { # $1 is a sandbox relative path (optional #version suffix)
+    FILE=${1%#*}
+    if [ -e ${FILE} ]; then
+        echo "Warning: trying to add pre-existing \"${FILE}\""
+    fi
+    echo "ADD    ${FILE}" >>${MSG}
+    echo "ADD    ${FILE}"
+    p4 ${P4_DEBUG} add -c ${REVIEW_CNUM} ${FILE}
+    cp -f ${SANDBOX}/${FILE} ${FILE}
+}
+
+EDIT() { # $1 is a sandbox relative path (optional #version suffix)
+    FILE=${1%#*}
+    if [ ! -e ${FILE} ]; then
+        echo "Warning: trying to edit non-existant \"${FILE}\""
+    fi
+    echo "EDIT   ${FILE}" >>${MSG}
+    echo "EDIT   ${FILE}"
+    p4 ${P4_DEBUG} edit -c ${REVIEW_CNUM} ${FILE}
+    cp -f ${SANDBOX}/${FILE} ${FILE}
+
+}
+
+MOVE() { # $1 and $2 are sandbox relative paths (optional #version suffices)
+    FROM=${1%#*}
+    TO=${2%#*}
+    if [ ! -e ${FROM} ]; then
+        echo "Warning: trying to move/rename from non-existant \"${FROM}\""
+        # touch ${FROM}
+    fi
+    if [ -e ${TO} ]; then
+        echo "Warning: trying to move/rename to pre-existing \"${TO}\""
+        # rm -f ${TO}
+    fi
+    echo "MOVE   ${FROM} ${TO}" >>${MSG}
+    echo "MOVE   ${FROM} ${TO}"
+    p4 ${P4_DEBUG} edit -c ${REVIEW_CNUM} ${FROM}
+    p4 ${P4_DEBUG} move -c ${REVIEW_CNUM} ${FROM} ${TO}
+    rm -f ${FROM}
+    touch ${FROM}
+    cp -f ${SANDBOX}/${TO} ${TO}
+}
+
+DELETE() { # $1 is a sandbox relative path (optional #version suffix)
+    FILE=${1%#*}
+    echo "DELETE ${FILE}" >>${MSG}
+    echo "DELETE ${FILE}"
+    p4 ${P4_DEBUG} edit   -c ${REVIEW_CNUM} ${FILE}
+    p4 ${P4_DEBUG} delete -c ${REVIEW_CNUM} ${FILE}
+    rm -f ${FILE}
+    touch ${FILE}
+}
+
+
+### Main flow #######################################################
+
+cleanup() {
+    cd ${SANDBOX}
+    if [ -d ${REVIEW} ]; then
+        sbrmtree ${REVIEW} >/dev/null
+    fi
+}
+trap cleanup EXIT
+
+echo
+if [ -d ${REVIEW} ]; then
+    echo "Removing pre-existing review sandbox."
+    sbrmtree -p4-delete-shelved ${REVIEW} >/dev/null
+fi
+
+echo "Creating review sandbox (may take a while)."
+SANDBOX_FROM=$(sbver | sed -nre '/^sbcloneFrom:/ s/sbcloneFrom: (.*)$/\1/p')
+sbclone -no-pdb ${SANDBOX_FROM} ${REVIEW} >/dev/null
+
+# Strip any previous RB: line from SANDBOX_CNUM
+p4 change -o ${SANDBOX_CNUM} \
+| grep -v "RB:"		     \
+| p4 change -i >/dev/null    \
+
+cd ${REVIEW}
+
+# Create a pristine changelist very similar to SANDBOX_CNUM
+REVIEW_CNUM=$( p4 change -o ${SANDBOX_CNUM}            \
+             | grep -Ev '//mw/.*#|Files:'              \
+             | sed -re 's/Change:.[0-9]+/Change: new/' \
+             | sed -re 's/^(Client:.*)$/\1_review/'    \
+             | p4 change -i                            \
+             | sed -nre 's/Change ([0-9]+).*/\1/gp'    \
+             )
+
+# Ensure that the collected messages files exists and is empty
+echo >${MSG} -n
+
+# Interpret the user's script
+. ${SANDBOX}/${SCRIPT}
+
+# Create and publish the final review
+sbreviewboard -cn ${REVIEW_CNUM} -no-open-browser -update-fields all -publish >/dev/null
+
+cd ${SANDBOX}
+
+# Add an "RB: <url>" line to SANDBOX_CNUM referencing the review
+p4 change -o ${SANDBOX_CNUM}                 \
+| sed -re "/Jobs:/i\	RB: ${REVIEW_URL}\n" \
+| p4 change -i >/dev/null                    \
+
+echo
+echo
+echo "Your slider-based review is nearly complete and published at:"
+echo "  ${REVIEW_URL}"
+echo
+echo "Your sandbox root now contains a new ${PASTE} file."
+echo "Please paste that file into the Instructions for Reviewers"
+echo "section of the review.  Replace yourself as a reviewer with"
+echo "the reviewer(s) you choose.  Then click publish."
+echo
