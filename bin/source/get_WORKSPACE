@@ -68,22 +68,22 @@ PREQUALINFO=$s/$( echo ${GECKS} | sed -r -e 's/ /_/g' )_sfbPrequalInfo_${CLUSTER
 PREQUALFAIL=${PREQUALINFO}/testsuite_sbruntests/sbtest/failed_testsuites.txt
 
 
-echo
-echo "WORKSPACE  =" ${WORKSPACE}
-echo "LOCALWS    =" ${LOCALWS}
-echo "WSNAME     =" ${WSNAME}
-echo "CLUSTER    =" ${CLUSTER}
-echo "GECKS=     =" ${GECKS}
-echo "CLONED     =" ${CLONED}
-echo "BACKUP     =" ${BACKUP}
-echo "WORKGIT    =" ${WORKGIT}
-echo "PREQUALINFO=" ${PREQUALINFO}
+# echo
+# echo "WORKSPACE  =" ${WORKSPACE}
+# echo "LOCALWS    =" ${LOCALWS}
+# echo "WSNAME     =" ${WSNAME}
+# echo "CLUSTER    =" ${CLUSTER}
+# echo "GECKS=     =" ${GECKS}
+# echo "CLONED     =" ${CLONED}
+# echo "BACKUP     =" ${BACKUP}
+# echo "WORKGIT    =" ${WORKGIT}
+# echo "PREQUALINFO=" ${PREQUALINFO}
 
 # Zap PREQUALFAIL if it is not a true file
 if [ ! -e ${PREQUALFAIL} ]; then
-echo " (Zapping PREQUALFAIL as computed path ${PREQUALFAIL} does not exist)"
+   echo " (Zapping PREQUALFAIL as computed path ${PREQUALFAIL} does not exist)"
    PREQUALFAIL=
 fi
 
-echo "PREQUALFAIL=" ${PREQUALFAIL}
-echo
+# echo "PREQUALFAIL=" ${PREQUALFAIL}
+# echo
