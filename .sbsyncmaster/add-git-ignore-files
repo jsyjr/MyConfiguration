@@ -29,6 +29,7 @@ append_gitignore_lines <<EOF
 /.sbtools/
 /build.glnxa64.log.files/
 /build.log.files/
+/bullseye/
 
 # Files (top level)
 #
@@ -63,7 +64,7 @@ jar_extract_*
 LKG_*
 suite_registration.cpp
 
-# Extensions typically signalling binary data (anywhere)
+# Extensions typically signalling binary or derived data (anywhere)
 *.0*
 *.1*
 *.2*
@@ -74,36 +75,44 @@ suite_registration.cpp
 *.7*
 *.8*
 *.9*
+*.CHM
+*.EXE
+*.FNT
+*.GIF
+*.HTML
+*.HTMT
+*.HTMTX
+*.ICO
+*.JPEG
+*.JPG
+*.LIB
+*.OBJ
+*.P
+*.PDFTX
+*.PNG
+*.TIFF
+*.TTF
+*.Tiffile
+*.Z
 *.a
 *.bz2
 *.chm
-*.CHM
 *.exe
-*.EXE
 *.fmt
 *.fnt
-*.FNT
 *.gif
-*.GIF
 *.htm
 *.html
-*.HTML
 *.html_template
 *.htmt
-*.HTMT
 *.htmtx
-*.HTMTX
 *.htmx
 *.ico
-*.ICO
 *.jar
 *.jp2
 *.jpeg
-*.JPEG
 *.jpg
-*.JPG
 *.lib
-*.LIB
 *.mdzip
 *.mexa64
 *.mexmaci64
@@ -118,12 +127,10 @@ suite_registration.cpp
 *.msi
 *.o
 *.obj
-*.OBJ
 *.ocx
 *.ogg
 *.otf
 *.p
-*.P
 *.pcf
 *.pch
 *.pcm
@@ -133,9 +140,7 @@ suite_registration.cpp
 *.pdfdocsource.ts
 *.pdfpp
 *.pdftx
-*.PDFTX
 *.png
-*.PNG
 *.ppt
 *.pptx
 *.prj
@@ -143,20 +148,19 @@ suite_registration.cpp
 *.so
 *.svg
 *.svgz
+*.swo
+*.swp
 *.tar
 *.tgz
 *.thumbnail
 *.tif
 *.tiff
-*.TIFF
 *.tiff2dib
-*.Tiffile
 *.ttf
-*.TTF
+*.vcXproj
 *.vcproj
 *.vcwin32
 *.vcxproj
-*.vcXproj
 *.wixproj
 *.wma
 *.wmf
@@ -169,9 +173,9 @@ suite_registration.cpp
 *.xlsx
 *.xltm
 *.xltx
-*.zip
 *.z
-*.Z
+*.zip
+*~
 EOF
 
 # These rules simply define which parts of the directory tree we want to track in git
