@@ -1,7 +1,7 @@
 # Emacs: type 'C-x #' when done
 
 # Every hour at 3(3) past the hour
-3  0,4,8,12,16,20 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_task source /jyates/.sbsyncmaster/env.source && /jyates/.sbsyncmaster/sync-and-build
-3  1,5,9,13,17,21 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_thin source /jyates/.sbsyncmaster/env.source && /jyates/.sbsyncmaster/sync-and-build
-3 2,6,10,14,18,22 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_task source /jyates/.sbsyncmaster/env.source && /jyates/.sbsyncmaster/sync-and-build
-3 3,7,11,15,19,23 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_thin source /jyates/.sbsyncmaster/env.source && /jyates/.sbsyncmaster/sync-and-build
+3  0,4,8,12,16,20 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_task /jyates/.sbsyncmaster/env.sh
+3  1,5,9,13,17,21 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_thin /jyates/.sbsyncmaster/env.sh
+3 2,6,10,14,18,22 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_task /jyates/.sbsyncmaster/env.sh
+3 3,7,11,15,19,23 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_thin /jyates/.sbsyncmaster/env.sh

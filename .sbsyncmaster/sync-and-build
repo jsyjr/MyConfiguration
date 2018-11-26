@@ -1,9 +1,10 @@
-#!/bin/sh
-if ["${SYNCMASTERDIR}"  == ""] ||
-   ["${LATESTPASSDIR}"  == ""] ||
-   ["${GIT_USER_NAME}"  == ""] ||
-   ["${GIT_USER_EMAIL}" == ""] ||
-   ["${CLUSTER}"        == ""]
+#!/bin/bash
+
+if [ "${SYNCMASTERDIR}"  == "" ] ||
+   [ "${LATESTPASSDIR}"  == "" ] ||
+   [ "${GIT_USER_NAME}"  == "" ] ||
+   [ "${GIT_USER_EMAIL}" == "" ] ||
+   [ "${CLUSTER}"        == "" ]
 then
     echo
     echo "One or more required environment symbols is not defined:"
@@ -18,11 +19,11 @@ then
     echo
     echo "A manual invocation might look like:"
     echo
-    echo "  CLUSTER=<Bcluster> . ~/.sbsyncmaster/env.source && ~/.sbsyncmaster/sync-and-build"
+    echo "  CLUSTER=<Bcluster> ~/.sbsyncmaster/env.sh"
     echo
     exit 1
 fi
 
 LOGDIR=${SYNCMASTERDIR}/${CLUSTER}.logs
 
-nice sbsyncmaster -sbstop -C ${LATESTPASSDIR} -r ${CLUSTER} -no-perforce -log-dir ${LOGDIR} -cfg ${SYNCMASTERDIR}/git-enabled-workspace.cfg
+sbsyncmaster -no-perforce -no-sbstop -nice -C ${LATESTPASSDIR} -src-root ${CLUSTER}:latest_pass -log-dir ${LOGDIR} -cfg ${SYNCMASTERDIR}/git-enabled-workspace.cfg

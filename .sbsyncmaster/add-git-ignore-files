@@ -145,6 +145,7 @@ suite_registration.cpp
 *.pptx
 *.prj
 *.ps
+*.sbrestore.tmp
 *.so
 *.svg
 *.svgz
