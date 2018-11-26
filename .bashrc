@@ -87,6 +87,8 @@ fi
 alias env='env | sort'
 alias cgir-02='rdesktop -g 1920x1600 -d mathworks -u jyates cgir-02-win64 &'
 alias dff='df -h /ws /sandbox/jyates / /jyates /home/jyates'
+alias ezfast='( cd matlab/src/cg_ir && /hub/share/sbtools/apps/cgir_tools/cgmake -f ez.mk DEBUG=1 NORUNTESTS=1 )'
+alias ezmk='( cd matlab/src/cg_ir && /hub/share/sbtools/apps/cgir_tools/cgmake -f ez.mk DEBUG=1 )'
 alias sshmw='ssh jyates@jyates-deb9-64.dhcp.mathworks.com'
 alias sma='ls -ltr /jyates/.sbsyncmaster/Bcgir_task.logs | tail'
 alias smh='ls -ltr /jyates/.sbsyncmaster/Bcgir_thin.logs | tail'
@@ -94,7 +96,8 @@ alias cn="p4 opened|grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|u
 alias changelist="p4 opened|grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|uniq|xargs p4 changelist -o"
 alias gecks="p4 opened|grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|uniq|xargs p4 describe|sed -nre '/^g[0-9]+/ { s/(g[0-9]+).*/\1/gp }'"
 alias submit="sbsubmit -no-clickable-shell -skip toptesters -skip indent -skip sbedits -cn \$(p4 opened|grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|uniq|xargs p4 changelist -o|sed -nre '/^Change:/ { s/Change:.([0-9]+).*/\1/gp }')"
-
+alias ralog="( cd matlab/bin/glnxa64 && ln -sf RA_LOGGING/libmwcgir_support-RA_LOG.so libmwcgir_support.so && ln -sf RA_LOGGING/libmwcgir_support-RA_LOG.so.dbg libmwcgir_support.so.dbg )"
+alias ranolog="( cd matlab/bin/glnxa64 && ln -sf RA_LOGGING/libmwcgir_support-NO_LOG.so libmwcgir_support.so && ln -sf RA_LOGGING/libmwcgir_support-NO_LOG.so.dbg libmwcgir_support.so.dbg )"
 ###################################
 
 ########## START MATHWORKS SPECIFIC ##########
@@ -115,6 +118,12 @@ if [ -d /mathworks ]; then
     alias sbnj='sb -nodesktop -nosplash -nojvm -r "opengl info"'
 
     alias nws='sbclone -no-pdb TASK'
+    alias nwspdb='sbclone -pdb TASK'
+    alias fixes='cat /ws/TASK/.sbtools/p4syncinfo/mwfixes_files ; echo ; echo $(cat /ws/TASK/.sbtools/p4syncinfo/mwfixes_files | wc -l) fixed files ; echo'
+    alias sbs_build="mw -using Bcgir_task_build sbs clone create -cluster Bcgir_task_build -name"
+    alias sbs_task="mw -using Bcgir_task sbs clone create -cluster Bcgir_task -name"
+    alias sbs_thin="mw -using Bcgir_thin sbs clone create -cluster Bcgir_thin -name"
+    alias sbsdel="mw -using Bcgir_task sbs clone discard"
 
     # if [ -d /sandbox/savadhan/sbtools ]; then
     #     if [ -f /sandbox/savadhan/sbtools/_bash_functions ]; then
