@@ -10,6 +10,9 @@ PATH=\
 :/sbin\
 
 if [ -d /mathworks ]; then
+    if [ -d /jyates ]; then
+	export HOME=/jyates
+    fi
     export SBTOOLS_ROOT=/hub/share/sbtools
 
     PATH=\
