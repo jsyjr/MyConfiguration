@@ -45,7 +45,11 @@ trap "cd ${PWD}" EXIT
 
 cd ${LOCALWS}
 
-CLONED=$(sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom: /*mathworks/devel/jobarchive/\([^/]*\)/.*$|\1|').latest_pass
+CLONED=$(sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom:[^B]*\(B[a-z0-9_]*\).*$|\1|').latest_pass
+
+
+
+
 BACKUP=local_$(hostname)$(echo ${WORKSPACE} | sed -e 's|/|_|g')_backup/latest
 
 # Determine any gecks attached to the workspace

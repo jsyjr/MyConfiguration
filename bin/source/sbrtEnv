@@ -9,7 +9,8 @@ elif [ ! -d ${WORKSPACE} ] ; then
 fi
 
 SBRTFLAGS="-max-exec-minutes 60 -sbscanlog-final-user-patterns cgir_profiling"
-RERUNFLAGS="-noretryfailedtests -rerunusing nothing"
+#RERUNFLAGS="-noretryfailedtests -rerunusing nothing"
+RERUNFLAGS="-rerunusing /ws/GOOD"
 
 # QUALIFY=/mathworks/devel/sandbox/${USER}/qualify
 # QUALFAIL=${QUALIFY}_sbruntests/glnxa64/sbtest/failed_testsuites.txt
