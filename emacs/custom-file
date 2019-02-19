@@ -119,7 +119,6 @@
  '(ivy-sort-matches-functions-alist
    '((t . ivy--prefix-sort)
      (ivy-switch-buffer . ivy-sort-function-buffer)))
- '(ivy-use-virtual-buffers t)
  '(kept-old-versions 5)
  '(kill-whole-line t)
  '(list-directory-verbose-switches "-l --group-directories-first")

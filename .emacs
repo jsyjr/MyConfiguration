@@ -1763,7 +1763,6 @@ convert it to readonly/view-mode."
  '(ivy-sort-matches-functions-alist
    '((t . ivy--prefix-sort)
      (ivy-switch-buffer . ivy-sort-function-buffer)))
- '(ivy-use-virtual-buffers t)
  )
 
 (my/custom-set-faces
