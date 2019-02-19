@@ -2161,10 +2161,7 @@ This command is designed to be used whether you are already in Info or not."
   (setq truncate-lines (default-value 'truncate-lines)))
 
 ;;}}}
-;;{{{  grep
-
-(add-to-list 'el-get-sources 'ag)
-(my/el-get-install "ag")
+;;{{{  ripgrep and grep
 
 (add-to-list 'el-get-sources
              '(:name ripgrep
