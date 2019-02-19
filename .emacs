@@ -19,6 +19,8 @@
 ;; Suppress redefinition warnings during startup
 (setq ad-redefinition-action 'accept)
 
+(setenv "HOME" "/jyates")
+
 ;;=== Notes ============================================================
 ;;{{{  Goals
 
