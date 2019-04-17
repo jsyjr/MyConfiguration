@@ -1,4 +1,7 @@
 # -*-shell-script-*-
+
+export HOME=/jyates
+
 # ~/.profile: executed by sh for login shells.
 
 # This file will only be executed on accounts with '/bin/sh' as the login shell.
