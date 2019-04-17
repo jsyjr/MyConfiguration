@@ -301,7 +301,7 @@
 
 ; Various packages reference c-common-mode-hook.  Update load-path
 ; early to ensure that we pick up the latest cc-mode sources.
-(add-to-list 'load-path "~/repos/cc-mode")
+; (add-to-list 'load-path "~/repos/cc-mode")
 
 ;; (add-to-list 'load-path "~/repos/emacs-helm-p4locate")
 

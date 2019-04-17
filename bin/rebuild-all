@@ -14,7 +14,7 @@ rebuild()
 }
 
 rebuild awesome
-rebuild cc-mode
+# rebuild cc-mode
 rebuild ctags
 rebuild doxygen
 rebuild emacs
