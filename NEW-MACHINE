@@ -159,6 +159,7 @@ sudo apt-get install \
   texlive-latex-base \
   ttf-mscorefonts-installer \
   unison-all-gtk \
+  wmctrl \
   xmlto \
   zlib1g-dev \
 
