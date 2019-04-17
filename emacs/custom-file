@@ -55,7 +55,6 @@
       (icon-type . nill)))
  '(delete-old-versions t)
  '(dired-listing-switches "-agGh --group-directories-first")
- '(display-buffer-reuse-frames t)
  '(ediff-cmp-options '("diff --histogram"))
  '(ediff-cmp-program "git")
  '(ediff-keep-variants nil)

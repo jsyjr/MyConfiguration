@@ -3767,7 +3767,6 @@ use either \\[customize] or the function `phw-mode'." t)
 
 
 (my/custom-set-variables
- '(display-buffer-reuse-frames t)
  '(server-switch-hook
    '(my/pop-file-name-history))
  '(server-temp-file-regexp "^/tmp/\\|.*\\.tmp")
