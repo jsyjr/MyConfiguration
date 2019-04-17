@@ -127,6 +127,7 @@
  '(magit-auto-revert-mode t)
  '(magit-backup-mode nil)
  '(magit-completing-read-function 'ivy-completing-read)
+ '(magit-display-buffer-function 'magit-display-buffer-fullcolumn-most-v1)
  '(magit-emacsclient-executable "/etc/alternatives/emacsclient")
  '(magit-refs-show-commit-count 'all)
  '(magit-repository-directories '("~/repos/awesome" "~/repos/doxygen" "~/repos/st"))
