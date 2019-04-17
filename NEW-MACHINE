@@ -423,13 +423,15 @@ cd cc-mode
 #
 sudo apt-get install \
   libclang-dev \
+  qt4-default \
+  qt4-qmake \
 
 cd ~/repos
 rm -rf ~/repos/doxygen
 git clone https://github.com/doxygen/doxygen.git
 cd doxygen
 ~/bin/rebuild-doxygen
-make -j8
+
 # sudo make install
 
 # These AwesomeWM instructions are very out-of-date.  See this page:
