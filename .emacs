@@ -115,6 +115,8 @@
 ;;   investigate Monoisome (https://larsenwork.com/monoid/)
 ;; - package management
 ;;   consider https://github.com/Malabarba/paradox
+;; - face colors might be improved via an online gradient generator
+;;   https://www.colorhexa.com/
 
 ;; ;; See the Misc[ellaneous System] Events node of the Emacs Lisp manual:
 ;; (global-set-key [usr1-signal]
