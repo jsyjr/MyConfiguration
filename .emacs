@@ -1731,29 +1731,30 @@ convert it to readonly/view-mode."
 ;;=== Abbreviation and expansion =======================================
 ;;{{{  ivy, counsel, swiper and wsf
 
-(add-to-list 'el-get-sources
-             '(:name ivy
-                     :description "Incremental Vertical completYon."
-                     :type github
-                     :pkgname "abo-abo/swiper"
-                     :after (ivy-mode)))
-(my/el-get-install "ivy")
+;; (add-to-list 'el-get-sources
+;;              '(:name ivy
+;;                      :description "Incremental Vertical completYon."
+;;                      :type github
+;;                      :pkgname "abo-abo/swiper"
+;;                      :after (ivy-mode)))
+;; (my/el-get-install "ivy")
 
-(add-to-list 'el-get-sources
-             '(:name counsel
-                     :description "Various completion functions using Ivy."
-                     :type github
-                     :pkgname "abo-abo/swiper"))
-(my/el-get-install "counsel")
+;; (add-to-list 'el-get-sources
+;;              '(:name counsel
+;;                      :description "Various completion functions using Ivy."
+;;                      :type github
+;;                      :pkgname "abo-abo/swiper"))
+;; (my/el-get-install "counsel")
 
 (add-to-list 'el-get-sources
              '(:name swiper
                      :description "Isearch with an overview. Oh, man!"
                      :type github
-                     :pkgname "abo-abo/swiper"))
+                     :pkgname "abo-abo/swiper"
+                     :after (ivy-mode)))
 (my/el-get-install "swiper")
 
-(eval-after-load "ivy"
+(eval-after-load "swiper"
   '(progn
      (diminish 'ivy-mode)
      (define-key ivy-minibuffer-map (kbd "<f1>") 'minibuffer-keyboard-quit)))
