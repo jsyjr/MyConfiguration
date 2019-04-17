@@ -1599,12 +1599,12 @@ convert it to readonly/view-mode."
 ;;   (define-key magit-mode-map "N" 'magit-notes-popup)
 ;;   (magit-change-popup-key 'magit-dispatch-popup :action ?T ?N))
 
-(add-hook 'magit-mode-hook
-          (lambda ()
-            (magit-define-popup-action 'magit-ediff-popup ?S "Show staged"   'magit-ediff-show-staged)
-            (magit-define-popup-action 'magit-ediff-popup ?U "Show unstaged" 'magit-ediff-show-unstaged)
-            ; (magit-stgit-mode)
-            ))
+;; (add-hook 'magit-mode-hook
+;;           (lambda ()
+;;             (magit-define-popup-action 'magit-ediff-popup ?S "Show staged"   'magit-ediff-show-staged)
+;;             (magit-define-popup-action 'magit-ediff-popup ?U "Show unstaged" 'magit-ediff-show-unstaged)
+;;             ; (magit-stgit-mode)
+;;             ))
 
 (defun my/magit-status ()
   "Switch to (or create) the magit status buffer for current context"
