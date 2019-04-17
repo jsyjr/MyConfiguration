@@ -3165,7 +3165,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
   ;; replace mathworks-sblocate and mathworks-sblocate-gendb
   (define-key sb-prefix-map "f" 'wsf-ivy-find-file)
-  (define-key sb-prefix-map "F" 'wsf-force-from-scratch)
+  (define-key sb-prefix-map "R" 'wsf-force-from-scratch)
 
   ;; (add-to-list 'el-get-sources
   ;;              '(:name rtags
