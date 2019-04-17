@@ -1,6 +1,6 @@
 ;;; gud.el --- Grand Unified Debugger mode for running GDB and other debuggers  -*- lexical-binding:t -*-
 
-;; Copyright (C) 1992-1996, 1998, 2000-2017 Free Software Foundation,
+;; Copyright (C) 1992-1996, 1998, 2000-2019 Free Software Foundation,
 ;; Inc.
 
 ;; Author: Eric S. Raymond <esr@snark.thyrsus.com>
@@ -20,7 +20,7 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
+;; along with GNU Emacs.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -327,7 +327,7 @@ Uses `gud-<MINOR-MODE>-directories' to find the source files."
     (when buf
       ;; Copy `gud-minor-mode' to the found buffer to turn on the menu.
       (with-current-buffer buf
-        (setq buffer-read-only t)
+        (buffer-disable-undo)
 	(setq-local gud-minor-mode minor-mode)
 	(if (boundp 'tool-bar-map)      ; not --without-x
 	    (setq-local tool-bar-map gud-tool-bar-map))
@@ -380,6 +380,7 @@ we're in the GUD buffer)."
        (if (not gud-running)
 	 ,(if (stringp cmd)
 	      `(gud-call ,cmd arg)
+	    ;; Unused lexical warning if cmd does not use "arg".
 	    cmd))))
      ,(if key `(local-set-key ,(concat "\C-c" key) ',func))
      ,(if key `(global-set-key (vconcat gud-key-prefix ,key) ',func))))
@@ -546,8 +547,8 @@ required by the caller."
 		   nil
 		   (if gdb-show-changed-values
 		       (or parent (pcase status
-				    (`changed 'font-lock-warning-face)
-				    (`out-of-scope 'shadow)
+				    ('changed 'font-lock-warning-face)
+				    ('out-of-scope 'shadow)
 				    (_ t)))
 		     t)
 		   depth)
@@ -567,8 +568,8 @@ required by the caller."
 		     nil
 		     (if gdb-show-changed-values
 			 (or parent (pcase status
-				      (`changed 'font-lock-warning-face)
-				      (`out-of-scope 'shadow)
+				      ('changed 'font-lock-warning-face)
+				      ('out-of-scope 'shadow)
 				      (_ t)))
 		       t)
 		     depth)
@@ -679,7 +680,7 @@ The option \"--fullname\" must be included in this value."
     ;; gud-marker-acc until we receive the rest of it.  Since we
     ;; know the full marker regexp above failed, it's pretty simple to
     ;; test for marker starts.
-    (if (string-match "\n\\(\032.*\\)?\\'" gud-marker-acc)
+    (if (string-match "\\(\n\\)?\\(\032.*\\)?\\'" gud-marker-acc)
 	(progn
 	  ;; Everything before the potential marker start can be output.
 	  (setq output (concat output (substring gud-marker-acc
@@ -773,7 +774,7 @@ the buffer in which this command was invoked."
   (gud-def gud-cont   "cont"     "\C-r" "Continue with display.")
   (gud-def gud-finish "finish"   "\C-f" "Finish executing current function.")
   (gud-def gud-jump
-	   (progn (gud-call "tbreak %f:%l") (gud-call "jump %f:%l"))
+	   (progn (gud-call "tbreak %f:%l" arg) (gud-call "jump %f:%l"))
 	   "\C-j" "Set execution address to current line.")
 
   (gud-def gud-up     "up %p"     "<" "Up N stack frames (numeric arg).")
@@ -1607,7 +1608,7 @@ and source-file directory for your debugger."
 ;; Last group is for return value, e.g. "> test.py(2)foo()->None"
 ;; Either file or function name may be omitted: "> <string>(0)?()"
 (defvar gud-pdb-marker-regexp
-  "^> \\([-a-zA-Z0-9_/.:\\]*\\|<string>\\)(\\([0-9]+\\))\\([a-zA-Z0-9_]*\\|\\?\\|<module>\\)()\\(->[^\n\r]*\\)?[\n\r]")
+  "^> \\([-a-zA-Z0-9_/.:@ \\]*\\|<string>\\)(\\([0-9]+\\))\\([a-zA-Z0-9_]*\\|\\?\\|<module>\\)()\\(->[^\n\r]*\\)?[\n\r]")
 
 (defvar gud-pdb-marker-regexp-file-group 1)
 (defvar gud-pdb-marker-regexp-line-group 2)
@@ -1696,8 +1697,7 @@ and source-file directory for your debugger."
   (gud-def gud-up     "up"           "<" "Up one stack frame.")
   (gud-def gud-down   "down"         ">" "Down one stack frame.")
   (gud-def gud-print  "p %e"         "\C-p" "Evaluate Python expression at point.")
-  ;; Is this right?
-  (gud-def gud-statement "! %e"      "\C-e" "Execute Python statement at point.")
+  (gud-def gud-statement "!%e"      "\C-e" "Execute Python statement at point.")
 
   ;; (setq comint-prompt-regexp "^(.*pdb[+]?) *")
   (setq comint-prompt-regexp "^(Pdb) *")
@@ -1832,7 +1832,7 @@ and source-file directory for your debugger."
 ;;
 ;; Type M-n to step over the current line and M-s to step into it.  That,
 ;; along with the JDB 'help' command should get you started.  The 'quit'
-;; JDB command will get out out of the debugger.  There is some truly
+;; JDB command will get out of the debugger.  There is some truly
 ;; pathetic JDB documentation available at:
 ;;
 ;;     http://java.sun.com/products/jdk/1.1/debugging/
@@ -2239,7 +2239,7 @@ relative to a classpath directory."
 		    (split-string
 		     ;; Eliminate any subclass references in the class
 		     ;; name string. These start with a "$"
-                     (if (string-match "$.*" p)
+                     (if (string-match "\\$.*" p)
                          (replace-match "" t t p) p)
 		     "\\.") "/")
 	 ".java"))
@@ -2607,7 +2607,12 @@ comint mode, which see."
 		      file-subst)))
 	 (filepart (and file-word (concat "-" (file-name-nondirectory file))))
 	 (existing-buffer (get-buffer (concat "*gud" filepart "*"))))
-    (switch-to-buffer (concat "*gud" filepart "*"))
+    (select-window
+     (display-buffer
+      (get-buffer-create (concat "*gud" filepart "*"))
+      '(display-buffer-reuse-window
+        display-buffer-in-previous-window
+        display-buffer-same-window display-buffer-pop-up-window)))
     (when (and existing-buffer (get-buffer-process existing-buffer))
       (error "This program is already being debugged"))
     ;; Set the dir, in case the buffer already existed with a different dir.
@@ -3365,10 +3370,7 @@ Treats actions as defuns."
 
 ;;;###autoload
 (define-minor-mode gud-tooltip-mode
-  "Toggle the display of GUD tooltips.
-With a prefix argument ARG, enable the feature if ARG is
-positive, and disable it otherwise.  If called from Lisp, enable
-it if ARG is omitted or nil."
+  "Toggle the display of GUD tooltips."
   :global t
   :group 'gud
   :group 'tooltip
@@ -3403,18 +3405,12 @@ it if ARG is omitted or nil."
 	(kill-local-variable 'gdb-define-alist)
 	(remove-hook 'after-save-hook 'gdb-create-define-alist t))))
 
-(define-obsolete-variable-alias 'tooltip-gud-modes
-                                'gud-tooltip-modes "22.1")
-
 (defcustom gud-tooltip-modes '(gud-mode c-mode c++-mode fortran-mode
 					python-mode)
   "List of modes for which to enable GUD tooltips."
   :type '(repeat (symbol :tag "Major mode"))
   :group 'gud
   :group 'tooltip)
-
-(define-obsolete-variable-alias 'tooltip-gud-display
-                                'gud-tooltip-display "22.1")
 
 (defcustom gud-tooltip-display
   '((eq (tooltip-event-buffer gud-tooltip-event)
@@ -3507,8 +3503,6 @@ With arg, dereference expr if ARG is positive, otherwise do not dereference."
   (message "Dereferencing is now %s."
 	   (if gud-tooltip-dereference "on" "off")))
 
-(define-obsolete-function-alias 'tooltip-gud-toggle-dereference
-                                'gud-tooltip-dereference "22.1")
 (defvar tooltip-use-echo-area)
 (declare-function tooltip-show "tooltip" (text &optional use-echo-area))
 (declare-function tooltip-strip-prompt "tooltip" (process output))
@@ -3529,11 +3523,11 @@ With arg, dereference expr if ARG is positive, otherwise do not dereference."
 (defun gud-tooltip-print-command (expr)
   "Return a suitable command to print the expression EXPR."
   (pcase gud-minor-mode
-    (`gdbmi (concat "-data-evaluate-expression \"" expr "\""))
-    (`guiler expr)
-    (`dbx (concat "print " expr))
-    ((or `xdb `pdb) (concat "p " expr))
-    (`sdb (concat expr "/"))))
+    ('gdbmi (concat "-data-evaluate-expression \"" expr "\""))
+    ('guiler expr)
+    ('dbx (concat "print " expr))
+    ((or 'xdb 'pdb) (concat "p " expr))
+    ('sdb (concat expr "/"))))
 
 (declare-function gdb-input "gdb-mi" (command handler &optional trigger))
 (declare-function tooltip-expr-to-print "tooltip" (event))
