@@ -2275,7 +2275,7 @@ This command is designed to be used whether you are already in Info or not."
 ;;{{{  Comint
 
 (my/custom-set-variables
- '(tramp-default-method "ssh" nil (tramp))  ; uses ControlMaster
+ '(tramp-default-method "ssh")              ; uses ControlMaster
  '(tramp-syntax 'default nil (tramp))
  '(comint-scroll-to-bottom-on-input t)      ; always insert at the bottom
 ;; '(comint-scroll-to-bottom-on-output nil) ; [DEF] always add output at the bottom
