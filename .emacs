@@ -3996,7 +3996,7 @@ use either \\[customize] or the function `phw-mode'." t)
 (my/el-get-install "keydef")
 
 
-;(keydef "M-D"           my/delete-whitespace-forward)
+(keydef "C-c d"         my/delete-whitespace-forward)
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
 
 (keydef "M-o"           other-window) ; simple repetition
