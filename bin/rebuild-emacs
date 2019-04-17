@@ -33,7 +33,8 @@ set +e
 #CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization                                                            --without-dbus --without-gconf --without-gsettings
 #CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization --with-x-toolkit=gtk2  --without-xwidgets
 #CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization --with-x-toolkit=lucid --without-xwidgets --with-gnutls=no --without-dbus --without-gconf --without-gsettings
- CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization --with-x-toolkit=lucid --without-xwidgets --with-gnutls=no
+#CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization --with-x-toolkit=lucid --without-xwidgets --with-gnutls=no
+ CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization --with-x-toolkit=lucid --without-xwidgets
 
 # CFLAGS='-march=native -mfpmath=387 -O3' make bootstrap
 
