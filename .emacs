@@ -3880,22 +3880,39 @@ use either \\[customize] or the function `phw-mode'." t)
 ;;=== el-get (epilog) ==================================================
 ;;{{{  Sync and update
 
-(if my/el-get-refetch-all-packages
-    (el-get-update-all t))
+;; (if my/el-get-refetch-all-packages
+;;     (el-get-update-all t))
 
-(message "======== Install missing packages")
-(princ my/missing-el-get-packages)
+(defun cleanup-loaddefs ()
+  (let (buf (get-buffer ".loaddefs.el"))
+    (when buf
+      (when (buffer-modified-p buf)
+        (basic-save-buffer buf)
+        (set-buffer-modified-p nil))
+      (kill-buffer buf))))
 
-(mapc (lambda (pkg)
-	(progn
-	  (message "Install %s" pkg)
-	  (el-get-install pkg)))
-      my/missing-el-get-packages)
+(when my/missing-el-get-packages
+  (message "======== Install missing packages")
+  (princ my/missing-el-get-packages)
+  (mapc (lambda (pkg)
+	  (progn
+	    (message "Install %s" pkg)
+            (cleanup-loaddefs)
+	    (el-get-install pkg)))
+        my/missing-el-get-packages))
+
+(when (or my/el-get-refetch-all-packages my/missing-el-get-packages)
+  (message "======== Reinstalling all packages")
+  (mapc (lambda (pkg)
+          (progn
+            (message "Reinstalling %s" pkg)
+            (cleanup-loaddefs)
+            (el-get-reinstall pkg)))
+        my/all-el-get-packages))
 
 ;; (if my/missing-el-get-packages (el-get-update-all t))
 
 (message "======== Load accumulated packagees")
-
 (mapc (lambda (pkg)
         (progn
           (message "Activating %s" pkg)
