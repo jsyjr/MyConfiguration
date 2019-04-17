@@ -382,7 +382,7 @@
      (".*" "~/.emacs.d/autosave/\\1" t))) ; everything else
  '(auto-save-list-file-prefix "~/.emacs.d/autosave-list/saves-")
  '(backup-by-copying t)
- '(backup-directory-alist '((".*" . "/home/jyates/.emacs.d/backup/")))
+ '(backup-directory-alist '((".*" . "/jyates/.emacs.d/backup/")))
  '(delete-old-versions t)
  '(kept-old-versions 5)
  '(vc-make-backup-files t)
@@ -1084,7 +1084,7 @@ mouse-3: go to end")
 ;; ;;                   :type	  github
 ;; ;;                   :pkgname	  "davidshepherd7/frames-only-mode"
 ;;                      :type        http
-;;                      :url         "file://localhost/home/jyates/emacs/frames-only.el"
+;;                      :url         "file://localhost/jyates/emacs/frames-only.el"
 ;; ;;                   :after       (frames-only-mode t)
 ;; 		     :features	  frames-only))
 ;; (my/el-get-install "frames-only")
@@ -2257,7 +2257,7 @@ This command is designed to be used whether you are already in Info or not."
                      ;; :type        github
                      ;; :pkgname     "emacsattic/ilocate-library"
                      :type        http
-                     :url         "file://localhost/home/jyates/emacs/patched/ilocate-library.el"
+                     :url         "file://localhost/jyates/emacs/patched/ilocate-library.el"
                      :features    ilocate-library))
 (my/el-get-install "ilocate-library")
 
@@ -2417,7 +2417,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;; 	     '(:name hideshow
 ;; 		     :description "Minor mode cmds to selectively display code/comment blocks"
 ;; 		     :type        http
-;; 		     :url         "file://localhost/home/jyates/emacs/patched/hideshow.el"
+;; 		     :url         "file://localhost/jyates/emacs/patched/hideshow.el"
 ;; 		     :features    hideshow))
 ;; (my/el-get-install "hideshow")
 ;; (require 'hideshow)
@@ -2500,7 +2500,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
                      :description "Adaptively set fill-prefix and overload filling functions"
                      :type        http
 ;;                   :url         "http://cc-mode.sourceforge.net/filladapt.el"
-                     :url         "file://localhost/home/jyates/emacs/filladapt.el"
+                     :url         "file://localhost/jyates/emacs/filladapt.el"
                      :features    filladapt))
 (my/el-get-install "filladapt")
 
@@ -2627,7 +2627,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;              '(:name vtags
 ;;                      :description "Edward Bishop's fork of emacs' etags"
 ;;                      :type        http
-;;                      :url         "file://localhost/home/jyates/emacs/vtags/vtags.el"
+;;                      :url         "file://localhost/jyates/emacs/vtags/vtags.el"
 ;;                      :features    vtags))
 ;; (my/el-get-install "vtags")
 
@@ -2643,10 +2643,10 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;; (require 'rtags)
 ;; (rtags-enable-standard-keybindings)
 ;;
-;; (call-process-shell-command "/home/jyates/bin/start-rdm" nil nil)
+;; (call-process-shell-command "/jyates/bin/start-rdm" nil nil)
 ;;
 ;; (defun my/quit-rdm ()
-;;   (call-process-shell-command "/home/jyates/bin/quit-rdm" nil nil))
+;;   (call-process-shell-command "/jyates/bin/quit-rdm" nil nil))
 ;; (add-hook 'kill-emacs-hook 'my/quit-rdm)
 
 ;;}}}
@@ -3366,7 +3366,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;                (sb-args (read-string "Run sb with args: " 
 ;;                                      default-args nil default-args))
 ;;                (sb-cmd (concat (mathworks-path-to-sbtool-program "sb ")
-;;                                " -gdb-switches -i=mi -debug-exe /home/jyates/bin/gdb-strip-fullname " sb-args))
+;;                                " -gdb-switches -i=mi -debug-exe /jyates/bin/gdb-strip-fullname " sb-args))
 ;;                )
 
 ;;           ;; Ask for directory to run in.
@@ -3709,7 +3709,7 @@ Ctrl | run to   toggle            print    step     frame    temp
 
 ;; Emacs' eshell
 (my/custom-set-variables
- '(eshell-aliases-file "/home/jyates/emacs/eshell/alias")
+ '(eshell-aliases-file "/jyates/emacs/eshell/alias")
  '(eshell-modules-list
    '(eshell-alias
      eshell-banner
@@ -3732,7 +3732,7 @@ Ctrl | run to   toggle            print    step     frame    temp
 ;;              '(:name phw
 ;;                      :description "Persistent Horizontal Window"
 ;;                      :type git
-;;                      :url         "file://localhost/home/jyates/repos/phw/"
+;;                      :url         "file://localhost/jyates/repos/phw/"
 ;;                      ))
 ;; (my/el-get-install "phw")
 
@@ -4206,7 +4206,7 @@ use either \\[customize] or the function `phw-mode'." t)
 
 (defun my/check-startup-file-status (rel-path)
   ""
-  (let* ((src (concat "/home/jyates/" rel-path))
+  (let* ((src (concat "/jyates/" rel-path))
          (elc (concat src ".elc")))
     (when (file-newer-than-file-p src elc)
       (message "Using out-of-date .elc: \"%s\" is more recent" rel-path)
