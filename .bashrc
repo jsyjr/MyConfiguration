@@ -125,6 +125,11 @@ if [ -d /mathworks ]; then
     alias sbs_thin="mw -using Bcgir_thin sbs clone create -cluster Bcgir_thin -name"
     alias sbsdel="mw -using Bcgir_task sbs clone discard"
 
+    alias sbrerun='pushd `sbroot` && sbruntests -farm devel -F none -testsuites '
+    alias sbrerunlocal='pushd `sbroot` && sbruntests -local 9 -F none -rerunusing nothing -noretryfailedtests -mlswitches -no-vmemorylimit -testsuites '
+
+    alias p4t="p4v -p p4broker-01-bgl:1666 -u jyates -c `p4 -Ztag -F %clientName% info`"
+
     # if [ -d /sandbox/savadhan/sbtools ]; then
     #     if [ -f /sandbox/savadhan/sbtools/_bash_functions ]; then
     #         . /sandbox/savadhan/sbtools/_bash_functions
