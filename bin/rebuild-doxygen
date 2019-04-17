@@ -14,7 +14,7 @@ mkdir build
 cd build
 
 # cmake -G "Unix Makefiles" -Denglish_only:BOOL=ON -Duse_libclang:BOOL=ON ..
-cmake -G "Unix Makefiles" -Denglish_only:BOOL=ON ..
+cmake -G "Unix Makefiles" -Denglish_only:BOOL=ON -Dbuild_doc=YES -Dbuild_wizard=YES ..
 
 sed -i -e 's/-O2/-march=native -mfpmath=387 -O3/' `find -name Makefile`
 
@@ -24,8 +24,10 @@ make clean
 make -kj8
 make -kj8
 make
+make -kj8 docs
+make -kj8 docs
+make docs
 
-# make docs
 # make pdf
 
 cd ..
