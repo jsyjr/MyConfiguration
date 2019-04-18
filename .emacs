@@ -1562,7 +1562,6 @@ convert it to readonly/view-mode."
  '(magit-completing-read-function 'ivy-completing-read)
 ;'(magit-diff-refine-hunk t)  ;; why is this disabled? ugly faces?
  '(magit-display-buffer-function 'magit-display-buffer-fullcolumn-most-v1)
- '(magit-emacsclient-executable "/etc/alternatives/emacsclient")
  '(magit-refs-show-commit-count 'all)
  '(magit-repository-directories
    '("~/repos/awesome"
