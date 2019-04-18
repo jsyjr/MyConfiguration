@@ -1570,7 +1570,8 @@ convert it to readonly/view-mode."
  '(magit-save-repository-buffers nil)
  '(magit-repository-directories-depth 0 t)
  ; drop git since I uniformly rely on magit
- '(vc-handled-backends nil))
+ '(vc-handled-backends nil)
+ '(with-editor-emacsclient-executable "/usr/bin/emacsclient"))
 
 (my/custom-set-faces
  '(magit-item-highlight             ((t (                                 :background "gray9"        ))))
