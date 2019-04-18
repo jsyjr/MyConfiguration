@@ -1,6 +1,7 @@
 # -*-shell-script-*-
 
 export HOME=/jyates
+export EDITOR=/usr/bin/emacsclient
 
 # ~/.profile: executed by sh for login shells.
 
