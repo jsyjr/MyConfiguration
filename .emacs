@@ -1456,7 +1456,7 @@ word."
 (defvar disk-access nil)
 (make-variable-buffer-local 'disk-access)
 
-(add-hook 'find-file-hooks 'disk-notice)
+(add-hook 'find-file-hook 'disk-notice)
 (add-hook 'view-mode-hooks 'disk-notice)
 (add-hook 'after-save-hook 'disk-notice)
 
