@@ -58,11 +58,11 @@ fi
 export XDG_CONFIG_HOME="${SSD_HOME}/.config"
 
 # Specify emacs as default editor(?):
-export EDITOR=emacsclient
-export VISUAL=emacsclient
-export P4EDITOR=emacsclient
+export EDITOR=/usr/bin/emacsclient
+export VISUAL=/usr/bin/emacsclient
+export P4EDITOR=/usr/bin/emacsclient
 
-export ALTERNATE_EDITOR=emacs
+export ALTERNATE_EDITOR=/usr/bin/emacs
 export ESHELL=/bin/bash
 
 export CCACHE_DIR=/ccc
