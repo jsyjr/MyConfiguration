@@ -20,6 +20,7 @@
 (setq ad-redefinition-action 'accept)
 
 (setenv "HOME" "/jyates")
+(setenv "EDITOR" "/usr/bin/emacsclient")
 
 ;;=== Notes ============================================================
 ;;{{{  Goals
