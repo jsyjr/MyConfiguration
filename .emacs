@@ -3800,75 +3800,79 @@ use either \\[customize] or the function `phw-mode'." t)
 ;; when using emacs for transient tags and this isn't evaluated before
 ;; loading emacs_setup.el, thus see if it has been specified and
 ;; process it.
+
 (defvar skip-sbtools-server-start) ;; suppress compile warning
-(let ((first-arg (car (cdr command-line-args))))
-  (if (equal first-arg "--eval=(setq skip-sbtools-server-start t)")
-      (setq skip-sbtools-server-start t)
-    )
-  )
 
-;; Emacs 21 doesn't support server-name, Emacs 23 is when
-;; Windows client started working.
-(when (and (>= emacs-major-version 23)
-	   (not noninteractive)  ;; --batch?
-	   (or (not (boundp 'skip-sbtools-server-start))
-	       (not skip-sbtools-server-start))
-	   )
-  (let ((sbtools-server-name nil))
-    (if (equal system-type 'gnu/linux)
-	;; UNIX (Linux)
-	(let ((display (getenv "DISPLAY")))
-	  (when display
-	    (let*
-		(
-		 (dispNumMatch   (string-match ":\\([0-9]+\\)" display))
-		 (dispNum        (when dispNumMatch (match-string 1 display)))
-		 (screenNumMatch (string-match ":[0-9]+\\.\\([0-9]+\\)" display))
-		 (screenNum      (if screenNumMatch 
-				     (match-string 1 display)
-				   "0"))
-		 (xpropDesktop   (shell-command-to-string
-				  (concat "xprop -root -display " 
-					  display " _NET_CURRENT_DESKTOP")))
-		 (desktopIdMatch (string-match
-				  "_NET_CURRENT_DESKTOP(CARDINAL) = \\([0-9]+\\)"
-				  xpropDesktop))
-		 (desktopId      (when desktopIdMatch (match-string 1 xpropDesktop)))
-		 )
-	      (let ((one-disp (getenv "SBTOOLS_ONE_EMACS_SESSION_PER_DISPLAY")))
-		(if (and one-disp (string= one-disp "1"))
-		    ;; server-name is serverDISP_NUM
-		    (when dispNum
-		      (setq sbtools-server-name (concat "server" dispNum)))
-		  ;; else server-name is serverDISP_NUM.SCREEN_NUM.DESKTOP_ID
-		  (when (and dispNum screenNum desktopId)
-		    (setq sbtools-server-name
-			  (concat "server" dispNum "." screenNum "." desktopId)))
-		  ))
-	      )))
-      ;; else maci64/Windows
-      (setq sbtools-server-name "server")
-      ) ;; end (if (equal system-type 'gnu/linux))
+;; (let ((first-arg (car (cdr command-line-args))))
+;;   (if (equal first-arg "--eval=(setq skip-sbtools-server-start t)")
+;;       (setq skip-sbtools-server-start t)
+;;     )
+;;   )
 
-    (defvar server-name) ;; suppress compile warning
-    (when sbtools-server-name
-      ;; In emacs23, server-running-p came into existence. Prior to
-      ;; that (emacs22) each invocation of server-start canceled the
-      ;; existing server and starts a new server. Using server-running-p
-      ;; we can avoid canceling an existing server.
-      (when (or (not (functionp 'server-running-p))
-		(not (server-running-p sbtools-server-name)))
-	(setq server-name sbtools-server-name)
-	(message (concat "SBTools: starting emacs server named: " server-name))
-	(if (> emacs-major-version 22)
-	    ;; server-force-delete arrived with emacs 23.
-	    (server-force-delete server-name)
-	  )
-	(server-start))
-      )
-    )
-  )
+;; ;; Emacs 21 doesn't support server-name, Emacs 23 is when
+;; ;; Windows client started working.
+;; (when (and (>= emacs-major-version 23)
+;; 	   (not noninteractive)  ;; --batch?
+;; 	   (or (not (boundp 'skip-sbtools-server-start))
+;; 	       (not skip-sbtools-server-start))
+;; 	   )
+;;   (let ((sbtools-server-name nil))
+;;     (if (equal system-type 'gnu/linux)
+;; 	;; UNIX (Linux)
+;; 	(let ((display (getenv "DISPLAY")))
+;; 	  (when display
+;; 	    (let*
+;; 		(
+;; 		 (dispNumMatch   (string-match ":\\([0-9]+\\)" display))
+;; 		 (dispNum        (when dispNumMatch (match-string 1 display)))
+;; 		 (screenNumMatch (string-match ":[0-9]+\\.\\([0-9]+\\)" display))
+;; 		 (screenNum      (if screenNumMatch 
+;; 				     (match-string 1 display)
+;; 				   "0"))
+;; 		 (xpropDesktop   (shell-command-to-string
+;; 				  (concat "xprop -root -display " 
+;; 					  display " _NET_CURRENT_DESKTOP")))
+;; 		 (desktopIdMatch (string-match
+;; 				  "_NET_CURRENT_DESKTOP(CARDINAL) = \\([0-9]+\\)"
+;; 				  xpropDesktop))
+;; 		 (desktopId      (when desktopIdMatch (match-string 1 xpropDesktop)))
+;; 		 )
+;; 	      (let ((one-disp (getenv "SBTOOLS_ONE_EMACS_SESSION_PER_DISPLAY")))
+;; 		(if (and one-disp (string= one-disp "1"))
+;; 		    ;; server-name is serverDISP_NUM
+;; 		    (when dispNum
+;; 		      (setq sbtools-server-name (concat "server" dispNum)))
+;; 		  ;; else server-name is serverDISP_NUM.SCREEN_NUM.DESKTOP_ID
+;; 		  (when (and dispNum screenNum desktopId)
+;; 		    (setq sbtools-server-name
+;; 			  (concat "server" dispNum "." screenNum "." desktopId)))
+;; 		  ))
+;; 	      )))
+;;       ;; else maci64/Windows
+;;       (setq sbtools-server-name "server")
+;;       ) ;; end (if (equal system-type 'gnu/linux))
+
+;;     (defvar server-name) ;; suppress compile warning
+;;     (when sbtools-server-name
+;;       ;; In emacs23, server-running-p came into existence. Prior to
+;;       ;; that (emacs22) each invocation of server-start canceled the
+;;       ;; existing server and starts a new server. Using server-running-p
+;;       ;; we can avoid canceling an existing server.
+;;       (when (or (not (functionp 'server-running-p))
+;; 		(not (server-running-p sbtools-server-name)))
+;; 	(setq server-name sbtools-server-name)
+;; 	(message (concat "SBTools: starting emacs server named: " server-name))
+;; 	(if (> emacs-major-version 22)
+;; 	    ;; server-force-delete arrived with emacs 23.
+;; 	    (server-force-delete server-name)
+;; 	  )
+;; 	(server-start))
+;;       )
+;;     )
+;;   )
 ;;=======
+
+(server-start)
 
 ;;}}}
 ;;{{{  Performance
