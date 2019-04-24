@@ -14,7 +14,8 @@ mkdir build
 cd build
 
 # cmake -G "Unix Makefiles" -Denglish_only:BOOL=ON -Duse_libclang:BOOL=ON ..
-cmake -G "Unix Makefiles" -Denglish_only:BOOL=ON -Dbuild_doc=YES -Dbuild_wizard=YES ..
+  cmake -G "Unix Makefiles" -Denglish_only:BOOL=ON -Dbuild_doc=YES -Dbuild_wizard=YES ..
+# Clang_DIR=/usr/lib/llvm-3.8/share/clang/cmake cmake -G "Unix Makefiles" -Denglish_only:BOOL=ON -Dbuild_doc=YES -Dbuild_wizard=YES -Duse_libclang:BOOL=ON ..
 
 sed -i -e 's/-O2/-march=native -mfpmath=387 -O3/' `find -name Makefile`
 
