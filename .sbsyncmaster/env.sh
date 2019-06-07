@@ -10,6 +10,9 @@ export CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
 export CCACHE_TEMPDIR=/huge/ccache
 export USE_CCACHE=1
 
+# export MAKE_SCRIPT=/hub/share/sbtools/apps/cgir_tools/cgmake
+export MAKE_SCRIPT=/hub/share/sbtools/bin/glnxa64/sbmake
+
 #############################################################
 #
 # The sync-and-build script expects these in the environment:
