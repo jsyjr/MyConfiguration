@@ -1,6 +1,8 @@
 # -*-shell-script-*-
 
+export HOME=/jyates
+
 # Setup minimal sbtools environment (sets PATH, LOCATION, HOST, USER, ...)
-. ~/.profile
+. ${HOME}/.profile
 # . /mathworks/hub/share/sbtools/bash_setup_env.bash
-# . ~/.bashrc
+# . ${HOME}/.bashrc
