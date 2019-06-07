@@ -20,7 +20,8 @@
 ;;====================================================
 
 (defvar wsf--workspace-root-marker-alist
-  '((".sbtools" . ( "matlab/src"
+  '((".sbtools" . ( "matlab/config"
+                    "matlab/src"
                     "matlab/test"
                     "matlab/toolbox/shared/cgir_fe"
                     "matlab/toolbox/shared/cgxe" ))
