@@ -89,6 +89,7 @@ alias cgir-02='rdesktop -g 1920x1600 -d mathworks -u jyates cgir-02-win64 &'
 alias dff='df -h /ws /sandbox/jyates / /jyates /home/jyates'
 alias ezfast='( cd matlab/src/cg_ir && /hub/share/sbtools/apps/cgir_tools/cgmake -f ez.mk DEBUG=1 NORUNTESTS=1 )'
 alias ezmk='( cd matlab/src/cg_ir && /hub/share/sbtools/apps/cgir_tools/cgmake -f ez.mk DEBUG=1 )'
+alias rgf="rg -u --files -g "
 alias sshmw='ssh jyates@jyates-deb9-64.dhcp.mathworks.com'
 alias sma='ls -ltr /jyates/.sbsyncmaster/Bcgir_task.logs | tail'
 alias smh='ls -ltr /jyates/.sbsyncmaster/Bcgir_thin.logs | tail'
