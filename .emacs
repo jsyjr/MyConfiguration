@@ -308,7 +308,7 @@
 
 ;; (add-to-list 'load-path "~/repos/emacs-helm-p4locate")
 
-(add-to-list 'load-path "~/.emacs.d/el-get/magit/lisp")
+;; (add-to-list 'load-path "~/.emacs.d/el-get/magit/lisp")
 
 (add-to-list 'load-path "~/repos/phw")
 
@@ -1528,10 +1528,15 @@ convert it to readonly/view-mode."
 ;;=== VC, diff, merge, patch ===========================================
 ;;{{{  git and magit
 
-;(add-to-list 'el-get-sources '(:name magit :branch "pu"))
+;; (add-to-list 'el-get-sources 'dash)
+;; (my/el-get-install "dash")
+;; (add-to-list 'el-get-sources 'transient)
+;; (my/el-get-install "transient")
+;; (add-to-list 'el-get-sources 'with-editor)
+;; (my/el-get-install "with-
 (add-to-list 'el-get-sources 'magit)
 (my/el-get-install "magit")
-(autoload #'magit-status-internal "magit" nil t)
+
 
 ;; (add-to-list 'el-get-sources
 ;;              '(:name magit-stgit
@@ -4143,7 +4148,7 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "M-g e"         el-get-find-recipe-file)
 (keydef "M-g g"         ripgrep-regexp)
 (keydef "M-g l"         ilocate-library-find-source)
-(keydef "M-g m"         my/magit-status)
+(keydef "M-g m"         magit-status)
 (keydef "M-g r"         jump-to-register)
 (keydef "M-g s"         my/elisp-find-symbol-definition)
 (keydef "M-g w"         mediawiki-open)
