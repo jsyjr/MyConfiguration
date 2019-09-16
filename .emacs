@@ -1674,22 +1674,10 @@ convert it to readonly/view-mode."
 ;;}}}
 ;;{{{  vdiff
 
-(add-to-list 'el-get-sources
-             '(:name vdiff
-                     :description "Ediff but no control window (similar to vimdiff)."
-                     :type        github
-                     :pkgname     "justbur/emacs-vdiff"
-                     :depends     (hydra)
-                     :features    (vdiff)))
+(add-to-list 'el-get-sources 'vdiff)
 (my/el-get-install "vdiff")
 
-(add-to-list 'el-get-sources
-             '(:name vdiff-magit
-                     :description "Integrate vdiff into magit, replacing ediff."
-                     :type        github
-                     :pkgname     "justbur/emacs-vdiff-magit"
-                     :depends     (vdiff magit)
-                     :features    (vdiff-magit)))
+(add-to-list 'el-get-sources 'vdiff-magit)
 (my/el-get-install "vdiff-magit")
 
 ;;}}}
