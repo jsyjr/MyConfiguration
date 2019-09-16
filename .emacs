@@ -1524,6 +1524,37 @@ convert it to readonly/view-mode."
 (my/el-get-install "iedit")
 
 ;;}}}
+;;{{{  Projectile, deadgrep, smart-jump and dumb-jump
+
+(add-to-list 'el-get-sources 'projectile)
+(my/el-get-install "projectile")
+
+(my/custom-set-variables
+ '(projectile-completion-system 'ido)
+ '(projectile-project-search-path "/ws")
+ )
+
+(add-to-list 'el-get-sources 'deadgrep)
+(my/el-get-install "deadgrep")
+
+(my/custom-set-variables
+ )
+
+(add-to-list 'el-get-sources 'smart-jump)
+(my/el-get-install "smart-jump")
+
+(my/custom-set-variables
+ '(smart-jump-bind-keys-for-evil nil)
+ )
+
+(add-to-list 'el-get-sources 'dumb-jump)
+(my/el-get-install "dumb-jump")
+
+(my/custom-set-variables
+ '(dumb-jump-mode t)
+ )
+
+;;}}}
 
 ;;=== VC, diff, merge, patch ===========================================
 ;;{{{  git and magit
