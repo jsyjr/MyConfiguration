@@ -118,6 +118,7 @@ if [ -d /mathworks ]; then
     alias sbn='sb -nodesktop -nosplash -r "opengl info"'
     alias sbnj='sb -nodesktop -nosplash -nojvm -r "opengl info"'
 
+    alias dmake='cgmake DEBUG=1'
     alias tws='sbclone -no-pdb THIN'
     alias nws='sbclone -no-pdb TASK'
     alias nwspdb='sbclone -pdb TASK'
