@@ -25,7 +25,7 @@ append_gitignore_lines() {
 append_gitignore_lines <<EOF
 # Directories (top level)
 #
-/config/
+!/config/
 /.sbtools/
 /build.glnxa64.log.files/
 /build.log.files/
@@ -183,6 +183,7 @@ EOF
 
 append_gitignore_lines matlab/ <<EOF
 /*/
+!/config/
 !/src/
 !/test/
 !/toolbox/
@@ -198,6 +199,7 @@ append_gitignore_lines matlab/src/ <<EOF
 !/eml/
 !/half_precision/
 !/include/
+!/range_services/
 !/rtw*/
 EOF
 
