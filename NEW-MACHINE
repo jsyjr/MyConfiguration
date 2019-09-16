@@ -163,6 +163,13 @@ sudo apt-get install \
   xmlto \
   zlib1g-dev \
 
+# Install fd (fd-find)
+#  Ubuntu:
+sudo apt install fd-find
+#  Debian: download latest fd _amd64.deb from https://github.com/sharkdp/fd/releases to /tmp
+cd /tmp
+sudo dpkg -i fd_X.Y.Z_amd64.deb
+
 
 # Install RipGrep
 #  [Really should script somehow. Code is in rust so get binary from tarball.]
