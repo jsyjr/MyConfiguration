@@ -3994,11 +3994,18 @@ use either \\[customize] or the function `phw-mode'." t)
 ;;=== Now that all packages have been processed ========================
 ;;{{{  Audit customizations
 
+
 (defvar my/custom-variables
   (eval-when-compile (sort my/accum-custom-variables
                            (lambda (a b)
                              (string-lessp (car a) (car b)))))
   "List of customizations to be compared to those in the custom file.")
+
+;;; Something keeps reintroducing this face so keep the audit quiet
+(my/custom-set-faces
+ '(woman-unknown
+   ((t
+     (:inherit font-lock-warning-face :foreground "red4")))))
 
 (defvar my/custom-faces
   (eval-when-compile (sort my/accum-custom-faces
