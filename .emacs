@@ -3225,7 +3225,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; (define-key c-mode-base-map (kbd "RET") 'newline)
 
   (my/custom-set-variables
-   '(p4-global-key-prefix "\C-cp"))
+   '(p4-global-key-prefix "\C-c4"))
 
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/p4" t)
   (require 'p4)
@@ -4084,8 +4084,6 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "C-c C--"       query-replace)
 (keydef "C-c ="         replace-regexp)
 (keydef "C-c C-="       query-replace-regexp)
-(keydef "C-c 4"         my/set-buffer-local-tab-width-to-4)
-(keydef "C-c 8"         my/set-buffer-local-tab-width-to-8)
 (keydef "C-c c"         org-capture)
 (keydef "C-c l"         org-store-link)
 
@@ -4155,6 +4153,9 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "C-x t r" read-only-mode)
 (keydef "C-x t w" whitespace-mode)
 (keydef "C-x t D" dired-toggle-read-only) (autoload 'dired-toggle-read-only "dired" nil t)
+(keydef "C-x t 4" my/set-buffer-local-tab-width-to-4)
+(keydef "C-x t 8" my/set-buffer-local-tab-width-to-8)
+
 
 ;; GUD navigation claims the capital letters in the "goto" map:
 ;;  "M-g A"     *disassembly            ; assembly language

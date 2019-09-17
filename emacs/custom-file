@@ -190,7 +190,7 @@ mouse-3: Remove current window from display"))))
  '(org-modules
    '(org-docview org-info org-habit org-inlinetask org-protocol org-mouse))
  '(org-support-shift-select t)
- '(p4-global-key-prefix "p")
+ '(p4-global-key-prefix "4")
  '(package-archives
    '(("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "https://melpa.org/packages/")))
