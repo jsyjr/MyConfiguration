@@ -1551,19 +1551,36 @@ convert it to readonly/view-mode."
 (my/custom-set-variables
  )
 
-(add-to-list 'el-get-sources 'smart-jump)
+
+(add-to-list 'el-get-sources
+             '(:name smart-jump
+                     :description "Jump to definition for 40+ languages"
+                     :type        github
+                     :pkgname     "jacktasia/smart-jump"
+                     :depends     (seq dumb-jump)))
 (my/el-get-install "smart-jump")
 
 (my/custom-set-variables
  '(smart-jump-bind-keys-for-evil nil)
  )
 
-(add-to-list 'el-get-sources 'dumb-jump)
+;; (require 'smart-jump)
+;; (smart-jump-setup-default-registers)
+
+
+(add-to-list 'el-get-sources
+             '(:name dumb-jump
+                     :description "Jump to definition for 40+ languages"
+                     :type        github
+                     :pkgname     "jacktasia/dumb-jump"
+                     :depends     (f s dash popup)))
 (my/el-get-install "dumb-jump")
 
 (my/custom-set-variables
  '(dumb-jump-mode t)
  )
+
+;; (require 'dumb-jump)
 
 ;;}}}
 
