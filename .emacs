@@ -277,6 +277,9 @@
 ;;}}}
 ;;{{{  ensure necessary directories
 
+;; Run git-clone with ‘--depth 1’ to create shallow clones
+(setq el-get-git-shallow-clone t)
+
 ;; even though we have loaded the custom-file we do not seem to be
 ;; be able to see el-get-dir's value so we set it directly :-(
 (setq el-get-dir "~/.emacs.d/el-get/")
