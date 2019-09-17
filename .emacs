@@ -1709,10 +1709,20 @@ convert it to readonly/view-mode."
 ;;}}}
 ;;{{{  vdiff
 
-(add-to-list 'el-get-sources 'vdiff)
+(add-to-list 'el-get-sources
+             '(:name vdiff
+                     :description "A vimdiff-like mode for Emacs"
+                     :type        github
+                     :pkgname     "justbur/emacs-vdiff"
+                     :depends     (cl-lib hydra)))
 (my/el-get-install "vdiff")
 
-(add-to-list 'el-get-sources 'vdiff-magit)
+(add-to-list 'el-get-sources
+             '(:name vdiff-magit
+                     :description "Integrate vdiff into magit"
+                     :type        github
+                     :pkgname     "justbur/emacs-vdiff-magit"
+                     :depends     (vdiff magit)))
 (my/el-get-install "vdiff-magit")
 
 ;;}}}
