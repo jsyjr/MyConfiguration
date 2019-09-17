@@ -922,7 +922,12 @@ mouse-3: go to end")
 ;;}}}
 ;;{{{  diminish
 
-(add-to-list 'el-get-sources 'diminish)
+(add-to-list 'el-get-sources
+             '(:name diminish
+                     :description "A diminished mode is a minor modes with little or no modeline display."
+                     :type        github
+                     :pkgname     "emacsmirror/diminish"
+                     :features    (diminish)))
 (my/el-get-install "diminish")
 (require 'diminish)
 
