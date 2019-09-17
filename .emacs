@@ -1546,6 +1546,13 @@ convert it to readonly/view-mode."
 ;; (require 'projectile)
 ;; (projectile-mode)
 
+
+(add-to-list 'el-get-sources
+             '(:name deadgrep
+                     :description "fast, friendly searching with ripgrep"
+                     :type        github
+                     :pkgname     "Wilfred/deadgrep"
+                     :depends     (cl-lib s dash spinner)))
 (my/el-get-install "deadgrep")
 
 (my/custom-set-variables
