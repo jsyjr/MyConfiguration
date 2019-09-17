@@ -1530,15 +1530,22 @@ convert it to readonly/view-mode."
 ;;}}}
 ;;{{{  Projectile, deadgrep, smart-jump and dumb-jump
 
-(add-to-list 'el-get-sources 'projectile)
+(add-to-list 'el-get-sources
+             '(:name projectile
+                     :description "Project interaction library"
+                     :type        github
+                     :pkgname     "bbatsov/projectile"
+                     :depends     (cl-lib)))
 (my/el-get-install "projectile")
 
 (my/custom-set-variables
  '(projectile-completion-system 'ido)
- '(projectile-project-search-path "/ws")
+ '(projectile-project-search-path ("/ws"))
  )
 
-(add-to-list 'el-get-sources 'deadgrep)
+;; (require 'projectile)
+;; (projectile-mode)
+
 (my/el-get-install "deadgrep")
 
 (my/custom-set-variables
@@ -4149,6 +4156,8 @@ use either \\[customize] or the function `phw-mode'." t)
 ;; (keydef "C-x , g"       am-grep)
 ;; (keydef "C-x , r"       am-force-recache)
 ;; (keydef "C-x , ."       am-grep-tag)
+
+;; C-x p is used by projectile
 
 ;; The manual recommends C-c for user keys, but C-x t is
 ;; always free, whereas C-c t is used by some modes.
