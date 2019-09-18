@@ -479,9 +479,10 @@
 (add-to-list 'el-get-sources
              '(:name kurecolor
                      :description "Color editing goodies for Emacs."
-                     :type github
-                     :pkgname "emacsfodder/kurecolor"
-                     :depends (s)))
+                     :type        github
+                     :pkgname     "emacsfodder/kurecolor"
+                     :depends     (s)
+                     :features    (kurecolor)))
 (my/el-get-install "kurecolor")
 
 ;;}}}
@@ -1128,8 +1129,9 @@ Which one depends on variable `subword-mode'."
 (add-to-list 'el-get-sources
              '(:name ibuffer-vc
                      :description "Group ibuffer's list by VC project, or show VC status"
-                     :type github
-                     :pkgname "purcell/ibuffer-vc"))
+                     :type        github
+                     :pkgname     "purcell/ibuffer-vc"
+                     :features    (ibuffer-vc)))
 (my/el-get-install "ibuffer-vc")
 
 ;;}}}
@@ -1518,7 +1520,17 @@ convert it to readonly/view-mode."
 ;;}}}
 ;;{{{  Undo-tree
 
-(add-to-list 'el-get-sources 'undo-tree)
+
+
+
+(add-to-list 'el-get-sources
+             '(:name undo-tree
+                     :description "Treat undo history as a tree"
+                     :website     "http://www.dr-qubit.org/undo-tree.html"
+                     :type git
+                     :url         "http://www.dr-qubit.org/git/undo-tree.git"
+                     :features    (undo-tree diff)
+                     ))
 (my/el-get-install "undo-tree")
 
 ;;}}}
@@ -1529,47 +1541,40 @@ convert it to readonly/view-mode."
                      :description "Edit multiple regions with the same content simultaneously."
                      :type        github
                      :pkgname     "victorhge/iedit"
-                     :features    iedit))
+                     :features    (iedit)))
 (my/el-get-install "iedit")
 
 ;;}}}
-;;{{{  Projectile, deadgrep, smart-jump and dumb-jump
+;;{{{  Projectile, smart-jump and dumb-jump
 
 (add-to-list 'el-get-sources
              '(:name projectile
                      :description "Project interaction library"
                      :type        github
                      :pkgname     "bbatsov/projectile"
-                     :depends     (cl-lib)))
+                     :depends     (cl-lib)
+                     :features    (projectile)
+                     :after       (progn
+                                    (when (file-exists-p "/ws")
+                                      (setq projectile-project-search-path '("/ws")))
+                                    (projectile-mode +1))))
 (my/el-get-install "projectile")
 
 (my/custom-set-variables
- '(projectile-completion-system 'ido)
- '(projectile-project-search-path ("/ws"))
- )
-
-;; (require 'projectile)
-;; (projectile-mode)
-
-
-(add-to-list 'el-get-sources
-             '(:name deadgrep
-                     :description "fast, friendly searching with ripgrep"
-                     :type        github
-                     :pkgname     "Wilfred/deadgrep"
-                     :depends     (cl-lib s dash spinner)))
-(my/el-get-install "deadgrep")
-
-(my/custom-set-variables
- )
+ '(projectile-completion-system 'ido))
 
 
 (add-to-list 'el-get-sources
              '(:name smart-jump
                      :description "Jump to definition for 40+ languages"
                      :type        github
-                     :pkgname     "jacktasia/smart-jump"
-                     :depends     (seq dumb-jump)))
+                     :pkgname     "jojojames/smart-jump"
+                     :load-path   "."
+                     :depends     (seq dumb-jump)
+                     :features    (smart-jump)
+                     :after       (progn
+                                    (smart-jump-setup-default-registers))
+                     ))
 (my/el-get-install "smart-jump")
 
 (my/custom-set-variables
@@ -1577,7 +1582,7 @@ convert it to readonly/view-mode."
  )
 
 ;; (require 'smart-jump)
-;; (smart-jump-setup-default-registers)
+
 
 
 (add-to-list 'el-get-sources
@@ -1585,7 +1590,8 @@ convert it to readonly/view-mode."
                      :description "Jump to definition for 40+ languages"
                      :type        github
                      :pkgname     "jacktasia/dumb-jump"
-                     :depends     (f s dash popup)))
+                     :depends     (f s dash popup)
+                     :features    (dumb-jump)))
 (my/el-get-install "dumb-jump")
 
 (my/custom-set-variables
@@ -1623,7 +1629,9 @@ convert it to readonly/view-mode."
 ;; (add-to-list 'el-get-sources 'magit-topgit)
 ;; (my/el-get-install "magit-topgit")
 
-(add-to-list 'el-get-sources 'git-timemachine)
+(add-to-list 'el-get-sources
+             '(:name 'git-timemachine
+                     :features (git-timemachine)))
 (my/el-get-install "git-timemachine")
 
 (my/custom-set-variables
@@ -1750,7 +1758,8 @@ convert it to readonly/view-mode."
                      :description "A vimdiff-like mode for Emacs"
                      :type        github
                      :pkgname     "justbur/emacs-vdiff"
-                     :depends     (cl-lib hydra)))
+                     :depends     (cl-lib hydra)
+                     :features    (vdiff)))
 (my/el-get-install "vdiff")
 
 (add-to-list 'el-get-sources
@@ -1758,7 +1767,8 @@ convert it to readonly/view-mode."
                      :description "Integrate vdiff into magit"
                      :type        github
                      :pkgname     "justbur/emacs-vdiff-magit"
-                     :depends     (vdiff magit)))
+                     :depends     (vdiff magit)
+                     :features    (vdiff-magit)))
 (my/el-get-install "vdiff-magit")
 
 ;;}}}
@@ -1939,7 +1949,8 @@ convert it to readonly/view-mode."
 
                                     (ac-set-trigger-key "TAB")
                                     (ac-set-trigger-key "<tab>"))
-                     :depends (yasnippet popup fuzzy)))
+                     :depends     (yasnippet popup fuzzy)
+                     :features    (auto-complete)))
 
 (my/el-get-install "auto-complete")
 (require-maybe 'auto-complete)
@@ -2019,7 +2030,7 @@ convert it to readonly/view-mode."
                      :description "XEmacs-ish hyper-apropos for GNUEmacs"
                      :type        http
                      :url         "http://www.cbrunzema.de/download/apropos-toc/apropos-toc.el"
-                     :features    apropos-toc))
+                     :features    (apropos-toc)))
 (my/el-get-install "apropos-toc")
 
 (defvar my/apropos-toc-font-lock-keywords
@@ -2241,14 +2252,53 @@ This command is designed to be used whether you are already in Info or not."
   (setq truncate-lines (default-value 'truncate-lines)))
 
 ;;}}}
-;;{{{  ripgrep and grep
+;;{{{  ripgrep, deadgrep, wgrep and grep
+
+(add-to-list 'el-get-sources
+             '(:name deadgrep
+                     :description "fast, friendly searching with ripgrep"
+                     :type        github
+                     :pkgname     "Wilfred/deadgrep"
+                     :depends     (cl-lib s dash spinner)
+                     :features    (deadgrep)))
+(my/el-get-install "deadgrep")
+
+
+(add-to-list 'el-get-sources
+             '(:name wgrep
+                     :description "Writable grep buffer and apply the changes to files"
+                     :type        github
+                     :pkgname     "mhayashi1120/Emacs-wgrep"
+                     :features    (wgrep)))
+(my/el-get-install "wgrep")
+
+
+(add-to-list 'el-get-sources
+             '(:name rg
+                     :description "Emacs search tool based on ripgrep"
+                     :type        github
+                     :pkgname     "dajva/rg.el"
+                     :depends     (cl-lib edmacro grep rg-ibuffer rg-result s vc wgrep)
+                     :features    (rg wgrep-rg)))
+(my/el-get-install "rg")
+
+
+(add-to-list 'el-get-sources
+             '(:name rg
+                     :description "Emacs search tool based on ripgrep"
+                     :type        github
+                     :pkgname     "dajva/rg.el"
+                     :depends     (cl-lib s dash spinner)
+                     :features    (rg)))
+(my/el-get-install "rg")
+
 
 (add-to-list 'el-get-sources
              '(:name ripgrep
                      :description "Emacs front-end for ripgrep, a command line search tool."
                      :type        github
                      :pkgname     "nlamirault/ripgrep.el"
-                     :features    ripgrep))
+                     :features    (ripgrep)))
 (my/el-get-install "ripgrep")
 
 
@@ -2336,7 +2386,7 @@ This command is designed to be used whether you are already in Info or not."
                      ;; :pkgname     "emacsattic/ilocate-library"
                      :type        http
                      :url         "file://localhost/jyates/emacs/patched/ilocate-library.el"
-                     :features    ilocate-library))
+                     :features    (ilocate-library)))
 (my/el-get-install "ilocate-library")
 
 ;;}}}
@@ -2475,8 +2525,9 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (add-to-list 'el-get-sources
              '(:name folding
                      :description "A folding-editor-like minor mode."
-                     :type github
-                     :pkgname "jaalto/project-emacs--folding-mode"))
+                     :type        github
+                     :pkgname     "jaalto/project-emacs--folding-mode"
+                     :features    (folding)))
 (my/el-get-install "folding")
 
 (my/custom-set-variables
@@ -2516,9 +2567,9 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (add-to-list 'el-get-sources
              '(:name hideshowvis
                      :description "Add fringe markers for hide/show foldable regions."
-                     :type        emacswiki
-                     :url         "http://www.emacswiki.org/emacs/download/hideshowvis.el"
-                     :features    hideshowvis))
+                     :type        github
+                     :pkgname     "sheijk/hideshowvis"
+                     :features    (hideshowvis)))
 (my/el-get-install "hideshowvis")
 
 ;; (defun my/fringe-click-hs (event)
@@ -2579,7 +2630,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
                      :type        http
 ;;                   :url         "http://cc-mode.sourceforge.net/filladapt.el"
                      :url         "file://localhost/jyates/emacs/filladapt.el"
-                     :features    filladapt))
+                     :features    (filladapt)))
 (my/el-get-install "filladapt")
 
 
@@ -2681,53 +2732,6 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;}}}
 
 ;;=== Programming ======================================================
-;;{{{  Find file in project
-
-(add-to-list 'el-get-sources 'find-file-in-project)
-(my/el-get-install "find-file-in-project")
-
-;;}}}
-;;{{{  Find a "tag" in a project
-
-(add-to-list 'el-get-sources
-             '(:name gxref
-                     :description "xref backend using GNU Global."
-                     :type github
-                     :pkgname "dedi/gxref"))
-(my/el-get-install "gxref")
-
-(add-hook 'xref-backend-functions 'gxref-xref-backend)
-
-;; For idutils:
-;; /hub/share/sbtools/external-apps/idutils/idutils-4.6-sbmod1/install/share/id-lang.map
-
-;; (add-to-list 'el-get-sources
-;;              '(:name vtags
-;;                      :description "Edward Bishop's fork of emacs' etags"
-;;                      :type        http
-;;                      :url         "file://localhost/jyates/emacs/vtags/vtags.el"
-;;                      :features    vtags))
-;; (my/el-get-install "vtags")
-
-;; (add-to-list 'el-get-sources
-;;              '(:name rtags
-;;                      :description "A C/C++ client/server indexer based on clang."
-;;                      :type        github
-;;                      :pkgname     "Andersbakken/rtags"
-;;                      :url         "https://github.com/Andersbakken/rtags"
-;;                      :features    rtags))
-;; (my/el-get-install "rtags")
-;;
-;; (require 'rtags)
-;; (rtags-enable-standard-keybindings)
-;;
-;; (call-process-shell-command "/jyates/bin/start-rdm" nil nil)
-;;
-;; (defun my/quit-rdm ()
-;;   (call-process-shell-command "/jyates/bin/quit-rdm" nil nil))
-;; (add-hook 'kill-emacs-hook 'my/quit-rdm)
-
-;;}}}
 ;;{{{  Compilation and next exrror
 
 (my/custom-set-variables
@@ -3133,10 +3137,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (defun my/c-mode-common-hook ()
   ""
-  ;; Semantic does a better job supporting which-func in mode-line
-  ;; (require 'semantic/imenu)
-  ;; (setq imenu-create-index-function 'semantic-create-imenu-index)
-
   ;; cc-mode uses abbrev-mode to implement electric keywords
   (diminish 'abbrev-mode)
 
@@ -3344,7 +3344,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 		         :description "Mathworks in-house version of matlab-mode"
                          :type        http
                          :url         "file://localhost/hub/share/sbtools/apps/emacs-add-ons/src/matlab-emacs/matlab-emacs/matlab.el"
-		         :features    matlab))
+		         :features    (matlab)))
     (my/el-get-install "matlab")
 
     (autoload #'matlab-mode "matlab" "MATLAB Editing Mode" t)
@@ -3495,8 +3495,18 @@ Works with: arglist-cont, arglist-cont-nonempty."
 (add-to-list 'el-get-sources
              '(:name mediawiki
                      :description "Edit mediawiki sites from Emacs."
-                     :type github
-                     :pkgname "hexmode/mediawiki-el"))
+                     :type        github
+                     :pkgname     "hexmode/mediawiki-el"
+                     :features    (url-http mml mm-url ring subr-x)
+                     :prepare     (progn
+                                    (autoload 'mediawiki-mode "mediawiki.el"
+                                      "Mode for mediawiki")
+                                    (add-to-list 'auto-mode-alist '("\\.mw$" . mediawiki-mode))
+                                    (autoload 'mediawiki-open "mediawiki.el"
+                                      "Open a wiki page specified by NAME from the mediawiki engine")
+                                    (autoload 'mediawiki-site "mediawiki.el"
+                                      "Set up mediawiki.el for a site.  Without an argument, use
+`mediawiki-site-default'.  Interactively, prompt for a site."))))
 (my/el-get-install "mediawiki")
 
 
@@ -3532,7 +3542,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
                      :description "Mode for the dot-language used by graphviz (att)."
                      :type        github
                      :pkgname     "ppareit/graphviz-dot-mode"
-                     :features    graphviz-dot-mode))
+                     :features    (graphviz-dot-mode)))
 (my/el-get-install "graphviz-dot-mode")
 
 (my/custom-set-variables
@@ -3832,15 +3842,6 @@ use either \\[customize] or the function `phw-mode'." t)
 
 ;; Support the Chrome Browser's Edit with Emacs extension
 (add-to-list 'el-get-sources 'edit-server)
-
-;; (add-to-list 'el-get-sources
-;; 	     '(:name edit-server
-;; 		     :description "Respond to requests from the Chrome Emacs_Chrome plugin."
-;;                      :type        http
-;;                      :url         "https://github.com/stsquad/emacs_chrome/blob/master/servers/edit-server.el"
-;; 		     :after	  (edit-server-start)
-;; 		     :features	  edit-server))
-
 (my/el-get-install "edit-server")
 
 
@@ -4083,6 +4084,9 @@ use either \\[customize] or the function `phw-mode'." t)
 (add-to-list 'el-get-sources 'keydef)
 (my/el-get-install "keydef")
 
+;; (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(keydef (projectile "C-c p") projectile-command-map)
+
 
 (keydef "C-c d"         my/delete-whitespace-forward)
 (keydef "C-c C-c M-x"   execute-extended-command) ; original M-x overridden by smex
@@ -4185,8 +4189,6 @@ use either \\[customize] or the function `phw-mode'." t)
 ;; (keydef "C-x , g"       am-grep)
 ;; (keydef "C-x , r"       am-force-recache)
 ;; (keydef "C-x , ."       am-grep-tag)
-
-;; C-x p is used by projectile
 
 ;; The manual recommends C-c for user keys, but C-x t is
 ;; always free, whereas C-c t is used by some modes.
