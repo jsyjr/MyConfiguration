@@ -3285,7 +3285,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
   ;; (define-key c-mode-base-map (kbd "RET") 'newline)
 
   (my/custom-set-variables
-   '(p4-global-key-prefix "\C-c4"))
+   '(p4-global-key-prefix "\C-cP"))
 
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/p4" t)
   (require 'p4)
