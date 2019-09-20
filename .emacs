@@ -4107,12 +4107,8 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "C-c z v"       browse-url-of-file)
 (keydef (dired "z"      browse-url-of-dired-file))
 
-;; easy ECB activation and deactivation
-;; (keydef "C-c b"         ecb-activate)
-;; (keydef "C-c d"         ecb-deactivate)
 (keydef "C-c b"         phw-mode)
 ;(keydef "C-c d"         phw-deactivate)
-;(keydef "C-c D"         my/ecb-run-gdb)
 
 
 ;; python-mode steals C-c C-k for python-mark-block. steal it back.
