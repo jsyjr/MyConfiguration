@@ -1,5 +1,5 @@
 ;; John Yates's .emacs
-;; -*- lexical-binding: t -*-
+;; -*- lexical-binding: t; folding-mode: t -*-
 
 (defconst copyright-owner "John S Yates Jr")
 (put 'copyright-owner 'safe-local-variable 'stringp)
