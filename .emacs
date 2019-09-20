@@ -3643,14 +3643,14 @@ Works with: arglist-cont, arglist-cont-nonempty."
 Modi |
 fier | <F5>     <F6>     <F7>     <F8>     <F9>     <F10>    <F11>
 ---- | ------   ------   ------   ------   ------   ------   ------
-     | run      print*   goto     print    step     next     set
+     | run      print    goto              step     next     set
      |                   prompt            into     stmt     break
      |
-Shft | rerun    print*            frame    frame    frame    remove
-     |          via pp            zero     down     up       break
+Shft | rerun    frame                      frame    frame    remove
+     |          zero                       down     up       break
      |
-Ctrl | run to   toggle            print    step     frame    temp
-     | cursor   help              via pp   instr    return   break
+Ctrl | run to   print             toggle   step     frame    temp
+     | cursor   via pp            help     instr    return   break
 ")
         (set-buffer-modified-p nil)
         (view-mode 1)
@@ -4267,17 +4267,17 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "C-<f5>"        my/gud-until)   ; MS run to cursor
 (keydef "S-<f5>"        my/gud-run)     ; restart
 
-(keydef   "<f6>"        my/gud-print*)
-(keydef "C-<f6>"        my/gud-help)
-(keydef "S-<f6>"        my/gud-pprint*)
+(keydef   "<f6>"        my/gud-print)
+(keydef "C-<f6>"        my/gud-pprint)
+(keydef "S-<f6>"        my/gud-frame0)
 
 (keydef   "<f7>"        my/gud-prompt)  ; focus GUD prompt
 (keydef "C-<f7>"        my/compile)
 (keydef "S-<f7>"        kill-compilation)
 
-(keydef   "<f8>"        my/gud-print)
-(keydef "C-<f8>"        my/gud-pprint)
-(keydef "S-<f8>"        my/gud-frame0)
+;;(keydef   "<f8>"        )
+(keydef "C-<f8>"        my/gud-help)
+;;(keydef "S-<f8>"        )
 
 (keydef   "<f9>"        my/gud-step)    ; MS step into
 (keydef "C-<f9>"        my/gud-stepi)   ; step by instructi
