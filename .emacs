@@ -1545,24 +1545,25 @@ convert it to readonly/view-mode."
 (my/el-get-install "iedit")
 
 ;;}}}
-;;{{{  Projectile, smart-jump and dumb-jump
+;;{{{  Smartscan
+
+;; Introduces bindings:
+;;
+;; M-n  martscan-symbol-go-forward
+;; M-p  martscan-symbol-go-backward
+;; M-'  martscan-symbol-replace         [conflicts with abbrev-prefix-mark]
 
 (add-to-list 'el-get-sources
-             '(:name projectile
-                     :description "Project interaction library"
+             '(:name smartscan
+                     :description "Jumps between other symbols found at point"
                      :type        github
-                     :pkgname     "bbatsov/projectile"
-                     :depends     (cl-lib)
-                     :features    (projectile)
-                     :after       (progn
-                                    (when (file-exists-p "/ws")
-                                      (setq projectile-project-search-path '("/ws")))
-                                    (projectile-mode +1))))
-(my/el-get-install "projectile")
+                     :pkgname     "mickeynp/smart-scan"
+                     :features    (smartscan)
+                     :after       (global-smartscan-mode 1)))
+(my/el-get-install "smartscan")
 
-(my/custom-set-variables
- '(projectile-completion-system 'ido))
-
+;;}}}
+;;{{{  Smart-jump and dumb-jump
 
 (add-to-list 'el-get-sources
              '(:name smart-jump
@@ -1573,16 +1574,11 @@ convert it to readonly/view-mode."
                      :depends     (seq dumb-jump)
                      :features    (smart-jump)
                      :after       (progn
-                                    (smart-jump-setup-default-registers))
-                     ))
+                                    (smart-jump-setup-default-registers))))
 (my/el-get-install "smart-jump")
 
 (my/custom-set-variables
- '(smart-jump-bind-keys-for-evil nil)
- )
-
-;; (require 'smart-jump)
-
+ '(smart-jump-bind-keys-for-evil nil))
 
 
 (add-to-list 'el-get-sources
@@ -1595,223 +1591,258 @@ convert it to readonly/view-mode."
 (my/el-get-install "dumb-jump")
 
 (my/custom-set-variables
- '(dumb-jump-mode t)
- )
+ '(dumb-jump-mode t))
 
-;; (require 'dumb-jump)
+;;}}}
+;;{{{  Grepping: ripgrep, deadgrep and wgrep
+
+(add-to-list 'el-get-sources
+             '(:name deadgrep
+                     :description "fast, friendly searching with ripgrep"
+                     :type        github
+                     :pkgname     "Wilfred/deadgrep"
+                     :depends     (cl-lib s dash spinner)
+                     :features    (deadgrep)))
+(my/el-get-install "deadgrep")
+
+
+(add-to-list 'el-get-sources
+             '(:name wgrep
+                     :description "Writable grep buffer and apply the changes to files"
+                     :type        github
+                     :pkgname     "mhayashi1120/Emacs-wgrep"
+                     :features    (wgrep)))
+(my/el-get-install "wgrep")
+
+
+(add-to-list 'el-get-sources
+             '(:name rg
+                     :description "Emacs search tool based on ripgrep"
+                     :type        github
+                     :pkgname     "dajva/rg.el"
+                     :depends     (cl-lib edmacro grep rg-ibuffer rg-result s vc wgrep)
+                     :features    (rg wgrep-rg)))
+(my/el-get-install "rg")
+
+
+(add-to-list 'el-get-sources
+             '(:name rg
+                     :description "Emacs search tool based on ripgrep"
+                     :type        github
+                     :pkgname     "dajva/rg.el"
+                     :depends     (cl-lib s dash spinner)
+                     :features    (rg)))
+(my/el-get-install "rg")
+
+
+(add-to-list 'el-get-sources
+             '(:name ripgrep
+                     :description "Emacs front-end for ripgrep, a command line search tool."
+                     :type        github
+                     :pkgname     "nlamirault/ripgrep.el"
+                     :features    (ripgrep)))
+(my/el-get-install "ripgrep")
+
+
+(my/custom-set-variables
+ '(grep-command "grep --color -nH -e ")
+ '(grep-find-command
+   '("find . -type f -exec grep --color -nH -e  {} +" . 42))
+ '(grep-find-template "find <D> <X> -type f <F> -exec grep <C> -nH -e <R> {} +")
+ '(grep-highlight-matches nil)
+ '(grep-template "grep <X> <C> -nH -e <R> <F>")
+ '(grep-use-null-device nil)
+ '(ripgrep-arguments '("--no-ignore"))
+ )
 
 ;;}}}
 
-;;=== VC, diff, merge, patch ===========================================
-;;{{{  git and magit
+;;=== Minor modes ======================================================
+;;{{{  folding
 
-;; (add-to-list 'el-get-sources 'dash)
-;; (my/el-get-install "dash")
-;; (add-to-list 'el-get-sources 'transient)
-;; (my/el-get-install "transient")
-;; (add-to-list 'el-get-sources 'with-editor)
-;; (my/el-get-install "with-
-(add-to-list 'el-get-sources 'magit)
-(my/el-get-install "magit")
+(add-to-list 'el-get-sources
+             '(:name folding
+                     :description "A folding-editor-like minor mode."
+                     :type        github
+                     :pkgname     "jaalto/project-emacs--folding-mode"
+                     :features    (folding)
+                     :after       (folding-mode)))
+(my/el-get-install "folding")
 
+(my/custom-set-variables
+ '(folding-mode-prefix-key ",")       ; also changed for hideshow
+ '(folding-advice-instantiate nil)      ; not advising M-g g
+ '(folding-goto-key "\M-gf")            ; Restore M-g's prefix behavior
+ )
+
+;;}}}
+;;{{{  hideshow
+
+;; My version handles block comments in C++ better.
+;; ~/emacs/patched/hideshow--better-handling-of-c++-comments.patch
 
 ;; (add-to-list 'el-get-sources
-;;              '(:name magit-stgit
-;;                      :description "StGit extension for Magit."
-;;                      :type        github
-;;                      :pkgname     "magit/magit-stgit"
-;;                      ;:features    (magit-stgit)
-;;                      ))
-;; (my/el-get-install "magit-stgit")
-;; (autoload #'magit-stgit-mode "magit-stgit" nil t)
+;; 	     '(:name hideshow
+;; 		     :description "Minor mode cmds to selectively display code/comment blocks"
+;; 		     :type        http
+;; 		     :url         "file://localhost/jyates/emacs/patched/hideshow.el"
+;; 		     :features    hideshow))
+;; (my/el-get-install "hideshow")
+;; (require 'hideshow)
 
+;; Display the size of a collapsed function body
+(defun my/display-code-line-counts (ov)
+  (when (eq 'code (overlay-get ov 'hs))
+    (let ((str (format " %d " (count-lines (overlay-start ov)
+                                           (overlay-end ov)))))
+      (put-text-property 0 (length str) 'face 'glyphless-char str)
+      (overlay-put ov 'display str))))
 
-;; (add-to-list 'el-get-sources 'magit-topgit)
-;; (my/el-get-install "magit-topgit")
+(eval-after-load "hideshow"
+  '(setq hs-set-up-overlay 'my/display-code-line-counts))
 
+;; My edits to correct the order of save-excursion save-restriction sequence
+;; have been incorporated into the version at emacswiki.org.
 (add-to-list 'el-get-sources
-             '(:name 'git-timemachine
-                     :features (git-timemachine)))
-(my/el-get-install "git-timemachine")
-
-(my/custom-set-variables
- '(git-commit-setup-hook
-   '(git-commit-save-message
-     git-commit-setup-changelog-support
-     git-commit-turn-on-auto-fill
-     git-commit-propertize-diff
-     with-editor-usage-message))
- '(magit-auto-revert-mode t)
- '(magit-backup-mode nil)
- '(magit-completing-read-function 'ivy-completing-read)
-;'(magit-diff-refine-hunk t)  ;; why is this disabled? ugly faces?
- '(magit-display-buffer-function 'magit-display-buffer-fullcolumn-most-v1)
- '(magit-refs-show-commit-count 'all)
- '(magit-repository-directories
-   '("~/repos/awesome"
-     "~/repos/doxygen"
-     "~/repos/st"))
- '(magit-save-repository-buffers nil)
- '(magit-repository-directories-depth 0 t)
- ; drop git since I uniformly rely on magit
- '(vc-handled-backends nil)
- '(with-editor-emacsclient-executable "/usr/bin/emacsclient"))
-
-(my/custom-set-faces
- '(magit-item-highlight             ((t (                                 :background "gray9"        ))))
-
- '(magit-blame-heading              ((t (                                 :background "gray20"       ))))
- '(magit-branch-local               ((t (:foreground "LightSkyBlue1"      :underline t               ))))
- '(magit-branch-remote              ((t (:inherit magit-branch-local      :foreground "DarkSeaGreen2"))))
- '(magit-diff-added                 ((t (:inherit diff-added                                         ))))
- '(magit-diff-added-highlight       ((t (:inherit diff-refine-added                                  ))))
- '(magit-diff-context               ((t (:inherit magit-dimmed                                       ))))
- '(magit-diff-context-highlight     ((t (:inherit magit-diff-context      :background "grey10"       ))))
- '(magit-diff-file-heading          ((t (:inherit magit-diff-hunk-heading :foreground "LightSkyBlue1"))))
- '(magit-diff-file-heading-highlight((t (:inherit (magit-diff-hunk-heading-highlight magit-diff-file-heading)))))
- '(magit-diff-hunk-heading          ((t (                                 :background "grey15"       ))))
- '(magit-diff-hunk-heading-highlight((t (:inherit magit-section-highlight :weight bold               ))))
- '(magit-diff-removed               ((t (:inherit diff-removed                                       ))))
- '(magit-diff-removed-highlight     ((t (:inherit diff-refine-removed                                ))))
- '(magit-diffstat-added             ((t (:inherit magit-diff-added                                   ))))
- '(magit-diffstat-removed           ((t (:inherit magit-diff-removed                                 ))))
- '(magit-dimmed                     ((t (:foreground "gray70"                                        ))))
- '(magit-hash                       ((t (:foreground "thistle1"                                      ))))
- '(magit-log-head-label-tags        ((t (:foreground "black"              :background "wheat2" :box 1))))
- '(magit-section-heading            ((t (:foreground "SteelBlue1"         :weight bold               ))))
- '(magit-tag                        ((t (:foreground "LightGoldenrod2"    :weight bold               ))))
- )
-
-;; (with-eval-after-load 'magit
-;;   (define-key magit-mode-map "N" 'magit-notes-popup)
-;;   (magit-change-popup-key 'magit-dispatch-popup :action ?T ?N))
-
-;; (add-hook 'magit-mode-hook
-;;           (lambda ()
-;;             (magit-define-popup-action 'magit-ediff-popup ?S "Show staged"   'magit-ediff-show-staged)
-;;             (magit-define-popup-action 'magit-ediff-popup ?U "Show unstaged" 'magit-ediff-show-unstaged)
-;;             ; (magit-stgit-mode)
-;;             ))
-
-(defun my/magit-status ()
-  "Switch to (or create) the magit status buffer for current context"
-  (interactive)
-  (let ((dir (locate-dominating-file "." ".git")))
-    (if (not dir)
-        (error "Directory not within a git workspace (%s)" default-directory)
-      (let ((mbuf (get-buffer (concat "*magit: " (file-name-as-directory (substring dir 0 -1)) "*"))))
-        (if mbuf
-            (switch-to-buffer mbuf)
-          (magit-status-internal dir))))))
-
-;;}}}
-;;{{{  diff
-
-(my/custom-set-faces
- '(diff-added          ((t (:inherit diff-changed :foreground "#c8ffe0"))))
- '(diff-file-header    ((t (:inherit diff-header  :foreground "light goldenrod yellow" :weight bold))))
- '(diff-header         ((t (:background "gray15"                       ))))
- '(diff-nonexistent    ((t (:strike-through "red"                      ))))
- '(diff-refine-added   ((t (:inherit diff-added   :background "#001800"))))
- '(diff-refine-change  ((t (                      :background "#1c3850"))) t)
- '(diff-refine-removed ((t (:inherit diff-removed :background "#200000"))))
- '(diff-removed        ((t (:inherit diff-changed :foreground "#ffd0e0"))))
- )
-
-;;}}}
-;;{{{  ediff
-
-(my/custom-set-variables
- '(ediff-cmp-program "git")
- '(ediff-cmp-options '("diff --histogram"))
- '(ediff-keep-variants nil)
- '(ediff-make-buffers-readonly-at-startup t)
- '(ediff-split-window-function 'split-window-horizontally)
- '(ediff-use-last-dir t)
- '(ediff-window-setup-function 'ediff-setup-windows-plain)
- )
-
-(my/custom-set-faces
- '(ediff-current-diff-A ((t (:inherit highlight :foreground "DarkSeaGreen1"))))
- '(ediff-current-diff-Ancestor ((t (:inherit highlight :foreground "yellow"))))
- '(ediff-current-diff-B ((t (:inherit highlight :foreground "MistyRose1"))))
- '(ediff-current-diff-C ((t (:inherit highlight :foreground "pale goldenrod"))))
- '(ediff-even-diff-A ((t (:background "#300000"))))
- '(ediff-even-diff-Ancestor ((t (:background "#300000"))))
- '(ediff-even-diff-B ((t (:background "#300000"))))
- '(ediff-even-diff-C ((t (:background "#300000"))))
- '(ediff-fine-diff-A ((t (:inherit ediff-current-diff-A :background "#525252" :weight bold))))
- '(ediff-fine-diff-Ancestor ((t (:inherit ediff-current-diff-Ancestor :background "#525252" :weight bold))))
- '(ediff-fine-diff-B ((t (:inherit ediff-current-diff-B :background "#525252" :weight bold))))
- '(ediff-fine-diff-C ((t (:inherit ediff-current-diff-C :background "#525252" :weight bold))))
- '(ediff-odd-diff-A ((t (:background "#281400"))))
- '(ediff-odd-diff-Ancestor ((t (:background "#281400"))))
- '(ediff-odd-diff-B ((t (:background "#281400"))))
- '(ediff-odd-diff-C ((t (:background "#281400"))))
- )
-
-;;}}}
-;;{{{  vdiff
-
-(add-to-list 'el-get-sources
-             '(:name vdiff
-                     :description "A vimdiff-like mode for Emacs"
+             '(:name hideshowvis
+                     :description "Add fringe markers for hide/show foldable regions."
                      :type        github
-                     :pkgname     "justbur/emacs-vdiff"
-                     :depends     (cl-lib hydra)
-                     :features    (vdiff)))
-(my/el-get-install "vdiff")
+                     :pkgname     "sheijk/hideshowvis"
+                     :features    (hideshowvis)))
+(my/el-get-install "hideshowvis")
 
-(add-to-list 'el-get-sources
-             '(:name vdiff-magit
-                     :description "Integrate vdiff into magit"
-                     :type        github
-                     :pkgname     "justbur/emacs-vdiff-magit"
-                     :depends     (vdiff magit)
-                     :features    (vdiff-magit)))
-(my/el-get-install "vdiff-magit")
+;; (defun my/fringe-click-hs (event)
+;;   (interactive "e")
+;;   (mouse-set-point event)
+;;   (end-of-line)
+;;   (if (save-excursion
+;;         (end-of-line 1)
+;;         (or (hs-already-hidden-p)
+;;             (progn
+;;               (forward-char 1)
+;;               (hs-already-hidden-p))))
+;;       (hs-show-block)
+;;     (hs-hide-block)
+;;     (beginning-of-line)))
+
+;; (defvar my/fringe-click-hs-mode-map
+;;   (let ((keymap (make-sparse-keymap)))
+;;     (define-key keymap [left-fringe mouse-1]
+;;       'my/fringe-click-hs)
+;;     keymap)
+;;   "Keymap for interpretting mouse-1 on the left-fringe")
+
+(defvar hs1-regexp
+  "\\(\n[[:blank:]]*///\\|///<\\).*$"
+  "List of regular expressions of blocks to be hidden.")
+
+(define-minor-mode hs1-mode
+  "Hide/show predefined blocks."
+  :lighter " hs1"
+  (if hs1-mode
+      (let (ol)
+    (save-excursion
+      (goto-char (point-min))
+      (while (search-forward-regexp hs1-regexp nil 'noErr)
+        (when (eq (syntax-ppss-context (syntax-ppss (match-end 1))) 'comment)
+          (setq ol (make-overlay (match-beginning 0) (match-end 0)))
+          (overlay-put ol 'hs1 t)
+          (overlay-put ol 'invisible t)
+          ))))
+    (remove-overlays (point-min) (point-max) 'hs1 t)
+    ))
+
+(add-hook 'c++-mode-hook '(lambda () (local-set-key (kbd "M-s M-s") 'hs1-mode)))
 
 ;;}}}
-;;{{{  smerge
+;;{{{  auto-fill and filladapt
+
+;; More recent version from Stefan Monnier here:
+;;   http://elpa.gnu.org/packages/filladapt.html
+;; Seems to still lack this patch:
+;;   http://cc-mode.sourceforge.net/filladapt.el.diff
+
+;; Redirect to a patched version more compatible with cc-mode
+(add-to-list 'el-get-sources
+             '(:name filladapt
+                     :description "Adaptively set fill-prefix and overload filling functions"
+                     :type        http
+;;                   :url         "http://cc-mode.sourceforge.net/filladapt.el"
+                     :url         "file://localhost/jyates/emacs/filladapt.el"
+                     :features    (filladapt)))
+(my/el-get-install "filladapt")
+
+
+;; As distributed filladapt.el contains no autoload cookies
+(autoload #'turn-on-filladapt-mode "filladapt"
+  "Unconditionally turn on Filladapt mode in the current buffer.
+
+\(fn)" t)
+
+(eval-after-load "filladapt" '(diminish 'filladapt-mode "f"))
+
+
+(defun my/turn-on-filling ()
+  (text-mode-hook-identify)  ; mark buffer for toggle-text-mode-auto-fill
+  (turn-on-auto-fill)
+  ;; Typically filladapt's "FA" indicates that filling is active
+  (diminish 'auto-fill-function)
+  (ignore-errors
+    (require 'filladapt)
+    (turn-on-filladapt-mode))
+  )
+
+(defun my/text-mode ()
+  (my/turn-on-filling)
+  (setq fill-column 80)
+  )
 
 (my/custom-set-variables
- '(smerge-auto-leave nil)
- '(smerge-command-prefix ""))
-
-(my/custom-set-faces
- '(smerge-base            ((t (:inherit ediff-even-diff-A))))
- '(smerge-lower           ((t (:inherit ediff-odd-diff-A))))
- '(smerge-mine            ((t (:inherit ediff-even-diff-A))) t)
- '(smerge-other           ((t (:inherit ediff-odd-diff-A))) t)
- '(smerge-refined-added   ((t (:inherit ediff-current-diff-A))))
- '(smerge-refined-changed ((t (:inherit ediff-current-diff-C))))
- '(smerge-refined-removed ((t (:inherit ediff-current-diff-B))))
- '(smerge-upper           ((t (:inherit ediff-even-diff-A))))
+ '(text-mode-hook '(my/text-mode))
  )
 
 ;;}}}
-;;{{{  Applying patches
+;;{{{  visual-lines-mode
 
-(eval-when-compile (require 'diff-mode))
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
 
-;; make using patch mode more convenient
-(defun my/diff-advance-apply-next-hunk-and-recenter ()
-  "Advance to next hunk, apply, and recenter windows for review."
-  (interactive)
-  (diff-hunk-next)
-  (diff-apply-hunk)
-  (when diff-advance-after-apply-hunk
-    (diff-hunk-prev))
-  (recenter 0)
-  (other-window 1)
-  (recenter 0)
-  (other-window 1))
+(my/custom-set-variables
+ '(visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow)))
 
-
-(add-hook 'diff-mode-hook
-          (function (lambda ()
-                      (local-set-key "\C-c\C-c" 'my/diff-advance-apply-next-hunk-and-recenter)
-                      (local-set-key "\C-c\C-i" 'diff-goto-source)))) ; mnemonic: inspect
+;; longlines has been deprecated
+;;
+;; (eval-after-load "longlines"
+;;   '(progn
+;;      (defvar longlines-mode-was-active nil)
+;;      (make-variable-buffer-local 'longlines-mode-was-active)
+;;
+;;      (defun longlines-suspend ()
+;;        (if longlines-mode
+;;            (progn
+;;              (setq longlines-mode-was-active t)
+;;              (longlines-mode 0))))
+;;
+;;      (defun longlines-restore ()
+;;        (if longlines-mode-was-active
+;;            (progn
+;;              (setq longlines-mode-was-active nil)
+;;              (longlines-mode 1))))
+;;
+;;      ;; longlines doesn't play well with ediff, so suspend it during diffs
+;;      (defadvice ediff-make-temp-file (before my/make-temp-file-suspend-ll
+;;                                              activate compile preactivate)
+;;        "Suspend longlines when running ediff."
+;;        (with-current-buffer (ad-get-arg 0)
+;;          (longlines-suspend)))
+;;
+;;      (add-hook 'ediff-cleanup-hook
+;;                (function (lambda ()
+;;                            (dolist (tmp-buf (list ediff-buffer-A
+;;                                                   ediff-buffer-B
+;;                                                   ediff-buffer-C))
+;;                              (if (buffer-live-p tmp-buf)
+;;                                  (with-current-buffer tmp-buf
+;;                                    (longlines-restore)))))))))
 
 ;;}}}
 
@@ -2252,68 +2283,6 @@ This command is designed to be used whether you are already in Info or not."
   (setq truncate-lines (default-value 'truncate-lines)))
 
 ;;}}}
-;;{{{  ripgrep, deadgrep, wgrep and grep
-
-(add-to-list 'el-get-sources
-             '(:name deadgrep
-                     :description "fast, friendly searching with ripgrep"
-                     :type        github
-                     :pkgname     "Wilfred/deadgrep"
-                     :depends     (cl-lib s dash spinner)
-                     :features    (deadgrep)))
-(my/el-get-install "deadgrep")
-
-
-(add-to-list 'el-get-sources
-             '(:name wgrep
-                     :description "Writable grep buffer and apply the changes to files"
-                     :type        github
-                     :pkgname     "mhayashi1120/Emacs-wgrep"
-                     :features    (wgrep)))
-(my/el-get-install "wgrep")
-
-
-(add-to-list 'el-get-sources
-             '(:name rg
-                     :description "Emacs search tool based on ripgrep"
-                     :type        github
-                     :pkgname     "dajva/rg.el"
-                     :depends     (cl-lib edmacro grep rg-ibuffer rg-result s vc wgrep)
-                     :features    (rg wgrep-rg)))
-(my/el-get-install "rg")
-
-
-(add-to-list 'el-get-sources
-             '(:name rg
-                     :description "Emacs search tool based on ripgrep"
-                     :type        github
-                     :pkgname     "dajva/rg.el"
-                     :depends     (cl-lib s dash spinner)
-                     :features    (rg)))
-(my/el-get-install "rg")
-
-
-(add-to-list 'el-get-sources
-             '(:name ripgrep
-                     :description "Emacs front-end for ripgrep, a command line search tool."
-                     :type        github
-                     :pkgname     "nlamirault/ripgrep.el"
-                     :features    (ripgrep)))
-(my/el-get-install "ripgrep")
-
-
-(my/custom-set-variables
- '(grep-command "grep --color -nH -e ")
- '(grep-find-command
-   '("find . -type f -exec grep --color -nH -e  {} +" . 42))
- '(grep-find-template "find <D> <X> -type f <F> -exec grep <C> -nH -e <R> {} +")
- '(grep-highlight-matches nil)
- '(grep-template "grep <X> <C> -nH -e <R> <F>")
- '(grep-use-null-device nil)
- '(ripgrep-arguments '("--no-ignore"))
- )
-
-;;}}}
 ;;{{{  Chasing URL's. See:  browse-url.el
 
 ;; (if (file-exists-p (concat "/usr/bin/x-www-browser"))
@@ -2330,7 +2299,7 @@ This command is designed to be used whether you are already in Info or not."
  )
 
 ;;}}}
-;;{{{  Directoris (ls, dired)
+;;{{{  Directories (ls, dired)
 
 (my/custom-set-variables
  '(dired-listing-switches "-agGh --group-directories-first")
@@ -2519,194 +2488,6 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 ;;}}}
 
-;;=== Minor modes ======================================================
-;;{{{  folding
-
-(add-to-list 'el-get-sources
-             '(:name folding
-                     :description "A folding-editor-like minor mode."
-                     :type        github
-                     :pkgname     "jaalto/project-emacs--folding-mode"
-                     :features    (folding)))
-(my/el-get-install "folding")
-
-(my/custom-set-variables
- '(folding-mode-prefix-key ",")       ; also changed for hideshow
- '(folding-advice-instantiate nil)      ; not advising M-g g
- '(folding-goto-key "\M-gf")            ; Restore M-g's prefix behavior
- )
-
-;;}}}
-;;{{{  hideshow
-
-;; My version handles block comments in C++ better.
-;; ~/emacs/patched/hideshow--better-handling-of-c++-comments.patch
-
-;; (add-to-list 'el-get-sources
-;; 	     '(:name hideshow
-;; 		     :description "Minor mode cmds to selectively display code/comment blocks"
-;; 		     :type        http
-;; 		     :url         "file://localhost/jyates/emacs/patched/hideshow.el"
-;; 		     :features    hideshow))
-;; (my/el-get-install "hideshow")
-;; (require 'hideshow)
-
-;; Display the size of a collapsed function body
-(defun my/display-code-line-counts (ov)
-  (when (eq 'code (overlay-get ov 'hs))
-    (let ((str (format " %d " (count-lines (overlay-start ov)
-                                           (overlay-end ov)))))
-      (put-text-property 0 (length str) 'face 'glyphless-char str)
-      (overlay-put ov 'display str))))
-
-(eval-after-load "hideshow"
-  '(setq hs-set-up-overlay 'my/display-code-line-counts))
-
-;; My edits to correct the order of save-excursion save-restriction sequence
-;; have been incorporated into the version at emacswiki.org.
-(add-to-list 'el-get-sources
-             '(:name hideshowvis
-                     :description "Add fringe markers for hide/show foldable regions."
-                     :type        github
-                     :pkgname     "sheijk/hideshowvis"
-                     :features    (hideshowvis)))
-(my/el-get-install "hideshowvis")
-
-;; (defun my/fringe-click-hs (event)
-;;   (interactive "e")
-;;   (mouse-set-point event)
-;;   (end-of-line)
-;;   (if (save-excursion
-;;         (end-of-line 1)
-;;         (or (hs-already-hidden-p)
-;;             (progn
-;;               (forward-char 1)
-;;               (hs-already-hidden-p))))
-;;       (hs-show-block)
-;;     (hs-hide-block)
-;;     (beginning-of-line)))
-
-;; (defvar my/fringe-click-hs-mode-map
-;;   (let ((keymap (make-sparse-keymap)))
-;;     (define-key keymap [left-fringe mouse-1]
-;;       'my/fringe-click-hs)
-;;     keymap)
-;;   "Keymap for interpretting mouse-1 on the left-fringe")
-
-(defvar hs1-regexp
-  "\\(\n[[:blank:]]*///\\|///<\\).*$"
-  "List of regular expressions of blocks to be hidden.")
-
-(define-minor-mode hs1-mode
-  "Hide/show predefined blocks."
-  :lighter " hs1"
-  (if hs1-mode
-      (let (ol)
-    (save-excursion
-      (goto-char (point-min))
-      (while (search-forward-regexp hs1-regexp nil 'noErr)
-        (when (eq (syntax-ppss-context (syntax-ppss (match-end 1))) 'comment)
-          (setq ol (make-overlay (match-beginning 0) (match-end 0)))
-          (overlay-put ol 'hs1 t)
-          (overlay-put ol 'invisible t)
-          ))))
-    (remove-overlays (point-min) (point-max) 'hs1 t)
-    ))
-
-(add-hook 'c++-mode-hook '(lambda () (local-set-key (kbd "M-s M-s") 'hs1-mode)))
-
-;;}}}
-;;{{{  auto-fill and filladapt
-
-;; More recent version from Stefan Monnier here:
-;;   http://elpa.gnu.org/packages/filladapt.html
-;; Seems to still lack this patch:
-;;   http://cc-mode.sourceforge.net/filladapt.el.diff
-
-;; Redirect to a patched version more compatible with cc-mode
-(add-to-list 'el-get-sources
-             '(:name filladapt
-                     :description "Adaptively set fill-prefix and overload filling functions"
-                     :type        http
-;;                   :url         "http://cc-mode.sourceforge.net/filladapt.el"
-                     :url         "file://localhost/jyates/emacs/filladapt.el"
-                     :features    (filladapt)))
-(my/el-get-install "filladapt")
-
-
-;; As distributed filladapt.el contains no autoload cookies
-(autoload #'turn-on-filladapt-mode "filladapt"
-  "Unconditionally turn on Filladapt mode in the current buffer.
-
-\(fn)" t)
-
-(eval-after-load "filladapt" '(diminish 'filladapt-mode "f"))
-
-
-(defun my/turn-on-filling ()
-  (text-mode-hook-identify)  ; mark buffer for toggle-text-mode-auto-fill
-  (turn-on-auto-fill)
-  ;; Typically filladapt's "FA" indicates that filling is active
-  (diminish 'auto-fill-function)
-  (ignore-errors
-    (require 'filladapt)
-    (turn-on-filladapt-mode))
-  )
-
-(defun my/text-mode ()
-  (my/turn-on-filling)
-  (setq fill-column 80)
-  )
-
-(my/custom-set-variables
- '(text-mode-hook '(my/text-mode))
- )
-
-;;}}}
-;;{{{  visual-lines-mode
-
-(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
-
-(my/custom-set-variables
- '(visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow)))
-
-;; longlines has been deprecated
-;;
-;; (eval-after-load "longlines"
-;;   '(progn
-;;      (defvar longlines-mode-was-active nil)
-;;      (make-variable-buffer-local 'longlines-mode-was-active)
-;;
-;;      (defun longlines-suspend ()
-;;        (if longlines-mode
-;;            (progn
-;;              (setq longlines-mode-was-active t)
-;;              (longlines-mode 0))))
-;;
-;;      (defun longlines-restore ()
-;;        (if longlines-mode-was-active
-;;            (progn
-;;              (setq longlines-mode-was-active nil)
-;;              (longlines-mode 1))))
-;;
-;;      ;; longlines doesn't play well with ediff, so suspend it during diffs
-;;      (defadvice ediff-make-temp-file (before my/make-temp-file-suspend-ll
-;;                                              activate compile preactivate)
-;;        "Suspend longlines when running ediff."
-;;        (with-current-buffer (ad-get-arg 0)
-;;          (longlines-suspend)))
-;;
-;;      (add-hook 'ediff-cleanup-hook
-;;                (function (lambda ()
-;;                            (dolist (tmp-buf (list ediff-buffer-A
-;;                                                   ediff-buffer-B
-;;                                                   ediff-buffer-C))
-;;                              (if (buffer-live-p tmp-buf)
-;;                                  (with-current-buffer tmp-buf
-;;                                    (longlines-restore)))))))))
-
-;;}}}
-
 ;;=== Major modes ======================================================
 ;;{{{  Org
 
@@ -2728,6 +2509,239 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 ;; Interesting org-mode completion, integrate with auto-complete?
 ;; http://www.emacswiki.org/emacs/download/completion-ui-more-sources.el
+
+;;}}}
+
+;;=== Projects, VC, diff, merge, patch =================================
+;;{{{  Projectile
+
+
+(add-to-list 'el-get-sources
+             '(:name projectile
+                     :description "Project interaction library"
+                     :type        github
+                     :pkgname     "bbatsov/projectile"
+                     :depends     (cl-lib)
+                     :features    (projectile)
+                     :after       (progn
+                                    (when (file-exists-p "/ws")
+                                      (setq projectile-project-search-path '("/ws")))
+                                    (projectile-mode +1))))
+(my/el-get-install "projectile")
+
+(my/custom-set-variables
+ '(projectile-completion-system 'ido))
+
+;;}}}
+;;{{{  Git and magit
+
+;; (add-to-list 'el-get-sources 'dash)
+;; (my/el-get-install "dash")
+;; (add-to-list 'el-get-sources 'transient)
+;; (my/el-get-install "transient")
+;; (add-to-list 'el-get-sources 'with-editor)
+;; (my/el-get-install "with-
+(add-to-list 'el-get-sources 'magit)
+(my/el-get-install "magit")
+
+
+;; (add-to-list 'el-get-sources
+;;              '(:name magit-stgit
+;;                      :description "StGit extension for Magit."
+;;                      :type        github
+;;                      :pkgname     "magit/magit-stgit"
+;;                      ;:features    (magit-stgit)
+;;                      ))
+;; (my/el-get-install "magit-stgit")
+;; (autoload #'magit-stgit-mode "magit-stgit" nil t)
+
+
+;; (add-to-list 'el-get-sources 'magit-topgit)
+;; (my/el-get-install "magit-topgit")
+
+(add-to-list 'el-get-sources
+             '(:name 'git-timemachine
+                     :features (git-timemachine)))
+(my/el-get-install "git-timemachine")
+
+(my/custom-set-variables
+ '(git-commit-setup-hook
+   '(git-commit-save-message
+     git-commit-setup-changelog-support
+     git-commit-turn-on-auto-fill
+     git-commit-propertize-diff
+     with-editor-usage-message))
+ '(magit-auto-revert-mode t)
+ '(magit-backup-mode nil)
+ '(magit-completing-read-function 'ivy-completing-read)
+;'(magit-diff-refine-hunk t)  ;; why is this disabled? ugly faces?
+ '(magit-display-buffer-function 'magit-display-buffer-fullcolumn-most-v1)
+ '(magit-refs-show-commit-count 'all)
+ '(magit-repository-directories
+   '("~/repos/awesome"
+     "~/repos/doxygen"
+     "~/repos/st"))
+ '(magit-save-repository-buffers nil)
+ '(magit-repository-directories-depth 0 t)
+ ; drop git since I uniformly rely on magit
+ '(vc-handled-backends nil)
+ '(with-editor-emacsclient-executable "/usr/bin/emacsclient"))
+
+(my/custom-set-faces
+ '(magit-item-highlight             ((t (                                 :background "gray9"        ))))
+
+ '(magit-blame-heading              ((t (                                 :background "gray20"       ))))
+ '(magit-branch-local               ((t (:foreground "LightSkyBlue1"      :underline t               ))))
+ '(magit-branch-remote              ((t (:inherit magit-branch-local      :foreground "DarkSeaGreen2"))))
+ '(magit-diff-added                 ((t (:inherit diff-added                                         ))))
+ '(magit-diff-added-highlight       ((t (:inherit diff-refine-added                                  ))))
+ '(magit-diff-context               ((t (:inherit magit-dimmed                                       ))))
+ '(magit-diff-context-highlight     ((t (:inherit magit-diff-context      :background "grey10"       ))))
+ '(magit-diff-file-heading          ((t (:inherit magit-diff-hunk-heading :foreground "LightSkyBlue1"))))
+ '(magit-diff-file-heading-highlight((t (:inherit (magit-diff-hunk-heading-highlight magit-diff-file-heading)))))
+ '(magit-diff-hunk-heading          ((t (                                 :background "grey15"       ))))
+ '(magit-diff-hunk-heading-highlight((t (:inherit magit-section-highlight :weight bold               ))))
+ '(magit-diff-removed               ((t (:inherit diff-removed                                       ))))
+ '(magit-diff-removed-highlight     ((t (:inherit diff-refine-removed                                ))))
+ '(magit-diffstat-added             ((t (:inherit magit-diff-added                                   ))))
+ '(magit-diffstat-removed           ((t (:inherit magit-diff-removed                                 ))))
+ '(magit-dimmed                     ((t (:foreground "gray70"                                        ))))
+ '(magit-hash                       ((t (:foreground "thistle1"                                      ))))
+ '(magit-log-head-label-tags        ((t (:foreground "black"              :background "wheat2" :box 1))))
+ '(magit-section-heading            ((t (:foreground "SteelBlue1"         :weight bold               ))))
+ '(magit-tag                        ((t (:foreground "LightGoldenrod2"    :weight bold               ))))
+ )
+
+;; (with-eval-after-load 'magit
+;;   (define-key magit-mode-map "N" 'magit-notes-popup)
+;;   (magit-change-popup-key 'magit-dispatch-popup :action ?T ?N))
+
+;; (add-hook 'magit-mode-hook
+;;           (lambda ()
+;;             (magit-define-popup-action 'magit-ediff-popup ?S "Show staged"   'magit-ediff-show-staged)
+;;             (magit-define-popup-action 'magit-ediff-popup ?U "Show unstaged" 'magit-ediff-show-unstaged)
+;;             ; (magit-stgit-mode)
+;;             ))
+
+(defun my/magit-status ()
+  "Switch to (or create) the magit status buffer for current context"
+  (interactive)
+  (let ((dir (locate-dominating-file "." ".git")))
+    (if (not dir)
+        (error "Directory not within a git workspace (%s)" default-directory)
+      (let ((mbuf (get-buffer (concat "*magit: " (file-name-as-directory (substring dir 0 -1)) "*"))))
+        (if mbuf
+            (switch-to-buffer mbuf)
+          (magit-status-internal dir))))))
+
+;;}}}
+;;{{{  Diff
+
+(my/custom-set-faces
+ '(diff-added          ((t (:inherit diff-changed :foreground "#c8ffe0"))))
+ '(diff-file-header    ((t (:inherit diff-header  :foreground "light goldenrod yellow" :weight bold))))
+ '(diff-header         ((t (:background "gray15"                       ))))
+ '(diff-nonexistent    ((t (:strike-through "red"                      ))))
+ '(diff-refine-added   ((t (:inherit diff-added   :background "#001800"))))
+ '(diff-refine-change  ((t (                      :background "#1c3850"))) t)
+ '(diff-refine-removed ((t (:inherit diff-removed :background "#200000"))))
+ '(diff-removed        ((t (:inherit diff-changed :foreground "#ffd0e0"))))
+ )
+
+;;}}}
+;;{{{  Ediff
+
+(my/custom-set-variables
+ '(ediff-cmp-program "git")
+ '(ediff-cmp-options '("diff --histogram"))
+ '(ediff-keep-variants nil)
+ '(ediff-make-buffers-readonly-at-startup t)
+ '(ediff-split-window-function 'split-window-horizontally)
+ '(ediff-use-last-dir t)
+ '(ediff-window-setup-function 'ediff-setup-windows-plain)
+ )
+
+(my/custom-set-faces
+ '(ediff-current-diff-A ((t (:inherit highlight :foreground "DarkSeaGreen1"))))
+ '(ediff-current-diff-Ancestor ((t (:inherit highlight :foreground "yellow"))))
+ '(ediff-current-diff-B ((t (:inherit highlight :foreground "MistyRose1"))))
+ '(ediff-current-diff-C ((t (:inherit highlight :foreground "pale goldenrod"))))
+ '(ediff-even-diff-A ((t (:background "#300000"))))
+ '(ediff-even-diff-Ancestor ((t (:background "#300000"))))
+ '(ediff-even-diff-B ((t (:background "#300000"))))
+ '(ediff-even-diff-C ((t (:background "#300000"))))
+ '(ediff-fine-diff-A ((t (:inherit ediff-current-diff-A :background "#525252" :weight bold))))
+ '(ediff-fine-diff-Ancestor ((t (:inherit ediff-current-diff-Ancestor :background "#525252" :weight bold))))
+ '(ediff-fine-diff-B ((t (:inherit ediff-current-diff-B :background "#525252" :weight bold))))
+ '(ediff-fine-diff-C ((t (:inherit ediff-current-diff-C :background "#525252" :weight bold))))
+ '(ediff-odd-diff-A ((t (:background "#281400"))))
+ '(ediff-odd-diff-Ancestor ((t (:background "#281400"))))
+ '(ediff-odd-diff-B ((t (:background "#281400"))))
+ '(ediff-odd-diff-C ((t (:background "#281400"))))
+ )
+
+;;}}}
+;;{{{  vdiff
+
+(add-to-list 'el-get-sources
+             '(:name vdiff
+                     :description "A vimdiff-like mode for Emacs"
+                     :type        github
+                     :pkgname     "justbur/emacs-vdiff"
+                     :depends     (cl-lib hydra)
+                     :features    (vdiff)))
+(my/el-get-install "vdiff")
+
+(add-to-list 'el-get-sources
+             '(:name vdiff-magit
+                     :description "Integrate vdiff into magit"
+                     :type        github
+                     :pkgname     "justbur/emacs-vdiff-magit"
+                     :depends     (vdiff magit)
+                     :features    (vdiff-magit)))
+(my/el-get-install "vdiff-magit")
+
+;;}}}
+;;{{{  Smerge
+
+(my/custom-set-variables
+ '(smerge-auto-leave nil)
+ '(smerge-command-prefix ""))
+
+(my/custom-set-faces
+ '(smerge-base            ((t (:inherit ediff-even-diff-A))))
+ '(smerge-lower           ((t (:inherit ediff-odd-diff-A))))
+ '(smerge-mine            ((t (:inherit ediff-even-diff-A))) t)
+ '(smerge-other           ((t (:inherit ediff-odd-diff-A))) t)
+ '(smerge-refined-added   ((t (:inherit ediff-current-diff-A))))
+ '(smerge-refined-changed ((t (:inherit ediff-current-diff-C))))
+ '(smerge-refined-removed ((t (:inherit ediff-current-diff-B))))
+ '(smerge-upper           ((t (:inherit ediff-even-diff-A))))
+ )
+
+;;}}}
+;;{{{  Applying patches
+
+(eval-when-compile (require 'diff-mode))
+
+;; make using patch mode more convenient
+(defun my/diff-advance-apply-next-hunk-and-recenter ()
+  "Advance to next hunk, apply, and recenter windows for review."
+  (interactive)
+  (diff-hunk-next)
+  (diff-apply-hunk)
+  (when diff-advance-after-apply-hunk
+    (diff-hunk-prev))
+  (recenter 0)
+  (other-window 1)
+  (recenter 0)
+  (other-window 1))
+
+
+(add-hook 'diff-mode-hook
+          (function (lambda ()
+                      (local-set-key "\C-c\C-c" 'my/diff-advance-apply-next-hunk-and-recenter)
+                      (local-set-key "\C-c\C-i" 'diff-goto-source)))) ; mnemonic: inspect
 
 ;;}}}
 
