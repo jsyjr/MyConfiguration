@@ -2862,11 +2862,9 @@ to a function that generates a unique name."
 
 (add-to-list 'auto-mode-alist '("custom-file" . emacs-lisp-mode))
 
-;; (my/custom-set-variables
-;;  '(eldoc-idle-delay 1.5)
-;;  )
-
-;(global-eldoc-mode -1)
+(my/custom-set-variables
+ '(global-eldoc-mode nil)
+ )
 
 (defun my/byte-compile-saved-elisp-buffer ()
   "Byte compile an elisp buffer anytime it is saved."

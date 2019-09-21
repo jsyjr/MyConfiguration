@@ -84,6 +84,7 @@
  '(git-commit-setup-hook
    '(git-commit-save-message git-commit-setup-changelog-support git-commit-turn-on-auto-fill git-commit-propertize-diff with-editor-usage-message))
  '(global-auto-complete-mode t)
+ '(global-eldoc-mode nil)
  '(global-font-lock-mode t)
  '(global-hl-line-mode t)
  '(graphviz-dot-preview-extension "svg")
