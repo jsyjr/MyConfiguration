@@ -22,7 +22,6 @@ if [ -d /mathworks ]; then
 :/hub/share/bin\
 :${SBTOOLS_ROOT}/bin/${SBARCH}\
 :${SBTOOLS_ROOT}/apps/cgir_tools\
-:$(/hub/share/sbtools/bin/glnxa64/sbcpptags -rtags-bin-dir)\
 :/mathworks/inside/labs/dev/matlab_coder_tools/bear\
 
 fi
