@@ -3240,16 +3240,6 @@ Works with: arglist-cont, arglist-cont-nonempty."
   (require 'sb-prompt)
   (require 'sb)
 
-  (defun sb-debug-ut-gdb ()
-    "'sb -debug-ut' in selected directory via GDB/MI (2 windows)"
-    (interactive)
-    (sb-debug "gdb" t))
-
-  (defun sb-debug-ut-gdb-many-windows ()
-    "'sb -debug-ut' in selected directory via GDB/MI (many windows)"
-    (interactive)
-    (sb-debug "gdb-many-windows" t))
-
   (require 'sb-maps)
 
   ;; replace mathworks-sblocate and mathworks-sblocate-gendb
@@ -3298,6 +3288,16 @@ Works with: arglist-cont, arglist-cont-nonempty."
                 (kill-buffer buf))))))
     ;(select-frame (display-buffer (current-buffer) display-buffer--other-frame-action t))
     (apply orig-fun args))
+
+  (defun sb-debug-ut-gdb ()
+    "'sb -debug-ut' in selected directory via GDB/MI (2 windows)"
+    (interactive)
+    (sb-debug "gdb" t))
+
+  (defun sb-debug-ut-gdb-many-windows ()
+    "'sb -debug-ut' in selected directory via GDB/MI (many windows)"
+    (interactive)
+    (sb-debug "gdb-many-windows" t))
 
   (advice-add 'sb-debug                     :around #'my/clean-up-gud-buffers)
   (advice-add 'sb-debug-gdb                 :around #'my/clean-up-gud-buffers)
