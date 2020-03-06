@@ -1,15 +1,27 @@
 #!/bin/dash
 
+TASK="$( cd /ws/TASK \
+       ; sbver | grep 'SyncFrom:' | sed -ze 's|SyncFrom: /*mathworks/devel/||' )"
+THIN="$( cd /ws/THIN \
+       ; sbver | grep 'SyncFrom:' | sed -ze 's|SyncFrom: /*mathworks/devel/||' )"
+
 # run sbver in every sandbox beneath /ws
 
 ( cd /ws \
 ; for DIR in * ; do \
-    [ -d $DIR ] && [ -f $DIR/mw_anchor ] && \
-    [ $DIR != "Bcgir_task.latest_pass" ] &&  \
-    [ $DIR != "Bcgir_thin.latest_pass" ] &&  \
-       ( cd /ws/$DIR \
-       ; echo -n "$DIR:  " \
-       ; sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom: /*mathworks/devel/||' \
+    [ -d ${DIR} ] && [ -f ${DIR}/mw_anchor ] && \
+    [ ${DIR} != "Bcgir_task.latest_pass"   ] && \
+    [ ${DIR} != "Bcgir_thin.latest_pass"   ] && \
+       ( cd /ws/${DIR} \
+       ; echo -n "${DIR}:  " \
+       ; JOB="$( sbver | grep 'SyncFrom:' | sed -ze 's|SyncFrom: /*mathworks/devel/||' -ze 's|#.*(BEHIND).*||' )" \
+       ; [ ${JOB} = ${TASK} ] && [ ${DIR} != 'TASK' ] && JOB='=TASK' \
+       ; [ ${JOB} = ${THIN} ] && [ ${DIR} != 'THIN' ] && JOB='=THIN' \
+       ; CNT="" \
+       ; [ ${DIR} != 'TASK' ] && [ ${DIR} != 'THIN' ] && CNT="$( p4 opened | wc -l )" \
+       ; printf '%s  %s\n' ${JOB} ${CNT} \
        ) \
   done \
 )
+
+
