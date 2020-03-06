@@ -1553,14 +1553,14 @@ convert it to readonly/view-mode."
 ;; M-p  martscan-symbol-go-backward
 ;; M-'  martscan-symbol-replace         [conflicts with abbrev-prefix-mark]
 
-(add-to-list 'el-get-sources
-             '(:name smartscan
-                     :description "Jumps between other symbols found at point"
-                     :type        github
-                     :pkgname     "mickeynp/smart-scan"
-                     :features    (smartscan)
-                     :after       (global-smartscan-mode 1)))
-(my/el-get-install "smartscan")
+;; (add-to-list 'el-get-sources
+;;              '(:name smartscan
+;;                      :description "Jumps between other symbols found at point"
+;;                      :type        github
+;;                      :pkgname     "mickeynp/smart-scan"
+;;                      :features    (smartscan)
+;;                      :after       (global-smartscan-mode 1)))
+;; (my/el-get-install "smartscan")
 
 ;;}}}
 ;;{{{  Smart-jump and dumb-jump
