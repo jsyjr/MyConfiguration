@@ -195,6 +195,7 @@ mouse-3: Remove current window from display"))))
  '(package-archives
    '(("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "https://melpa.org/packages/")))
+ '(package-selected-packages '(gxref))
  '(pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)))
  '(pretty-control-l-mode t)
  '(projectile-completion-system 'ido)
