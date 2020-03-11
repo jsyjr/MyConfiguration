@@ -127,6 +127,8 @@ if [ -d /mathworks ]; then
     alias sbs_task="mw -using Bcgir_task sbs clone create -cluster Bcgir_task -name"
     alias sbs_thin="mw -using Bcgir_thin sbs clone create -cluster Bcgir_thin -name"
     alias sbsdel="mw -using Bcgir_task sbs clone discard"
+    alias nrss="CH_FORCEFULLY_CREATE_CACHE=1 mw checkconfig && mw gmake -j24 COMPONENTS_TO_BUILD=range_services DEBUG=1 && mw gmake -j24 COMPONENTS_TO_BUILD=cgir_support DEBUG=1"
+    alias nopen="p4 opened | wc -l"
 
     alias sbrerun='pushd `sbroot` && sbruntests -farm devel -F none -testsuites '
     alias sbrerunlocal='pushd `sbroot` && sbruntests -local 9 -F none -rerunusing nothing -noretryfailedtests -mlswitches -no-vmemorylimit -testsuites '
