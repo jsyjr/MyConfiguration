@@ -144,4 +144,4 @@ fi
 ########### END MATHWORKS SPECIFIC ###########
 
 # This script is aware of Mathworks idiosyncracies
-. ${HOME}/.my_path
+. ~/.my_path
