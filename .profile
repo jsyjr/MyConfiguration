@@ -1,4 +1,4 @@
-# -*-shell-script-*-
+#!/bin/dash
 
 export HOME=/jyates
 export EDITOR=/usr/bin/emacsclient
