@@ -62,6 +62,8 @@ append_gitignore_lines <<EOF
 .validate_dox.ts
 jar_extract_*
 LKG_*
+_mkgraph_dump.viz
+sbpatch_history_sbclone
 suite_registration.cpp
 
 # Extensions typically signalling binary or derived data (anywhere)
