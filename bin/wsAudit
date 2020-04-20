@@ -1,27 +1,28 @@
-#!/bin/dash
+#!/bin/bash
 
-TASK="$( cd /ws/TASK \
-       ; sbver | grep 'SyncFrom:' | sed -ze 's|SyncFrom: /*mathworks/devel/||' )"
-THIN="$( cd /ws/THIN \
-       ; sbver | grep 'SyncFrom:' | sed -ze 's|SyncFrom: /*mathworks/devel/||' )"
+TASK="$( cd /ws/TASK ; sbver | grep 'SyncFrom:' | sed -ze 's|SyncFrom: /*mathworks/devel/jobarchive/Bcgir_task|TASK|' -ze 's| #.*(BEHIND).*||' -ze 's|_job[0-9]*||' -ze 's|.pass.*||' )"
+printf '\nTASK=     %s\n'   ${TASK}
+TBLD="$( cd /ws/TBLD ; sbver | grep 'SyncFrom:' | sed -ze 's|SyncFrom: /*mathworks/devel/jobarchive/Bcgir_task_build|TBLD|' -ze 's| #.*(BEHIND).*||' -ze 's|_job[0-9]*||' -ze 's|.pass.*||' )"
+printf   'TBLD=     %s\n'   ${TBLD}
+THIN="$( cd /ws/THIN ; sbver | grep 'SyncFrom:' | sed -ze 's|SyncFrom: /*mathworks/devel/jobarchive/Bcgir_thin|THIN|' -ze 's| #.*(BEHIND).*||' -ze 's|_job[0-9]*||' -ze 's|.pass.*||' )"
+printf   'THIN=     %s\n\n' ${THIN}
 
 # run sbver in every sandbox beneath /ws
 
+shopt -s extglob
+
 ( cd /ws \
-; for DIR in * ; do \
-    [ -d ${DIR} ] && [ -f ${DIR}/mw_anchor ] && \
-    [ ${DIR} != "Bcgir_task.latest_pass"   ] && \
-    [ ${DIR} != "Bcgir_thin.latest_pass"   ] && \
+; for DIR in !(Bcgir_*|TASK|TBLD|THIN) ; do \
+     [[ ${DIR} =~ ^[A-Z0-9]+$ ]] && [[ -d ${DIR} ]] && [[ -f ${DIR}/mw_anchor ]] && \
        ( cd /ws/${DIR} \
-       ; echo -n "${DIR}:  " \
-       ; JOB="$( sbver | grep 'SyncFrom:' | sed -ze 's|SyncFrom: /*mathworks/devel/||' -ze 's|#.*(BEHIND).*||' )" \
-       ; [ ${JOB} = ${TASK} ] && [ ${DIR} != 'TASK' ] && JOB='=TASK' \
-       ; [ ${JOB} = ${THIN} ] && [ ${DIR} != 'THIN' ] && JOB='=THIN' \
-       ; CNT="" \
-       ; [ ${DIR} != 'TASK' ] && [ ${DIR} != 'THIN' ] && CNT="$( p4 opened | wc -l )" \
-       ; printf '%s  %s\n' ${JOB} ${CNT} \
+       ; JOB="$( sbver | grep 'SyncFrom:' | sed -ze 's|SyncFrom: /*mathworks/devel/jobarchive/||' -ze 's|Bcgir_task_build|TBLD|g' -ze 's|Bcgir_task|TASK|g' -ze 's|Bcgir_thin|THIN|g' -ze 's| #.*(BEHIND).*||' -ze 's|_job[0-9]*||' -ze 's|.pass.*||' )" \
+       ; [[ ${JOB} = ${TASK} ]] && JOB='TASK=' \
+       ; [[ ${JOB} = ${TBLD} ]] && JOB='TBLD=' \
+       ; [[ ${JOB} = ${THIN} ]] && JOB='THIN=' \
+       ; CNT="$( p4 opened 2>/dev/null | wc -l )" \
+       ; ABOUT='' \
+       ; [[ -f ABOUT.txt ]] && ABOUT="$( cat ABOUT.txt )" \
+       ; printf '%s:%4s %-32s%s\n' ${DIR} ${CNT} ${JOB} "${ABOUT}" \
        ) \
   done \
 )
-
-

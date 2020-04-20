@@ -51,6 +51,9 @@ CLONED=$(sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom:[^B]*\(B[a-z0-9_]*\).*$|\
 
 
 BACKUP=local_$(hostname)$(echo ${WORKSPACE} | sed -e 's|/|_|g')_backup/latest
+BACKUP_PATH=$s/_sbbackup/${BACKUP}
+SANDBOX_INFO=${BACKUP_PATH}/.sandbox_info
+
 
 # Determine any gecks attached to the workspace
 GECKS=$( p4 opened \

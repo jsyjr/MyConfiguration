@@ -12,6 +12,9 @@ if [ -L ${LOCALWS}/SBSredirect ] ; then
 fi
 
 sbbackup -opened
+mkdir ${SANDBOX_INFO}
+cp ${LOCALWS}/ABOUT.txt ${SANDBOX_INFO} 2>/dev/null
+cp ${LOCALWS}/SLIDERS.* ${SANDBOX_INFO} 2>/dev/null
 
 # If local git repo is local to the workspace and if it contains both
 # commits and a perforce branch then move it to the sibling save area.
@@ -38,11 +41,14 @@ cd /ws
 sbrmtree ${LOCALWS}
 sbclone -no-pdb ${CLONED} ${LOCALWS}
 cd ${LOCALWS}
+sblocalhub -sync
+cp ${SANDBOX_INFO}/ABOUT.txt . 2>/dev/null
+cp ${SANDBOX_INFO}/SLIDERS.* . 2>/dev/null
 
 # Check for a git repository in a sibling save area
 if [ ! -d ${SAVEGIT} ]; then
     # No git repository found, simple restore the sbbackup
-    sbrestore -no-prompt -f -r $s/_sbbackup/${BACKUP}
+    sbrestore -no-prompt -f -r ${BACKUP_PATH}
 else
     # Use sibling save area's git repo rather than syncmaster's fresh repo
     rm -rf ${WORKGIT}
@@ -53,7 +59,7 @@ else
     git commit -m "${JOB}" >/dev/null 2>&1
 
     # Restore the backup
-    # sbrestore -no-prompt -f -r $s/_sbbackup/${BACKUP}
+    # sbrestore -no-prompt -f -r ${BACKUP_PATH}
     # git commit -m "_sbbackup/${BACKUP}" >/dev/null 2>&1
 
     # Back to master and merge newest changes from perforce
