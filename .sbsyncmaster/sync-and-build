@@ -1,19 +1,27 @@
 #!/bin/bash
 
 if [ "${SYNCMASTERDIR}"  == "" ] ||
-   [ "${LATESTPASSDIR}"  == "" ] ||
+   [ "${CLUSTER}"        == "" ] ||
+   [ "${CLUSTERS_ROOT}"  == "" ] ||
+   [ "${CLUSTERDIR}"     == "" ] ||
+   [ "${CLUSTER_PATH}"   == "" ] ||
+   [ "${LOGDIR}"         == "" ] ||
+   [ "${GITDIR}"         == "" ] ||
    [ "${GIT_USER_NAME}"  == "" ] ||
-   [ "${GIT_USER_EMAIL}" == "" ] ||
-   [ "${CLUSTER}"        == "" ]
+   [ "${GIT_USER_EMAIL}" == "" ]
 then
     echo
     echo "One or more required environment symbols is not defined:"
     echo
     echo "  SYNCMASTERDIR  = ${SYNCMASTERDIR}"
-    echo "  LATESTPASSDIR  = ${LATESTPASSDIR}"
+    echo "  CLUSTER        = ${CLUSTER}"
+    echo "  CLUSTERS_ROOT  = ${CLUSTERS_ROOT}"
+    echo "  CLUSTERDIR     = ${CLUSTERDIR}"
+    echo "  CLUSTER_PATH   = ${CLUSTER_PATH}"
+    echo "  LOGDIR         = ${LOGDIR}"
+    echo "  GITDIR         = ${GITDIR}"
     echo "  GIT_USER_NAME  = ${GIT_USER_NAME}"
     echo "  GIT_USER_EMAIL = ${GIT_USER_EMAIL}"
-    echo "  CLUSTER        = ${CLUSTER}"
     echo
     echo "Did you invoke the script manually without providing these symbols?"
     echo
@@ -24,6 +32,6 @@ then
     exit 1
 fi
 
-LOGDIR=${SYNCMASTERDIR}/${CLUSTER}.logs
+#   echo "sbsyncmaster -no-perforce -no-sbstop -nice -C ${CLUSTERDIR} -src-root ${CLUSTER}:latest_pass -log-dir ${LOGDIR} -cfg ${SYNCMASTERDIR}/git-enabled-workspace.cfg"
 
-sbsyncmaster -no-perforce -no-sbstop -nice -C ${LATESTPASSDIR} -src-root ${CLUSTER}:latest_pass -log-dir ${LOGDIR} -cfg ${SYNCMASTERDIR}/git-enabled-workspace.cfg
+sbsyncmaster -no-perforce -no-sbstop -nice -C ${CLUSTERDIR} -src-root ${CLUSTER}:latest_pass -log-dir ${LOGDIR} -cfg ${SYNCMASTERDIR}/git-enabled-workspace.cfg

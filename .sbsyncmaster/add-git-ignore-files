@@ -1,8 +1,47 @@
 #!/bin/dash
-echo BANG
+
+# The intent of these .ignores is to include all code mentioned in cg_ir/ez.mk:
+#
+# <CLUSTER-ROOT>
+# └── matlab
+#     ├── config
+#     ├── src
+#     │   ├── cg_ir
+#     │   ├── cgir_*
+#     │   ├── dnn_core
+#     │   ├── eml
+#     │   ├── emlcode
+#     │   ├── half_precision
+#     │   ├── include
+#     │   ├── pir_core
+#     │   ├── range_services
+#     │   ├── rtw*
+#     │   ├── slcg
+#     │   ├── slcg_cpp
+#     │   │   └── client
+#     │   ├── slcg_driver
+#     │   ├── slcg_fe
+#     │   ├── slcg_filepackaging
+#     │   ├── slcg_identifiers
+#     │   ├── slcg_mf0
+#     │   ├── slvm
+#     │   └── xil_utils
+#     ├── test
+#     │   └── toolbox
+#     │       ├── cgir
+#     │       └── cgir_web_interface
+#     └── toolbox
+#         ├── cgir
+#         ├── coder
+#         │   ├── codedescriptor_core
+#         │   └── foundation
+#         └── shared
+#             ├── cgir_fe
+#             ├── cgxe
+#             └── cxxfe
 
 append_gitignore_lines() {
-    if [ ! -d .git ] ; then exit -1 ; fi
+#    if [ ! -e .git ] ; then exit -1 ; fi
 
     GITIGNORE_PATH=${1}.gitignore
     if [ -e ${GITIGNORE_PATH} ] ; then
@@ -16,7 +55,9 @@ append_gitignore_lines() {
     cat  >>${GITIGNORE_PATH}
     # chmod a-w ${GITIGNORE_PATH}
     if [ ! -z $1 ] ; then
+        echo "git add --force ${GITIGNORE_PATH}"
         git add --force ${GITIGNORE_PATH}
+        echo "-"
     fi
 }
 
@@ -25,11 +66,8 @@ append_gitignore_lines() {
 append_gitignore_lines <<EOF
 # Directories (top level)
 #
-!/config/
-/.sbtools/
-/build.glnxa64.log.files/
-/build.log.files/
-/bullseye/
+/*/
+!/matlab/
 
 # Files (top level)
 #
@@ -46,7 +84,7 @@ append_gitignore_lines <<EOF
 /GTAGS
 /ID
 /mw_anchor
-/sbpatch_history.txt
+/sbpatch_history*
 /sbrestore_*.txt
 /*.log
 /*.sbsmartbuild.mk
@@ -62,6 +100,8 @@ append_gitignore_lines <<EOF
 .validate_dox.ts
 jar_extract_*
 LKG_*
+_mkgraph_dump.viz
+sbpatch_history_sbclone
 suite_registration.cpp
 
 # Extensions typically signalling binary or derived data (anywhere)
@@ -196,11 +236,28 @@ append_gitignore_lines matlab/src/ <<EOF
 /*/
 !/cg_ir/
 !/cgir_*/
+!/dnn_core/
 !/eml/
+!/emlcoder/
 !/half_precision/
 !/include/
+!/pir_core/
 !/range_services/
 !/rtw*/
+!/slcg/
+!/slcg_cpp/
+!/slcg_driver/
+!/slcg_fe/
+!/slcg_filepackaging/
+!/slcg_identifiers/
+!/slcg_mf0/
+!/slvm/
+!/xil_utils/
+EOF
+
+append_gitignore_lines matlab/src/slcg_cpp/ <<EOF
+/*/
+!/client/
 EOF
 
 append_gitignore_lines matlab/test/ <<EOF
@@ -211,16 +268,25 @@ EOF
 append_gitignore_lines matlab/test/toolbox/ <<EOF
 /*/
 !/cgir/
+!/cgir_web_interface/
 EOF
 
 append_gitignore_lines matlab/toolbox/ <<EOF
 /*/
 !/cgir/
+!/coder/
 !/shared/
+EOF
+
+append_gitignore_lines matlab/toolbox/coder/ <<EOF
+/*/
+!/codedescriptor_core/
+!/foundation/
 EOF
 
 append_gitignore_lines matlab/toolbox/shared/ <<EOF
 /*/
 !/cgir_fe/
 !/cgxe/
+!/cxxfe/
 EOF
