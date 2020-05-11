@@ -224,18 +224,16 @@
    '(("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "https://melpa.org/packages/"))))
 
-(my/custom-set-variables
-'(package-selected-packages
-   '(
-;;   async
-;;   ace-window
-;;   avy
-;;   counsel-gtags
-     gxref
-;;   ivy
-;;   kurecolor
+;; (my/custom-set-variables
+;; '(package-selected-packages
+;;   '(async
+;;     ace-window
+;;     avy
+;;     counsel-gtags
+;;     ivy
+;;     kurecolor
 ;;   ; smartparens ; -- clashing dash installations
-)))
+;; )))
 
 ;;}}}
 ;;{{{  Load customizations
