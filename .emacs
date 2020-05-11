@@ -3569,6 +3569,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
  '(gdb-stack-buffer-addresses t)
  '(gdb-thread-buffer-arguments nil)
  '(gud-gdb-command-name "gdb -i=mi")
+ '(split-width-threshold 1023)         ;; Crummy window splitting rules for wide screens
  )
 
 (defun my/gdb-new-frame ()
