@@ -3678,16 +3678,16 @@ Works with: arglist-cont, arglist-cont-nonempty."
         (insert
          "
 Modi |
-fier | <F5>     <F6>     <F7>     <F8>     <F9>     <F10>    <F11>
----- | ------   ------   ------   ------   ------   ------   ------
-     | run      print    goto              step     next     set
-     |                   prompt            into     stmt     break
+fier | <F5>     <F6>     <F7>     <F8>     <F9>     <F10>    <F11>    <F12>
+---- | ------   ------   ------   ------   ------   ------   ------   ------
+     | run      print    print    goto     step     next     set      customize
+     |                   via pp   prompt   into     stmt     break    option
      |
-Shft | rerun    frame                      frame    frame    remove
-     |          zero                       down     up       break
+Ctrl | run to   unit     compile  toggle   step     frame    temp     customize
+     | cursor   test              help     instr    return   break    group
      |
-Ctrl | run to   print             toggle   step     frame    temp
-     | cursor   via pp            help     instr    return   break
+Shft | rerun    print*   print*   frame    frame    frame    remove   customize
+     |                   via pp   zero     down     up       break    apropos
 ")
         (set-buffer-modified-p nil)
         (view-mode 1)
@@ -4295,22 +4295,23 @@ use either \\[customize] or the function `phw-mode'." t)
 ;; Strong similarity to MS Visual Studio's function keys
 (keydef   "<f4>"        next-error)
 (keydef "C-<f4>"        first-error)
+(keydef "S-<f4>"        kill-compilation)
 
 (keydef   "<f5>"        my/gud-cont)    ; MS go / continue
 (keydef "C-<f5>"        my/gud-until)   ; MS run to cursor
 (keydef "S-<f5>"        my/gud-run)     ; restart
 
-(keydef   "<f6>"        my/gud-print)
-(keydef "C-<f6>"        my/gud-pprint)
-(keydef "S-<f6>"        my/gud-frame0)
+(keydef   "<f6>"        my/gud-print)   ; print  %e
+(keydef "C-<f6>"        my/gud-run-ut)  ; run unit test
+(keydef "S-<f6>"        my/gud-pstar)   ; print* %e
 
-(keydef   "<f7>"        my/gud-prompt)  ; focus GUD prompt
+(keydef   "<f7>"        my/gud-pprint)  ; print  %e via pp
 (keydef "C-<f7>"        my/compile)
-(keydef "S-<f7>"        kill-compilation)
+(keydef "S-<f7>"        my/gud-ppstar)  ; print* %e via pp
 
-;;(keydef   "<f8>"        )
+(keydef   "<f8>"        my/gud-prompt)  ; focus GUD prompt
 (keydef "C-<f8>"        my/gud-help)
-;;(keydef "S-<f8>"        )
+(keydef "S-<f8>"        my/gud-frame0)
 
 (keydef   "<f9>"        my/gud-step)    ; MS step into
 (keydef "C-<f9>"        my/gud-stepi)   ; step by instructi
