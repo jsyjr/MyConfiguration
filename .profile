@@ -24,15 +24,8 @@ fi
 # xrdb ~/.Xresources
 if [ -d /ccc ]; then
     export CCACHE_DIR=/ccc
-    #export CCACHE_LOGFILE=/ccc/LOGFILE
     export CCACHE_LOGFILE=/tmp/ccache.log
     export CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
-    #export CCACHE_TEMPDIR=/huge/ccache
     export CCACHE_TEMPDIR=/tmp
     export USE_CCACHE=1
 fi
-export CCACHE_DIR=/ccc
-export CCACHE_LOGFILE=/tmp/ccache.log
-export CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
-export CCACHE_TEMPDIR=/tmp
-export USE_CCACHE=1
