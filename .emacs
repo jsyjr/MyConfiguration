@@ -1,5 +1,5 @@
 ;; John Yates's .emacs
-;; -*- lexical-binding: t; folding-mode: t -*-
+;; -*- lexical-binding: t -*-
 
 (defconst copyright-owner "John S Yates Jr")
 (put 'copyright-owner 'safe-local-variable 'stringp)
@@ -4340,5 +4340,4 @@ use either \\[customize] or the function `phw-mode'." t)
 ;;======================================================================
 ;; Local Variables:
 ;; comment-column: 40
-;; folded-file: t
 ;; End:
