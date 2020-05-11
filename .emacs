@@ -275,7 +275,7 @@
 ;;}}}
 ;;{{{  ensure necessary directories
 
-;; Run git-clone with ‘--depth 1’ to create shallow clones
+;; Run git-clone with "--depth 1" to create shallow clones
 (setq el-get-git-shallow-clone t)
 
 ;; even though we have loaded the custom-file we do not seem to be
