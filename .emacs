@@ -1566,7 +1566,24 @@ convert it to readonly/view-mode."
 ;; (my/el-get-install "smartscan")
 
 ;;}}}
-;;{{{  Smart-jump and dumb-jump
+;;{{{  Projectile, smart-jump and dumb-jump
+
+(add-to-list 'el-get-sources
+             '(:name projectile
+                     :description "Project interaction library"
+                     :type        github
+                     :pkgname     "bbatsov/projectile"
+                     :depends     (cl-lib)
+                     :features    (projectile)
+                     :after       (progn
+                                    (when (file-exists-p "/ws")
+                                      (setq projectile-project-search-path '("/ws")))
+                                    (projectile-mode +1))))
+(my/el-get-install "projectile")
+
+(my/custom-set-variables
+ '(projectile-completion-system 'ido))
+
 
 (add-to-list 'el-get-sources
              '(:name smart-jump
