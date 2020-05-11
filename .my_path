@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/bash
 
 PATH=\
 /usr/lib/ccache\
@@ -10,9 +10,6 @@ PATH=\
 :/sbin\
 
 if [ -d /mathworks ]; then
-    if [ -d /jyates ]; then
-	export HOME=/jyates
-    fi
     export SBTOOLS_ROOT=/hub/share/sbtools
 
     PATH=\
@@ -22,7 +19,6 @@ if [ -d /mathworks ]; then
 :/hub/share/bin\
 :${SBTOOLS_ROOT}/bin/${SBARCH}\
 :${SBTOOLS_ROOT}/apps/cgir_tools\
-:/mathworks/inside/labs/dev/matlab_coder_tools/bear\
 
 fi
 

@@ -20,7 +20,7 @@
      (".*" "~/.emacs.d/autosave/\\1" t)))
  '(auto-save-list-file-prefix "~/.emacs.d/autosave-list/saves-")
  '(backup-by-copying t)
- '(backup-directory-alist '((".*" . "/jyates/.emacs.d/backup/")))
+ '(backup-directory-alist '((".*" . "/home/jyates/.emacs.d/backup/")))
  '(before-save-hook '(copyright-update time-stamp))
  '(blink-cursor-blinks 0)
  '(blink-cursor-delay 0)
@@ -67,7 +67,7 @@
  '(eol-mnemonic-mac ":")
  '(eol-mnemonic-undecided "?")
  '(eol-mnemonic-unix "/")
- '(eshell-aliases-file "/jyates/emacs/eshell/alias")
+ '(eshell-aliases-file "/home/jyates/emacs/eshell/alias")
  '(eshell-modules-list
    '(eshell-alias eshell-banner eshell-basic eshell-cmpl eshell-dirs eshell-glob eshell-hist eshell-ls eshell-pred eshell-prompt eshell-script eshell-term))
  '(explicit-shell-file-name "/bin/bash")

@@ -50,12 +50,7 @@ set emacs
 # - always move it to most recent
 export HISTCONTROL=ignoredups
 
-if [ -d /mathworks ]; then
-    export SSD_HOME=/jyates
-else
-    export SSD_HOME=${HOME}
-fi
-export XDG_CONFIG_HOME="${SSD_HOME}/.config"
+export XDG_CONFIG_HOME="${HOME}/.config"
 
 # Specify emacs as default editor(?):
 export EDITOR=/usr/bin/emacsclient
@@ -86,13 +81,13 @@ fi
 #alias l='ls -F'
 alias env='env | sort'
 alias cgir-02='rdesktop -g 1920x1600 -d mathworks -u jyates cgir-02-win64 &'
-alias dff='df -h /ws /sandbox/jyates / /jyates /home/jyates'
+alias dff='df -h /ws /sandbox/jyates /'
 alias ezfast='( cd matlab/src/cg_ir && /hub/share/sbtools/apps/cgir_tools/cgmake DEBUG=1 NORUNTESTS=1 -f ez.mk )'
 alias ezmk='( cd matlab/src/cg_ir && /hub/share/sbtools/apps/cgir_tools/cgmake DEBUG=1 -f ez.mk )'
 alias rgf="rg -u --files -g "
 alias sshmw='ssh jyates@jyates-deb9-64.dhcp.mathworks.com'
-alias sma='ls -ltr /jyates/.sbsyncmaster/Bcgir_task.logs | tail'
-alias smh='ls -ltr /jyates/.sbsyncmaster/Bcgir_thin.logs | tail'
+alias sma='ls -ltr /home/jyates/.sbsyncmaster/Bcgir_task.logs | tail'
+alias smh='ls -ltr /home/jyates/.sbsyncmaster/Bcgir_thin.logs | tail'
 alias cn="p4 opened|grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|uniq|xargs p4 changelist -o|sed -nre '/^Change:/ { s/Change:.([0-9]+).*/\1/gp }'"
 alias changelist="p4 opened|grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|uniq|xargs p4 changelist -o"
 alias gecks="p4 opened|grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|uniq|xargs p4 describe|sed -nre '/^g[0-9]+/ { s/(g[0-9]+).*/\1/gp }'"
