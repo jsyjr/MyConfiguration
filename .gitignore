@@ -105,8 +105,7 @@ st-light
 
 # Hidden directories in the root of the home directory
 #/.*/ -- Same rationale as for /.* (see previous comment).
-.sbsyncmaster/Bcgir_task.logs/
-.sbsyncmaster/Bcgir_thin.logs/
+.sbsyncmaster/Bcgir_t*.logs/
 /.AndroidStudio1.2/
 /.BullseyeCoverage/
 /.Xilinx/

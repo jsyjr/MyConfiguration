@@ -119,13 +119,13 @@ if [ -d /mathworks ]; then
     alias sbnj='sb -nodesktop -nosplash -nojvm -r "opengl info"'
 
     alias dmake='cgmake DEBUG=1'
-    alias tws='sbclone -no-pdb THIN'
+    alias bws='sbclone -no-pdb TBLD'
     alias nws='sbclone -no-pdb TASK'
+    alias tws='sbclone -no-pdb THIN'
     alias nwspdb='sbclone -pdb TASK'
     alias fixes='cat /ws/TASK/.sbtools/p4syncinfo/mwfixes_files ; echo ; echo $(cat /ws/TASK/.sbtools/p4syncinfo/mwfixes_files | wc -l) fixed files ; echo'
     alias sbs_build="mw -using Bcgir_task_build sbs clone create -cluster Bcgir_task_build -name"
     alias sbs_task="mw -using Bcgir_task sbs clone create -cluster Bcgir_task -name"
-    alias sbs_thin="mw -using Bcgir_thin sbs clone create -cluster Bcgir_thin -name"
     alias sbsdel="mw -using Bcgir_task sbs clone discard"
     alias nrss="CH_FORCEFULLY_CREATE_CACHE=1 mw checkconfig && mw gmake -j24 COMPONENTS_TO_BUILD=range_services DEBUG=1 && mw gmake -j24 COMPONENTS_TO_BUILD=cgir_support DEBUG=1"
     alias nopen="p4 opened | wc -l"
