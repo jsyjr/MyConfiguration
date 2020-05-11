@@ -903,9 +903,7 @@ mouse-3: Remove current window from display"))))
                   (keymap
                    (mode-line keymap
                               (mouse-1 . beginning-of-defun)
-                              (mouse-2 . #[nil "e\300=\203	 \301 \207~\207"
-                                               [1 narrow-to-defun]
-                                               2 nil nil])
+                              (mouse-2 . my/toggle-function-narrowing)
                               (mouse-3 . end-of-defun)))
                   face which-func help-echo
 "Function (enclosing or preceding)
