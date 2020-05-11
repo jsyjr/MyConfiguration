@@ -1600,6 +1600,8 @@ convert it to readonly/view-mode."
 (my/custom-set-variables
  '(smart-jump-bind-keys-for-evil nil))
 
+;; (require 'smart-jump)
+
 
 (add-to-list 'el-get-sources
              '(:name dumb-jump
@@ -1612,6 +1614,8 @@ convert it to readonly/view-mode."
 
 (my/custom-set-variables
  '(dumb-jump-mode t))
+
+;; (require 'dumb-jump)
 
 ;;}}}
 ;;{{{  Grepping: ripgrep, deadgrep and wgrep
