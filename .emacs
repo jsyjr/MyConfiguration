@@ -894,6 +894,13 @@ mouse-3: Remove current window from display"))))
 ;;}}}
 ;;{{{  mode-line which-func
 
+(defun my/toggle-function-narrowing ()
+  "Alternate between narrowing and windening current function"
+  (interactive)
+  (if (eq (point-min) 1)
+      (narrow-to-defun)
+    (widen)))
+
 (my/custom-set-variables
  '(which-func-format
    '("["
