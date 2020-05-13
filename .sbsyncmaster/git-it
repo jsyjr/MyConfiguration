@@ -29,12 +29,14 @@ mv .gitignore ${GITDIR}/info/exclude
 
 # If current cluster image does not match repository tip then add and commit
 if [ ! git diff-index --quiet HEAD -- ]; then
+    # Adding files goes _much_ faster with no compression
     git config --local core.compression 0
-    time -p git add . >/dev/null 2>&1
-    time -p sbver | sed -nre '/SyncFrom/ s|^.*/(B[^/ ]*)/(.*)_job[0-9]*_pass$|\1: \2|gp' | git commit -aF - >/dev/null 2>&1
-    # Now repack with maximal compression
+    git add config                                                                                  >/dev/null 2>&1
+    git add matlab                                                                                  >/dev/null 2>&1
+    sbver | sed -nre '/SyncFrom/ s|^.*/(B[^/ ]*)/(.*)_job[0-9]*_pass$|\1: \2|gp' | git commit -aF - >/dev/null 2>&1
+    # Now repack with extreme compression
     git config --local core.compression 9
-    time -p git repack -adfF --threads=0 --depth=50 --window=250 --write-bitmap-index
+    repack -adfF --threads=0 --depth=50 --window=250 --write-bitmap-index
 fi
 
 # Do not propagated the "filesystem-agnostic Git symbolic link" during sbclone
