@@ -73,6 +73,7 @@ append_gitignore_lines <<EOF
 #
 /.clusterdestination
 /.last_sunc
+/.metadata
 /.perforce
 /.rtags-config
 /.sbcheck.*
