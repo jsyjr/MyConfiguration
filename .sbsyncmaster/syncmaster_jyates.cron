@@ -7,3 +7,6 @@
 3  3,9,15,21 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_task       /home/jyates/.sbsyncmaster/env.sh
 3 4,10,16,22 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_thin       /home/jyates/.sbsyncmaster/env.sh
 3 5,11,17,23 * * * . /hub/share/sbtools/bash_setup.bash && CLUSTER=Bcgir_task_build /home/jyates/.sbsyncmaster/env.sh
+
+# Every day at midnight
+0 0          * * * /hub/share/sbtools/apps/cgir_tools/cgsandboxes -sandbox-dir /ws -autobackup
