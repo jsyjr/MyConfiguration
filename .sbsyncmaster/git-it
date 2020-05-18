@@ -10,6 +10,8 @@ if [ -e .git ]; then
     rm -rf .git
 fi
 
+chmod -R a-x mathlab/src
+
 # Ensure this latest_pass is connected to the separate git directory
 if [ -d ${GITDIR} ]; then
     # Reconnect to existing separate git dir
@@ -28,20 +30,17 @@ fi
 mv .gitignore ${GITDIR}/info/exclude
 
 # If current cluster image does not match repository tip then add and commit
-if [ ! git diff-index --quiet HEAD -- ]; then
-    # Adding files goes _much_ faster with no compression
+if ! git diff-index --quiet HEAD -- ; then
+    # Adding and committing files goes _much_ faster with no compression
     git config --local core.compression 0
-    git add config                                                                                  >/dev/null 2>&1
-    git add matlab                                                                                  >/dev/null 2>&1
-    sbver | sed -nre '/SyncFrom/ s|^.*/(B[^/ ]*)/(.*)_job[0-9]*_pass$|\1: \2|gp' | git commit -aF - >/dev/null 2>&1
+    git add config matlab                                                            >/dev/null 2>&1
+    sbver                                                                          \
+    | sed -nre '/SyncFrom/ s|^.*/(B[^/ ]*)/(.*)_job([0-9]*)_pas.*$|j\3  \2  \1|gp' \
+    | git commit -aF -                                                               >/dev/null 2>&1
     # Now repack with extreme compression
     git config --local core.compression 9
-    repack -adfF --threads=0 --depth=50 --window=250 --write-bitmap-index
+    git repack -adfF --threads=0 --depth=50 --window=250 --write-bitmap-index
 fi
-
-# Do not propagated the "filesystem-agnostic Git symbolic link" during sbclone
-chmod -R a+w .git
-rm -rf .git
 
 # Leave behind some stats
 SYNC_FROM="$( cd $CLUSTER_PATH ; sbver | grep 'SyncFrom:' )"
