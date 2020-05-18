@@ -1,4 +1,4 @@
-# -*-gdb-script-*-
+ # -*-gdb-script-*-
 
 # I would like to source this file and be done:
 #
