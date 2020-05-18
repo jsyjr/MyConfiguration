@@ -2561,12 +2561,14 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 
 ;; (add-to-list 'el-get-sources 'dash)
 ;; (my/el-get-install "dash")
-;; (add-to-list 'el-get-sources 'transient)
-;; (my/el-get-install "transient")
-;; (add-to-list 'el-get-sources 'with-editor)
-;; (my/el-get-install "with-
 (add-to-list 'el-get-sources 'magit)
 (my/el-get-install "magit")
+(add-to-list 'el-get-sources 'magit-imerge)
+(my/el-get-install "magit-imerge")
+(add-to-list 'el-get-sources 'transient)
+(my/el-get-install "transient")
+(add-to-list 'el-get-sources 'with-editor)
+(my/el-get-install "with-editor")
 
 
 ;; (add-to-list 'el-get-sources
