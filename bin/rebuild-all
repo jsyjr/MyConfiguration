@@ -13,7 +13,7 @@ rebuild()
       ~/bin/rebuild-$1 )
 }
 
-rebuild awesome
+# rebuild awesome
 # rebuild cc-mode
 rebuild ctags
 rebuild doxygen
