@@ -141,4 +141,6 @@ fi
 ########### END MATHWORKS SPECIFIC ###########
 
 # This script is aware of Mathworks idiosyncracies
-. ~/.my_path
+. ${HOME}/.my_path
+
+alias turris='ssh root@turris'
