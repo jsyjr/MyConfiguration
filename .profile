@@ -23,7 +23,7 @@ if [ -d /mathworks ]; then
 fi
 
 # Rewrite path per my own preferences
-. ~/.my_path
+source ~/.my_path
 
 # xrdb ~/.Xresources
 if [ -d /ccc ]; then
