@@ -36,6 +36,7 @@ end
 
 define caf
   b client_assertion_failed
+  b foundation::core::diag::terminate
 end
 
 define bex
