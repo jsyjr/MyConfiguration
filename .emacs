@@ -119,6 +119,14 @@
 ;; - face colors might be improved via an online gradient generator
 ;;   https://www.colorhexa.com/
 
+;; IMO a much more handy UI metaphor is dragging the line at point
+;; up or down through the surrounding lines while preserving the
+;; point's position in the line. That is implemented in
+;; org-drag-line-forward and org-drag-line-backward. Pretty
+;; much nothing in their implementations depends on org-mode, so
+;; they can be bound and used in any mode.
+
+
 ;; ;; See the Misc[ellaneous System] Events node of the Emacs Lisp manual:
 ;; (global-set-key [usr1-signal]
 ;;               (lambda ()
