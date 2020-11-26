@@ -20,4 +20,4 @@ rebuild doxygen
 rebuild emacs
 rebuild global
 rebuild phw
-rebuild st
+# rebuild st
