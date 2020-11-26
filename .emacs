@@ -3262,6 +3262,7 @@ Works with: arglist-cont, arglist-cont-nonempty."
 
 (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/sb-tools/" t)
+  (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/general-libs/" t)
   (add-to-list 'load-path "/hub/share/sbtools/apps/emacs-add-ons/src/matlab-emacs/matlab-emacs/" t)
 
   ;; Kill SBTools' heavy-handed attempt to manage my windows
