@@ -16,7 +16,10 @@ export MATLAB_MEM_MGR=debug,nointegcheck
 if [ -d /mathworks ]; then
     . /mathworks/hub/share/sbtools/bash_setup_env.bash
     export q=/mathworks/devel/sandbox/$USER/qualify
-    # /hub/share/sbtools/bin/glnxa64/sbvncserver -vnctype tigervnc -plainUsers=jyates -alwaysshared
+    /hub/share/sbtools/bin/glnxa64/sbvncserver -vnctype tigervnc -alwaysshared \
+         -plainUsers=jyates,dserr,ntalele,amathewi,dgutierr,jlawranc\
+         ,martind,ebergero,akshathb,kaakash,annquach,xiaofeng\
+         ,ksurende,jhafer,pnagare,donghe
 fi
 
 # Rewrite path per my own preferences
