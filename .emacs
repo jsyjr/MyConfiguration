@@ -3246,6 +3246,10 @@ Works with: arglist-cont, arglist-cont-nonempty."
 ;;}}}
 ;;{{{  Mathworks stuff
 
+(my/custom-set-variables
+'(sb-separate-kill-ring-from-clipboard nil)
+ )
+
 (defun my/workspace-shell (WORKSPACE)
   "Create or switch to a running shell process in WORKSPACE."
   (interactive "BWorkspace: ")
