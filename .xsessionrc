@@ -1,6 +1,4 @@
-#!/bin/dash
-
-. ~/.profile
+# -*-shell-script-*-
 
 # Setup minimal sbtools environment (sets PATH, LOCATION, HOST, USER, ...)
-# /mathworks/hub/share/sbtools/bash_setup_env.bash
+. /mathworks/hub/share/sbtools/bash_setup_env.bash
