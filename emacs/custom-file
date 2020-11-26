@@ -56,8 +56,6 @@
  '(delete-old-versions t)
  '(dired-listing-switches "-agGh --group-directories-first")
  '(dumb-jump-mode t)
- '(ediff-cmp-options '("diff --histogram"))
- '(ediff-cmp-program "git")
  '(ediff-keep-variants nil)
  '(ediff-make-buffers-readonly-at-startup t)
  '(ediff-split-window-function 'split-window-horizontally)

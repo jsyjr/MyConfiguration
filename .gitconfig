@@ -11,6 +11,7 @@
 	prompt = false
 [merge]
 	log = true
+	tool = p4merge
 [push]
 	default = nothing
 [color]
@@ -29,3 +30,6 @@
 	autocrlf = input
 [rebase]
 	autosquash = true
+[mergetool]
+	keepTemporaries = false
+	prompt = false
