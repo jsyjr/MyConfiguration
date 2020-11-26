@@ -1,0 +1,70 @@
+#!/bin/dash
+
+# If another instance of this script is already running then exit
+if [ -e $SBSYNCMASTER_SINGLETON ]; then
+    exit
+else
+    trap cleanup EXIT INT QUIT
+    touch $SBSYNCMASTER_SINGLETON
+fi
+
+# $ROOT                 <ROOT>/
+#                       │
+# $CLUSTER_TAG          ├── <CLUSTER_TAG> -> $CLUSTER_LATEST_PASS
+#                       │
+# $CLUSTER_ROOT         ├── .cluster/
+# $CLUSTER_PATH         │   └── <CLUSTER>/
+# $CLUSTER_GIT_REPO     │       ├── git/
+# $CLUSTER_LOGS         │       ├── logs/
+#                       │       ├── ...
+# $CLUSTER_LATEST_PASS  │       └── <CLUSTER>.latest_pass/
+#                       │
+#                       ├── <SANDBOX>/
+#                       │           └── ...
+#                       │
+#                       └── .sandbox/
+#                           └── ...
+
+export CLUSTER_LATEST_PASS=$1
+export CLUSTER_PATH=$( dirname $CLUSTER_LATEST_PASS )
+export CLUSTER_ROOT=$( dirname $CLUSTER_PATH )
+
+export CLUSTER=$( basename $CLUSTER_PATH )
+export CLUSTER_LOGS=$CLUSTER_PATH/logs
+export CLUSTER_GIT_REPO=$CLUSTER_PATH/git
+
+export SBSYNCMASTER_IN_PROGRESS=$CLUSTER_PATH/.$CLUSTER.latest_pass.sbsyncmaster.inprogress
+export SBSYNCMASTER_NEED_COMMIT=/tmp/sbsyncmaster.need_commit
+rm -rf $SBSYNCMASTER_NEED_COMMIT
+
+
+# echo
+# echo "  SYNCMASTERDIR       = $SYNCMASTERDIR"
+# echo "  MAKE_SCRIPT         = $MAKE_SCRIPT"
+# echo "  CLUSTER             = $CLUSTER"
+# echo "  CLUSTER_PATH        = $CLUSTER_PATH"
+# echo "  CLUSTER_LATEST_PASS = $CLUSTER_LATEST_PASS"
+# echo "  CLUSTER_LOGS        = $CLUSTER_LOGS"
+# echo "  CLUSTER_GIT_REPO    = $CLUSTER_GIT_REPO"
+# echo "  GIT_USER_NAME       = $GIT_USER_NAME"
+# echo "  GIT_USER_EMAIL      = $GIT_USER_EMAIL"
+# echo
+
+
+cd $CLUSTER_PATH
+sbsyncmaster -no-perforce -no-sbstop -nice -delete-inprogress -src-root $CLUSTER:latest_pass -log-dir $CLUSTER_LOGS -cfg $SYNCMASTERDIR/git-enabled-workspace.cfg
+
+# sbsyncmaster has completed and possibly left a new read-only sandbox image
+
+if [ -f $SBSYNCMASTER_NEED_COMMIT ]; then
+    # sbsyncmaster ran to completion
+    cd $CLUSTER_LATEST_PASS
+    $SYNCMASTERDIR/new-git-commit
+fi
+
+
+cleanup() {
+    trap '' EXIT INT QUIT
+    rm -rf $SBSYNCMASTER_SINGLETON
+    exit
+}

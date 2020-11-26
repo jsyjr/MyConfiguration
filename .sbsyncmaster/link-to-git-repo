@@ -1,0 +1,36 @@
+#!/bin/dash
+
+# $ROOT                 <ROOT>/
+#                       │
+# $CLUSTER_ROOT         └── .cluster/
+# $CLUSTER_PATH             └── <CLUSTER>/
+# $CLUSTER_GIT_REPO             ├── git/
+#                               ├── ...
+# $CLUSTER_LATEST_PASS          └── <CLUSTER>.latest_pass/
+
+# On entry wd is $CLUSTER_LATEST_PASS or more accurately $SBSYNCMASTER_IN_PROGRESS
+#  = $CLUSTER_PATH/.$CLUSTER.latest_pass.sbsyncmaster.inprogress
+
+# Ensure this latest_pass is connected to the separate git directory
+if [ -d $CLUSTER_GIT_REPO ]; then
+    echo "gitdir: $CLUSTER_GIT_REPO" >.git
+else
+    # First time initialization of a separate git dir for this cluster
+    git init --separate-git-dir=$CLUSTER_GIT_REPO .
+
+    git -C $CLUSTER_GIT_REPO config --local user.name  "$GIT_USER_NAME"
+    git -C $CLUSTER_GIT_REPO config --local user.email "$GIT_USER_EMAIL"
+
+    git -C $CLUSTER_GIT_REPO config --local core.eol lf
+    git -C $CLUSTER_GIT_REPO config --local core.filemode false
+    git -C $CLUSTER_GIT_REPO config --local diff.algorithm histogram
+    git -C $CLUSTER_GIT_REPO config --local diff.colorMoved true
+    git -C $CLUSTER_GIT_REPO config --local diff.indentHeuristic true
+    git -C $CLUSTER_GIT_REPO config --local merge.conflictstyle diff3
+    git -C $CLUSTER_GIT_REPO config --local merge.tool p4merge
+    git -C $CLUSTER_GIT_REPO config --local mergetool.cmd 'p4merge -nl Upstream -nb Base -nr Sandbox -nm Merged $BASE $REMOTE $LOCAL $MERGED'
+    git -C $CLUSTER_GIT_REPO config --local mergetool.keepTemporaries false
+    git -C $CLUSTER_GIT_REPO config --local mergetool.prompt false
+fi
+
+chmod a-w .git

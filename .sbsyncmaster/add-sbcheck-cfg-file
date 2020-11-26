@@ -1,0 +1,11 @@
+#!/bin/dash
+set -x
+pwd
+ls -la ..
+
+cat >sbcheck.cfg <<EOF
+# Because cgmux creates sandboxes in which _all_ git managed files
+# are writable running sbedits takes forever and is pointless.  So
+# just suppress it.
+-skip sbedits
+EOF
