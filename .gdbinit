@@ -52,13 +52,15 @@ set print thread-events off
 # Seem to get set on so reset to our desired state
 set print static-members off
 
+# exit
+
 set auto-solib-add off
 
 catch load
 commands
   silent
   delete breakpoint 1
-  sharedlibrary libmwcg_ir
+  sharedlibrary libmwcg_ir.so
 #  sharedlibrary libmwcgir_algorithm.so
 #  sharedlibrary libmwcgir_analysis.so
 #  sharedlibrary libmwcgir_cgel.so
@@ -80,13 +82,13 @@ commands
 #  sharedlibrary libmweml.so
 #  sharedlibrary libmwrtw_core.so
   segv
+  caf
   echo \n
   echo Caught load shared library event. Now is the time to set breakpoints.\n
   echo \n
 end
 
 echo \n
-
 
 echo \n
 echo Do not set breakpoints yet. Issue appropriate run command.  GDB will break at the\n
