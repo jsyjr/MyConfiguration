@@ -376,13 +376,13 @@
 ;;}}}
 ;;{{{  John Wiegley's use-package
 
-(add-to-list 'el-get-sources
-             '(:name use-package
-                     :description "A use-package declaration for simplifying your .emacs."
-                     :type        github
-                     :pkgname     "jwiegley/use-package"
-                     :features    (use-package bind-key)))
-(my/el-get-install "use-package")
+;; (add-to-list 'el-get-sources
+;;              '(:name use-package
+;;                      :description "A use-package declaration for simplifying your .emacs."
+;;                      :type        github
+;;                      :pkgname     "jwiegley/use-package"
+;;                      :features    (use-package bind-key)))
+;; (my/el-get-install "use-package")
 
 ;;}}}
 
