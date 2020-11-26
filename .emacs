@@ -2666,7 +2666,7 @@ An alternate approach would be after-advice on isearch-other-meta-char."
       (let ((mbuf (get-buffer (concat "*magit: " (file-name-as-directory (substring dir 0 -1)) "*"))))
         (if mbuf
             (switch-to-buffer mbuf)
-          (magit-status-internal dir))))))
+          (magit-status-setup-buffer dir))))))
 
 ;;}}}
 ;;{{{  Diff
