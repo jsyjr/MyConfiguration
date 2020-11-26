@@ -45,7 +45,8 @@ trap "cd ${PWD}" EXIT
 
 cd ${LOCALWS}
 
-CLONED=$(sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom:[^B]*\(B[a-z0-9_]*\).*$|\1|').latest_pass
+# CLONED=$(sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom:[^B]*\(B[a-z0-9_]*\).*$|\1|').latest_pass
+CLONED=$(sbver | grep 'SyncFrom:' | sed -e 's|SyncFrom:[^B]*\(B[a-z0-9_]*\).*$|.cluster/\1/\1|').latest_pass
 
 
 
