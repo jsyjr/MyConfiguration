@@ -19,7 +19,6 @@
 ;; Suppress redefinition warnings during startup
 (setq ad-redefinition-action 'accept)
 
-(setenv "HOME" "/home/jyates")
 (setenv "EDITOR" "/usr/bin/emacsclient")
 
 ;;=== Notes ============================================================
@@ -104,6 +103,7 @@
 ;;{{{  Missing and TODO
 
 ;; TODO
+;; - imerge
 ;; - mode-line:
 ;;   position-widget could change color if cursor exceeds limit column
 ;;   see http://www.emacswiki.org/emacs/ModeLinePosition
@@ -132,6 +132,14 @@
 ;;               (lambda ()
 ;;                 (interactive)
 ;;                 (save-buffers-kill-emacs t)))
+
+;; A possible shell script for P4MERGE, HGMERGE, ...
+;;
+;; emacsclient -ucF "((delete-frame-on-ediff-quit . t))" \
+;;   -e "(ediff-merge-with-ancestor \"${local}\" \"${other}\" \"${base}\"
+;; nil \"${output}\")" \
+;;   -e "(add-hook 'ediff-quit-hook (lambda () (when (frame-parameter nil
+;; 'delete-frame-on-ediff-quit) (delete-frame))))"
 
 ;; See Emanuel Berg's error.el: http://user.it.uu.se/~embe8573/emacs-init/error.el
 
@@ -1560,9 +1568,9 @@ convert it to readonly/view-mode."
 
 ;; Introduces bindings:
 ;;
-;; M-n  martscan-symbol-go-forward
-;; M-p  martscan-symbol-go-backward
-;; M-'  martscan-symbol-replace         [conflicts with abbrev-prefix-mark]
+;; M-n  smartscan-symbol-go-forward
+;; M-p  smartscan-symbol-go-backward
+;; M-'  smartscan-symbol-replace         [conflicts with abbrev-prefix-mark]
 
 ;; (add-to-list 'el-get-sources
 ;;              '(:name smartscan
@@ -1574,23 +1582,25 @@ convert it to readonly/view-mode."
 ;; (my/el-get-install "smartscan")
 
 ;;}}}
+;;{{{  Project navigation
+;;}}}
 ;;{{{  Projectile, smart-jump and dumb-jump
 
-(add-to-list 'el-get-sources
-             '(:name projectile
-                     :description "Project interaction library"
-                     :type        github
-                     :pkgname     "bbatsov/projectile"
-                     :depends     (cl-lib)
-                     :features    (projectile)
-                     :after       (progn
-                                    (when (file-exists-p "/ws")
-                                      (setq projectile-project-search-path '("/ws")))
-                                    (projectile-mode +1))))
-(my/el-get-install "projectile")
+;; (add-to-list 'el-get-sources
+;;              '(:name projectile
+;;                      :description "Project interaction library"
+;;                      :type        github
+;;                      :pkgname     "bbatsov/projectile"
+;;                      :depends     (cl-lib)
+;;                      :features    (projectile)
+;;                      :after       (progn
+;;                                     (when (file-exists-p "/ws")
+;;                                       (setq projectile-project-search-path '("/ws")))
+;;                                     (projectile-mode +1))))
+;; (my/el-get-install "projectile")
 
-(my/custom-set-variables
- '(projectile-completion-system 'ido))
+;; (my/custom-set-variables
+;;  '(projectile-completion-system 'ido))
 
 
 (add-to-list 'el-get-sources
@@ -2548,31 +2558,38 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 ;;{{{  Projectile
 
 
-(add-to-list 'el-get-sources
-             '(:name projectile
-                     :description "Project interaction library"
-                     :type        github
-                     :pkgname     "bbatsov/projectile"
-                     :depends     (cl-lib)
-                     :features    (projectile)
-                     :after       (progn
-                                    (when (file-exists-p "/ws")
-                                      (setq projectile-project-search-path '("/ws")))
-                                    (projectile-mode +1))))
-(my/el-get-install "projectile")
+;; (add-to-list 'el-get-sources
+;;              '(:name projectile
+;;                      :description "Project interaction library"
+;;                      :type        github
+;;                      :pkgname     "bbatsov/projectile"
+;;                      :depends     (cl-lib)
+;;                      :features    (projectile)
+;;                      :after       (progn
+;;                                     (when (file-exists-p "/ws")
+;;                                       (setq projectile-project-search-path '("/ws")))
+;;                                     (projectile-mode +1))))
+;; (my/el-get-install "projectile")
 
-(my/custom-set-variables
- '(projectile-completion-system 'ido))
+;; (my/custom-set-variables
+;;  '(projectile-completion-system 'ido))
 
 ;;}}}
 ;;{{{  Git and magit
+
+;; (defun my/refresh-vc-stuff ()
+;;   (interactive)
+;;   (vc-file-clearprops buffer-file-name)
+;;   (vc-state-refresh buffer-file-name 'Git)
+;;   (vc-mode-line buffer-file-name 'Git))
+
 
 ;; (add-to-list 'el-get-sources 'dash)
 ;; (my/el-get-install "dash")
 (add-to-list 'el-get-sources 'magit)
 (my/el-get-install "magit")
-(add-to-list 'el-get-sources 'magit-imerge)
-(my/el-get-install "magit-imerge")
+;; (add-to-list 'el-get-sources 'magit-imerge)
+;; (my/el-get-install "magit-imerge")
 (add-to-list 'el-get-sources 'transient)
 (my/el-get-install "transient")
 (add-to-list 'el-get-sources 'with-editor)
@@ -2897,6 +2914,7 @@ to a function that generates a unique name."
 (add-to-list 'auto-mode-alist '("custom-file" . emacs-lisp-mode))
 
 (my/custom-set-variables
+;;  '(eldoc-idle-delay 1.5)
  '(global-eldoc-mode nil)
  )
 
@@ -4137,7 +4155,7 @@ use either \\[customize] or the function `phw-mode'." t)
 (my/el-get-install "keydef")
 
 ;; (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-(keydef (projectile "C-c p") projectile-command-map)
+;;(keydef (projectile "C-c p") projectile-command-map)
 
 
 (keydef "C-c d"         my/delete-whitespace-forward)
@@ -4277,6 +4295,7 @@ use either \\[customize] or the function `phw-mode'." t)
 (keydef "M-g e"         el-get-find-recipe-file)
 (keydef "M-g g"         ripgrep-regexp)
 (keydef "M-g l"         ilocate-library-find-source)
+;(keydef "M-g m"         magit-status)
 (keydef "M-g m"         my/magit-status)
 (keydef "M-g r"         jump-to-register)
 (keydef "M-g s"         my/elisp-find-symbol-definition)
