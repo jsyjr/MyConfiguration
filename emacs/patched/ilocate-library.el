@@ -200,6 +200,7 @@ rebuild the cache."
      ilocate-library-cache)
    nil t))
 
+;;;###autoload
 (defun ilocate-library (&optional reload-cache)
   "Interactive-only version of `locate-library' with name completion.
 
@@ -226,6 +227,7 @@ See also `ilocate-completing-read-library'."
    (ilocate-completing-read-library "ilocate library: " nil reload-cache)
    nil nil t))
 
+;;;###autoload
 (defun ilocate-load-library (&optional reload-cache)
   "Interactive-only version of `load-library' with name completion.
 
@@ -251,6 +253,7 @@ See also `ilocate-completing-read-library'"
   (load-library
    (ilocate-completing-read-library "iload library: " nil reload-cache)))
 
+;;;###autoload
 (defun ilocate-library-find-source (&optional reload-cache)
   "Prompt with completion for name of a Lisp library, and visit the source.
 
@@ -285,7 +288,7 @@ See also `ilocate-completing-read-library'"
          (library-file (locate-library library-name))
          (source-file (if (string-match "elc?\\(\\.gz\\)?$" library-file)
                           (replace-match "el" t t library-file)
-                        library-file))
+?                        library-file))
          (compressed-source-file (concat source-file ".gz")))
     (cond
      ((file-exists-p source-file)
