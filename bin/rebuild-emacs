@@ -35,6 +35,6 @@ set +e
 #CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization --with-x-toolkit=lucid --without-xwidgets --with-gnutls=no --without-dbus --without-gconf --without-gsettings
 #CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization --with-x-toolkit=lucid --without-xwidgets --with-gnutls=no
 #CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization --with-x-toolkit=lucid --without-xwidgets --with-imagemagick
- CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/'                                 --with-x-toolkit=lucid    --with-xwidgets --with-imagemagick --with-json --with-file-notification=yes
+ CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/'                                 --with-x-toolkit=gtk2     --with-xwidgets --with-imagemagick --with-json --with-file-notification
 
 compile-emacs
