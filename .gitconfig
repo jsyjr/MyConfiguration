@@ -33,3 +33,7 @@
 [mergetool]
 	keepTemporaries = false
 	prompt = false
+[pull]
+	ff = only
+[credential]
+	helper = cache
