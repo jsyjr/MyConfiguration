@@ -1,5 +1,7 @@
 ;;; init.el -*- lexical-binding: t; outshine-mode: 1; fill-column: 119 -*-
-(setq debug-on-error t)
+;(setq debug-on-error t)
+(setq native-comp-async-report-warnings-errors nil)
+(setq warning-minimum-level :error)
 
 ;; Reference by graphviz-dot-mode
 (defconst default-tab-width 4)
@@ -20,7 +22,8 @@
 ;;; === Early Init =====================================================
 
 ;; Delay garbage collection (likely for full startup process, reset in init.el)
-(setq gc-cons-threshold most-positive-fixnum)
+;;(setq gc-cons-threshold most-positive-fixnum)
+(setq gc-cons-threshold 8000000)
 
 ;; Prevent unwanted runtime builds in gccemacs (native-comp); packages are
 ;; compiled ahead-of-time when they are installed and site files are compiled
@@ -38,75 +41,19 @@
 (setq x-gtk-resize-child-frames 'resize-mode)
 
 ;;; === Notes ==========================================================
-;;;; Goals
-
-;; Package sanity:
-;; - I fully concur with el-get author Dimitri Fontaine's sentiments.
-;;   I too want a single file specifying all the packages I use, whence
-;;   to obtain them and how they should be configured.
-
-;; Custom file sanity:
-;; - grouping
-;; - commentary
-;; - no repeating detault settings
-
-
-;;;; Directory hygiene (NEEDS REVIEW)
-;;
-;; Apart for this file (~/.emacs) all state that I maintain manually
-;; I place into my ~/emacs/ directory (e.g. custom-file, spelling
-;; dictionaries, templates I write/modify for yasnippet, packages I
-;; write or modify).  I then maintain the contents of that directory
-;; in git and replicate to all sites where I use emacs.
-;;
-;; By contrast I reserve my ~/.emacs.d directory for cached state
-;; transparently managed by various packages (e.g. semanticdb, el-get,
-;; backup, auto-save, etc).  This is information that is either
-;; ephemeral or recreatable from the combination of my .emacs file and
-;; the contents of my ~/emacs/ directory.
-
-;; Speed: - I strive to have all functionality either autoloaded or
-;; handled via eval-after-load.  The few files that I tolerate being
-;; loaded as part of this .emacs are those that will truly be used
-;; immediately (cua-base for blinking cursor).
-
-
-;;;; Sharing and credits (NEEDS REVIEW)
-
-;; "Everyone's .emacs  rips off someone else's"...
-
-;; In the emacs world there is a bit of a convention to prefix one's
-;; private code with some version of the one's name or initials.  This
-;; might make sense if users copied code amongst .emacs files while
-;; preserving the original author's name.  In my experience this is
-;; not what happens.  Rather imported code gets reprefixed.  Yet the
-;; real goal is not so much to claim authorship as to avoid collisions
-;; in the emacs name space.  Hence I do not use my own name, only a
-;; "my/" prefix.  Anyone willing to adopt a similar convention could
-;; then easily crib any of my customizations.
-
-;; It is too hard and too noisy to attribute ideas in the body of this
-;; file.  Here I simply list sources from which I have either cribbed
-;; outright or else have drawn inspiration.
-
-
-;;; === Key space ======================================================
-
-
-
-;;; === Setup ==========================================================
-;;;; ADD NOTES ON SETTING UP ON A NEW MACHINE
-
-
 ;;; === Missing and TODO  (NEEDS REVIEW) ===============================
 
 ;; TODO
+;; - Audit all :defer n
+;; - Audit all :disabled
+;; - Audit :requires and try to replace with :after
+;; - Audit :demand t
+;; - Debug vc-follow-symlinks
 ;; - Highlight current error in compile buffer
 ;;   https://emacs.stackexchange.com/questions/13134/emphasise-the-current-error-in-the-compilation-window
 ;; - imerge
 ;; - include info-apropos in help menu
 ;; - mode-line:
-;;   position-widget should adopt a fixed-size: [123456,123456]
 ;;   position-widget could change color if cursor exceeds limit column
 ;;   see http://www.emacswiki.org/emacs/ModeLinePosition
 ;;   consider https://github.com/Malabarba/smart-mode-line
@@ -153,13 +100,70 @@
 ;; e/vtags
 ;; gtags?
 ;; setnu?
-;; defer which-func until we initialize a buffer in one of the following
-;;   modes: emacs-lisp-mode c-mode c++-mode  python-mode makefile-mode
-;;          sh-mode perl-mode or cperl-mode
 
 ;; (add-to-list 'compilation-error-regexp-alist
 ;;             '("^\\(?:..\\[[ 0-9]+\\]+ \\)*\\([a-zA-Z0-9:\\/\\.-]+\.lp0\\)\(\\([0-9]+\\)\)"
 ;;               1 2 nil))
+
+
+
+;;;; Goals
+
+;; Package sanity:
+;; - I fully concur with el-get author Dimitri Fontaine's sentiments.
+;;   I too want a single file specifying all the packages I use, whence
+;;   to obtain them and how they should be configured.
+
+;; Custom file sanity:
+;; - grouping
+;; - commentary
+;; - no repeating detault settings
+
+
+;;;; Directory hygiene (NEEDS REVIEW)
+;;
+;; Apart from this file (~/.emacs.d/init.el) all state that I maintain
+;; manually I place into my ~/emacs/ directory (e.g. custom-file,
+;; spelling dictionaries, templates I write/modify for yasnippet,
+;; packages I write or modify).  I then maintain the contents of that
+;; directory in git and replicate to all sites where I use emacs.
+;;
+;; By contrast I reserve my ~/.emacs.d directory for cached state
+;; transparently managed by various packages (e.g. semanticdb, el-get,
+;; backup, auto-save, etc).  This is information that is either
+;; ephemeral or recreatable from the combination of my .emacs file and
+;; the contents of my ~/emacs/ directory.
+
+;; Speed: - I strive to have all functionality either autoloaded or
+;; handled via eval-after-load.  The few files that I tolerate being
+;; loaded as part of this .emacs are those that will truly be used
+;; immediately (cua-base for blinking cursor).
+
+
+;;;; Sharing and credits (NEEDS REVIEW)
+
+;; "Everyone's .emacs  rips off someone else's"...
+
+;; In the emacs world there is a bit of a convention to prefix one's
+;; private code with some version of the one's name or initials.  This
+;; might make sense if users copied code amongst .emacs files while
+;; preserving the original author's name.  In my experience this is
+;; not what happens.  Rather imported code gets reprefixed.  Yet the
+;; real goal is not so much to claim authorship as to avoid collisions
+;; in the emacs name space.  Hence I do not use my own name, only a
+;; "my/" prefix.  Anyone willing to adopt a similar convention could
+;; then easily crib any of my customizations.
+
+;; It is too hard and too noisy to attribute ideas in the body of this
+;; file.  Here I simply list sources from which I have either cribbed
+;; outright or else have drawn inspiration.
+
+
+;;; === Key space ======================================================
+
+
+;;; === Setup ==========================================================
+;;;; ADD NOTES ON SETTING UP ON A NEW MACHINE
 
 
 ;;; === Package management via straight and use-package (not custom) ===
@@ -168,6 +172,9 @@
 
 ;; Bootstrap `straight'
 (defvar bootstrap-version)
+(defvar comp-deferred-compilation-deny-list ())
+(defvar straight-check-for-modifications: '(watch-files)) ; no checking at startup
+
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
       (bootstrap-version 5))
@@ -196,61 +203,84 @@
 
 
 (use-package straight-x
-  :after straight
   :straight (:host github :repo "raxod502/straight.el" :branch "master" :local-repo "straight.el" :files ("straight*.el"))
-  :commands (straight-x-fetch-all straight-x-clean-unused-repos straight-x-pull-all))
+  :after straight
+  :commands (straight-x-fetch-all straight-remove-unused-repos straight-x-pull-all))
 
 
-;;;; Use-package-hydra: add :hydra keyword to use-package macro (to1ne)
-;; https://gitlab.com/to1ne/use-package-hydra
+;;;; General: convenience wrappers for keybindings (Fox Kiester)
+;; https://github.com/noctuid/general.el
 
-(use-package use-package-hydra
-  :straight (:host gitlab :repo "to1ne/use-package-hydra")
-  :ensure t)
-
+(use-package general
+  :straight (:host github :repo "noctuid/general.el"))
 
 ;;;; Use-package: a configuration macro to simplify .init.el (John Wiegley)
 ;; https://github.com/jwiegley/use-package
+;; doc: https://github.com/jwiegley/use-package/blob/master/README.md
 ;; doc: https://jwiegley.github.io/use-package/keywords/
+;; kbd: https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-Rebinding.html
+;;      After loading, M-x describe-personal-keybindings show all such keybindings
+
+;; This list comes primarily from examining use-package-keywords
+;;
+;; :defer is implied by :bind, :bind*, :commands, :hook, :interpreter, :magic[-fallback], :mode
+;;
+;; Order insensitive metadata (neither introduces nor references any symbols, nor executes any code):
+;; :disabled         - turn off a troublesome or currently unused package
+;; :straight
+;; :pin              - pin the package to an archive
+;; :ensure           - causes package(s) to be installed automatically if not already present on your system
+;; :defer            - supress non-auto-deferred loading if you know that another package will load this one
+;; :demand           - prevent automatic deferred loading
+;; :no-require       - inhibit loading package at compile time (e.g. just need eval-after-load functionality)
+;; :requires         - suppress if feature(s) not available at time of use-package decl (= :if (featurep 'foo))
+;; :load             - :load keyword overrides :no-require
+;; :after            - delay loading until (:all PKG...) (default) or (:any PKG...) are loaded
+;; :catch            - override use-package-expand-minimally
+;; :blackout         -
+;; :diminish         - support for diminish.el (if installed).
+;; :delight          - support for delight.el (if installed)
+;;
+;; Order sensitive (may introduce, references or modify symbols, and/or may execute code):
+;; :load-path        - append to load-path before loading; relative paths are expanded within user-emacs-directory
+;; :defines          - introduce dummy variable declarations solely for the sake of the byte-compiler
+;; :functions        - introduce dummy function declarations solely for the sake of the byte-compiler
+;; :preface          - definition to silence byte-compiler and to be used in :if tests
+;; :if :when :unless - predicate initialization and loading
+;; :custom           - custom-set or set-default each variable definition; does not modify custom-file
+;; :custom-face      - customize-set-faces each face definition; does not modify custom-file
+;; :bind(*)          - ( ( <global-key> . <command> )... :map <package-local-map> ( <local-key> . <command> )... )
+;;                     * = overriding all minor mode bindings
+;; :bind-keymap(*)   - ( <package-prefix-key> . <map-in-package> )
+;;                     * = overriding all minor mode bindings
+;; :interpreter      - extend interpreter-mode-alist; use cons if package name does not end with -mode
+;; :mode             - extend auto-mode-alist; use cons if package name does not end with -mode
+;; :magic            - extend magic-mode-alist; use cons if package name does not end with -mode
+;; :magic-fallback   - extend magic-fallback-mode-alist; use cons if package name does not end with -mode
+;; :hook             - see https://github.com/jwiegley/use-package/blob/master/README.md#hooks
+;; :commands         - creates autoloads and defers loading of the module until commands are used
+;; :init             - code executed unconditionally before package is loaded (and even when not loaded)
+;; :config           - execute code after a package is loaded (perhaps lazily); could even be a use-package form
+;; :hydra            -
+
 
 (use-package use-package-core
   :straight (:type built-in)
   :requires (use-package-hydra)
   :custom
-  (use-package-always-defer t)         ; Always defer load package to speed up startup
-  (use-package-compute-statistics t)   ; Collect use-package statistics
-  (use-package-enable-imenu-support t) ; Let imenu finds use-package definitions
-  (use-package-expand-minimally t)     ; Make the expanded code as minimal as possible
-  (use-package-verbose t))             ; Report loading details
+  (use-package-always-defer t)          ; Always defer load package to speed up startup
+  (use-package-compute-statistics t)    ; Collect use-package statistics
+  (use-package-enable-imenu-support t)  ; Let imenu finds use-package definitions
+  (use-package-expand-minimally t)      ; Make the expanded code as minimal as possible
+  (use-package-verbose t))              ; Report loading details
 
-;; Recommended order from
-;; https://github.com/raxod502/radian/blob/develop/emacs/use-package-keywords.md
-;;
-;; :disabled            - JSY
-;; :preface
-;; :straight
-;; :no-require
-;; :requires            - never loads package if these feature not available at time use-package decl is encountered (= :if (featurep 'foo))
-;; :defines
-;; :functions
-;; :demand
-;; :defer
-;; :after               - delay loading until these packages are loaded
-;; :commands            - creates autoloads and defers loading of the module until commands are used
-;; :init/el-patch
-;; :init
-;; :magic
-;; :mode
-;; :interpreter
-;; :hook
-;; :bind
-;; :bind-keymap
-;; :config/el-patch
-;; :config
-;; :custom              - jsy
-;; :custom-face         - jsy
-;; :blackout
-;; :hydra               - JSY
+
+;;;; Use-package-hydra: add :hydra keyword to use-package macro (to1ne)
+;; https://github.com/emacsmirror/use-package-hydra
+
+(use-package use-package-hydra
+  :straight (:host github :repo "emacsmirror/use-package-hydra")
+  :requires (hydra))
 
 
 ;;;; Macro: use-feature
@@ -270,7 +300,7 @@ NAME and ARGS are as in `use-package'."
   :straight (:type built-in)
   :custom
   ;(custom-theme-directory null-device)
-  (custom-file null-device))
+  (custom-file null-device))            ; I use use-package's :custom instead
 
 
 ;;; === Init file helpers (Radian and others) ==========================
@@ -366,82 +396,27 @@ as in `defun'."
           (shell-quote-argument source-directory)))))))
 
 
-;;;; Improved beginning-of-buffer and end-of-buffer
-;; https://fuco1.github.io/2017-05-06-Enhanced-beginning--and-end-of-buffer-in-special-mode-buffers-(dired-etc.).html
-
-(defmacro my/beginning-of-buffer (mode &rest forms)
-  "Define a special version of `beginning-of-buffer' in MODE.
-
-The special function is defined such that the point first moves
-to `point-min' and then FORMS are evaluated.  If the point did
-not change because of the evaluation of FORMS, jump
-unconditionally to `point-min'.  This way repeated invocations
-toggle between real beginning and logical beginning of the
-buffer."
-  (declare (indent 1))
-  (let ((fname (intern (concat "my/" (symbol-name mode) "-beginning-of-buffer")))
-        (mode-map (intern (concat (symbol-name mode) "-mode-map")))
-        (mode-hook (intern (concat (symbol-name mode) "-mode-hook"))))
-    `(progn
-       (defun ,fname ()
-         (interactive)
-         (let ((p (point)))
-           (goto-char (point-min))
-           ,@forms
-           (when (= p (point))
-             (goto-char (point-min)))))
-       (add-hook ',mode-hook
-                 (lambda ()
-                   (define-key ,mode-map
-                     [remap beginning-of-buffer] ',fname))))))
-
-
-(defmacro my/end-of-buffer (mode &rest forms)
-  "Define a special version of `end-of-buffer' in MODE.
-
-The special function is defined such that the point first moves
-to `point-max' and then FORMS are evaluated.  If the point did
-not change because of the evaluation of FORMS, jump
-unconditionally to `point-max'.  This way repeated invocations
-toggle between real end and logical end of the buffer."
-  (declare (indent 1))
-  (let ((fname (intern (concat "my/" (symbol-name mode) "-end-of-buffer")))
-        (mode-map (intern (concat (symbol-name mode) "-mode-map")))
-        (mode-hook (intern (concat (symbol-name mode) "-mode-hook"))))
-    `(progn
-       (defun ,fname ()
-         (interactive)
-         (let ((p (point)))
-           (goto-char (point-max))
-           ,@forms
-           (when (= p (point))
-             (goto-char (point-max)))))
-       (add-hook ',mode-hook
-                 (lambda ()
-                   (define-key ,mode-map
-                     [remap end-of-buffer] ',fname))))))
-
-
 ;;; === Temporary configuration to optimize startup ====================
 
-(use-package emacs ;-startup
+(use-package emacs ; optimize startup
   :straight (:type built-in)
   :custom
   ;; Resizing the Emacs frame can be a terribly expensive part of changing the
   ;; font. By inhibiting this, we easily halve startup times with fonts that are
   ;; larger than the system default.
   (frame-inhibit-implied-resize t)
-  (setq gc-cons-threshold most-positive-fixnum)
-  (setq ad-redefinition-action 'accept)
-  (setq load-prefer-newer nil)
-
-  :hook (after-init . (lambda ()
-                        (setq frame-inhibit-implied-resize nil)
-                        (setq gc-cons-threshold (* 100 1024 1024))
-                        (setq gc-cons-percentage 0.1)
-                        (setq ad-redefinition-action 'warn)
-                        (setq load-prefer-newer t)
-                        (garbage-collect))))
+  (gc-cons-threshold most-positive-fixnum)
+  (ad-redefinition-action 'accept)
+  :hook
+  (after-init . (lambda ()
+                  (setq frame-inhibit-implied-resize nil)
+                  (setq gc-cons-threshold (* 100 1024 1024))
+                  (setq gc-cons-percentage 0.1)
+                  (setq ad-redefinition-action 'warn)
+                  (setq load-prefer-newer t)
+                  (garbage-collect)))
+  :config
+  (setq load-prefer-newer nil))
 
 ;; Resizing the Emacs frame can be a terribly expensive part of changing the
 ;; font. By inhibiting this, we easily halve startup times with fonts that are
@@ -467,6 +442,7 @@ toggle between real end and logical end of the buffer."
 ;; Ctl-c-map:
 
 (use-package emacs ;-keymap
+  :disabled
   :straight (:type built-in)
   :init
   (defvar ctl-c-r-map (make-sparse-keymap)
@@ -488,17 +464,10 @@ toggle between real end and logical end of the buffer."
 ;; https://github.com/abo-abo/hydra
 
 (use-package hydra
-  :straight (:host github :repo "https://github.com/abo-abo/hydra")
-  :config
-  (dimmer-configure-hydra))
-  ;; :config
-  ;; (use-package use-package-hydra
-  ;;  :straight (:host gitlab :repo "to1ne/use-package-hydra")))
+  :straight (:host github :repo "abo-abo/hydra"))
 
-
-
-
-                                      ;hydra
+;; doc: https://emacs.stackexchange.com/a/46938/443
+;;
 ;; (use-package hydra
 ;;   :config
 ;;   (use-package use-package-hydra)
@@ -518,24 +487,19 @@ toggle between real end and logical end of the buffer."
 ;;   )
 
 
-
-
-
-
-
 ;;;; Transient: prefix cmd, infix args and suffix cmd menu (Jonas Bernoulli)
 ;; https://github.com/magit/transient
 
-(use-package transient)
+(use-package transient
+  :custom
+  (transient-enable-popup-navigation t))
 
 
 ;;;; # Posframe: pop a posframe (just a frame) at point (Feng Shu)
 ;; https://github.com/tumashu/posframe
 
 (use-package posframe
-  :disabled
-  :config
-  (dimmer-configure-posframe))
+  :disabled)
 
 
 ;;;; # Transient-posframe: use posframe to display a transient (yanghaoxie)
@@ -569,11 +533,27 @@ toggle between real end and logical end of the buffer."
 ;;; === Protection =====================================================
 ;;;; Auto-save and backup
 
+;; Backup On Save To Rcs
 (use-package bostr
   :straight (:host github :repo "jsyjr/bostr")
   :hook after-save)
 
-;; TODO: explore saving to an RCS file (see also https://gitlab.com/esr/src)
+
+;;;; Byte-compile on save of a .el file
+
+(defun my/compile-saved-elisp-buffer ()
+  "Byte compile an elisp buffer anytime it is saved."
+  (when (and (eq major-mode 'emacs-lisp-mode)
+             (not (string-prefix-p "phw" (buffer-name))))
+    (let ((f (buffer-file-name)))
+      (byte-compile-file f)
+;;      (native-compile-async f)
+      )))
+
+(setq byte+native-compile t)
+(setq load-prefer-newer t)
+
+(add-hook 'after-save-hook 'my/compile-saved-elisp-buffer)
 
 
 ;;;; Immortal buffers
@@ -602,7 +582,7 @@ toggle between real end and logical end of the buffer."
 
 ;;;; Safe local variables
 
-(use-package emacs
+(use-package emacs ; safe-local-vars
   :straight (:type built-in)
   :custom
   (safe-local-variable-values
@@ -642,13 +622,24 @@ toggle between real end and logical end of the buffer."
 
 ;;; === Visuals ========================================================
 ;;;; Random custom items
-
-(use-package emacs
+(use-package emacs ; random visuals
   :straight (:type built-in)
+  :custom
+  (inhibit-startup-message t)
+  (inhibit-startup-screen t)           ; splash screens are for wimps
+  (initial-scratch-message nil)        ; do not seed *scratch* w/ a msg
+  (scalable-fonts-allowed t)           ; no restrictions (can be slow!)
+  (scroll-conservatively 1)            ; scroll window a line at a line
+  (tool-bar-mode nil)                  ; recover screen space, no toolbar
+  (transient-mark-mode t)              ; hightlight region, etc.
+  (truncate-lines t)                   ; no wrapped lines
+  (use-dialog-box nil)                 ; dialog boxes are also for wimps
+  (visible-bell t)                     ; subtle blink in response to ^G
+  (ring-bell-function #'my/ring-bell)  ; avoid annoying dings and flashes
   :init
   ;; This function is especially important given the atypical mini-buffer
   ;; behavior in my use of mini-frame.  The flash did not happen in the
-  ;; mini-buffer being destroyed , but rather in the header line of the
+  ;; mini-buffer being destroyed, but rather in the header line of the
   ;; frame recovering focus.
   (defun my/ring-bell ()
     (message "command= %s" this-command)
@@ -657,30 +648,28 @@ toggle between real end and logical end of the buffer."
                                   keyboard-quit mwheel-scroll down up next-line previous-line
                                   backward-char forward-char))
       (ding)))
-  :custom
-  (inhibit-startup-message t)
-  (inhibit-startup-screen t)            ; splash screens are for wimps
-  (initial-scratch-message nil)         ; do not seed *scratch* w/ a msg
-  (scalable-fonts-allowed t)            ; no restrictions (can be slow!)
-  (scroll-conservatively 1)             ; scroll window a line at a line
-  (tool-bar-mode nil)                   ; recover screen space, no toolbar
-  (transient-mark-mode t)               ; hightlight region, etc.
-  (truncate-lines t)                    ; no wrapped lines
-  (use-dialog-box nil)                  ; dialog boxes are also for wimps
-  (visible-bell t)                      ; subtle blink in response to ^G
-  (ring-bell-function #'my/ring-bell))  ; avoid annoying dings and flashes
+  :config
+  ;; On Wed, Jan 19, 2022 at 6:52 AM Eli Zaretskii <eliz@gnu.org> wrote:
+  ;; (https://lists.gnu.org/archive/html/emacs-devel/2022-01/msg01189.html)
+  ;;
+  ;; Users and readers of certain scripts cannot use such a simplistic
+  ;; solution, which is basically only suitable for plain ASCII text.  (And
+  ;; even there it is slowly becoming inappropriate, what with the growing
+  ;; popularity of ligatures, let alone Emoji.) Emacs should be able to do
+  ;; better.
+  (set-face-background 'glyphless-char "red"))
 
-(use-package simple
+(use-package simple ; column numbers in mode line
   :straight (:type built-in)
   :custom
   (column-number-mode t))               ; enable magic line/column format
 
-(use-package cus-edit
+(use-package cus-edit ; custom
   :straight (:type built-in)
   :custom
   (custom-buffer-done-kill t))          ; kill custom buffer on exit
 
-(use-package font-core
+(use-package font-core ; font locking
   :straight (:type built-in)
   :custom
   (global-font-lock-mode t))            ; font-lock in all buffers
@@ -696,18 +685,44 @@ toggle between real end and logical end of the buffer."
   :config
   (good-scroll-mode +1))
 
-;;;; All-the-icons: expose various colored icon fonts fonts (Dom Charlesworth)
-;; https://github.com/domtronn/all-the-icons.el
-
-(use-package all-the-icons
-  :straight (:host github :repo "domtronn/all-the-icons.el"))
-
-
-;;;; Emacs-svg-icon: greyscale icons from remote collections (Nicolas P. Rougier)
+;;;; # Emacs-svg-icon: greyscale icons from remote collections (Nicolas P. Rougier)
 ;; https://github.com/rougier/emacs-svg-icon
 
 (use-package svg-icon
+  :disabled
   :straight (:host github :repo "rougier/emacs-svg-icon"))
+
+
+;;;; # All-the-icons: expose various colored icon fonts fonts (Dom Charlesworth)
+;; https://github.com/domtronn/all-the-icons.el
+
+(use-package all-the-icons
+  :disabled
+  :straight (:host github :repo "domtronn/all-the-icons.el"))
+
+
+;;;; # All-the-icons-completion: Add icons completion candidates (Itai Y. Efrat)
+;; https://github.com/iyefrat/all-the-icons-completion
+
+(use-package all-the-icons-completion
+  :disabled
+  :straight (:host github :repo "iyefrat/all-the-icons-completion")
+  :after (marginalia all-the-icons svg-icon)
+  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+  :config
+  (all-the-icons-completion-mode))
+
+
+;;;; # All-the-icons-dired: shows icons for each file in dired mode (jtbm37)
+;; https://github.com/jtbm37/all-the-icons-dired
+
+(use-package all-the-icons-dired.el
+  :disabled
+  :straight (:host github :repo "jtbm37/all-the-icons-dired")
+  :after (:any all-the-icons svg-icon)
+  :hook (dired-mode-hook . all-the-icons-dired-mode)
+  :config
+  (all-the-icons-dired-mode))
 
 
 ;;;; Modus: theming (Protesilaos Stavrou) + cursor colors, shape and blinking
@@ -716,6 +731,18 @@ toggle between real end and logical end of the buffer."
 (use-package emacs ; modus-vivendi
   :straight (:type built-in)
   :demand t
+  :custom
+  (modus-themes-bold-constructs nil)
+  (modus-themes-slanted-constructs t)
+  (modus-themes-hl-line nil)
+  (modus-themes-region '(bg-only))
+  (modus-themes-fringes 'intense)
+  (modus-themes-completions nil)
+  (modus-themes-diffs 'bg-only)
+  (modus-themes-mode-line '(borderless accented))
+  (modus-themes-paren-match '(intense-bold))
+  (modus-themes-syntax nil)
+
   :config
 
 ;; InputMono-BlackItalic
@@ -775,66 +802,66 @@ toggle between real end and logical end of the buffer."
 ;; InputMono-ThinItalic
 ;; InputMono-Thin
 
-
   (let
-;;    ((fixed-family "Source Code Pro") (variable-family "Source Sans Pro"))
-    ((fixed-family "Monoid") (variable-family "Source Sans Pro"))
+;;    ((fixed-family "Monoid") (variable-family "Source Sans Pro"))
+    ((fixed-family "Source Code Pro") (variable-family "Source Sans Pro"))
+;;    ((fixed-family "Terminus") (variable-family "Source Sans Pro"))
 ;;    ((fixed-family "Input Mono") (variable-family "Input Sans"))
+;;    ((fixed-family "Dina") (variable-family "Input Sans"))
     ;; Main typeface
-    (set-face-attribute 'default nil :family fixed-family :height 100)
+    (set-face-attribute 'default nil :family fixed-family :height 140)
     ;; Proportionately spaced typeface
     (set-face-attribute 'variable-pitch nil :family variable-family :height 1.0)
     ;; Monospaced typeface
     (set-face-attribute 'fixed-pitch nil :family fixed-family :height 1.0))
-  (load-theme 'modus-vivendi)
-  :custom
-  (modus-themes-bold-constructs nil)
-  (modus-themes-slanted-constructs t)
-  (modus-themes-hl-line nil)
-  (modus-themes-region 'bg-only)
-  (modus-themes-fringes 'intense)
-  (modus-themes-completions nil)
-  (modus-themes-diffs 'bg-only)
-  (modus-themes-mode-line 'borderless)
-  (modus-themes-paren-match 'intense-bold)
-  (modus-themes-syntax nil))
+  (load-theme 'modus-vivendi))
 
-(use-package cua-base
+(use-package cua-base ; cursor style: insert (bar), overwrite (box), or read-only
   :straight (:type built-in)
   :demand t
   :custom
   (cua-enable-cua-keys nil)
-  (cua-normal-cursor-color    '(bar . "#ffff00")) ; Yellow1
-  (cua-overwrite-cursor-color '(box . "#ffb5c5")) ; Pink1
-  (cua-read-only-cursor-color '(box . "#c1ffc1")) ; DarkSeaGreen1
+  (cua-overwrite-cursor-color '(box . "#ff69b4")) ; HotPink
+  (cua-read-only-cursor-color '(box . "#54ff9f")) ; SeaGreen1
+  (cua-normal-cursor-color    '(bar . "#ffd700")) ; Gold
   (cua-enable-cursor-indications t)
   :config
   (cua-mode t))
 
-(use-package emacs
-  :straight (:type built-in)
-  :custom
-  (x-stretch-cursor t))
-
-(use-package frame
+(use-package frame ; blinking cursor timing
   :straight (:type built-in)
   :custom
   (blink-cursor-blinks 0)
   (blink-cursor-delay 0))
 
+(use-package emacs ; stretch cursor
+  :straight (:type built-in)
+  :custom
+  (x-stretch-cursor t))
+
+
 ;;;; Dimmer: dim non-active windows (Neil Okamoto)
 ;; https://github.com/gonewest818/dimmer.el
 
 (use-package dimmer
-  :demand t
+  :defer 2
   :custom
-  (dimmer-adjustment-mode :both)
-  (dimmer-fraction 0.05)
+  (dimmer-adjustment-mode :both)        ; both foreground and background
+  (dimmer-fraction 0.1)                 ; subtle, slightly less contrast
   :config
+  (setq dimmer-buffer-exclusion-regexps
+        '("^ \\*Minibuf-[0-9]+\\*$"     ; dimmer default
+          "^ \\*Echo.*\\*$"             ; dimmer default
+          "^ \\*LV\\*$"                 ; hydras
+          "^ \\*transient\\*$"          ; magit et al
+          "^\\*Org Select\\*$"          ; org-mode
+          "^ \\*Agenda Commands\\*$"    ; org-mode
+          "^ \\*.*posframe.*buffer.*\\*$"
+          "^ \\*which-key\\*$"))
   (dimmer-mode 1))
 
 
-;;;; Minions: minor mode menu (Jonas Bernoulli)
+;;;; Minions: minions minor modes menu (Jonas Bernoulli)
 ;; https://github.com/tarsius/minions
 
 (use-package minions
@@ -843,27 +870,23 @@ toggle between real end and logical end of the buffer."
   (minions-mode 1)
   (global-set-key [S-down-mouse-3] 'minions-minor-modes-menu))
 
-;; (use-package key-cast
-;;   :config
-;;   (key-cast-mode 1))
 
+;;;; # Some modes look better with proportional fonts
 
-;;;; Some modes look better with proportional fonts
-
-(mapc
- (lambda (hook)
-   (add-hook hook (lambda () (variable-pitch-mode t))))
- '(erc-mode-hook
-   edit-server-start-hook
-   markdown-mode-hook
-   twittering-mode
-   text-mode
-   ))
+;; (mapc
+;;  (lambda (hook)
+;;    (add-hook hook (lambda () (variable-pitch-mode t))))
+;;  '(erc-mode-hook
+;;    edit-server-start-hook
+;;    markdown-mode-hook
+;;    twittering-mode
+;;    text-mode
+;;    ))
 
 
 ;;;; Icon label when minimized
 
-(use-package emacs
+(use-package emacs ; icon title
   :straight (:type built-in)
   :custom
   (icon-title-format
@@ -874,7 +897,10 @@ toggle between real end and logical end of the buffer."
 
 ;;;; Filename [ path ] in title bar
 
-(use-package emacs
+;; Suggstion from https://blog.lambda.cx/posts/eamacs-improved-frame-title
+;; (setq frame-title-format '("%b@" (:eval (or (file-remote-p default-directory 'host) system-name)) " — Emacs"))
+
+(use-package emacs ; contents of title bar
   :straight (:type built-in)
   :custom
   (frame-title-format
@@ -894,60 +920,178 @@ toggle between real end and logical end of the buffer."
                   " ]")
                ""))))))
 
+;;;; Usurp tab bar below title bar as global status bar
+
+(use-package tab-bar
+  :straight (:type built-in)
+  :custom
+  (tab-bar-format '(tab-bar-format-global))
+  (tab-bar-mode t))
+
 
 ;;;; Frame appearance
 
+(use-package emacs ; appearance of subsequent frames
+  :straight (:type built-in)
+  :custom
+  (indicate-buffer-boundaries 'right)   ; graphics in fringe
+  (default-frame-alist
+   '((minibuffer . nil)
+     (vertical-scroll-bars . nil)
+     (menu-bar-lines . 1)
+     (tool-bar-lines . 0)
+     (icon-type . nil)
+     (background-mode . dark)
+     (background-color . "black")
+     (foreground-color . "white")
+     (cursor-type . bar)
+     (x-stretch-cursor . t))))
+
+;; unspecified values taken from default-frame-alist (above)
 (use-package frame
   :straight (:type built-in)
   :custom
   (initial-frame-alist
-   '(
-     ; (cursor-type . bar)
-     (fullscreen . maximized)
-     (minibuffer . nil)
-     (vertical-scroll-bars)
-     (menu-bar-lines . 0)
-     (tool-bar-lines . 0)
-     (icon-type . nill)
-     (x-stretch-cursor t))))
+   '((fullscreen . maximized))))
 
-;; Match initial-frame-alist settings (above)
-(use-package emacs
-  :straight (:type built-in)
-  :custom
-  (default-frame-alist
-    '(
-      ; (cursor-type . bar)
-      (fullscreen . maximized)
-      (minibuffer . nil)
-      (vertical-scroll-bars)
-      (menu-bar-lines . 0)
-      (icon-type . nill)
-      (x-stretch-cursor t)))
-  (indicate-buffer-boundaries 'right)) ; graphics in fringe
 
-;; Minibuffer
+;;;; MBMB: separate minibuffer frame overlaying the menu bar
+
+(defun mbmb/resize-mbf (mbf)
+  "MBMB callback for the resize-mini-frames variable."
+  (let ((width (frame-text-width mbf)))
+    (fit-frame-to-buffer-1 mbf nil 1 width width 'vertically)))
+
+;; unspecified values taken from previously defined default-frame-alist
 (use-package frame
   :straight (:type built-in)
   :custom
-  (minibuffer-frame-alist
-   `((user-position . t)
-     (user-size . t)
-     (undecorated . t)
-     (z-group . nil)
-     (keep-ratio . t)
-     (child-frame-border-width . 1)
+  (resize-mini-windows t)
+  (resize-mini-frames #'mbmb/resize-mbf)
+  (minibuffer-frame-alist       ; unspecified from default-frame-alist
+   `((minibuffer . only)
+     (minibuffer-exit . nil)
+     (visibility . nil)
+     (min-height . 1)
+     (auto-raise . t)
+     (menu-bar-lines . 0)
      (internal-border-width . 1)
-     (fullscreen . nil)
-     (height . 1)
-     (left . -1)
-     (top . 33)
-     (width . .33))))
+     (skip-taskbar . t)
+     (undecorated . t)
+     (desktop-dont-save . t))))
+
+
+(defvar mbmb/title-bar-height 34
+  "Querying title-bar-height returns 0; so hardwire it here.")
+
+(defun mbmb/mbf (owner)
+  "Qualify OWNER by returning its dedicated separate MBF or nil."
+  (let ((owner-minibuffer (frame-parameter owner 'minibuffer)))
+    (cond
+     ((not owner-minibuffer)
+      nil)
+     ((eq owner-minibuffer 'only)
+      nil)                      ; OWNER is actually a separate MBF
+     (t
+      (let ((mbf (window-frame owner-minibuffer)))
+	(if (eq (frame-parameter mbf 'minibuffer) 'only)
+	    mbf
+	  nil))))))
+
+(defun mbmb/apply-owner-width (owner mbf)
+  "Apply qualified OWNER's width to separate MBF."
+  (when (frame-size-changed-p owner)
+    (let ((width (frame-parameter owner 'width)))
+      (unless (eq (frame-parameter mbf 'width) width)
+	(set-frame-parameter mbf 'width  width)))))
+
+(defun mbmb/track-owner-width (owner)
+  "Qualify OWNER and adjust its separate MBF's width."
+  (let ((mbf (mbmb/mbf owner)))
+    (when mbf
+      (mbmb/apply-owner-width owner mbf))))
+(add-hook 'window-size-change-functions #'mbmb/track-owner-width)
+
+(defun mbmb/apply-owner-position (owner mbf)
+  "Apply qualified OWNER's position to separate MBF."
+  (let ((pos (frame-position owner)))
+    (set-frame-position mbf (car pos) (+ (cdr pos) mbmb/title-bar-height))))
+
+(defun mbmb/track-owner-position (owner)
+  "Qualify OWNER and adjust its separate MBF's position."
+  (let ((mbf (mbmb/mbf owner)))
+    (when mbf
+      (mbmb/apply-owner-position owner mbf))))
+(add-hook 'move-frame-functions         #'mbmb/track-owner-position)
+
+(defun mbmb/setup-colors-position-and-width (owner mbf)
+  "Given OWNER and MBF, ensure proper MBF color, position and width."
+  (set-face-background 'fringe          "black" mbf)
+  (set-face-background 'internal-border "white" mbf)
+  (mbmb/apply-owner-position owner mbf)
+  (mbmb/apply-owner-width owner mbf))
+
+(defun mbmb/setup-minibuffer ()
+  "Invoke mbmb/setup-colors-position-and-width with owner and mbf."
+  (let ((owner (window-frame (minibuffer-selected-window))))
+    (mbmb/setup-colors-position-and-width owner (mbmb/mbf owner))))
+(add-hook 'minibuffer-setup-hook #'mbmb/setup-minibuffer)
+
+(defun mbmb/after-make-frame (owner)
+  "Final steps in creating an MBMB minibuffer frame."
+  (let ((mbf (mbmb/mbf owner)))
+    (when mbf
+      (mbmb/setup-colors-position-and-width owner mbf)
+      (mbmb/resize-mbf mbf)
+      (raise-frame owner)
+      (raise-frame mbf)
+      (set-frame-parameter mbf 'z-group 'above)
+      (set-frame-parameter mbf 'visibility t))))
+(add-hook 'after-make-frame-functions #'mbmb/after-make-frame)
+
+(defun mbmb/adjust-mbf-z-group (owner)
+  "Adjust an MBF's z-group based on whether it or its OWNER has focus."
+  (let ((mbf (mbmb/mbf owner)))
+    (when mbf
+      (set-frame-parameter mbf 'z-group
+                           (if (or (frame-focus-state owner)
+                                   (frame-focus-state mbf))
+                               'above
+                             nil)))))
+
+(defvar mbmb/focus-events-timer nil
+  "A place to record a running timer.")
+
+(defvar mbmb/last-focus-state 'force-update
+  "Most recent ‘frame-focus-state’ from a focus change event.")
+
+(defun mbmb/focus-change ()
+  "On actual focus change update all MBF z-group settings."
+  (setq mbmb/focus-events-timer nil)
+  (let ((state (with-no-warnings (frame-focus-state))))
+    (unless (eq mbmb/last-focus-state state)
+      (setq mbmb/last-focus-state state)
+      (dolist (frame (frame-list))
+        (mbmb/adjust-mbf-z-group frame)))))
+
+;; This debouncing logic was inspired by
+;; https://www.reddit.com/r/emacs/comments/kxsgtn/ignore_spurious_focus_events_for
+
+(defvar mbmb/debounce-delay 0.02
+  "Time to wait before declaring change debounced.")
+
+(defun mbmb/debounce-focus-change ()
+  "Drain spurious events by canceling a running timer and setup a new one."
+  (if (timerp mbmb/focus-events-timer)
+      (cancel-timer mbmb/focus-events-timer))
+  (setq mbmb/focus-events-timer
+        (run-with-timer mbmb/debounce-delay nil #'mbmb/focus-change)))
+(add-function :after after-focus-change-function #'mbmb/debounce-focus-change)
 
 
 ;;;; Visualize current line
 
-(use-package emacs
+(use-package emacs ; current line
   :straight (:type built-in)
   :custom
   (indicate-empty-lines t)
@@ -956,6 +1100,10 @@ toggle between real end and logical end of the buffer."
 
 ;; Highlight current line except when region is active
 (use-package hl-line
+  :custom
+  (global-hl-line-sticky-flag t "maintian highlight in inactive windows")
+  :custom-face
+  (hl-line ((t (:underline (:color "gray30" :style line) :extend t :inherit (modus-themes-hl-line)))))
   :config
   (defun my/global-hl-line-hide-on-activate-mark()
     (hl-line-unhighlight)
@@ -968,11 +1116,7 @@ toggle between real end and logical end of the buffer."
       (global-hl-line-highlight)))
   (add-hook   'activate-mark-hook #'my/global-hl-line-hide-on-activate-mark)
   (add-hook 'deactivate-mark-hook #'my/global-hl-line-show-on-deactivate-mark)
-  (global-hl-line-mode +1)
-  :custom
-  (global-hl-line-sticky-flag t "maintian highlight in inactive windows")
-  :custom-face
-  (hl-line ((t (:underline (:color "gray20" :style line) :extend t :inherit (modus-theme-hl-line))))))
+  (global-hl-line-mode +1))
 
 ;; Indicators in fringe when line is wrapped
 (use-package simple
@@ -994,12 +1138,12 @@ toggle between real end and logical end of the buffer."
 ;; Universally display ^L as a full window-width horizontal rule
 (use-package pp-c-l
   :straight (:host github :repo "jsyjr/pp-c-l" :branch "main")
-  :hook ((window-setup window-configuration-change) . refresh-pretty-control-l)
   :custom
   (pretty-control-l-mode t)
   (pp^L-^L-string-function (lambda (win) (make-string (1- (window-width win)) 32)))
   :custom-face
-  (pp^L-highlight ((((type x w32 mac graphic) (class color)) (:inherit shadow :strike-through t)))))
+  (pp^L-highlight ((((type x w32 mac graphic) (class color)) (:inherit shadow :strike-through t))))
+  :hook ((window-setup window-configuration-change) . refresh-pretty-control-l))
 
 
 ;; (my/custom-set-faces
@@ -1089,16 +1233,21 @@ toggle between real end and logical end of the buffer."
 
 (use-package paren
   :straight (:type built-in)
-  :config
-  (show-paren-mode t)
   :custom
-  (show-paren-delay 0))                  ; do it immediately
+  (show-paren-delay 0)                  ; do it immediately
+  ;; Appers no longer to be part of paren.el
+  ;; :custom-face
+  ;; (show-paren-match ((t (:background "light green" :foreground "black" :weight bold))))
+  ;; (show-paren-mismatch ((t (:background "firebrick" :foreground "white"))))
+  :config
+  (show-paren-mode t))
 
 
 ;;;; Highlight-doxygen: highlight doxy cmds and args (Anders Lindgren)
 ;; https://github.com/Lindydancer/highlight-doxygen
 
-(use-package highlight-doxygen)
+;; Hook for c-mode and c++-mode
+;; (use-package highlight-doxygen)
 
 
 ;;; === Mode-line ======================================================
@@ -1112,7 +1261,7 @@ toggle between real end and logical end of the buffer."
   :group 'basic-faces)
 
 
-(use-package emacs
+(use-package emacs ; mode-line-format
   :straight (:type built-in)
   :custom
   (mode-line-format
@@ -1166,7 +1315,7 @@ mouse-3: Remove current window from display")))))
 
 ;;;; mode-line eol-mnemonic
 
-(use-package emacs
+(use-package emacs ; mode-line: eol
   :straight (:type built-in)
   :custom
   (eol-mnemonic-mac ":")                ; defaults to '/'
@@ -1206,7 +1355,11 @@ mouse-3: Remove current window from display")))))
   "Accumulate max column visited to prevent mode-line jitter.")
 (make-variable-buffer-local 'buffer-max-column-visited)
 
+(copy-face 'modus-themes-subtle-blue 'my/position-widget-bold)
+(set-face-attribute 'my/position-widget-bold nil :weight 'bold)
+
 (defun my/position-widget ()
+  ""
   (let*
       ((c-n-m column-number-mode)
        (l-n-m line-number-mode)
@@ -1217,7 +1370,8 @@ mouse-3: Remove current window from display")))))
       (widen)
 
       (let*
-          ((eob-line  (line-number-at-pos (point-max)))
+          (
+           (eob-line  (line-number-at-pos (point-max)))
            (wbeg-line (line-number-at-pos wbeg))
            (wend-line (line-number-at-pos wend))
 
@@ -1225,7 +1379,7 @@ mouse-3: Remove current window from display")))))
             (concat
              ;; Leading [
              (if (= wbeg-line 1)
-                 #("[" 0 1 (face modus-theme-subtle-blue))
+                 #("[" 0 1 (face my/position-widget-bold))
                "[")
              ;; Body
              (if (not (or l-n-m c-n-m))
@@ -1279,11 +1433,11 @@ mouse-3: Remove current window from display")))))
                                     (float (- eob-line wlines -2)))))
                     (rpad (+ lpad hilen)))
 
-                 (put-text-property lpad rpad 'face 'modus-theme-subtle-blue expanded)
+                 (put-text-property lpad rpad 'face 'modus-themes-subtle-blue expanded)
                  expanded))
              ;; Trailing ]
              (if (= wend-line eob-line)
-                 #("]" 0 1 (face modus-theme-subtle-blue))
+                 #("]" 0 1 (face my/position-widget-bold))
                "]"))))
 
         (propertize
@@ -1307,20 +1461,25 @@ mouse-3: Remove current window from display")))))
 
 (setq mode-line-position '(:eval (my/position-widget)))
 
+;; defer which-func until we initialize a buffer in one of the following
+;;   modes: emacs-lisp-mode c-mode c++-mode  python-mode makefile-mode
+;;          sh-mode perl-mode or cperl-mode
 
 ;;;; mode-line which-func
 
 (use-package which-func
-;  :straight (:type built-in)
-  :config
-  (defun my/toggle-function-narrowing ()
-    "Alternate between narrowing and windening current function"
-    (interactive)
-    (if (eq (point-min) 1)
-        (narrow-to-defun)
-        (widen)))
+  :straight (:type built-in)
   :custom
-  (which-function-mode t nil (which-func))
+  ;; Don't set `which-function-mode' to be enabled by default for all modes
+  ;; For which-func support: (add-to-list 'which-func-mode 'MAJOR-MODE)
+  (which-func-modes '(c++-mode
+                      c-mode
+                      cperl-mode
+                      emacs-lisp-mode
+                      makefile-mode
+                      perl-mode
+                      python-mode
+                      sh-mode))
   (which-func-format
    '("["
      (:propertize which-func-current local-map
@@ -1334,7 +1493,14 @@ mouse-3: Remove current window from display")))))
 mouse-1: go to beginning
 mouse-2: toggle function narrowing
 mouse-3: go to end")
-     "]")))
+     "]"))
+  :init
+  (defun my/toggle-function-narrowing ()
+    "Alternate between narrowing and windening current function"
+    (interactive)
+    (if (eq (point-min) 1)
+        (narrow-to-defun)
+        (widen))))
 
 ;; (my/custom-set-faces
 ;;  '(which-func ((t (:foreground "dark blue" :weight bold))))
@@ -1502,12 +1668,12 @@ bizarre reason."
 
 (use-package free-keys
   :straight (:host github :repo "Fuco1/free-keys")
-  :commands free-keys
   :custom
   (free-keys-modifiers '("" "C" "A" "M" "s" "H" "C-M" "A-C" "C-s" "A-M"))
+  :commands free-keys
   :config
   (radian-defadvice my--advice-free-keys-disable-whitespace-mode
-      (&optional prefix buffer)
+      (&optional _prefix _buffer)
     :after #'free-keys
     "Locally disable showing trailing whitespace"
     (with-current-buffer (get-buffer-create "*Free keys*")
@@ -1519,11 +1685,14 @@ bizarre reason."
 
 (use-package which-key
   :straight (:host github :repo "justbur/emacs-which-key")
+  :demand t
   :custom
   (which-key-popup-type 'side-window)
   (which-key-side-window-location 'left)
   (which-key-show-prefix 'top)
-  (which-key-sort-order #'which-key-prefix-then-key-order))
+  (which-key-sort-order #'which-key-prefix-then-key-order)
+  :config
+  (which-key-mode 1))
 
 
 ;;; === Window management ==============================================
@@ -1535,7 +1704,7 @@ bizarre reason."
 ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Controlling-Active-Maps.html
 ;; set-transient-map keymap &optional keep-pred on-exit
 
-;; edm-arrange
+;; edm-redraw
 ;; edm-clone-window
 ;; edm-dec-mfact
 ;; edm-dec-nmaster
@@ -1549,17 +1718,42 @@ bizarre reason."
 ;; edm-zoom
 
 (use-package edm
+  :disabled
   :straight (:host github :repo "jsyjr/edm")
-  :demand t
-;  :bind-keymap
-;  ("C-." . edm-mode-map)
   :custom
-  ;; (edm-keymap-prefix (kbd "C-."))
   (edm-mfact 0.66)
   (edm-nmaster 1)
+  :bind-keymap ("C-," . edm-mode-map)
+  :bind (:map edm-mode-map
+              ("r"        . 'edm-redraw)
+              ("C-r"      . 'edm-redraw)
+              ("n"        . 'edm-select-next-window)
+              ("C-n"      . 'edm-select-next-window)
+              ("SPC"      . 'edm-select-next-window)
+              ("p"        . 'edm-select-previous-window)
+              ("C-p"      . 'edm-select-previous-window)
+              ("N"        . 'edm-swap-next-window)
+              ("C-S-n"    . 'edm-swap-next-window)
+              ("P"        . 'edm-swap-previous-window)
+              ("C-S-p"    . 'edm-swap-previous-window)
+              ("%"        . 'edm-dec-mfact)
+              ("{"        . 'edm-dec-mfact)
+              ("["        . 'edm-dec-mfact)
+              ("^"        . 'edm-inc-mfact)
+              ("}"        . 'edm-inc-mfact)
+              ("]"        . 'edm-inc-mfact)
+              ("d"        . 'edm-dec-nmaster)
+              ("C-d"      . 'edm-dec-nmaster)
+              ("i"        . 'edm-inc-nmaster)
+              ("k"        . 'edm-delete-window)
+              ("C-k"      . 'edm-delete-window)
+              ("RET"      . 'edm-zoom)
+              ("<return>" . 'edm-zoom)
+              ("c"        . 'edm-clone-window)
+              ("C-c"      . 'edm-clone-window))
   :config
-  (setq display-buffer-base-action '(display-buffer-below-selected))
-;  (setq edm-keymap-prefix (kbd "C-."))
+;  (setq display-buffer-alist '((".*" . display-buffer-reuse-window)))
+;  (setq display-buffer-base-action '(display-buffer-below-selected))
   (edm-mode +1)
 )
 
@@ -1586,64 +1780,98 @@ bizarre reason."
 ;; https://github.com/muffinmad/emacs-mini-frame
 
 (use-package mini-frame
-  :straight (:host github :repo "muffinmad/emacs-mini-frame" :files("mini-frame.el"))
+  :disabled
+  :straight (:host github :repo "muffinmad/emacs-mini-frame")
   :custom
   (mini-frame-color-shift-step 0)
   (mini-frame-create-lazy nil)
+  (mini-frame-detach-on-hide nil)
   (mini-frame-internal-border-color "white")
-; (mini-frame-create-lazy nil)
-  ;; ;; Overlay "parent" frame's title bar, stretch from left to right edge
+  (mini-frame-standalone t)
+;;(x-gtk-resize-child-frames 'resize-mode)
   (mini-frame-show-parameters (lambda ()
-                                (let ((sf (selected-frame)))
-                                  `((user-position . t)
+                                (let* ((sf (selected-frame))
+                                       (fg (frame-geometry sf)))
+				  ;; `((top   . ,(alist-get 'top   fg))
+				  ;;   (left  . ,(alist-get 'left  fg))
+				  ;;   (width . ,(alist-get 'width fg))
+                                  `((top   . ,(frame-parameter sf 'top))
+                                    (left  . ,(+ (frame-parameter sf 'left)
+                                                 (car (cdr (assq 'external-border-size fg)))))
+                                    (width . ,(+ (frame-parameter sf 'width)
+                                                 2))
+                                    (height . 1)
+                                    (fullscreen . nil)
+                                    (user-position . t)
                                     (user-size . t)
                                     (keep-ratio . t)
                                     (child-frame-border-width . 1)
                                     (internal-border-width . 1)
-                                    (fullscreen . nil)
-                                    (z-group . nil)
-                                    (left . ,(+ (frame-parameter sf 'left)
-                                                (car (cdr (assq 'external-border-size (frame-geometry sf))))))
-                                    ;; (width . ,(frame-parameter sf 'width))
-                                    (width . 0.66)
-                                    (top   . ,(frame-parameter sf 'top))))))
-  (mini-frame-standalone t)) ; Escape parent confines to allow above positioning
+                                    )))))
+  
 
-(defun my/experiment ()
-  ""
-  (interactive)
-  (setq mini-frame-internal-border-color "white")
-  (setq mini-frame-show-parameters (lambda ()
-                                (let ((sf (selected-frame)))
-                                  `((user-position . t)
-                                    (user-size . t)
-                                    (keep-ratio . t)
-                                    (child-frame-border-width . 1)
-                                    (internal-border-width . 1)
-                                    (fullscreen . nil)
-                                    (left . ,(+ (frame-parameter sf 'left)
-                                                (car (cdr (assq 'external-border-size (frame-geometry sf))))))
-                                    (width . ,(frame-parameter sf 'width))
-                                    (top   . ,(+ (frame-parameter sf 'top) 41))))))
-  (setq mini-frame-standalone t)
+;; (use-package mini-frame
+;;   :disabled
+;;   :straight (:host github :repo "muffinmad/emacs-mini-frame" :files("mini-frame.el"))
+;;   :custom
+;;   (mini-frame-color-shift-step 0)
+;;   (mini-frame-create-lazy nil)
+;;   (mini-frame-internal-border-color "white")
+;;   ;; Completions overlay "parent" frame's title bar; 2/3 width, starting at left edge
+;;   (mini-frame-show-parameters (lambda ()
+;;                                 (let ((sf (selected-frame)))
+;;                                   `((top   . ,(frame-parameter sf 'top))
+;;                                     (left . ,(+ (frame-parameter sf 'left)
+;;                                                 (car (cdr (assq 'external-border-size (frame-geometry sf))))))
+;;                                     ;; (width . ,(frame-parameter sf 'width))
+;;                                     (width . 0.66)
+;;                                     (fullscreen . nil)
+;;                                     (z-group . above)
+;;                                     (user-position . t)
+;;                                     (user-size . t)
+;;                                     (keep-ratio . t)
+;;                                     (child-frame-border-width . 1)
+;;                                     (internal-border-width . 1)
+;;                                     ))))
+;;   (mini-frame-standalone t)) ; Escape parent confines to allow above positioning
 
-  ;; (setq mini-frame-show-parameters (lambda ()
-  ;;                               (let ((sf (selected-frame)))
-  ;;                                 `((user-position . t)
-  ;;                                   (user-size . t)
-  ;;                                   (keep-ratio . t)
-  ;;                                   (child-frame-border-width . 1)
-  ;;                                   (internal-border-width . 1)
-  ;;                                   (fullscreen . nil)
-  ;;                                   (z-group . nil)
-  ;;                                   (left . 0)
-  ;;                                   (width . 1.0)
-  ;;                                   (top   .  0)))))
-  ;; (setq mini-frame-standalone nil)
-
-  (setq-default header-line-format mode-line-format)
-  (setq-default mode-line-format nil)
-  (setq mode-line-format nil))
+;; (defun my/experiment ()
+;;   ""
+;;   (interactive)
+;;   (setq mini-frame-internal-border-color "white")
+;;   (setq mini-frame-show-parameters (lambda ()
+;;                                 (let ((sf (selected-frame)))
+;;                                   (my/echo-area-track-selected-frame)
+;;                                   `((top   . ,(+ (frame-parameter sf 'top) 41))
+;;                                     (left . ,(+ (frame-parameter sf 'left)
+;;                                                 (car (cdr (assq 'external-border-size (frame-geometry sf))))))
+;;                                     (width . ,(frame-parameter sf 'width))
+;;                                     ;; Remaining parameters mimic minibuffer-frame-alist
+;;                                     (user-position . t)
+;;                                     (user-size . t)
+;;                                     (keep-ratio . t)
+;;                                     (child-frame-border-width . 1)
+;;                                     (internal-border-width . 1)
+;;                                     (fullscreen . nil)))))
+;;   (setq mini-frame-standalone t)
+;;
+;;   ;; (setq mini-frame-show-parameters (lambda ()
+;;   ;;                               (let ((sf (selected-frame)))
+;;   ;;                                 `((user-position . t)
+;;   ;;                                   (user-size . t)
+;;   ;;                                   (keep-ratio . t)
+;;   ;;                                   (child-frame-border-width . 1)
+;;   ;;                                   (internal-border-width . 1)
+;;   ;;                                   (fullscreen . nil)
+;;   ;;                                   (z-group . nil)
+;;   ;;                                   (left . 0)
+;;   ;;                                   (width . 1.0)
+;;   ;;                                   (top   .  0)))))
+;;   ;; (setq mini-frame-standalone nil)
+;;
+;;   (setq-default header-line-format mode-line-format)
+;;   (setq-default mode-line-format nil)
+;;   (setq mode-line-format nil))
 
 
 ;;;; # Purpose: purpose-based window management (Bar Magal)
@@ -1651,8 +1879,8 @@ bizarre reason."
 
 (use-package window-purpose
   :disabled
-  :after imenu-list
   :straight (:host github :repo "bmag/emacs-purpose")
+  :after imenu-list
   :config
   (setq purpose-default-action-order 'prefer-same-window)
   ;; (add-to-list 'purpose-user-mode-purposes`gc50075
@@ -1678,19 +1906,21 @@ bizarre reason."
 ;; https://github.com/karthink/popper
 
 (use-package popper
+  :disabled
   :straight (:host github :repo "karthink/popper")
-  :bind (("C-`"   . popper-toggle-latest)
-         ("M-`"   . popper-cycle)
-         ("C-M-`" . popper-toggle-type))
-  :init
-  (popper-mode +1)
+  :after edm
   :custom
   (popper-reference-buffers '("^magit[-:].*$"
                               "\\*Messages\\*"
                               "Output\\*$"
                               help-mode
                               helpful-mode
-                              compilation-mode)))
+                              compilation-mode))
+  :bind (("C-`"   . popper-toggle-latest)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :config
+  (popper-mode +1))
 
 
 ;;;; # Popwin: force better behavior on popup windows (Tomohiro Matsuyama)
@@ -1719,26 +1949,230 @@ bizarre reason."
 ;;  )
 
 ;;; === Minibuffer selection ===========================================
+;;;; Marginalia: rich annotations for minibuffer completions (Daniel Mendler)
+;; https://github.com/minad/marginalia
+
+(use-package marginalia
+  :straight (:host github :repo "minad/marginalia")
+  :demand t
+  :custom
+  (marginalia-max-relative-age 0)
+  (marginalia-align 'right)
+  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+  :general
+  ("M-A" 'marginalia-cycle)             ; cycle annotations: heavy, light, none
+  (:keymaps 'minibuffer-local-map
+            "M-A" 'marginalia-cycle)
+  :config
+  (marginalia-mode 1))
+
+
 ;;;; Orderless: orderless completion style (Omar Antolín Camarena)
 ;; https://github.com/oantolin/orderless
 
 (use-package orderless
+  :straight (:host github :repo "oantolin/orderless")
   :custom
   (completion-styles '(orderless))
-;  (orderless-skip-highlighting (lambda () selectrum-is-active))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
+
+
+
+(use-package orderless
+  :straight (:host github :repo "oantolin/orderless")
+  :custom
+  (completion-styles '(orderless))
+  (completion-category-defaults nil)    ; I want to be in control!
+  (completion-category-overrides
+   '((file (styles basic-remote         ; For `tramp' hostname completion with `vertico'
+                   orderless
+                   ))
+     ))
+
+  ;; The following is taken directly from Protesilaos's
+  ;; Emacs configuration, with very minor changes. See
+  ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-emacs.el
+  :custom
+  (orderless-component-separator 'orderless-escapable-split-on-space)
+  (orderless-matching-styles
+   '(orderless-literal
+     orderless-prefixes
+     orderless-initialism
+     orderless-regexp
+     ;; orderless-flex
+     ;; orderless-strict-leading-initialism
+     ;; orderless-strict-initialism
+     ;; orderless-strict-full-initialism
+     ;; orderless-without-literal       ; Recommended for dispatches instead
+     ))
+  (orderless-style-dispatchers
+   '(prot-orderless-literal-dispatcher
+     prot-orderless-strict-initialism-dispatcher
+     prot-orderless-flex-dispatcher
+     ))
+  :init
+  (defun orderless--strict-*-initialism (component &optional anchored)
+    "Match a COMPONENT as a strict initialism, optionally ANCHORED.
+The characters in COMPONENT must occur in the candidate in that
+order at the beginning of subsequent words comprised of letters.
+Only non-letters can be in between the words that start with the
+initials.
+
+If ANCHORED is `start' require that the first initial appear in
+the first word of the candidate.  If ANCHORED is `both' require
+that the first and last initials appear in the first and last
+words of the candidate, respectively."
+    (orderless--separated-by
+        '(seq (zero-or-more alpha) word-end (zero-or-more (not alpha)))
+      (cl-loop for char across component collect `(seq word-start ,char))
+      (when anchored '(seq (group buffer-start) (zero-or-more (not alpha))))
+      (when (eq anchored 'both)
+        '(seq (zero-or-more alpha) word-end (zero-or-more (not alpha)) eol))))
+
+  (defun orderless-strict-initialism (component)
+    "Match a COMPONENT as a strict initialism.
+This means the characters in COMPONENT must occur in the
+candidate in that order at the beginning of subsequent words
+comprised of letters.  Only non-letters can be in between the
+words that start with the initials."
+    (orderless--strict-*-initialism component))
+
+  (defun prot-orderless-literal-dispatcher (pattern _index _total)
+    "Literal style dispatcher using the equals sign as a suffix.
+It matches PATTERN _INDEX and _TOTAL according to how Orderless
+parses its input."
+    (when (string-suffix-p "=" pattern)
+      `(orderless-literal . ,(substring pattern 0 -1))))
+
+  (defun prot-orderless-strict-initialism-dispatcher (pattern _index _total)
+    "Leading initialism  dispatcher using the comma suffix.
+It matches PATTERN _INDEX and _TOTAL according to how Orderless
+parses its input."
+    (when (string-suffix-p "," pattern)
+      `(orderless-strict-initialism . ,(substring pattern 0 -1))))
+
+  (defun prot-orderless-flex-dispatcher (pattern _index _total)
+    "Flex  dispatcher using the tilde suffix.
+It matches PATTERN _INDEX and _TOTAL according to how Orderless
+parses its input."
+    (when (string-suffix-p "." pattern)
+      `(orderless-flex . ,(substring pattern 0 -1))))
   )
 
 
-;;;; Prescient: sort and maybe filter candidates list (Radon Rosborough)
-;; https://github.com/raxod502/prescient.el
+;;;; Vertico: vertical interactive completion (Daniel Mendler)
+;; https://github.com/minad/vertico
 
-(use-package prescient
-  :straight (:host github :repo "raxod502/prescient.el" :local-repo "prescient" :files (:defaults))
+(use-package vertico
+  ;; Special recipe to load extensions conveniently
+  :straight (vertico :host github :repo "minad/vertico"
+                     :files (:defaults "extensions/*")
+                     :includes (vertico-indexed
+                                vertico-flat
+                                vertico-grid
+                                vertico-mouse
+                                vertico-quick
+                                vertico-buffer
+                                vertico-repeat
+                                vertico-reverse
+                                vertico-directory
+                                vertico-multiform
+                                vertico-unobtrusive
+                                ))
   :custom
-  (prescient-history-length 1000)
-  :config
-  (prescient-persist-mode +1))
+  (vertico-count 13)
+  (vertico-resize t)
+  (vertico-cycle nil)
+  ;; Extensions
+  (vertico-grid-separator "       ")
+  (vertico-grid-lookahead 50)
+  (vertico-buffer-display-action '(display-buffer-reuse-window))
+  (vertico-multiform-categories
+   '((file reverse)
+     (consult-grep buffer)
+     (consult-location)
+     (imenu buffer)
+     (library reverse indexed)
+     (org-roam-node reverse indexed)
+     (t reverse)
+     ))
+  (vertico-multiform-commands
+   '(("flyspell-correct-*" grid reverse)
+     (org-refile grid reverse indexed)
+     (consult-yank-pop indexed)
+     (consult-flycheck)
+     (consult-lsp-diagnostics)
+     ))
+  :general
+  (:keymaps '(normal insert visual motion)
+            "M-." #'vertico-repeat
+            )
+  (:keymaps 'vertico-map
+            "<tab>" #'vertico-insert ; Set manually otherwise setting `vertico-quick-insert' overrides this
+            "<escape>" #'minibuffer-keyboard-quit
+            "?" #'minibuffer-completion-help
+            "C-M-n" #'vertico-next-group
+            "C-M-p" #'vertico-previous-group
+            ;; Multiform toggles
+            "<backspace>" #'vertico-directory-delete-char
+            "C-w" #'vertico-directory-delete-word
+            "C-<backspace>" #'vertico-directory-delete-word
+            "RET" #'vertico-directory-enter
+            "C-i" #'vertico-quick-insert
+            "C-o" #'vertico-quick-exit
+            "M-o" #'kb/vertico-quick-embark
+            "M-G" #'vertico-multiform-grid
+            "M-F" #'vertico-multiform-flat
+            "M-R" #'vertico-multiform-reverse
+            "M-U" #'vertico-multiform-unobtrusive
+            "C-l" #'kb/vertico-multiform-flat-toggle
+            )
+  :hook ((rfn-eshadow-update-overlay . vertico-directory-tidy) ; Clean up file path when typing
+         (minibuffer-setup . vertico-repeat-save) ; Make sure vertico state is saved
+         )
+  :init
+  (defun kb/vertico-multiform-flat-toggle ()
+    "Toggle between flat and reverse."
+    (interactive)
+    (vertico-multiform--display-toggle 'vertico-flat-mode)
+    (if vertico-flat-mode
+        (vertico-multiform--temporary-mode 'vertico-reverse-mode -1)
+      (vertico-multiform--temporary-mode 'vertico-reverse-mode 1)))
+  (defun kb/vertico-quick-embark (&optional arg)
+    "Embark on candidate using quick keys."
+    (interactive)
+    (when (vertico-quick-jump)
+      (embark-act arg)))
 
+  ;; Workaround for problem with `tramp' hostname completions. This overrides
+  ;; the completion style specifically for remote files! See
+  ;; https://github.com/minad/vertico#tramp-hostname-completion
+  (defun kb/basic-remote-try-completion (string table pred point)
+    (and (vertico--remote-p string)
+         (completion-basic-try-completion string table pred point)))
+  (defun kb/basic-remote-all-completions (string table pred point)
+    (and (vertico--remote-p string)
+         (completion-basic-all-completions string table pred point)))
+  (add-to-list 'completion-styles-alist
+               '(basic-remote           ; Name of `completion-style'
+                 kb/basic-remote-try-completion kb/basic-remote-all-completions nil))
+  :config
+  (vertico-mode)
+  ;; Extensions
+  (vertico-multiform-mode)
+
+  ;; https://github.com/minad/vertico/wiki#move-annotations-in-front-of-the-candidate
+  (defun vertico--swap-annotations (result)
+  ;; Move annotations only for files
+  (if minibuffer-completing-file-name
+      (mapcar (lambda (x)
+                ;; Swap prefix/suffix annotations
+                (list (car x) (concat (string-trim-left (caddr x)) " ") (cadr x)))
+              result)
+    result))
+  (advice-add #'vertico--affixate :filter-return #'vertico--swap-annotations)
+  )
 
 ;;;; Consult: commands based on the completing-read function  (Daniel Mendler)
 ;; https://github.com/minad/consult
@@ -1765,6 +2199,26 @@ bizarre reason."
   ;;   (interactive "P")
   ;;   (let ((consult-find-command '("fdfind" "--color=never" "--full-path")))
   ;;     (consult-find dir)))
+
+  :custom
+  (consult-project-root-function (lambda () (locate-dominating-file "." ".git")))
+
+  ;; Use Consult to select xref locations with preview
+  (xref-show-xrefs-function #'consult-xref)
+  (xref-show-definitions-function #'consult-xref)
+
+  ;; Replace `multi-occur' with `consult-multi-occur', which is a drop-in replacement.
+  (multi-occur #'consult-multi-occur)
+
+  ;; Optionally configure narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (consult-narrow-key "<") ;; (kbd "C-+")
+
+  ;; Optionally configure the register formatting. This improves the register
+  ;; preview for `consult-register', `consult-register-load',
+  ;; `consult-register-store' and the Emacs built-ins.
+  (register-preview-delay 0)
+  (register-preview-function #'consult-register-format)
 
   ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind
@@ -1814,26 +2268,6 @@ bizarre reason."
   ;; (:map flycheck-command-map
   ;;       ("!" . consult-flycheck))
 
-  :custom
-  (consult-project-root-function (lambda () (locate-dominating-file "." ".git")))
-
-  ;; Use Consult to select xref locations with preview
-  (xref-show-xrefs-function #'consult-xref)
-  (xref-show-definitions-function #'consult-xref)
-
-  ;; Replace `multi-occur' with `consult-multi-occur', which is a drop-in replacement.
-  (multi-occur #'consult-multi-occur)
-
-  ;; Optionally configure narrowing key.
-  ;; Both < and C-+ work reasonably well.
-  (consult-narrow-key "<") ;; (kbd "C-+")
-
-  ;; Optionally configure the register formatting. This improves the register
-  ;; preview for `consult-register', `consult-register-load',
-  ;; `consult-register-store' and the Emacs built-ins.
-  (register-preview-delay 0)
-  (register-preview-function #'consult-register-format)
-
   :config
   ;; Optionally tweak the register preview window.
   ;; This adds thin lines, sorting and hides the mode line of the window.
@@ -1857,122 +2291,111 @@ bizarre reason."
 
 ;; Optionally add the `consult-flycheck' command.
 (use-package consult-flycheck
+  :disabled
   :bind (:map flycheck-command-map
               ("!" . consult-flycheck)))
-
-
-;;;; Selectrum: select items from a list (Radon Rosborough)
-;; https://github.com/raxod502/selectrum#what-is-it
-
-(use-package selectrum
-  :commands
-  (selectrum-mode
-   ;; selectrum-complete-in-buffer
-   ;; selectrum-select-from-history
-   ;; selectrum-completing-read
-   ;; selectrum-completing-read-multiple
-   ;; selectrum-completion-in-region
-   ;; selectrum-read-buffer
-   ;; selectrum-read-file-name
-   ;; selectrum--fix-dired-read-dir-and-switches
-   ;; selectrum-read-library-name
-   ;; selectrum-read-library-name
-   ;; selectrum--fix-minibuffer-message
-)
-  :bind
-  :custom
-  (selectrum-refine-candidate-function #'orderless-filter)
-  (selectrum-highlight-candidates-function #'orderless-highlight-matches)
-  :config
-  (selectrum-mode +1))
-
-
-(use-package selectrum-prescient
-  :after (prescient selectrum)  ; enforced in the hook-loads section
-  :straight (:host github :repo "raxod502/prescient.el" :local-repo "prescient" :files (:defaults))
-  :custom
-  (selectrum-prescient-enable-filtering nil)
-  :config
-  (selectrum-prescient-mode +1))
-
-
-(use-package consult-selectrum
-  :after (consult selectrum)  ; enforced in the hook-loads section
-  :straight (:host github :repo "minad/consult" :local-repo "consult" :files (:defaults)))
-
-
-
-;;;; Marginalia: rich annotations for minibuffer completions (Daniel Mendler)
-;; https://github.com/minad/marginalia
-
-(use-package marginalia
-  ;; Either bind `marginalia-cycle` globally or only in the minibuffer
-  :bind (("M-A" . marginalia-cycle)
-         :map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
-  :custom
-  ;; Prefer richer, more heavy, annotations over the lighter default variant.
-  ;; E.g. M-x will show the documentation string additional to the keybinding.
-  ;; By default only the keybinding is shown as annotation.
-  ;; Note that there is the command `marginalia-cycle' to
-  ;; switch between the annotators.
-  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
-  :config
-  ;; When using Selectrum, ensure that Selectrum is refreshed when cycling annotations.
-  (advice-add #'marginalia-cycle :after
-              (lambda () (when (bound-and-true-p selectrum-mode) (selectrum-exhibit))))
-  (marginalia-mode))
 
 
 ;;;; Embark: minibuffer actions rooted in keymaps (Omar Antolín Camarena)
 ;; https://github.com/oantolin/embark
 
 (use-package embark
-  :after consult  ; enforced in the hook-loads section
   :straight (:host github :repo "oantolin/embark" :local-repo "embark" :files (:defaults))
   :bind
   ("C-S-a" . embark-act)               ; pick some comfortable binding
   :config
-  ;; For Selectrum users:
-  (defun current-candidate+category ()
-    (when selectrum-active-p
-      (cons (selectrum--get-meta 'category)
-            (selectrum-get-current-candidate))))
-  (defun current-candidates+category ()
-    (when selectrum-active-p
-      (cons (selectrum--get-meta 'category)
-            (selectrum-get-current-candidates
-             ;; Pass relative file names for dired.
-             minibuffer-completing-file-name))))
-  (add-hook 'embark-setup-hook #'selectrum-set-selected-candidate)
   (add-hook 'embark-target-finders #'current-candidate+category)
   (add-hook 'embark-candidate-collectors #'current-candidates+category))
 
 (use-package embark-consult
-  :after (consult embark)  ; enforced in the hook-loads section
   :straight (:host github :repo "oantolin/embark" :local-repo "embark" :files (:defaults))
+  :after (consult embark)
   :config
   (add-hook 'embark-collect-mode #'embark-consult-preview-minor-mode))
 
-
-
-;;; === Buffers display and selection ==================================
-
+;;; === Buffers: selection, display and navigation =====================
 ;;;; Ibuffer: operate on buffers like dired (Colin Walters)
 
 (use-package ibuffer
   :straight (:type built-in)
+  :custom
+  (ibuffer-default-shrink-to-minimum-size t)
   :bind
   (("<f1>" . ibuffer-list-buffers)
    :map ibuffer-mode-map
    ("<f1>" . quit-window))
-  :custom
-  (ibuffer-default-shrink-to-minimum-size t)
   :config
   (my/beginning-of-buffer
     ibuffer (ibuffer-forward-line 1))
   (my/end-of-buffer
     ibuffer (ibuffer-backward-line 1)))
+
+;;;; Improved beginning-of-buffer and end-of-buffer
+;; https://fuco1.github.io/2017-05-06-Enhanced-beginning--and-end-of-buffer-in-special-mode-buffers-(dired-etc.).html
+;; Web page has support for
+;;   Dired (M-x dired)
+;;   Occur (M-x occur)
+;;   Ibuffer (M-x ibuffer)
+;;   vc directory view (M-x vc-dir or C-x v d)
+;;   bs (M-x bs-show)
+;;   Recentf (M-x recentf-open-files)
+;;   Org Agenda (M-x org-agenda)
+;;   ag (from ag.el package, M-x ag)
+;;   Notmuch (from notmuch package, M-x notmuch-search)
+;;   Elfeed (from elfeed package, M-x elfeed)
+
+(defmacro my/beginning-of-buffer (mode &rest forms)
+  "Define a special version of `beginning-of-buffer' in MODE.
+
+The special function is defined such that the point first moves
+to `point-min' and then FORMS are evaluated.  If the point did
+not change because of the evaluation of FORMS, jump
+unconditionally to `point-min'.  This way repeated invocations
+toggle between real beginning and logical beginning of the
+buffer."
+  (declare (indent 1))
+  (let ((fname (intern (concat "my/" (symbol-name mode) "-beginning-of-buffer")))
+        (mode-map (intern (concat (symbol-name mode) "-mode-map")))
+        (mode-hook (intern (concat (symbol-name mode) "-mode-hook"))))
+    `(progn
+       (defun ,fname ()
+         (interactive)
+         (let ((p (point)))
+           (goto-char (point-min))
+           ,@forms
+           (when (= p (point))
+             (goto-char (point-min)))))
+       (add-hook ',mode-hook
+                 (lambda ()
+                   (define-key ,mode-map
+                     [remap beginning-of-buffer] ',fname))))))
+
+
+(defmacro my/end-of-buffer (mode &rest forms)
+  "Define a special version of `end-of-buffer' in MODE.
+
+The special function is defined such that the point first moves
+to `point-max' and then FORMS are evaluated.  If the point did
+not change because of the evaluation of FORMS, jump
+unconditionally to `point-max'.  This way repeated invocations
+toggle between real end and logical end of the buffer."
+  (declare (indent 1))
+  (let ((fname (intern (concat "my/" (symbol-name mode) "-end-of-buffer")))
+        (mode-map (intern (concat (symbol-name mode) "-mode-map")))
+        (mode-hook (intern (concat (symbol-name mode) "-mode-hook"))))
+    `(progn
+       (defun ,fname ()
+         (interactive)
+         (let ((p (point)))
+           (goto-char (point-max))
+           ,@forms
+           (when (= p (point))
+             (goto-char (point-max)))))
+       (add-hook ',mode-hook
+                 (lambda ()
+                   (define-key ,mode-map
+                               [remap end-of-buffer] ',fname))))))
+
 
 ;;; === Editing ========================================================
 ;;;; Whitepace and general hygiene
@@ -2043,10 +2466,11 @@ Use a normal parenthesis if not inside any."
 ;; https://github.com/joaotavora/yasnippet
 
 (use-package yasnippet
-  :mode ("emacs/yasnippet/"         . snippet-mode)
-  :mode ("emacs/yasnippet/.+\\.el$" . emacs-lisp-mode)
+  :disabled
   :custom
   (yas-snippet-dirs "~/emacs/yasnippet")
+  :mode ("emacs/yasnippet/"         . snippet-mode)
+  :mode ("emacs/yasnippet/.+\\.el$" . emacs-lisp-mode)
   :config
   (yas-global-mode t))
 
@@ -2082,7 +2506,7 @@ Use a normal parenthesis if not inside any."
 (use-package ilocate-library
   :straight (:host github :repo "jsyjr/ilocate-library")
   :bind
-  ("M-g l" . ilocate-library-find-source))
+  ("M-g  l" . ilocate-library-find-source))
 
 ;;; === Diff, ediff, vdiff, merge, patch ===============================
 ;;;; Ediff: (builtin: Michael Kifer)
@@ -2128,23 +2552,32 @@ Use a normal parenthesis if not inside any."
 ;;;; Dumb-jump: use ripgrep to goto definition (Jack Angers)
 ;; https://github.com/jacktasia/dumb-jump
 
+;; Default bindings:
+;; C-M-g  dumb-jump-go
+;; C-M-p  dumb-jump-back
+;; C-M-q  dumb-jump-quick-look
+
 (use-package dumb-jump
+  :disabled
   :straight (:host github :repo "jacktasia/dumb-jump")
   :custom
   (dumb-jump-prefer-searcher 'rg)
   :config
   (setq xref-backend-functions (remq 'etags--xref-backend xref-backend-functions))
-  (add-to-list 'xref-backend-functions #'dumb-jump-xref-activate t)
-  :hydra
-  (hydra-dumb-jump (:color blue :columns 3)
-    "Dumb Jump"
-    ("j" dumb-jump-go "Go")
-    ("o" dumb-jump-go-other-window "Other window")
-    ("e" dumb-jump-go-prefer-external "Go external")
-    ("x" dumb-jump-go-prefer-external-other-window "Go external other window")
-    ("i" dumb-jump-go-prompt "Prompt")
-    ("l" dumb-jump-quick-look "Quick look")
-    ("b" dumb-jump-back "Back")))
+  (add-to-list 'xref-backend-functions #'dumb-jump-xref-activate t))
+
+  ;; Obsolete function (as of 2020-06-26); see github page (preserve as :hydra example)
+  ;;
+  ;; :hydra
+  ;; (hydra-dumb-jump (:color blue :columns 3)
+  ;;   "Dumb Jump"
+  ;;   ("j" dumb-jump-go "Go")
+  ;;   ("o" dumb-jump-go-other-window "Other window")
+  ;;   ("e" dumb-jump-go-prefer-external "Go external")
+  ;;   ("x" dumb-jump-go-prefer-external-other-window "Go external other window")
+  ;;   ("i" dumb-jump-go-prompt "Prompt")
+  ;;   ("l" dumb-jump-quick-look "Quick look")
+  ;;   ("b" dumb-jump-back "Back")))
 
 
 ;;; === Projects and project navigation ================================
@@ -2164,21 +2597,24 @@ Use a normal parenthesis if not inside any."
 ;;;; Vc: a version control system driver (Eric S. Raymond)
 
 (use-package vc
+  :disabled
   :straight (:type built-in)
+  ;; :custom
+  ;; (vc-follow-symlinks true)
   :init
-  (defvar vc-follow-symlinks nil)
   (defun my/vc-follow-some-symbolic-links ()
     (message "my/vc-follow-some-symbolic-links: %s" buffer-file-name)
     (when (and
-           (file-exists-p (buffer-file-name))
+           (file-exists-p buffer-file-name)
            (stringp buffer-file-name)
            (or (string-prefix-p "/home/jyates/.emacs.d/straight/repos/" buffer-file-name)
                (string-equal "" buffer-file-name)))
          (setq-local vc-follow-symlinks t)))
   :hook
-  (find-file-hook . my/vc-follow-some-symbolic-links))
+  (find-file-hook . my/vc-follow-some-symbolic-links)
+  )
 
-vc-follow-symlinks
+
 ;;;; Magit: a git porcelain inside Emacs (Jonas Bernoulli)
 ;; https://github.com/magit/magit
 
@@ -2201,7 +2637,6 @@ vc-follow-symlinks
      git-commit-propertize-diff
      with-editor-usage-message))
   :config
-  (dimmer-configure-magit)
   (defun my/magit-status ()
     "Switch to (or create) the magit status buffer for current context"
     (interactive)
@@ -2436,14 +2871,14 @@ point reaches the beginning or end of the buffer, stop there."
 
 (use-package delsel
   :straight (:type built-in)
+  :custom
+  (activate-mark #'my/turn-on-delete-selection-mode)
   :config
   (defun my/turn-on-delete-selection-mode ()
     (remove-hook activate-mark-hook #'my/turn-on-delete-selection-mode)
-    (delete-selection-mode 1))
-  :custom
-  (activate-mark #'my/turn-on-delete-selection-mode))
+    (delete-selection-mode 1)))
 
-;Copyright (C) 2021 by 
+
 ;;;; Simple editing operations
 
 (defun my/delete-whitespace-forward (arg)
@@ -2533,7 +2968,7 @@ word."
 
 ;;;; Tabs
 
-(use-package emacs
+(use-package emacs ; tabbing and tab stops
   :straight (:type built-in)
   :custom
   (indent-tabs-mode nil)        ; no hard tabs
@@ -2622,10 +3057,12 @@ convert it to readonly/view-mode."
   :demand t)
 
 
-;;;; Iedit: simultaneously edit multiple loci in the same way (Victor Ren)
+;;;; Iedit: edit multiple regions in the same way simultaneously (Victor Ren)
+;; https://github.com/victorhge/iedit
 
 (use-package iedit
-  :straight (:host github :repo "victorhge/iedit"))
+  :straight (:host github :repo "victorhge/iedit")
+  :general ("C-c ;" 'iedit-mode))
 
 
 ;;;; Smartscan: jumps between other symbols found at point (Mickey Petersen)
@@ -2646,7 +3083,6 @@ convert it to readonly/view-mode."
 ;; Used in my older .emacs configuration
 
 (use-package folding
-  :defer
   :straight (:host github :repo "jaalto/project-emacs--folding-mode"))
 
 (autoload 'folding-mode "folding" "Folding mode" t)
@@ -2684,11 +3120,11 @@ convert it to readonly/view-mode."
 
 (use-package outshine
   ;; Easier navigation for source files, especially this one.
+  :custom
+  (outshine-startup-folded-p nil)
   :bind (:map outshine-mode-map
               ("<S-iso-lefttab>" . outshine-cycle-buffer))
-  :hook (emacs-lisp-mode . outshine-mode)
-  :custom
-  (outshine-startup-folded-p nil))
+  :hook (emacs-lisp-mode . outshine-mode))
 
 
 ;;;; Filladapt: enhance default auto-fill behavior (Kyle E. Jones)
@@ -2712,6 +3148,13 @@ convert it to readonly/view-mode."
 ;;; === Abbreviation and expansion =====================================
 
 
+;;; === Terminal and shell support =====================================
+;;;; libvterm: a fully-fledged terminal emulator within Emacs (Lukas Fürmetz)
+;; https://github.com/akermu/emacs-libvterm
+
+;; (use-package vterm
+;;   :straight (:host github :repo "akermu/emacs-libvterm"))
+
 ;;; === Utilities ======================================================
 ;;;; Recentf: a menu of recently opened files (David Ponce)
 
@@ -2720,7 +3163,6 @@ convert it to readonly/view-mode."
   :custom
   (recentf-save-file "~/.emacs.d/recentf")
   :config
-  (recentf-mode 1)
   (my/beginning-of-buffer
     recentf-dialog (when (re-search-forward "^  \\[" nil t)
                      (goto-char (match-beginning 0))))
@@ -2749,16 +3191,6 @@ convert it to readonly/view-mode."
 ;;{{{  Less safe: y/n instead of yes/no
 
 (fset 'yes-or-no-p 'y-or-n-p)
-
-;; (setq load-prefer-newer t)
-
-;; (defun my/byte-compile-saved-elisp-buffer ()
-;;   "Byte compile an elisp buffer anytime it is saved."
-;;   (if (and (eq major-mode 'emacs-lisp-mode)
-;;            (not (string-prefix-p "phw" (buffer-name))))
-;;       (byte-compile-file (buffer-file-name))))
-;;
-;; (add-hook 'after-save-hook 'my/byte-compile-saved-elisp-buffer)
 
 
 ;;; === Key bindings ===================================================
@@ -2792,7 +3224,7 @@ convert it to readonly/view-mode."
 (keydef "C-c z r"       browse-url-of-region)
 (keydef "C-c z u"       browse-url)
 (keydef "C-c z v"       browse-url-of-file)
-(keydef (dired "z"      browse-url-of-dired-file))
+;(keydef (dired "z"      browse-url-of-dired-file))
 
 ; (keydef "C-c b"         phw-mode)
 ; (keydef "C-c d"         phw-deactivate)
@@ -2818,12 +3250,12 @@ convert it to readonly/view-mode."
 (keydef "C-c ="         replace-regexp)
 (keydef "C-c C-="       query-replace-regexp)
 (keydef "C-c c"         org-capture)
-(keydef "C-c l"         org-store-link)
+;(keydef "C-c l"         org-store-link)
 
 
 ;; Additions to the help command
 ;;
-(keydef "C-h A"         apropos-toc)       ; mnemonic: apropos All
+;;(keydef "C-h A"         apropos-toc)       ; mnemonic: apropos All
 (keydef "C-h B"         describe-bindings)
 (keydef "C-h L"         (info "elisp"))    ; was describe-language-environment
 (keydef "C-h R"         'my/elisp-function-reference)
@@ -2853,19 +3285,19 @@ convert it to readonly/view-mode."
 
 ;; The manual recommends C-c for user keys, but C-x t is
 ;; always free, whereas C-c t is used by some modes.
-(keydef "C-x t ." dired-hide-dotfiles-mode)
-(keydef "C-x t c" column-number-mode)
-(keydef "C-x t d" toggle-debug-on-error)
-(keydef "C-x t e" toggle-debug-on-error)
-(keydef "C-x t f" auto-fill-mode)
-(keydef "C-x t l" toggle-truncate-lines)
-(keydef "C-x t m" menu-bar-mode)
-(keydef "C-x t q" toggle-debug-on-quit)
-(keydef "C-x t r" read-only-mode)
-(keydef "C-x t w" whitespace-mode)
-(keydef "C-x t D" dired-toggle-read-only) (autoload 'dired-toggle-read-only "dired" nil t)
-(keydef "C-x t 4" my/set-buffer-local-tab-width-to-4)
-(keydef "C-x t 8" my/set-buffer-local-tab-width-to-8)
+;; (keydef "C-x t ." dired-hide-dotfiles-mode)
+;; (keydef "C-x t c" column-number-mode)
+;; (keydef "C-x t d" toggle-debug-on-error)
+;; (keydef "C-x t e" toggle-debug-on-error)
+;; (keydef "C-x t f" auto-fill-mode)
+;; (keydef "C-x t l" toggle-truncate-lines)
+;; (keydef "C-x t m" menu-bar-mode)
+;; (keydef "C-x t q" toggle-debug-on-quit)
+;; (keydef "C-x t r" read-only-mode)
+;; (keydef "C-x t w" whitespace-mode)
+;; (keydef "C-x t D" dired-toggle-read-only) (autoload 'dired-toggle-read-only "dired" nil t)
+;; (keydef "C-x t 4" my/set-buffer-local-tab-width-to-4)
+;; (keydef "C-x t 8" my/set-buffer-local-tab-width-to-8)
 
 
 ;; GUD navigation claims the capital letters in the "goto" map:
@@ -2958,7 +3390,7 @@ convert it to readonly/view-mode."
 
 ;(eval-after-load "bs"  '(keydef (bs "<f1>") (bs-kill)))
 
-;;; === Load certain packages via hooks rather than autoload ===========
+;;; === Load certain packages via oneshot hooks rather than autoload ===
 
 ;; The traditional technique to delay the cost of loading a package
 ;; is emacs' autoload feature.  It depend on a package having a set
@@ -2966,65 +3398,84 @@ convert it to readonly/view-mode."
 ;; be loaded transparently.  Unfortunately, many packages fail to
 ;; satisfy this pre-condtion.
 ;;
-;; But all is not lost.  Very often, for such a package, there is
+;; But all is not lost.  Very often, for such packages, there exists
 ;; some hook which can be gauranteed to be invoked just before that
-;; package needs to initialized.  This use-package lists a number
-;; of such hooks and arranges to load various packages.  After that
-;; the traditional use-package mechasims kick in and complete the
-;; process of customization and configuration.
+;; package needs to initialize.  Implementing oneshot initialization
+;; within a self-removing function on that hook suffices.  Upon load
+;; all traditional use-package mechasims kick in, completing package
+;; customization and configuration.
 
-(use-package emacs
+(use-package emacs ; force load stuff via pre-command-hook
   :init
+  (defun my/pre-command-oneshot()
+    (remove-hook 'pre-command-hook #'my/pre-command-oneshot)
 
-  (defun my/pre-command-hook-loads()
-    (remove-hook 'pre-command-hook #'my/pre-command-hook-loads)
-    (mini-frame-mode +1)
-    (selectrum-mode  +1)
-    (which-key-mode  +1)
-    (load-library "popup")
+    (recentf-mode 1)
+;   (when (display-graphic-p)
+;     (load-library "all-the-icons")
+;     (load-library "svg-icon"))
+;   (mini-frame-mode +1)
+;   (load-library "popup")
     (load-library "hydra")
-    (load-library "orderless")
-    (load-library "orderless")
-    (load-library "prescient")
-    (load-library "selectrum")
-    (load-library "selectrum-prescient")
-    (load-library "marginalia")
-    (load-library "consult")           ; loads recentf
-    (load-library "consult-selectrum")
-    (load-library "embark")
-    (load-library "embark-consult")
-    (load-library "which-key")
-    (load-library "dumb-jump")
-    (setq which-key-mode t)
+;   (load-library "orderless")
+    (load-library "vertico")
+;   (load-library "prescient")
+;   (load-library "marginalia")
+;   (load-library "consult")           ; loads recentf
+;   (load-library "embark")
+;   (load-library "embark-consult")
+;    (load-library "dumb-jump")
     )
-  (add-hook 'pre-command-hook #'my/pre-command-hook-loads)
+  (add-hook 'pre-command-hook #'my/pre-command-oneshot)
 
-  (defun my/post-command-hook-loads()
-    (remove-hook 'post-command-hook #'my/post-command-hook-loads)
+  (defun my/post-command-oneshot()
+    (remove-hook 'post-command-hook #'my/post-command-oneshot)
+
     (load-library "hl-line")
     (load-library "paren")
     )
-  (add-hook 'post-command-hook #'my/post-command-hook-loads)
+  (add-hook 'post-command-hook #'my/post-command-oneshot)
 
-  ;; (defun my/find-file-hook-loads()
-  ;;   (remove-hook 'find-file-hook #'my/find-file-hook-loads)
-  ;;   )
-  ;; (add-hook 'find-file-hook #'my/find-file-hook-loads)
+  (defun my/minibuffer-setup-oneshot()
+    (remove-hook 'minibuffer-setup-hook #'my/minibuffer-setup-oneshot)
 
-  (defun my/find-file-not-found-functions-hook-loads()
-    (remove-hook 'find-file-not-found-functions #'my/find-file-not-found-functions-hook-loads)
-    (load-library "yasnippet")
+    (setq enable-recursive-minibuffers t)
+    (minibuffer-depth-indicate-mode 1)  ; show recursion depth in promp
+    (setq read-extended-command-predicate       ; Hide M-x commands which do
+        #'command-completion-default-include-p) ; not work in current mode
+    (setq minibuffer-prompt-properties  ; No cursor within minibuffer prompt
+          '(read-only t cursor-intangible t face minibuffer-prompt))
+    (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+    ;; Add prompt indicator to `completing-read-multiple'.
+    ;; Alternatively try `consult-completing-read-multiple'.
+    ;; (defun crm-indicator (args)
+    ;;   (cons (concat "[CRM] " (car args)) (cdr args)))
+    ;; (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
     )
-  (add-hook 'find-file-not-found-functions #'my/find-file-not-found-functions-hook-loads)
+  (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-oneshot)
+
+  ;; (defun my/find-file()
+  ;;   (remove-hook 'find-file-hook #'my/find-file)
+  ;;   )
+  ;; (add-hook 'find-file-hook #'my/find-file)
+
+  (defun my/find-file-not-found-functions-oneshot()
+    (remove-hook 'find-file-not-found-functions #'my/find-file-not-found-functions-oneshot)
+;;    (load-library "yasnippet")
+    )
+  (add-hook 'find-file-not-found-functions #'my/find-file-not-found-functions-oneshot)
 
 )
 
 
 ;; Display collected use-package statistics in a tabulated-list buffer
+;;   Declared          the use-package declaration was seen
+;;   Prefaced          :preface has been processed
+;;   Initialized       :init has been processed (load status unknown)
+;;   Configured        :config has been processed (the package is loaded!)
+
 (use-package-report)
 
 
 ;;; init.el ends here
-
-
-

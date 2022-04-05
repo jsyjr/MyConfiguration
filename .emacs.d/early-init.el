@@ -1,10 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
 ;; This file is loaded before package.el is initialized, and before
-;; the first graphical frame is initialized, by Emacs 27 (but not by
-;; any previous version of Emacs). Trivia: I was the person to
-;; implement support for early-init.el, after a protracted argument
-;; between me and most of the rest of the Emacs mailing list.
+;; the first graphical frame is initialized.
 ;;
 ;; If the early init-file is available, we actually execute our entire
 ;; init process within it, by just loading the regular init-file.
@@ -53,4 +50,5 @@ resources.")
 
   ;; Avoid messing with things more than necessary.
   (advice-remove #'display-graphic-p #'radian--advice-fix-display-graphic-p)
-  (advice-remove #'xw-display-color-p #'radian--advice-fix-xw-display-color-p))
+  (advice-remove #'xw-display-color-p #'radian--advice-fix-xw-display-color-p)
+  )
