@@ -288,7 +288,7 @@ See also `ilocate-completing-read-library'"
          (library-file (locate-library library-name))
          (source-file (if (string-match "elc?\\(\\.gz\\)?$" library-file)
                           (replace-match "el" t t library-file)
-?                        library-file))
+                        library-file))
          (compressed-source-file (concat source-file ".gz")))
     (cond
      ((file-exists-p source-file)
