@@ -367,14 +367,14 @@ mkdir -p ~/repos
 #
 cd ~/repos
 rm -rf ~/repos/st
-git clone http://git.suckless.org/st
+git clone --depth=1 http://git.suckless.org/st
 cd st
 ~/bin/rebuild-st
 
 # Get a more up to date Universal ctags
 cd ~/repos
 rm -rf ctags
-git clone https://github.com/universal-ctags/ctags.git
+git clone --depth=1 https://github.com/universal-ctags/ctags.git
 cd ctags
 ~/bin/rebuild-ctags
 
@@ -404,7 +404,7 @@ sudo apt-get install spotify-client
 #
 cd ~/repos
 rm -rf ~/repos/emacs
-git clone git://git.savannah.gnu.org/emacs.git
+git clone --depth=1 git://git.savannah.gnu.org/emacs.git
 cd emacs
 ./autogen.sh
 PATH=${PATH}:${HOME}/bin ${HOME}/bin/rebuild-emacs
@@ -447,7 +447,7 @@ sudo apt-get install \
 
 cd ~/repos
 rm -rf ~/repos/doxygen
-git clone https://github.com/doxygen/doxygen.git
+git clone --depth=1 https://github.com/doxygen/doxygen.git
 cd doxygen
 ~/bin/rebuild-doxygen
 
