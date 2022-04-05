@@ -125,9 +125,13 @@ sudo apt-get install \
   libcurl4-gnutls-dev \
   libdbd-sqlite3-perl \
   libdbus-1-dev \
+  libdbus-glib-1-dev \
+  libdbus-glib-1-dev-bin \
   libdbusmenu-gtk3-4 \
   libdw-dev \
   libexpat1-dev \
+  libgccjit-dev \
+  libgccjit0 \
   libgconf2-dev \
   libgif-dev \
   libgnutls28-dev \
@@ -145,6 +149,9 @@ sudo apt-get install \
   librsvg2-dev \
   libsystemd-dev \
   libtinfo-dev \
+  libvterm-bin \
+  libvterm-dev \
+  libvterm0 \
   libx11-dev \
   libxaw7-dev \
   libxml2-dev \
