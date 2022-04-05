@@ -7,34 +7,35 @@
 # I have to change MAKEINFO=yes to MAKEINFO=no in the
 # Makefile to compile without docs.
 
-set -e
-
 if [ ! -f "src/bitmaps/leftptr.xbm" ]; then
    echo "Working directory ( $(pwd) ) is not the root of an emacs source tree."; exit 1
 fi
 
-set +e
 make extraclean
 make bootstrap-clean
-set -e
 
+set -e
 git reset --hard
 git clean -xdf
 git pull --rebase
-
-# rm -r lisp/cedet test/cedet
-
 set +e
 
 ./autogen.sh all
 
-# Run the configure script (with a local definition of CFLAGS)
-#CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/'
-#CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization                                                            --without-dbus --without-gconf --without-gsettings
-#CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization --with-x-toolkit=gtk2  --without-xwidgets
-#CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization --with-x-toolkit=lucid --without-xwidgets --with-gnutls=no --without-dbus --without-gconf --without-gsettings
-#CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization --with-x-toolkit=lucid --without-xwidgets --with-gnutls=no
-#CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/' --enable-link-time-optimization --with-x-toolkit=lucid --without-xwidgets --with-imagemagick
- CFLAGS='-march=native -mfpmath=387 -O3' ./configure --prefix=/usr/local/emacs --program-transform-name='s/^ctags$/ctags.emacs/'                                 --with-x-toolkit=gtk2     --with-xwidgets --with-imagemagick --with-json --with-file-notification
+# Run the configure script
+./configure \
+  --prefix=/usr/local/emacs \
+  --program-transform-name='s/^ctags$/ctags.emacs/' \
+  --disable-year2038 \
+  --disable-acl \
+  --with-modules \
+  --with-json \
+  --with-file-notification \
+  --with-native-compilation \
+  --with-xwidgets \
+  --with-pgtk \
+  >/tmp/config
 
-compile-emacs
+#  --with-x-toolkit=athena \
+
+compile-emacs >/tmp/compile
