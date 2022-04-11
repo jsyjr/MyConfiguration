@@ -23,6 +23,8 @@ set +e
 ./autogen.sh all
 
 # Run the configure script
+# (Add   --with-pgtk for Wayland)
+
 ./configure \
   --prefix=/usr/local/emacs \
   --program-transform-name='s/^ctags$/ctags.emacs/' \
@@ -33,7 +35,6 @@ set +e
   --with-file-notification \
   --with-native-compilation \
   --with-xwidgets \
-  --with-pgtk \
   >/tmp/config
 
 #  --with-x-toolkit=athena \
