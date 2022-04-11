@@ -844,7 +844,7 @@ as in `defun'."
 ;; https://github.com/gonewest818/dimmer.el
 
 (use-package dimmer
-  :defer 2
+  :demand t
   :custom
   (dimmer-adjustment-mode :both)        ; both foreground and background
   (dimmer-fraction 0.1)                 ; subtle, slightly less contrast
