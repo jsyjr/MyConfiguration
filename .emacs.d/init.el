@@ -3076,7 +3076,7 @@ convert it to readonly/view-mode."
 ;; https://github.com/emacsorphanage/keydef
 
 (use-package keydef
-  :demand)
+  :demand t)
 
 
 ;;;; My key bindings
