@@ -865,6 +865,7 @@ as in `defun'."
 ;; https://github.com/tarsius/minions
 
 (use-package minions
+  ;; :straight (:host github :repo "tarsius/minions")
   :demand t
   :config
   (minions-mode 1)
