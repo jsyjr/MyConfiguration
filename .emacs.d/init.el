@@ -921,34 +921,26 @@ as in `defun'."
                   " ]")
                ""))))))
 
-;;;; Usurp tab bar below title bar as global status bar
-
-(use-package tab-bar
-  :straight (:type built-in)
-  :custom
-  (tab-bar-format '(tab-bar-format-global))
-  (tab-bar-mode t))
-
-
 ;;;; Frame appearance
 
 (use-package emacs ; appearance of subsequent frames
   :straight (:type built-in)
   :custom
-  (indicate-buffer-boundaries 'right)   ; graphics in fringe
   (default-frame-alist
    '((minibuffer . nil)
-     (vertical-scroll-bars . nil)
-     (menu-bar-lines . 1)
+     (menu-bar-lines . 0)
      (tool-bar-lines . 0)
+     (tab-bar-lines . 1)
      (icon-type . nil)
      (background-mode . dark)
      (background-color . "black")
      (foreground-color . "white")
+     (vertical-scroll-bars . nil)
      (cursor-type . bar)
-     (x-stretch-cursor . t))))
+     (x-stretch-cursor . t)))
+  (indicate-buffer-boundaries 'right))  ; graphics in fringe
 
-;; unspecified values taken from default-frame-alist (above)
+;; unspecified values come from default-frame-alist (above)
 (use-package frame
   :straight (:type built-in)
   :custom
@@ -956,138 +948,22 @@ as in `defun'."
    '((fullscreen . maximized))))
 
 
-;;;; MBMB: separate minibuffer frame overlaying the menu bar
+;;;; MBTB: separate minibuffer frame overlaying the tab bar
+;; https://github.com/jsyjr/mbtb
 
-(defun mbmb/resize-mbf (mbf)
-  "MBMB callback for the resize-mini-frames variable."
-  (let ((width (frame-text-width mbf)))
-    (fit-frame-to-buffer-1 mbf nil 1 width width 'vertically)))
+(use-package mbtb
+  :straight (:host github :repo "jsyjr/mbtb" :branch "main")
+  :demand t)
 
-;; unspecified values taken from previously defined default-frame-alist
-(use-package frame
+;; Usurp global tab bar as location of persistent collapsed minibuffer
+(use-package tab-bar
   :straight (:type built-in)
+  :demand t
   :custom
-  (resize-mini-windows t)
-  (resize-mini-frames #'mbmb/resize-mbf)
-  (minibuffer-frame-alist       ; unspecified from default-frame-alist
-   `((minibuffer . only)
-     (minibuffer-exit . nil)
-     (visibility . nil)
-     (min-height . 1)
-     (auto-raise . t)
-     (menu-bar-lines . 0)
-     (internal-border-width . 1)
-     (skip-taskbar . t)
-     (undecorated . t)
-     (desktop-dont-save . t))))
+  (tab-bar-format '((lambda () " ")))
+  :config
+  (tab-bar-mode +1))
 
-
-(defvar mbmb/title-bar-height 34
-  "Querying title-bar-height returns 0; so hardwire it here.")
-
-(defun mbmb/mbf (owner)
-  "Qualify OWNER by returning its dedicated separate MBF or nil."
-  (let ((owner-minibuffer (frame-parameter owner 'minibuffer)))
-    (cond
-     ((not owner-minibuffer)
-      nil)
-     ((eq owner-minibuffer 'only)
-      nil)                      ; OWNER is actually a separate MBF
-     (t
-      (let ((mbf (window-frame owner-minibuffer)))
-	(if (eq (frame-parameter mbf 'minibuffer) 'only)
-	    mbf
-	  nil))))))
-
-(defun mbmb/apply-owner-width (owner mbf)
-  "Apply qualified OWNER's width to separate MBF."
-  (when (frame-size-changed-p owner)
-    (let ((width (frame-parameter owner 'width)))
-      (unless (eq (frame-parameter mbf 'width) width)
-	(set-frame-parameter mbf 'width  width)))))
-
-(defun mbmb/track-owner-width (owner)
-  "Qualify OWNER and adjust its separate MBF's width."
-  (let ((mbf (mbmb/mbf owner)))
-    (when mbf
-      (mbmb/apply-owner-width owner mbf))))
-(add-hook 'window-size-change-functions #'mbmb/track-owner-width)
-
-(defun mbmb/apply-owner-position (owner mbf)
-  "Apply qualified OWNER's position to separate MBF."
-  (let ((pos (frame-position owner)))
-    (set-frame-position mbf (car pos) (+ (cdr pos) mbmb/title-bar-height))))
-
-(defun mbmb/track-owner-position (owner)
-  "Qualify OWNER and adjust its separate MBF's position."
-  (let ((mbf (mbmb/mbf owner)))
-    (when mbf
-      (mbmb/apply-owner-position owner mbf))))
-(add-hook 'move-frame-functions         #'mbmb/track-owner-position)
-
-(defun mbmb/setup-colors-position-and-width (owner mbf)
-  "Given OWNER and MBF, ensure proper MBF color, position and width."
-  (set-face-background 'fringe          "black" mbf)
-  (set-face-background 'internal-border "white" mbf)
-  (mbmb/apply-owner-position owner mbf)
-  (mbmb/apply-owner-width owner mbf))
-
-(defun mbmb/setup-minibuffer ()
-  "Invoke mbmb/setup-colors-position-and-width with owner and mbf."
-  (let ((owner (window-frame (minibuffer-selected-window))))
-    (mbmb/setup-colors-position-and-width owner (mbmb/mbf owner))))
-(add-hook 'minibuffer-setup-hook #'mbmb/setup-minibuffer)
-
-(defun mbmb/after-make-frame (owner)
-  "Final steps in creating an MBMB minibuffer frame."
-  (let ((mbf (mbmb/mbf owner)))
-    (when mbf
-      (mbmb/setup-colors-position-and-width owner mbf)
-      (mbmb/resize-mbf mbf)
-      (raise-frame owner)
-      (raise-frame mbf)
-      (set-frame-parameter mbf 'z-group 'above)
-      (set-frame-parameter mbf 'visibility t))))
-(add-hook 'after-make-frame-functions #'mbmb/after-make-frame)
-
-(defun mbmb/adjust-mbf-z-group (owner)
-  "Adjust an MBF's z-group based on whether it or its OWNER has focus."
-  (let ((mbf (mbmb/mbf owner)))
-    (when mbf
-      (set-frame-parameter mbf 'z-group
-                           (if (or (frame-focus-state owner)
-                                   (frame-focus-state mbf))
-                               'above
-                             nil)))))
-
-(defvar mbmb/focus-events-timer nil
-  "A place to record a running timer.")
-
-(defvar mbmb/last-focus-state 'force-update
-  "Most recent ‘frame-focus-state’ from a focus change event.")
-
-(defun mbmb/focus-change ()
-  "On actual focus change update all MBF z-group settings."
-  (setq mbmb/focus-events-timer nil)
-  (let ((state (with-no-warnings (frame-focus-state))))
-    (unless (eq mbmb/last-focus-state state)
-      (setq mbmb/last-focus-state state)
-      (dolist (frame (frame-list))
-        (mbmb/adjust-mbf-z-group frame)))))
-
-;; This debouncing logic was inspired by
-;; https://www.reddit.com/r/emacs/comments/kxsgtn/ignore_spurious_focus_events_for
-
-(defvar mbmb/debounce-delay 0.02
-  "Time to wait before declaring change debounced.")
-
-(defun mbmb/debounce-focus-change ()
-  "Drain spurious events by canceling a running timer and setup a new one."
-  (if (timerp mbmb/focus-events-timer)
-      (cancel-timer mbmb/focus-events-timer))
-  (setq mbmb/focus-events-timer
-        (run-with-timer mbmb/debounce-delay nil #'mbmb/focus-change)))
-(add-function :after after-focus-change-function #'mbmb/debounce-focus-change)
 
 
 ;;;; Visualize current line
