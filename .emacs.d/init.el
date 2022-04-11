@@ -1011,6 +1011,7 @@ as in `defun'."
 
 
 ;;;; Pretty ^L (display as a full-width horizontal rule)
+;; https://github.com/jsyjr/pp-c-l
 
 ;; Universally display ^L as a full window-width horizontal rule
 (use-package pp-c-l
