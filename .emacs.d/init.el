@@ -1,5 +1,7 @@
-;;; init.el -*- lexical-binding: t; outshine-mode: 1; fill-column: 119 -*-
+;; init.el -*- lexical-binding: t; outshine-mode: 1; fill-column: 119 -*-
+
 ;(setq debug-on-error t)
+;(debug-on-variable-change ??)
 (setq native-comp-async-report-warnings-errors nil)
 (setq warning-minimum-level :error)
 
@@ -212,7 +214,10 @@
 ;; https://github.com/noctuid/general.el
 
 (use-package general
-  :straight (:host github :repo "noctuid/general.el"))
+  :straight (:host github :repo "noctuid/general.el")
+  :custom
+  (general-use-package-emit-autoloads t))
+
 
 ;;;; Use-package: a configuration macro to simplify .init.el (John Wiegley)
 ;; https://github.com/jwiegley/use-package
@@ -531,9 +536,9 @@ as in `defun'."
   :straight  (:host github :repo "auto-complete/popup-el"))
 
 ;;; === Protection =====================================================
-;;;; Auto-save and backup
+;;;; Bostr: Backup On Save To Rcs
+;; Remember to install rcs
 
-;; Backup On Save To Rcs
 (use-package bostr
   :straight (:host github :repo "jsyjr/bostr")
   :hook after-save)
@@ -928,6 +933,8 @@ as in `defun'."
   :custom
   (default-frame-alist
    '((minibuffer . nil)
+     (frame-minibuffer-at-top . t)
+     (window-mode-line-at-top . t)
      (menu-bar-lines . 0)
      (tool-bar-lines . 0)
      (tab-bar-lines . 1)
@@ -1054,26 +1061,6 @@ as in `defun'."
   "Make display engine's tab-width buffer local and set it to 8."
   (interactive)
   (setq tab-width 8))
-
-
-;;;; Ansi colors
-
-(use-package ansi-color
-  :straight (:type built-in)
-  :custom
-  (ansi-color-names-vector
-   ["black"
-    "#ee9090"
-    "pale green"
-    "khaki"
-    "steelblue1"
-    "dark violet"
-    "DarkSlateGray1"
-    "white"]))
-
-;; From the distant past...
-;;  '(ansi-color-faces-vector [default bold default italic underline bold bold-italic modeline])
-;;  '(ansi-color-names-vector ["black" "IndianRed1" "medium spring green" "khaki1" "DodgerBlue1" "maroon1" "DarkSlateGray1" "white"])
 
 
 ;;;; Kurecolor: color editing goodies (Jason Milkins)
@@ -1460,8 +1447,8 @@ unhelpful."
   :straight (:type built-in)
   :bind (:map help-map
          ("C-c" . describe-key-briefly)
-	 ("M-c" . describe-copying)
-	 ("M-l" . find-function-on-key)))
+         ("M-c" . describe-copying)
+         ("M-l" . find-function-on-key)))
 
 
 (use-package help-fns+
@@ -1469,11 +1456,11 @@ unhelpful."
   :after help-fns
   :bind (:map help-map
          ("B"	. describe-buffer)
-	 ("c"	. describe-command)
-	 ("o"	. describe-option)
-	 ("C-o" . describe-option-of-type)
-	 ("M-f" . describe-file)
-	 ("M-k" . describe-keymap)))
+         ("c"	. describe-command)
+         ("o"	. describe-option)
+         ("C-o" . describe-option-of-type)
+         ("M-f" . describe-file)
+         ("M-k" . describe-keymap)))
 
 
 ;;;; Helpful - a better *help* buffer (Wilfred Hughes)
@@ -1540,7 +1527,7 @@ bizarre reason."
       (radian-clone-emacs-source-maybe))))
 
 
-;;;; Free-keys - show free keybindings for modkeys or prefixes (Matus Goljer)
+;;;; Free-keys: show free keybindings for modkeys or prefixes (Matus Goljer)
 ;; https://github.com/Fuco1/free-keys
 ;; doc: https://www.gnu.org/software/emacs/manual/html_node/elisp/Key-Binding-Conventions.html
 
@@ -1556,6 +1543,14 @@ bizarre reason."
     "Locally disable showing trailing whitespace"
     (with-current-buffer (get-buffer-create "*Free keys*")
       (setq show-trailing-whitespace nil))))
+
+
+;;;; # Unbound: find convenient unbound keystrokes (Davis Herring)
+;; https://github.com/emacsmirror/emacswiki.org/blob/master/unbound.el
+
+(use-package unbound
+  :disabled
+  :straight (:host github :repo "emacsmirror/emacswiki.org" :files ("unbound.el")))
 
 
 ;;;; Which-key: display key bindings after typing a prefix (Justin Burkett)
@@ -1648,13 +1643,13 @@ bizarre reason."
 ;; (defun split-horizontally-for-temp-buffers ()
 ;;   "Split the window horizontally for temp buffers."
 ;;   (when (and (one-window-p t)
-;;      	     (not (active-minibuffer-window)))
+;;                   (not (active-minibuffer-window)))
 ;;     (split-window-horizontally t)))
 
 ; (add-hook 'temp-buffer-setup-hook 'split-horizontally-for-temp-buffers)
 
 
-;;;; Mini-frame: show minibuffer reads in a child frame (Andrii Kolomoiets)
+;;;; # Mini-frame: show minibuffer reads in a child frame (Andrii Kolomoiets)
 ;; https://github.com/muffinmad/emacs-mini-frame
 
 (use-package mini-frame
@@ -1670,9 +1665,9 @@ bizarre reason."
   (mini-frame-show-parameters (lambda ()
                                 (let* ((sf (selected-frame))
                                        (fg (frame-geometry sf)))
-				  ;; `((top   . ,(alist-get 'top   fg))
-				  ;;   (left  . ,(alist-get 'left  fg))
-				  ;;   (width . ,(alist-get 'width fg))
+                                  ;; `((top   . ,(alist-get 'top   fg))
+                                  ;;   (left  . ,(alist-get 'left  fg))
+                                  ;;   (width . ,(alist-get 'width fg))
                                   `((top   . ,(frame-parameter sf 'top))
                                     (left  . ,(+ (frame-parameter sf 'left)
                                                  (car (cdr (assq 'external-border-size fg)))))
@@ -1686,7 +1681,7 @@ bizarre reason."
                                     (child-frame-border-width . 1)
                                     (internal-border-width . 1)
                                     )))))
-  
+
 
 ;; (use-package mini-frame
 ;;   :disabled
@@ -1780,7 +1775,7 @@ bizarre reason."
                       purpose-display-maybe-pop-up-frame)))
 
 
-;;;; Popper: summon and disimss ephemeral buffer and windows (karthink)
+;;;; # Popper: summon and disimss ephemeral buffer and windows (karthink)
 ;; https://github.com/karthink/popper
 
 (use-package popper
@@ -1807,24 +1802,6 @@ bizarre reason."
 (use-package popwin
   :disabled)
 
-
-;;;; # Frames-only-mode:
-
-;; (add-to-list 'el-get-sources
-;; 	     '(:name frames-only
-;; 		     :description "Make emacs play nicely with tiling window managers by setting it up to use frames rather than windows"
-;; ;;                   :type	  github
-;; ;;                   :pkgname	  "davidshepherd7/frames-only-mode"
-;;                      :type        http
-;;                      :url         "file://localhost/home/jyates/emacs/frames-only.el"
-;; ;;                   :after       (frames-only-mode t)
-;; 		     :features	  frames-only))
-;; (my/el-get-install "frames-only")
-;;
-;;
-;; (my/custom-set-variables
-;;  '(frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
-;;  )
 
 ;;; === Minibuffer selection ===========================================
 ;;;; Marginalia: rich annotations for minibuffer completions (Daniel Mendler)
@@ -2208,6 +2185,13 @@ parses its input."
   (my/end-of-buffer
     ibuffer (ibuffer-backward-line 1)))
 
+;;;; Ibuffer-vc: group buffers in ibuffer list by VC project (Steve Purcell)
+;; https://github.com/purcell/ibuffer-vc
+
+(use-package ibuffer-vc
+  :straight (:host github :repo "purcell/ibuffer-vc"))
+
+
 ;;;; Improved beginning-of-buffer and end-of-buffer
 ;; https://fuco1.github.io/2017-05-06-Enhanced-beginning--and-end-of-buffer-in-special-mode-buffers-(dired-etc.).html
 ;; Web page has support for
@@ -2275,6 +2259,23 @@ toggle between real end and logical end of the buffer."
                                [remap end-of-buffer] ',fname))))))
 
 
+;;; === Completion =====================================================
+;;;; Corfu: Completion Overlay Region FUnction
+(use-package corfu
+  :straight (corfu :host github :repo "minad/corfu")
+  :general
+  (:keymaps 'corfu-map
+            :states 'insert
+            "C-n" #'corfu-next
+            "C-p" #'corfu-previous
+            "<escape>" #'corfu-quit
+            "<return>" #'corfu-insert
+            "M-d" #'corfu-show-documentation
+            "M-l" #'corfu-show-location)
+  :config
+  (corfu-global-mode))
+
+
 ;;; === Editing ========================================================
 ;;;; Whitepace and general hygiene
 
@@ -2340,7 +2341,7 @@ Use a normal parenthesis if not inside any."
   :disabled)
 
 
-;;;; Yasnippet: a TextMate inspired template system  (João Távora)
+;;;; # Yasnippet: a TextMate inspired template system  (João Távora)
 ;; https://github.com/joaotavora/yasnippet
 
 (use-package yasnippet
@@ -2362,13 +2363,6 @@ Use a normal parenthesis if not inside any."
 
 
 ;;; === File, directories, URLs and FFAP ===============================
-;;;; Ibuffer-vc: group buffers in ibuffer list by VC project (Steve Purcell)
-;; https://github.com/purcell/ibuffer-vc
-
-(use-package ibuffer-vc
-  :straight (:host github :repo "purcell/ibuffer-vc"))
-
-
 ;;;; FFAP
 
 (use-package ffap
@@ -2907,15 +2901,15 @@ convert it to readonly/view-mode."
   (interactive)
   (cond ((not (buffer-file-name))
          (call-interactively 'view-file))
-	((and (buffer-modified-p)
+        ((and (buffer-modified-p)
               (not (disk-file-modified-p)))
          (save-buffer)
          (setq buffer-read-only t)
          (view-mode 1))
-	((and (buffer-modified-p)
+        ((and (buffer-modified-p)
               (disk-file-modified-p))
          (error "Buffer must be saved, but the file has also changed."))
-	((and (not (buffer-modified-p))
+        ((and (not (buffer-modified-p))
               (disk-file-modified-p))
          (revert-buffer t t)
          (setq buffer-read-only t)
@@ -2923,7 +2917,7 @@ convert it to readonly/view-mode."
         (buffer-read-only
          (view-mode -1)
          (setq buffer-read-only nil))
-	(t
+        (t
          (setq buffer-read-only t)
          (view-mode 1))))
 
@@ -3061,8 +3055,290 @@ convert it to readonly/view-mode."
 ;;          (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))))
 
 ;;; === Programming ====================================================
+;;;; Elisp
 
-;;  :straight (:host github :repo "mp81ss/gendoxy")
+(use-package eldoc
+  :straight (:type built-in)
+  :custom
+  (global-eldoc-mode -1))
+
+
+;;;; # gendoxy: generate doxygen documentation from C code (Michele Pes)
+;; https://github.com/mp81ss/gendoxy
+
+(use-package gendoxy
+  :disabled
+  :straight (:host github :repo "mp81ss/gendoxy"))
+
+
+;;;; gdb-mi
+
+(use-package gdb-mi
+  :straight (:type built-in)
+  :custom
+  (gdb-create-source-file-list nil)
+  (gdb-many-windows t)
+  (gdb-stack-buffer-addresses t)
+  (gdb-thread-buffer-arguments nil)
+  (gud-gdb-command-name "gdb -i=mi")
+  (split-width-threshold 1023)         ;; Crummy window splitting rules for wide screens
+  :config
+
+  (defun my/gdb-new-frame ()
+    (interactive)
+    (select-frame (make-frame))
+    (call-interactively 'gdb))
+
+  (defvar gdb-source-window nil)
+  (defvar gdb-comint-window nil)
+
+  ;; Mathworks trashes the program to run when requesting gdb
+  (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
+    (setq gud-gdb-command-name "~/bin/gdb"))
+
+  (defun my/gud-eob ()
+    "Jump to EOB in GUD's interaction buffer."
+    (select-window gdb-comint-window)
+    (goto-char (point-max)))
+
+  (defmacro my/gud-def (func cmd stay-put &optional doc)
+    "Define FUNC as sending CMD. See gud.el's gud-def for more details."
+    `(defalias ',func (lambda (arg)
+                        ,@(if doc (list doc))
+                        (interactive "p")
+                        (when (not gud-running)
+                          ,(unless (zerop stay-put)
+                             `(my/gud-eob))
+                          ,(if (stringp cmd)
+                               `(gud-call ,cmd arg)
+                             cmd)))))
+
+
+  (my/gud-def my/gud-break  "break %f:%l"  0 "Set breakpoint at current line.")
+  (my/gud-def my/gud-tbreak "tbreak %f:%l" 0 "Set temporary breakpoint at current line.")
+  (my/gud-def my/gud-remove "clear %f:%l"  0 "Remove breakpoint at current line")
+  (my/gud-def my/gud-step   "step %p"      1 "Step one or more source lines (step into calls).")
+  (my/gud-def my/gud-next   "next %p"      1 "Step one or more source lines (skip over calls).")
+  (my/gud-def my/gud-stepi  (progn (gud-call "stepi %p")
+                                   (gud-call "x/i $pc"))
+              1 "Step one or more instructions (step into calls).")
+  (my/gud-def my/gud-nexti  (progn (gud-call "nexti %p")
+                                   (gud-call "x/i $pc"))
+              1 "Step one or more instructions (skip over calls).")
+  (my/gud-def my/gud-cont   (progn (gud-go nil))
+              1 "Continue with display.")
+  (my/gud-def my/gud-finish "finish"       1 "Finish executing current function.")
+  (my/gud-def my/gud-jump   (progn (gud-call "tbreak %f:%l")
+                                   (gud-call "jump %f:%l"))
+              0 "Set execution address to current line.")
+  (my/gud-def my/gud-up     "up %p"        0 "Up N stack frames (numeric arg).")
+  (my/gud-def my/gud-down   "down %p"      0 "Down N stack frames (numeric arg).")
+  (my/gud-def my/gud-pprint "pp %e"        0 "Evaluate C expression at point.")
+  (my/gud-def my/gud-ppstar "pp* %e"       0 "Evaluate C dereferenced pointer expression at point.")
+  (my/gud-def my/gud-print  "print %e"     0 "Evaluate C expression at point.")
+  (my/gud-def my/gud-pstar  "print* %e"    0 "Evaluate C dereferenced pointer expression at point.")
+  (my/gud-def my/gud-until  "until %f:%l"  0 "Continue to current line.")
+  (my/gud-def my/gud-run    "run"          1 "Run/restart program.")
+  (my/gud-def my/gud-frame0 "frame 0"      0 "Return to stack frame 0 in source window.")
+  (my/gud-def my/gud-prompt "frame"        1 "Jump to EOB in GUD's interaction buffer.")
+
+
+  (defun my/dedicate-gdb-comint-window()
+    "Mark gud-comint-buffer's window as dedicated for gdb-many-windows"
+    (when (and gud-comint-buffer gdb-many-windows)
+      (set-window-dedicated-p (setq gdb-comint-window (get-buffer-window gud-comint-buffer)) t)))
+
+  (eval-after-load "gdb-mi"
+    '(advice-add 'gdb-setup-windows :after #'my/dedicate-gdb-comint-window))
+
+  (defun my/gud-help ()
+    "Toggle display of a table of GDB key bindings."
+    (interactive)
+    (let ((gdb-keys (get-buffer "*GDB key bindings*")))
+      (unless gdb-keys
+        (setq gdb-keys (get-buffer-create "*GDB key bindings*"))
+        (with-current-buffer gdb-keys
+          (buffer-disable-undo)
+          (read-only-mode -1)
+          (erase-buffer)
+          (insert
+           "
+Modi |
+fier | <F5>     <F6>     <F7>     <F8>     <F9>     <F10>    <F11>    <F12>
+---- | ------   ------   ------   ------   ------   ------   ------   ------
+     | run      print    print    goto     step     next     set      customize
+     |                   via pp   prompt   into     stmt     break    option
+     |
+Ctrl | run to   unit     compile  toggle   step     frame    temp     customize
+     | cursor   test              help     instr    return   break    group
+     |
+Shft | rerun    print*   print*   frame    frame    frame    remove   customize
+     |                   via pp   zero     down     up       break    apropos
+")
+          (set-buffer-modified-p nil)
+          (view-mode 1)
+          ))
+      (with-current-buffer gdb-keys
+        (let ((win (get-buffer-window)))
+          (if (not win)
+              (set-window-buffer gdb-source-window gdb-keys)
+            (select-window win)
+            (bury-buffer))))
+      (my/gud-eob)))
+
+
+;;   ;; From http://markshroyer.com/2012/11/emacs-gdb-keyboard-navigation/
+;;
+;;   ;; For the consistency of gdb-select-window's calling convention...
+;;   (defun gdb-comint-buffer-name ()
+;;     (buffer-name gud-comint-buffer))
+;;   (defun gdb-source-buffer-name ()
+;;     (buffer-name (window-buffer gdb-source-window)))
+;;
+;;   (defun gdb-select-window (header)
+;;     "Switch directly to the specified GDB window.
+;; Moves the cursor to the requested window, switching between
+;; `gdb-many-windows' \"tabs\" if necessary in order to get there.
+;;
+;; Recognized window header names are: 'comint, 'locals, 'registers,
+;; 'stack, 'breakpoints, 'threads, and 'source."
+;;
+;;     (interactive "Sheader: ")
+;;
+;;     (let* ((header-alternate (case header
+;;				  ('locals	'registers)
+;;				  ('registers	'locals)
+;;				  ('breakpoints 'threads)
+;;				  ('threads	'breakpoints)))
+;;	      (buffer (intern (concat "gdb-" (symbol-name header) "-buffer")))
+;;	      (buffer-names (mapcar (lambda (header)
+;;				      (funcall (intern (concat "gdb-"
+;;							       (symbol-name header)
+;;							       "-buffer-name"))))
+;;				    (if (null header-alternate)
+;;					(list header)
+;;				      (list header header-alternate))))
+;;	      (window (if (eql header 'source)
+;;			  gdb-source-window
+;;			(or (get-buffer-window (car buffer-names))
+;;			    (when (not (null (cadr buffer-names)))
+;;			      (get-buffer-window (cadr buffer-names)))))))
+;;
+;;	 (when (not (null window))
+;;	   (let ((was-dedicated (window-dedicated-p window)))
+;;	     (select-window window)
+;;	     (set-window-dedicated-p window nil)
+;;	     (when (member header '(locals registers breakpoints threads))
+;;	       (switch-to-buffer (gdb-get-buffer-create buffer))
+;;	       (setq header-line-format (gdb-set-header buffer)))
+;;	     (set-window-dedicated-p window was-dedicated))
+;;	   t)))
+;;
+;;   ;; Use global keybindings for the window selection functions so that they
+;;   ;; work from the source window too...
+;;   (mapcar (lambda (setting)
+;;	       (lexical-let ((key    (car setting))
+;;			     (header (cdr setting)))
+;;		 (global-set-key (concat "\M-g" key) #'(lambda ()
+;;							     (interactive)
+;;							     (gdb-select-window header)))))
+;;	     '(("A" . disassembly)	   ; assembly language
+;;	       ("B" . breakpoints)
+;;	       ("D" . disassembly)
+;;	       ("F" . stack)
+;;	       ("G" . comint)
+;;	       ("I" . disassembly)	   ; instructions
+;;	       ("L" . locals)
+;;	       ("O" . input/output)
+;;	       ("R" . registers)
+;;	       ("S" . source)
+;;	       ("T" . threads)))
+
+;; Make sure the file named TRUE-FILE is in a buffer that appears on the screen
+;; and that its line LINE is visible.
+;; Put the overlay-arrow on the line LINE in that buffer.
+;; Most of the trickiness in here comes from wanting to preserve the current
+;; region-restriction if that's possible.  We use an explicit display-buffer
+;; to get around the fact that this is called inside a save-excursion.
+
+;; (defadvice gud-display-line (around my/gud-display-line activate)
+;;   (let* ((last-nonmenu-event t)	 ; Prevent use of dialog box for questions.
+;;	  (buffer
+;;	   (with-current-buffer gud-comint-buffer
+;;	     (gud-find-file true-file)))
+;;	    ;;================
+;;	  ;; (window (and buffer
+;;	  ;;		  (or (get-buffer-window buffer)
+;;	  ;;		   (display-buffer buffer))))
+;;	    ;;================
+;;	    (window (and buffer
+;;			 (or (if (eq gud-minor-mode 'gdbmi)
+;;				 (unless (gdb-display-source-buffer buffer)
+;;				   (gdb-display-buffer buffer nil 'visible)))
+;;			     (get-buffer-window buffer)
+;;			     (display-buffer buffer))))
+;;	    ;;================
+;;	  (pos))
+;;     (when buffer
+;;	 (with-current-buffer buffer
+;;	 (unless (or (verify-visited-file-modtime buffer) gud-keep-buffer)
+;;	   (if (yes-or-no-p
+;;		(format "File %s changed on disk.  Reread from disk? "
+;;			(buffer-name)))
+;;	       (revert-buffer t t)
+;;	     (setq gud-keep-buffer t)))
+;;	 (save-restriction
+;;	   (widen)
+;;	   (goto-char (point-min))
+;;	   (forward-line (1- line))
+;;	   (setq pos (point))
+;;	   (or gud-overlay-arrow-position
+;;	       (setq gud-overlay-arrow-position (make-marker)))
+;;	   (set-marker gud-overlay-arrow-position (point) (current-buffer))
+;;	   ;; If they turned on hl-line, move the hl-line highlight to
+;;	   ;; the arrow's line.
+;;	   (when (featurep 'hl-line)
+;;	     (cond
+;;	      (global-hl-line-mode
+;;	       (global-hl-line-highlight))
+;;	      ((and hl-line-mode hl-line-sticky-flag)
+;;	       (hl-line-highlight)))))
+;;	 (cond ((or (< pos (point-min)) (> pos (point-max)))
+;;		(widen)
+;;		(goto-char pos))))
+;;	 (when window
+;;	 (set-window-point window gud-overlay-arrow-position)
+;;	 (if (eq gud-minor-mode 'gdbmi)
+;;	     (setq gdb-source-window window))))))
+  :general
+  (:keymaps   "<f5>" #'my/gud-cont      ; MS go / continue
+            "C-<f5>" #'my/gud-until     ; MS run to cursor
+            "S-<f5>" #'my/gud-run       ; restart
+
+              "<f6>" #'my/gud-print     ; print  %e
+            "C-<f6>" #'my/gud-run-ut    ; run unit test
+            "S-<f6>" #'my/gud-pstar     ; print* %e
+
+              "<f7>" #'my/gud-pprint    ; print  %e via pp
+            "C-<f7>" #'my/compile
+            "S-<f7>" #'my/gud-ppstar    ; print* %e via pp
+
+              "<f8>" #'my/gud-prompt    ; focus GUD prompt
+            "C-<f8>" #'my/gud-help
+            "S-<f8>" #'my/gud-frame0
+
+              "<f9>" #'my/gud-step      ; MS step into
+            "C-<f9>" #'my/gud-stepi     ; step by instructi
+            "S-<f9>" #'my/gud-down
+
+              "<f10>" #'my/gud-next     ; MS step over
+            "C-<f10>" #'my/gud-finish   ; MS step out
+            "S-<f10>" #'my/gud-up
+
+              "<f11>" #'my/gud-break
+            "C-<f11>" #'my/gud-tbreak
+            "S-<f11>" #'my/gud-remove)
+)
 
 ;;; === Unclassified ===================================================
 
@@ -3220,34 +3496,6 @@ convert it to readonly/view-mode."
 (keydef "C-<f4>"        first-error)
 (keydef "S-<f4>"        kill-compilation)
 
-(keydef   "<f5>"        'my/gud-cont)    ; MS go / continue
-(keydef "C-<f5>"        'my/gud-until)   ; MS run to cursor
-(keydef "S-<f5>"        'my/gud-run)     ; restart
-
-(keydef   "<f6>"        'my/gud-print)   ; print  %e
-(keydef "C-<f6>"        'my/gud-run-ut)  ; run unit test
-(keydef "S-<f6>"        'my/gud-pstar)   ; print* %e
-
-(keydef   "<f7>"        'my/gud-pprint)  ; print  %e via pp
-(keydef "C-<f7>"        'my/compile)
-(keydef "S-<f7>"        'my/gud-ppstar)  ; print* %e via pp
-
-(keydef   "<f8>"        'my/gud-prompt)  ; focus GUD prompt
-(keydef "C-<f8>"        'my/gud-help)
-(keydef "S-<f8>"        'my/gud-frame0)
-
-(keydef   "<f9>"        'my/gud-step)    ; MS step into
-(keydef "C-<f9>"        'my/gud-stepi)   ; step by instructi
-(keydef "S-<f9>"        'my/gud-down)
-
-(keydef   "<f10>"       'my/gud-next)    ; MS step over
-(keydef "C-<f10>"       'my/gud-finish)  ; MS step out
-(keydef "S-<f10>"       'my/gud-up)
-
-(keydef   "<f11>"       'my/gud-break)
-(keydef "C-<f11>"       'my/gud-tbreak)
-(keydef "S-<f11>"       'my/gud-remove)
-
 ;; (keydef "C-."           vtags-find)
 ;; (keydef "<kp-begin>"    vtags-point-to-placeholder)
 ;; (keydef "<kp-right>"    vtags-next-placeholder)
@@ -3311,6 +3559,7 @@ convert it to readonly/view-mode."
 
     (load-library "hl-line")
     (load-library "paren")
+    (load-library "corfu")
     )
   (add-hook 'post-command-hook #'my/post-command-oneshot)
 
