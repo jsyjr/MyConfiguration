@@ -1,26 +1,32 @@
-#!/bin/bash
+#!/bin/dash
 
-PATH=\
-/usr/lib/ccache\
-:/usr/local/sbin\
-:/usr/local/bin\
-:/usr/sbin\
-:/usr/bin\
-:/sbin\
-:/bin\
+PATH=${HOME}/bin
+
+append_if() {
+    [ -d $1 ] && PATH=${PATH}:$1
+}
+
+append_if ${HOME}/.local/bin
+append_if ${HOME}/doxyTools
+append_if ${HOME}/.cask
+append_if /usr/local/emacs/bin
+append_if /usr/lib/ccache
+append_if /usr/local/netbin
+append_if /usr/local/bin
+append_if /usr/bin
+append_if /bin
+append_if /usr/local/sbin
+append_if /usr/sbin
+append_if /sbin
 
 if [ -d /mathworks ]; then
-    export SBTOOLS_ROOT=/hub/share/sbtools
+    export SBTOOLS_ROOT=/mathworks/hub/share/sbtools
 
-    PATH=\
-/usr/local/apps/bat/perl/perl-5.20.2-mw-020/bin\
-:${PATH}\
-:/usr/local/netbin\
-:/hub/share/bin\
-:${SBTOOLS_ROOT}/bin/${SBARCH}\
-:${SBTOOLS_ROOT}/apps/cgir_tools\
-
+#   append_if /mathworks/sandbox/dserr/sbtools/apps/cgir_tools
+    append_if ${SBTOOLS_ROOT}/apps/cgir_tools
+    append_if /mathworks/hub/share/bin
+    append_if ${SBTOOLS_ROOT}/bin/${SBARCH}
+    append_if /mathworks/inside/labs/dev/matlab_coder_tools/vscodeproj/vscodeproj
 fi
 
-# Put my ~/bin at the front so that I can override random commands
-export PATH=${HOME}/bin:${HOME}/doxyTools:${PATH}
+export PATH=${PATH}
