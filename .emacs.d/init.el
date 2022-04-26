@@ -1,4 +1,4 @@
-;; init.el -*- lexical-binding: t; outshine-mode: 1; fill-column: 119 -*-
+;;; init.el -*- lexical-binding: t; outshine-mode: 1; fill-column: 119 -*-
 
 ;(setq debug-on-error t)
 ;(debug-on-variable-change ??)
@@ -285,6 +285,7 @@
 
 (use-package use-package-hydra
   :straight (:host github :repo "emacsmirror/use-package-hydra")
+  :defer
   :requires (hydra))
 
 
@@ -1935,6 +1936,7 @@ parses its input."
                                 vertico-multiform
                                 vertico-unobtrusive
                                 ))
+  :defer
   :custom
   (vertico-count 13)
   (vertico-resize t)
@@ -2260,20 +2262,112 @@ toggle between real end and logical end of the buffer."
 
 
 ;;; === Completion =====================================================
-;;;; Corfu: Completion Overlay Region FUnction
+;;;; Completion: General completion configuration (jao)
+;; https://codeberg.org/jao/elibs/src/branch/main/completion.org
+
+(use-package minibuffer
+  :straight (:type built-in)
+  :custom
+  (tab-always-indent 'complete) ; indent.el
+  (read-extended-command-predicate #'command-completion-default-include-p) ; simple.el
+  (completion-auto-select nil)
+  (completion-category-defaults nil)
+  (completion-category-overrides
+   '((file (styles partial-completion))
+     (command (styles initials substring partial-completion))
+     (symbol (styles initials substring partial-completion))
+     (variable (styles initials substring partial-completion))))
+  (completion-cycle-threshold nil)
+  (completion-ignore-case t)
+  (completion-show-help nil)
+  (completion-show-inline-help nil)
+  (completion-styles '(basic substring partial-completion emacs22))
+  (completion-wrap-movement t)
+  (completions-detailed t)
+  (completions-format 'one-column)
+  (completions-sort #'jao-completion--sort-by-history)
+  :config
+  (defun jao-completion--sort-by-alpha-length (elems)
+    (sort elems (lambda (c1 c2)
+                  (or (string-version-lessp c1 c2)
+                      (< (length c1) (length c2))))))
+
+  (defun jao-completion--sort-by-history (elems)
+    (let ((hist (and (not (eq minibuffer-history-variable t))
+                     (symbol-value minibuffer-history-variable))))
+      (if hist
+          (minibuffer--sort-by-position hist elems)
+        (jao-completion--sort-by-alpha-length elems))))
+  )
+
+
+;;;; Corfu: Completion Overlay Region FUnction (Daniel Mendler)
+;; https://github.com/minad/corfu
+
 (use-package corfu
   :straight (corfu :host github :repo "minad/corfu")
+  :defer
+  :custom
+  (corfu-auto t)                        ; Enable auto completion
+  (corfu-auto-delay 0.25)               ; Delay for auto completion
+  (corfu-auto-prefix 3)                 ; Min prefix length for auto completion
+  (corfu-count 10)                      ; Max # of candidates to show
+  (corfu-cycle nil)                     ; Enable corfu-next / previous cycling
+  (corfu-echo-documentation '(1.0 . 0.2))
+  (corfu-min-width 30)
+  (corfu-min-width 99)
+  (corfu-preselect-first t)             ; Preselect first candidate
+  (corfu-preview-current 'insert)       ; First candidate as overlay. Insert on input if only one
+  (corfu-quit-at-boundary 'separator)   ; Boundary: stay alive if separator inserted
+  (corfu-quit-no-match 'separator)      ; No match: stay alive if separator inserted
+  (corfu-scroll-margin 4)               ; Top and bottom lines when scrolling
+  (corfu-separator ?\s)                 ; Component separator character
+
+  :config
+  ;; show eldoc string immediately after accepted completion too
+  (with-eval-after-load "eldoc"
+    (eldoc-add-command-completions "corfu-"))
+
+  (defun jao-corfu--active-p ()
+    (and (>= corfu--index 0) (/= corfu--index corfu--preselect)))
+
+  (defun jao-corfu-quit-or-insert ()
+    (interactive)
+    (if (jao-corfu--active-p) (corfu-insert) (corfu-quit)))
+
+  (defun jao-corfu-quit-or-previous ()
+    (interactive)
+    (if (jao-corfu--active-p)
+        (corfu-previous)
+      (corfu-quit)
+      (previous-line)))
+
   :general
   (:keymaps 'corfu-map
-            :states 'insert
-            "C-n" #'corfu-next
-            "C-p" #'corfu-previous
-            "<escape>" #'corfu-quit
-            "<return>" #'corfu-insert
-            "M-d" #'corfu-show-documentation
-            "M-l" #'corfu-show-location)
-  :config
-  (corfu-global-mode))
+            "C-n"        #'corfu-next
+            "C-p"        #'corfu-previous
+            "<escape>"   #'corfu-quit
+            "C-<return>" #'corfu-insert
+            "\r"         #'jao-corfu-quit-or-insert
+;           "<return>"   #'corfu-insert
+            "H-SPC"      #'corfu-insert-separator
+            ;; "SPC" #'corfu-insert-separator ; Use when `corfu-quit-at-boundary' is non-nil
+            "M-d"        #'corfu-show-documentation
+            "C-g"        #'corfu-quit
+            "M-l"        #'corfu-show-location))
+
+;; For lsp-mode buffers:
+;;
+;; :hook (lsp-completion-mode . kb/corfu-setup-lsp) ; Use corfu for lsp completion
+;; :custom
+;; (lsp-completion-provider :none) ; Use corfu instead the default for lsp completions
+;; :config
+;; ;; Setup lsp to use corfu for lsp completion
+;; (defun kb/corfu-setup-lsp ()
+;;   "Use orderless completion style with lsp-capf instead of the
+;;   default lsp-passthrough."
+;;   (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+;;         '(orderless)))
 
 
 ;;; === Editing ========================================================
@@ -2302,16 +2396,6 @@ Use a normal parenthesis if not inside any."
                 (save-excursion (backward-up-list)
                                 (cdr (syntax-after (point)))))
               ?\))))
-
-
-;;;; # Gendoxy: generate doxygen from C source (Michele Pes)
-;; https://github.com/mp81ss/gendoxy
-
-(use-package gendoxy
-  :disabled
-  :straight (:host github :repo "mp81ss/gendoxy")
-  :custom
-  (gendoxy-backslash t))
 
 
 ;;; === Autotype: completion and expansion =============================
@@ -2360,6 +2444,16 @@ Use a normal parenthesis if not inside any."
 ;;   (if (eq major-mode 'snippet-mode)
 ;;       ;;  (mapc 'yas/load-directory yas/snippet-dirs)))
 ;;       (yas-reload-all))) ; no mapc with just a single directory root
+
+
+;;;; # Gendoxy: generate doxygen from C source (Michele Pes)
+;; https://github.com/mp81ss/gendoxy
+
+(use-package gendoxy
+  :disabled
+  :straight (:host github :repo "mp81ss/gendoxy")
+  :custom
+  (gendoxy-backslash t))
 
 
 ;;; === File, directories, URLs and FFAP ===============================
@@ -2548,7 +2642,9 @@ Use a normal parenthesis if not inside any."
 ;;;; Wgrep: apply changes by editting a grep buffer (Masahiro Hayashi)
 ;; https://github.com/mhayashi1120/Emacs-wgrep
 
-(use-package wgrep)
+(use-package wgrep
+  :straight (:host github :repo "mhayashi1120/Emacs-wgrep")
+  )
 
 
 ;;;; Rg: a search tool based on ripgrep (David Landell)
@@ -2976,6 +3072,13 @@ convert it to readonly/view-mode."
   :config
   (hideshowvis-enable))
 
+;; https://www.reddit.com/r/emacs/comments/746cd0/comment/dnwi2x1/?utm_source=share&utm_medium=web2x&context=3
+;;
+;; (defun toggle-fold ()
+;;   (interactive)
+;;   (save-excursion
+;;     (end-of-line)
+;;     (hs-toggle-hiding))
 
 ;; Display the size of a collapsed function body  (obsolete?)
 ;; (defun my/display-code-line-counts (ov)
@@ -3063,12 +3166,6 @@ convert it to readonly/view-mode."
   (global-eldoc-mode -1))
 
 
-;;;; # gendoxy: generate doxygen documentation from C code (Michele Pes)
-;; https://github.com/mp81ss/gendoxy
-
-(use-package gendoxy
-  :disabled
-  :straight (:host github :repo "mp81ss/gendoxy"))
 
 
 ;;;; gdb-mi
@@ -3125,8 +3222,7 @@ convert it to readonly/view-mode."
   (my/gud-def my/gud-nexti  (progn (gud-call "nexti %p")
                                    (gud-call "x/i $pc"))
               1 "Step one or more instructions (skip over calls).")
-  (my/gud-def my/gud-cont   (progn (gud-go nil))
-              1 "Continue with display.")
+  (my/gud-def my/gud-cont   "cont"         1 "Continue with display.")
   (my/gud-def my/gud-finish "finish"       1 "Finish executing current function.")
   (my/gud-def my/gud-jump   (progn (gud-call "tbreak %f:%l")
                                    (gud-call "jump %f:%l"))
@@ -3311,7 +3407,8 @@ Shft | rerun    print*   print*   frame    frame    frame    remove   customize
 ;;	 (if (eq gud-minor-mode 'gdbmi)
 ;;	     (setq gdb-source-window window))))))
   :general
-  (:keymaps   "<f5>" #'my/gud-cont      ; MS go / continue
+  (:keymaps 'global
+              "<f5>" #'my/gud-cont      ; MS go / continue
             "C-<f5>" #'my/gud-until     ; MS run to cursor
             "S-<f5>" #'my/gud-run       ; restart
 
@@ -3542,15 +3639,18 @@ Shft | rerun    print*   print*   frame    frame    frame    remove   customize
 ;     (load-library "svg-icon"))
 ;   (mini-frame-mode +1)
 ;   (load-library "popup")
+    (load-library "corfu")
+    (global-corfu-mode 1)
     (load-library "hydra")
 ;   (load-library "orderless")
     (load-library "vertico")
+    (load-library "corfu")
 ;   (load-library "prescient")
 ;   (load-library "marginalia")
 ;   (load-library "consult")           ; loads recentf
 ;   (load-library "embark")
 ;   (load-library "embark-consult")
-;    (load-library "dumb-jump")
+;   (load-library "dumb-jump")
     )
   (add-hook 'pre-command-hook #'my/pre-command-oneshot)
 
@@ -3559,7 +3659,6 @@ Shft | rerun    print*   print*   frame    frame    frame    remove   customize
 
     (load-library "hl-line")
     (load-library "paren")
-    (load-library "corfu")
     )
   (add-hook 'post-command-hook #'my/post-command-oneshot)
 
