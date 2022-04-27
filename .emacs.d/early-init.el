@@ -7,6 +7,12 @@
 ;; init process within it, by just loading the regular init-file.
 ;; (That file takes care of making sure it is only loaded once.)
 
+(let ((emacs-start-time (current-time)))
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              (let ((elapsed (float-time (time-subtract (current-time) emacs-start-time))))
+                (message "[Emacs initialized in %.3fs]" elapsed)))))
+
 ;; Load an alternate ~/.emacs.d during regular init.
 (unless (getenv "USER_EMACS_DIRECTORY")
 
