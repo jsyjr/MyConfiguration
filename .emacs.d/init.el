@@ -3478,7 +3478,7 @@ Shft | rerun    print*   print*   frame    frame    frame    remove   customize
 ;;;; wsf: find a file in an indexed Mathworks workspace
 ;; https://github.com/jsyjr/wsf
 
-(use-package mw-jsy
+(use-package wsf
   :straight (:host github :repo "jsyjr/wsf")
   :after mw-jsy
   :general
