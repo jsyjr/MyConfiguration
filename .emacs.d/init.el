@@ -66,7 +66,6 @@
 ;; - Audit all :disabled
 ;; - Audit :requires and try to replace with :after
 ;; - Audit :demand t
-;; - Debug vc-follow-symlinks
 ;; - Highlight current error in compile buffer
 ;;   https://emacs.stackexchange.com/questions/13134/emphasise-the-current-error-in-the-compilation-window
 ;; - imerge
