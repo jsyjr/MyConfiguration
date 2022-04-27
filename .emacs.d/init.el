@@ -3216,8 +3216,8 @@ convert it to readonly/view-mode."
   (defvar gdb-comint-window nil)
 
   ;; Mathworks trashes the program to run when requesting gdb
-  (when (file-exists-p "/hub/share/sbtools/emacs_setup.el")
-    (setq gud-gdb-command-name "~/bin/gdb"))
+  ;; (when (file-exists-p "/mathworks/hub/share/sbtools/emacs_setup.el")
+  ;;   (setq gud-gdb-command-name "~/bin/gdb"))
 
   (defun my/gud-eob ()
     "Jump to EOB in GUD's interaction buffer."
