@@ -305,7 +305,7 @@
 
 (use-package use-package-hydra
   :straight (:host github :repo "emacsmirror/use-package-hydra")
-  :defer
+  :defer ; Loaded via one or more hooks near the bottom of this file
   :requires (hydra))
 
 
@@ -490,7 +490,9 @@ as in `defun'."
 ;; https://github.com/abo-abo/hydra
 
 (use-package hydra
-  :straight (:host github :repo "abo-abo/hydra"))
+  :straight (:host github :repo "abo-abo/hydra")
+  :defer ; Loaded via one or more hooks near the bottom of this file
+  )
 
 ;; doc: https://emacs.stackexchange.com/a/46938/443
 ;;
@@ -1005,6 +1007,8 @@ as in `defun'."
 
 ;; Highlight current line except when region is active
 (use-package hl-line
+  :straight (:type built-in)
+  :defer ; Loaded via one or more hooks near the bottom of this file
   :custom
   (global-hl-line-sticky-flag t "maintian highlight in inactive windows")
   :custom-face
@@ -1119,6 +1123,7 @@ as in `defun'."
 
 (use-package paren
   :straight (:type built-in)
+  :defer ; Loaded via one or more hooks near the bottom of this file
   :custom
   (show-paren-delay 0)                  ; do it immediately
   ;; Appers no longer to be part of paren.el
@@ -1956,7 +1961,7 @@ parses its input."
                                 vertico-multiform
                                 vertico-unobtrusive
                                 ))
-  :defer
+  :defer ; Loaded via one or more hooks near the bottom of this file
   :custom
   (vertico-count 13)
   (vertico-resize t)
@@ -2326,7 +2331,7 @@ toggle between real end and logical end of the buffer."
 
 (use-package corfu
   :straight (corfu :host github :repo "minad/corfu")
-  :defer
+  :defer ; Loaded via one or more hooks near the bottom of this file
   :custom
   (corfu-auto t)                        ; Enable auto completion
   (corfu-auto-delay 0.25)               ; Delay for auto completion
@@ -3155,6 +3160,7 @@ convert it to readonly/view-mode."
 
 (use-package recentf
   :straight (:type built-in)
+  :defer ; Loaded via one or more hooks near the bottom of this file
   :custom
   (recentf-save-file "~/.emacs.d/recentf")
   :config
