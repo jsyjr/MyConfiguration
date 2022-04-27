@@ -3463,6 +3463,31 @@ Shft | rerun    print*   print*   frame    frame    frame    remove   customize
             "S-<f11>" #'my/gud-remove)
 )
 
+;;; === Mathworks stuff ================================================
+;;;; mw-jsy: my personal Mathworks stuff
+;; https://github.com/jsyjr/my-jsy
+
+(use-package mw-jsy
+  :straight (:host github :repo "jsyjr/mw-jsy")
+  :defer
+  :custom
+  (sb-separate-kill-ring-from-clipboard nil)
+  )
+
+
+;;;; wsf: find a file in an indexed Mathworks workspace
+;; https://github.com/jsyjr/wsf
+
+(use-package mw-jsy
+  :straight (:host github :repo "jsyjr/wsf")
+  :after mw-jsy
+  :general
+  (:keymaps 'sb-prefix-map
+  "f" #'wsf-find-file
+  "R" #'wsf-force-from-scratch)
+  )
+
+
 ;;; === Unclassified ===================================================
 
 ;;{{{  Less safe: y/n instead of yes/no
