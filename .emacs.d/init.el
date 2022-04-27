@@ -62,6 +62,9 @@
 ;;; === Missing and TODO  (NEEDS REVIEW) ===============================
 
 ;; TODO
+;; - Work through https://github.com/bitspook/spookmax.d
+;; - Work through https://codeberg.org/jao/elibs
+;;
 ;; - Audit all :defer n
 ;; - Audit all :disabled
 ;; - Audit :requires and try to replace with :after
