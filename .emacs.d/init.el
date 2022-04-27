@@ -42,7 +42,23 @@
 ;; https://github.com/muffinmad/emacs-mini-frame#gnome-shell-does-not-resize-emacs-child-frames
 (setq x-gtk-resize-child-frames 'resize-mode)
 
-;;; === Notes ==========================================================
+;;; === To investigate =================================================
+
+;; My "Navigating an enormous code base" posting on Redit
+;; https://www.reddit.com/r/emacs/comments/uc25wx/navigating_an_enormous_code_base
+
+;; Extending project.el
+;; https://manueluberti.eu/emacs/2020/11/14/extending-project/
+
+;; Lots of ideas for speeding up startup
+;; https://www.reddit.com/r/emacs/comments/u8o4vz/starting_fresh
+
+;; Cursor blinking via fade-in / fade-out
+;; https://www.reddit.com/r/emacs/comments/u9omcp/pulsingcursormode_ui_tweak_cursor_animation_fades
+
+;; Electric cursor (better abstraction?, currently no readonly)
+;; https://github.com/duckwork/electric-cursor
+
 ;;; === Missing and TODO  (NEEDS REVIEW) ===============================
 
 ;; TODO
