@@ -3656,6 +3656,8 @@ Shft | rerun    print*   print*   frame    frame    frame    remove   customize
 
 (use-package emacs ; force load stuff via pre-command-hook
   :init
+
+  ;; Pre-command
   (defun my/pre-command-oneshot()
     (remove-hook 'pre-command-hook #'my/pre-command-oneshot)
 
@@ -3670,7 +3672,6 @@ Shft | rerun    print*   print*   frame    frame    frame    remove   customize
     (load-library "hydra")
 ;   (load-library "orderless")
     (load-library "vertico")
-    (load-library "corfu")
 ;   (load-library "prescient")
 ;   (load-library "marginalia")
 ;   (load-library "consult")           ; loads recentf
@@ -3680,14 +3681,17 @@ Shft | rerun    print*   print*   frame    frame    frame    remove   customize
     )
   (add-hook 'pre-command-hook #'my/pre-command-oneshot)
 
+  ;; Post-command
   (defun my/post-command-oneshot()
     (remove-hook 'post-command-hook #'my/post-command-oneshot)
 
     (load-library "hl-line")
     (load-library "paren")
+    (load-library "recentf")
     )
   (add-hook 'post-command-hook #'my/post-command-oneshot)
 
+  ;; Minibuffer-setup
   (defun my/minibuffer-setup-oneshot()
     (remove-hook 'minibuffer-setup-hook #'my/minibuffer-setup-oneshot)
 
@@ -3712,6 +3716,7 @@ Shft | rerun    print*   print*   frame    frame    frame    remove   customize
   ;;   )
   ;; (add-hook 'find-file-hook #'my/find-file)
 
+  ;; Find-file-not-found
   (defun my/find-file-not-found-functions-oneshot()
     (remove-hook 'find-file-not-found-functions #'my/find-file-not-found-functions-oneshot)
 ;;    (load-library "yasnippet")
