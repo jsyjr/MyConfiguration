@@ -192,8 +192,9 @@
 
 ;; Bootstrap `straight'
 (defvar bootstrap-version)
-(defvar comp-deferred-compilation-deny-list ())
-(defvar straight-check-for-modifications: '(watch-files)) ; no checking at startup
+(defvar straight-check-for-modifications
+  '(find-when-checking watch-files)  ; no checking during startup
+  "When to check for package modifications.")
 
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
