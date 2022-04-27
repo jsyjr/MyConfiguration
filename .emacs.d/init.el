@@ -220,6 +220,7 @@
   (straight-use-package-by-default t)      ; Make use-package install missing packages via straight
   (straight-vc-git-default-clone-depth 1)
   :config
+; (straight-check-for-modifications '(find-when-checking watch-files))
   (push "lib" straight-default-files-directive))
 
 
