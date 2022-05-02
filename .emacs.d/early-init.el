@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;; This file is loaded before package.el is initialized, and before
 ;; the first graphical frame is initialized.
