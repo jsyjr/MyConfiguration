@@ -108,6 +108,7 @@ sudo apt-get install \
   emacs \
   exuberant-ctags \
   flex \
+  fzf \
   git \
   global \
   gnutls-dev \
