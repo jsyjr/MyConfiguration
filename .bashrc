@@ -53,9 +53,9 @@ export HISTCONTROL=ignoredups
 export XDG_CONFIG_HOME="${HOME}/.config"
 
 # Specify emacs as default editor(?):
-export EDITOR=emacsclient
-export VISUAL=emacsclient
-export P4EDITOR=emacsclient
+export EDITOR=emacs
+export VISUAL=emacs
+export P4EDITOR=emacs
 
 export ALTERNATE_EDITOR=emacs
 export ESHELL=/bin/bash

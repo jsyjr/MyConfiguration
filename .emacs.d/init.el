@@ -558,6 +558,15 @@ as in `defun'."
 (use-package popup
   :straight  (:host github :repo "auto-complete/popup-el"))
 
+
+;;;; Compat: a general COMPATibility library (Philip Kaludercic)
+;; https://git.sr.ht/~pkal/compat
+
+(use-package compat
+  :straight (:host melpa :repro "gnu-elpa-mirror/compat")
+  :defer)
+
+
 ;;; === Protection =====================================================
 ;;;; Bostr: Backup On Save To Rcs
 ;; Remember to install rcs
@@ -2609,10 +2618,9 @@ Use a normal parenthesis if not inside any."
 ;;;; Magit: a git porcelain inside Emacs (Jonas Bernoulli)
 ;; https://github.com/magit/magit
 
-
 (use-package magit
   :straight (:host github :repo "magit/magit")
-  :requires (magit-process)     ;; not sure why this is necessary
+  :requires (magit-process compat) ;; not sure why this is necessary
   :custom
   (magit-auto-revert-mode t)
   (magit-backup-mode nil)
@@ -3463,6 +3471,119 @@ Shft | rerun    print*   print*   frame    frame    frame    remove   customize
             "S-<f11>" #'my/gud-remove)
 )
 
+;;;; compile: run inferior compiler, parse error messages
+
+(use-package compile
+  :straight (:type built-in)
+  :general
+  (keymaps 'global
+             "<f4>" #'next-error
+           "C-<f4>" #'first-error
+           "S-<f4>" #'kill-compilation
+           "C-<f7>" #'my/compile)
+  :custom
+; (compile-command "/usr/bin/make -k")
+  (compilation-scroll-output 'first-error) ; follow compilation output
+; (compilation-skip-threshold 2)           ; next-errormpil should only stop at errors
+  (next-error-hook 'compile-goto-error)
+  (next-error-recenter '(4))
+; :custom-face
+; (compilation-column-number ((t (:inherit file-name-shadow           ))))
+; (compilation-info          ((t (:inherit font-lock-comment-face     ))))
+; (compilation-line-number   ((t (:inherit font-lock-preprocessor-face))))
+  :init
+  ;; File is in a test directory if it contains a suite_registration.cpp
+  ;; Should locate dominating module directory by looking for Makefile
+  ;; Name of image is path from module directory to test directory with '/' replaced by '_'
+  ;;
+  ;;   cd /ws/WARP/matlab/src/<MODULE>/
+  ;;   rm -f /ws/WARP/matlab/derived/glnxa64/testbin/src/<MODULE>/<TEST_IMAGE>
+  ;;   cgmake -no-distcc DEBUG=1
+  ;;   /ws/WARP/matlab/derived/glnxa64/testbin/src/<MODULE>/<TEST_IMAGE>
+
+  (defun my/compile-command ()
+    "Return a compile command for the current (.cpp) buffer.
+
+If not in a unittest directory compile only the single file.
+If in a unittest directory locate the module directory, run
+cgmake -no-distcc there and if successful run the test image."
+    (let* ((cwd (file-name-directory (buffer-file-name)))
+           (exe nil)
+           (cmd (if (not (locate-dominating-file "." "unittest"))
+                    (concat "sbcc -mc " (buffer-name))
+                  (while (cond
+                          ((string-suffix-p "unittest/" cwd)
+                           (setq exe "unittest")
+                           (setq cwd (substring cwd 0 -9)))
+                          ((string-suffix-p "my/" cwd)
+                           (setq exe "my_unittest")
+                           (setq cwd (substring cwd 0 -3)))
+                          (t
+                           nil)))
+                  (let* ((path (split-string cwd "matlab/src"))
+                         (target (concat (nth 0 path) "matlab/derived/glnxa64/testbin/src" (nth 1 path) exe)))
+                    (concat
+                     "rm -f " target "\n"
+                     "cgmake -no-distcc DEBUG=1\n"
+                     target)))))
+      (concat "cd " cwd "\n" cmd)))
+
+  (defun my/compile (command &optional comint)
+    "If within a Mathworks sandbox recompile most recent .cpp.
+A minor variant of the compile function shipped in compile.el.
+Here is the doc-string for that original function:
+
+Compile the program including the current buffer.  Default: run `make'.
+Runs COMMAND, a shell command, in a separate process asynchronously
+with output going to the buffer `*compilation*'.
+
+You can then use the command \\[next-error] to find the next error message
+and move to the source code that caused it.
+
+If optional second arg COMINT is t the buffer will be in Comint mode with
+`compilation-shell-minor-mode'.
+
+Interactively, prompts for the command if the variable
+`compilation-read-command' is non-nil; otherwise uses `compile-command'.
+With prefix arg, always prompts.
+Additionally, with universal prefix arg, compilation buffer will be in
+comint mode, i.e. interactive.
+
+To run more than one compilation at once, start one then rename
+the `*compilation*' buffer to some other name with
+\\[rename-buffer].  Then _switch buffers_ and start the new compilation.
+It will create a new `*compilation*' buffer.
+
+On most systems, termination of the main compilation process
+kills its subprocesses.
+
+The name used for the buffer is actually whatever is returned by
+the function in `compilation-buffer-name-function', so you can set that
+to a function that generates a unique name."
+    (interactive
+     (list
+      (let ((command (progn
+                       (if (string-suffix-p ".cpp" (buffer-name))
+                           (setq compile-command (my/compile-command)))
+                       (eval compile-command))))
+        (if (or compilation-read-command current-prefix-arg)
+	    (compilation-read-command command)
+	  command))
+      (consp current-prefix-arg)))
+    (unless (equal command (eval compile-command))
+      (setq compile-command command))
+    (save-some-buffers (not compilation-ask-about-save)
+                       compilation-save-buffers-predicate)
+    (setq-default compilation-directory default-directory)
+    (compilation-start command comint))
+  :config
+  ;; Fix next error so that it does not visit every file in the include stack
+  ;; leading up the the error site.  Lifted directly from stackoverflow
+  ;; how-can-i-skip-in-file-included-from-in-emacs-c-compilation-mode
+  (setf (nth 5 (assoc 'gcc-include compilation-error-regexp-alist-alist)) 0)
+  )
+
+
 ;;; === Mathworks stuff ================================================
 ;;;; mw-jsy: my personal Mathworks stuff
 ;; https://github.com/jsyjr/my-jsy
@@ -3483,9 +3604,19 @@ Shft | rerun    print*   print*   frame    frame    frame    remove   customize
   :after mw-jsy
   :general
   (:keymaps 'sb-prefix-map
-  "f" #'wsf-find-file
-  "R" #'wsf-force-from-scratch)
+            "f" #'wsf-find-file
+            "R" #'wsf-force-from-scratch)
   )
+
+
+;;;; my/workspace-shell
+
+(defun my/workspace-shell (WORKSPACE)
+  "Create or switch to a running shell process in WORKSPACE."
+  (interactive "BWorkspace: ")
+  (let ((default-directory (concat "/ws/" WORKSPACE "/")))
+    (shell WORKSPACE))
+  (load-library "mw-jsy"))
 
 
 ;;; === Unclassified ===================================================

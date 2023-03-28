@@ -1,6 +1,6 @@
 #!/bin/dash
 
-export EDITOR=/usr/bin/emacsclient
+export EDITOR=/usr/bin/emacs
 export MATLAB_MEM_MGR=debug,nointegcheck
 
 # ~/.profile: executed by sh for login shells.
