@@ -9,6 +9,7 @@ append_if() {
 append_if ${HOME}/.local/bin
 append_if ${HOME}/doxyTools
 append_if ${HOME}/.cask
+append_if ${HOME}/.cargo/bin
 append_if /usr/local/emacs/bin
 append_if /usr/lib/ccache
 append_if /usr/local/netbin
