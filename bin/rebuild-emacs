@@ -8,7 +8,16 @@
 # Makefile to compile without docs.
 
 if [ ! -f "src/bitmaps/leftptr.xbm" ]; then
-   echo "Working directory ( $(pwd) ) is not the root of an emacs source tree."; exit 1
+    echo "Working directory ( $(pwd) ) is not the root of an emacs source tree."
+    exit 1
+fi
+
+if git status --short | grep -Gq '.' ; then
+    echo "The emacs sandbox ( $(pwd) ) has uncommited work"
+    echo
+    git status
+    echo
+    exit 1
 fi
 
 make extraclean
@@ -25,18 +34,35 @@ set +e
 # Run the configure script
 # (Add   --with-pgtk for Wayland)
 
+# If CC and CXX environment variables are not set, then configure
+# will not find important native compilation libraries (libgccjit)
+export CC=/usr/bin/gcc-10
+export CXX=${CC}
+
 ./configure \
-  --prefix=/usr/local/emacs \
   --program-transform-name='s/^ctags$/ctags.emacs/' \
   --disable-year2038 \
   --disable-acl \
-  --with-modules \
-  --with-json \
   --with-file-notification \
-  --with-native-compilation \
-  --with-xwidgets \
+  --with-json \
+  --with-modules \
+  --with-no-native-compilation \
+  --with-small-ja-dic \
   >/tmp/config
 
+#  --with-tree-sitter=ifavailable \
 #  --with-x-toolkit=athena \
+
+echo
+echo ===================================================================
+echo
+cat /tmp/config
+echo
+echo ===================================================================
+echo
+
+#  --with-native-compilation=AOT \
+#  --prefix=/usr/local/emacs \
+#  --with-xwidgets \
 
 compile-emacs >/tmp/compile

@@ -1,16 +1,19 @@
 #!/bin/dash
 
+# OPT_FLAGS='-O0 -g'
+OPT_FLAGS='-O2'
+
 # Dependencies are not complete so parallel builds have sporadic failures.
 # Do a first parallel pass to build as much as possible.
-CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make -j24 -k
-CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make -j24 -k doc
+CFLAGS='-march=native -mfpmath=387 ${OPT_FLAGS} -no-pie' make -j24 -k
+CFLAGS='-march=native -mfpmath=387 ${OPT_FLAGS} -no-pie' make -j24 -k doc
 
 # Now do a non-parallel build to get loose ends tied up
 set -e
-CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make
-CFLAGS='-march=native -mfpmath=387 -O3 -no-pie' make doc
+CFLAGS='-march=native -mfpmath=387 -${OPT_FLAGS} -no-pie' make
+CFLAGS='-march=native -mfpmath=387 -${OPT_FLAGS} -no-pie' make doc
 
-(cd lisp ; make autoloads)
+(cd lisp ; make autoloads ; make trampolines)
 
 echo
 echo "Build is complete; performing very simple invocation"
@@ -20,6 +23,7 @@ echo
 echo
 echo Starting emacs
 echo
-./src/emacs -Q &
+# ./src/emacs -Q &
+./src/emacs &
 echo
 echo
