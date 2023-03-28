@@ -2,6 +2,8 @@
 
 export EDITOR=/usr/bin/emacs
 export MATLAB_MEM_MGR=debug,nointegcheck
+export GCM_CREDENTIAL_STORE=plaintext
+export GCM_PLAINTEXT_STORE_PATH=~/.git-credential-cache/credentials
 
 # ~/.profile: executed by sh for login shells.
 
