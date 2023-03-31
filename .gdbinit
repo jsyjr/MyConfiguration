@@ -1,23 +1,33 @@
- # -*-gdb-script-*-
+# -*-gdb-script-*-
 
-# I would like to source this file and be done:
-#
+# Note: my ~/.sbtools/sb.cfg specifies -no-debug-backing-stores
+
+source /mathworks/hub/share/sbtools/.gdbinit
 source /mathworks/inside/files/dev/cda/codegen/cgir/tools/.gdbinit
-#
-# Unfortunately there seems to be some sort of issue with python that
-# I have yet to sort out.  In the interim here is the non-python portion
-# the above file:
 
-# shell firefox -remote openFile\("/tmp/foo.html",new-tab\)
+define dr
+  print $arg0.toString(RS::RangeDisplay::DisplayFormat::FULL)
+end
 
+define gtf
+  run --gtest_filter=$arg0
+end
 
+define ral
+  shell rm -rf /tmp/cg_debug_printf.txt
+  set CG::analysis::range::rangeAnalysisLoggingEnabled = 1
+end
+
+define ralid
+  shell rm -rf /tmp/cg_debug_printf.txt
+  set CG::analysis::range::rangeAnalysisLoggingEnabled = 1
+  set CG::analysis::range::rangeAnalysisLogObjIdsEnabled = 1
+  set RS::rangeAnalysisLogRvrIdsEnabled = 1
+end
 
 # set auto-solib-add on
 set history save off
 set non-stop off
-
-# handle SIGALRM nostop noprint
-segv
 
 define sb
   nosegv
@@ -39,11 +49,6 @@ define caf
   b foundation::core::diag::terminate
 end
 
-define bex
-  handle SIGSEGV nostop noprint pass
-  caf
-end
-
 
 # Don't display the thread creation/deletion/switch messages
 # This doesn't work on MACI, so comment it out when debuggin on MACI
@@ -54,45 +59,65 @@ set print static-members off
 
 # exit
 
-set auto-solib-add off
-
-catch load
-commands
-  silent
-  delete breakpoint 1
-  sharedlibrary libmwcg_ir.so
-#  sharedlibrary libmwcgir_algorithm.so
-#  sharedlibrary libmwcgir_analysis.so
-#  sharedlibrary libmwcgir_cgel.so
-#  sharedlibrary libmwcgir_clair.so
-#  sharedlibrary libmwcgir_construct.so
-#  sharedlibrary libmwcgir_cpp_emitter.so
-#  sharedlibrary libmwcgir_fixpt.so
-#  sharedlibrary libmwcgir_gpu.so
-#  sharedlibrary libmwcgir_hdl.so
-#  sharedlibrary libmwcgir_interp.so
-#  sharedlibrary libmwcgir_mi.so
-#  sharedlibrary libmwcgir_plc.so
-  sharedlibrary libmwcgir_support.so
-  sharedlibrary libmwcgir_tests.so
-#  sharedlibrary libmwcgir_tfl.so
-#  sharedlibrary libmwcgir_vm_rt.so
-#  sharedlibrary libmwcgir_vm.so
-  sharedlibrary libmwcgir_xform.so
-#  sharedlibrary libmweml.so
-#  sharedlibrary libmwrtw_core.so
-  segv
-  caf
-  echo \n
-  echo Caught load shared library event. Now is the time to set breakpoints.\n
-  echo \n
+define hint
+    echo \n
+    echo Conditional BP:\n
+    echo   condition <BP> cg_pps_contains(<SYM>, "<PATTERN>")\n
+    echo \n
+    echo Print array values:\n
+    echo   pv <ARRAY> <FIRST> <LAST>  (e.g. pv arr 0 2)\n
+    echo \n
+    echo Auto symbol loading:\n
+    echo   set auto-solib-add on|off\n
+    echo \n
+    echo Load symbols:\n
+    echo   sb-load-stack <FRAME_NUM> | all\n
+    echo \n
 end
 
-echo \n
+
+# Avoid loading symbols from most libraries
+#set auto-solib-add off
+
+# But do load these
+sb-auto-load-libs cgir_
+sharedlibrary libmwcg_ir.so
+sharedlibrary libmweml.so
+sharedlibrary libmwrange_services.so
+# sharedlibrary libmwrtw_core.so
+
 
 echo \n
-echo Do not set breakpoints yet. Issue appropriate run command.  GDB will break at the\n
-echo first load shared library event.  At that you should set up any breakpoints, then\n
-echo run or\n
-echo run --gtest_filter=\n
+echo ===================================================================\n
 echo \n
+echo Running a unittest?  DO NOT SETUP BREAKPOINTS YET.
+echo \n
+echo For much faster loading do the following:\n
+echo \n
+echo (gdb) unittest\n
+echo (gdb) run [ --gtest_filter=? ]\n
+echo \n
+echo Once your unittest loads its first shared library GDB will break,\n
+echo perform some bookkeeping and then display its (gdb) prompt.\n
+echo \n
+echo At that you should setup your breakpoints.
+echo \n
+
+# THIS is breakpoint #1
+segv
+
+define unittest
+  set auto-solib-add on
+  catch load
+  commands
+    silent
+    delete breakpoint 1
+    delete breakpoint 2
+    caf
+    echo \n
+    echo ===================================================================\n
+    echo Caught first shared library load event. Setup your breakpoints now.\n
+    echo Once your breakpoints are in-place issue a 'continue' command.\n
+    echo \n
+  end
+end

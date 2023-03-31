@@ -187,6 +187,10 @@
 
 
 ;;; === Package management via straight and use-package (not custom) ===
+;;;; Activate any packages install from an ELPA or MELPA
+
+(package-activate-all)
+
 ;;;; Straight: a next-generation package manager (Radon Rosborough)
 ;; https://github.com/raxod502/straight.el
 
@@ -558,14 +562,13 @@ as in `defun'."
 (use-package popup
   :straight  (:host github :repo "auto-complete/popup-el"))
 
-
 ;;;; Compat: a general COMPATibility library (Philip Kaludercic)
 ;; https://git.sr.ht/~pkal/compat
 
 (use-package compat
+  :disabled
   :straight (:host melpa :repro "gnu-elpa-mirror/compat")
   :defer)
-
 
 ;;; === Protection =====================================================
 ;;;; Bostr: Backup On Save To Rcs
@@ -841,7 +844,8 @@ as in `defun'."
 
   (let
 ;;    ((fixed-family "Monoid") (variable-family "Source Sans Pro"))
-    ((fixed-family "Source Code Pro") (variable-family "Source Sans Pro"))
+    ((fixed-family "Iosevka Comfy Fixed") (variable-family "Iosevka Comfy Duo"))
+;;  ((fixed-family "Source Code Pro") (variable-family "Source Sans Pro"))
 ;;    ((fixed-family "Terminus") (variable-family "Source Sans Pro"))
 ;;    ((fixed-family "Input Mono") (variable-family "Input Sans"))
 ;;    ((fixed-family "Dina") (variable-family "Input Sans"))
@@ -965,8 +969,8 @@ as in `defun'."
   :custom
   (default-frame-alist
    '((minibuffer . nil)
-     (frame-minibuffer-at-top . t)
-     (window-mode-line-at-top . t)
+     ;; (frame-minibuffer-at-top . t)
+     ;; (window-mode-line-at-top . t)
      (menu-bar-lines . 0)
      (tool-bar-lines . 0)
      (tab-bar-lines . 1)
@@ -2078,6 +2082,7 @@ parses its input."
 
 (use-package consult
   :straight (:host github :repo "minad/consult" :local-repo "consult" :files (:defaults))
+  :disabled
   ;; :init
   ;; Optionally configure a function which returns the project root directory
   ;; (autoload 'projectile-project-root "projectile")
@@ -2205,29 +2210,6 @@ parses its input."
   (add-hook 'embark-collect-mode #'embark-consult-preview-minor-mode))
 
 ;;; === Buffers: selection, display and navigation =====================
-;;;; Ibuffer: operate on buffers like dired (Colin Walters)
-
-(use-package ibuffer
-  :straight (:type built-in)
-  :custom
-  (ibuffer-default-shrink-to-minimum-size t)
-  :bind
-  (("<f1>" . ibuffer-list-buffers)
-   :map ibuffer-mode-map
-   ("<f1>" . quit-window))
-  :config
-  (my/beginning-of-buffer
-    ibuffer (ibuffer-forward-line 1))
-  (my/end-of-buffer
-    ibuffer (ibuffer-backward-line 1)))
-
-;;;; Ibuffer-vc: group buffers in ibuffer list by VC project (Steve Purcell)
-;; https://github.com/purcell/ibuffer-vc
-
-(use-package ibuffer-vc
-  :straight (:host github :repo "purcell/ibuffer-vc"))
-
-
 ;;;; Improved beginning-of-buffer and end-of-buffer
 ;; https://fuco1.github.io/2017-05-06-Enhanced-beginning--and-end-of-buffer-in-special-mode-buffers-(dired-etc.).html
 ;; Web page has support for
@@ -2293,6 +2275,29 @@ toggle between real end and logical end of the buffer."
                  (lambda ()
                    (define-key ,mode-map
                                [remap end-of-buffer] ',fname))))))
+
+
+;;;; Ibuffer: operate on buffers like dired (Colin Walters)
+
+(use-package ibuffer
+  :straight (:type built-in)
+  :custom
+  (ibuffer-default-shrink-to-minimum-size t)
+  :bind
+  (("<f1>" . ibuffer-list-buffers)
+   :map ibuffer-mode-map
+   ("<f1>" . quit-window))
+  :config
+  (my/beginning-of-buffer
+    ibuffer (ibuffer-forward-line 1))
+  (my/end-of-buffer
+    ibuffer (ibuffer-backward-line 1)))
+
+;;;; Ibuffer-vc: group buffers in ibuffer list by VC project (Steve Purcell)
+;; https://github.com/purcell/ibuffer-vc
+
+(use-package ibuffer-vc
+  :straight (:host github :repo "purcell/ibuffer-vc"))
 
 
 ;;; === Completion =====================================================
@@ -3256,7 +3261,8 @@ convert it to readonly/view-mode."
   (my/gud-def my/gud-nexti  (progn (gud-call "nexti %p")
                                    (gud-call "x/i $pc"))
               1 "Step one or more instructions (skip over calls).")
-  (my/gud-def my/gud-cont   "cont"         1 "Continue with display.")
+  (my/gud-def my/gud-cont   (progn (gud-go nil))
+              1 "Continue with display.")
   (my/gud-def my/gud-finish "finish"       1 "Finish executing current function.")
   (my/gud-def my/gud-jump   (progn (gud-call "tbreak %f:%l")
                                    (gud-call "jump %f:%l"))
@@ -3601,6 +3607,7 @@ to a function that generates a unique name."
 
 (use-package wsf
   :straight (:host github :repo "jsyjr/wsf")
+  :disabled
   :after mw-jsy
   :general
   (:keymaps 'sb-prefix-map
@@ -3851,7 +3858,7 @@ to a function that generates a unique name."
   (defun my/minibuffer-setup-oneshot()
     (remove-hook 'minibuffer-setup-hook #'my/minibuffer-setup-oneshot)
 
-    (setq enable-recursive-minibuffers t)
+    ;; (setq enable-recursive-minibuffers t)
     (minibuffer-depth-indicate-mode 1)  ; show recursion depth in promp
     (setq read-extended-command-predicate       ; Hide M-x commands which do
         #'command-completion-default-include-p) ; not work in current mode

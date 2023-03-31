@@ -1,7 +1,0 @@
-# Emacs: type 'C-x #' when done
-
-# Every hour at 3(3) past the hour
-3 *   * * * . /hub/share/sbtools/bash_setup.bash && /home/jyates/.sbsyncmaster/sync-all-clusters
-
-# Every day at midnight
-0 0   * * * /hub/share/sbtools/apps/cgir_tools/cgsandboxes -sandbox-dir /ws -autobackup

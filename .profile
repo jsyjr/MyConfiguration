@@ -4,6 +4,7 @@ export EDITOR=/usr/bin/emacs
 export MATLAB_MEM_MGR=debug,nointegcheck
 export GCM_CREDENTIAL_STORE=plaintext
 export GCM_PLAINTEXT_STORE_PATH=~/.git-credential-cache/credentials
+export P4MERGE=p4merge
 
 # ~/.profile: executed by sh for login shells.
 
@@ -18,18 +19,16 @@ export GCM_PLAINTEXT_STORE_PATH=~/.git-credential-cache/credentials
 if [ -d /mathworks ]; then
     . /mathworks/hub/share/sbtools/bash_setup_env.bash
     export q=/mathworks/devel/sandbox/$USER/qualify
-    /hub/share/sbtools/bin/glnxa64/sbvncserver -vnctype tigervnc -alwaysshared \
-         -plainUsers=jyates,dserr,ntalele,amathewi,dgutierr,jlawranc\
-         ,martind,ebergero,akshathb,kaakash,annquach,xiaofeng\
-         ,ksurende,jhafer,pnagare,donghe
+    # /mathworks/hub/share/sbtools/bin/glnxa64/sbvncserver -vnctype tigervnc -alwaysshared
+    # -plainUsers=jyates,dserr,ntalele,amathewi,dgutierr,jlawranc,martind,akshathb,kaakash,annquach,xiaofeng,jhafer,donghe
 fi
 
 # Rewrite path per my own preferences
 source ~/.my_path
 
 # xrdb ~/.Xresources
-if [ -d /ccc ]; then
-    export CCACHE_DIR=/ccc
+if [ -d /ws/.ccache ]; then
+    export CCACHE_DIR=/ws/.ccache
     export CCACHE_LOGFILE=/tmp/ccache.log
     export CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
     export CCACHE_TEMPDIR=/tmp

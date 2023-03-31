@@ -1,0 +1,108 @@
+#!/bin/bash
+
+alias aa="sed <${HOME}/.alias -nre 's|^ *alias ([^=]*)=(.*)|\1	\2|p' | sort"
+alias ga="aa | grep"
+
+######### GENERAL ALIASES #########
+# enable color support of ls and also add handy aliases
+if [ "$TERM" != "dumb" ]; then
+    eval "`dircolors -b`"          # set LS_COLORS
+    alias ls='ls --color=auto'
+fi
+
+# some more ls aliases
+#alias ll='ls -lhF'
+#alias lla='ls -lhFA'
+#alias la='ls -hA'
+#alias l='ls -F'
+
+alias dff='df -h /ws /mathworks/devel/sandbox/jyates /'
+alias env='env | sort'
+alias gsn='git status --short | wc -l'
+alias gsp="git status --short | sed -nre 's|...(.*)|\1|p' | sort"
+alias gss='git status --short | sort'
+alias lc='wc -l'
+alias p4n='p4 opened | wc -l'
+alias p4o="p4 opened | sed -nre 's|^.*/(matlab/[^#]*)#[0-9]* - (....).*|\2 : \1|p' | sort"
+alias p4p="p4 opened | sed -nre 's|^.*/(matlab/[^#]*)#.*|\1|p' | sort"
+alias pss='ps afx | grep syncm'
+alias rgf='rg -uu --files -g '
+alias rla='. ~/.alias'
+alias teg='time /usr/local/bin/emacs     -q -l /mathworks/hub/share/sbtools/emacs_setup.el "--eval=(kill-emacs)"'
+alias tet='time /usr/local/bin/emacs -nw -q -l /mathworks/hub/share/sbtools/emacs_setup.el "--eval=(kill-emacs)"'
+alias gdp="(cd \$(sbroot) ; git status --short | sed -nre 's|...(.*)|git \1|p' | sort >/tmp/join.$$ ; p4 opened | sed -nre 's|^.*/(matlab/[^#]*)#.*|p4_ \1|p' | sort | join --nocheck-order -j2 -a1 -v1 -a2 -v2 -o1.1,2.1,1.2,2.2 - /tmp/join.$$ ; rm /tmp/join.$$)"
+
+###################################
+
+########## START MATHWORKS SPECIFIC ##########
+#
+if [ -d /mathworks ]; then
+
+    # Customize DEFAULT_SANDBOX to where you normally work
+    # (This must be defined before sourcing bash_setup.bash)
+    export DEFAULT_SANDBOX=/ws/Bcgir_task.latest_pass/
+    export x=$DEFAULT_SANDBOX
+    if [ -f /mathworks/hub/share/sbtools/bash_setup.bash ]; then
+        . /mathworks/hub/share/sbtools/bash_setup.bash
+    fi
+
+    export SBRT_FULL_CFG="-cfg Acgir_Aslrtw -cfg cgir_ui_test_exclude -cfg /mathworks/hub/share/sbtools/apps/cgir_tools/latest_source_to_test_mapping/excludefile_noCgCtxCreate_Aslrtw_Acgir.txt"
+
+    alias p4h="rm -rf /tmp/p4history ; sbp4tree -format git-repo -bare -o /tmp/p4history"
+
+    alias kar="sbruntests -kill-and-report -session-id"
+
+    alias ezfast='( cd matlab/src/cg_ir && /hub/share/sbtools/apps/cgir_tools/cgmake DEBUG=1 NORUNTESTS=1 -f ez.mk )'
+    alias ezmk='( cd matlab/src/cg_ir && /hub/share/sbtools/apps/cgir_tools/cgmake DEBUG=1 -f ez.mk )'
+    alias sbn='sb -memmgr debug,nointegcheck -nodesktop -nosplash -r "opengl info"'
+    alias sbnj='sb -memmgr debug,nointegcheck -nodesktop -nosplash -nojvm -r "opengl info"'
+    alias ddnrun='echo;echo "    cd(fullfile(matlabroot,"src/cg_ir/tools/dataDrivenNodes")); ddnrun"; echo'
+
+    alias pq="cgprequal -max-exec-minutes 60"
+
+    alias cgm="reset ; pwd ; cgmake"
+    alias changelist="p4 opened | grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g'|sort|uniq|xargs p4 changelist -o"
+    alias cn="p4 opened | grep ' change '|sed -re 's/.* change ([0-9]+).*/\1/g' | sort -u | xargs p4 changelist -o | sed -nre '/^Change:/ { s/Change:.([0-9]+).*/\1/gp }'"
+    alias diff='git diff --no-index --histogram'
+    alias gecks="p4 opened | grep ' change ' | sed -re 's/.* change ([0-9]+).*/\1/g' | sort -u | xargs p4 describe|sed -nre '/^g[0-9]+/ { s/(g[0-9]+).*/\1/gp }'"
+    alias nrss='CH_FORCEFULLY_CREATE_CACHE=1 mw checkconfig && mw gmake -j24 COMPONENTS_TO_BUILD=range_services DEBUG=1 && mw gmake -j24 COMPONENTS_TO_BUILD=cgir_support DEBUG=1'
+    alias gitlab='PATH=/local/cgmux/apps/cgir_tools:${PATH}'
+    alias vsc='sbm code $(sbroot)/vsprojWorkspace.code-workspace'
+
+    alias sbs_build='mw -using Bcgir_task_build sbs clone create -cluster Bcgir_task_build -name'
+    alias sbs_task='mw -using Bcgir_task sbs clone create -cluster Bcgir_task -name'
+    alias sbs_cga='mw -using Bcga sbs clone create -cluster Bcga -name'
+    alias sbsdel='mw -using Bcgir_task sbs clone discard'
+
+    alias sbrerun='pushd `sbroot` && sbruntests -farm devel -F none -testsuites '
+    alias sbrerunlocal='pushd `sbroot` && sbruntests -local 9 -F none -rerunusing nothing -noretryfailedtests -mlswitches -no-vmemorylimit -testsuites '
+
+    alias tclean="cd /ws ; cgmux delete down ; cgmux delete master ; cgmux disconnect up ; cgmux kill thin ; cgmux scan ; resdet"
+    alias tshare="tclean ; cgmux sync _Bcgir_thin thin ; cgmux clone thin master ; cgmux connect ah-jyates-l /ws/master up ; cgmux clone up down"
+    alias tcgmux="tclean ; /local/cgmux/apps/cgir_tools/cgmuxTest/testScripts/basicSyncAndClone"
+    alias fakeCluster="/local/cgmux/apps/cgir_tools/cgmuxTest/testScripts/fakeCluster"
+
+    # sbo= sbsmartbuild -opened, no debug unless ut or dbg;  ut: unit tests only;  nt: full build, no tests
+    alias sbo="sbsmartbuild -opened -distcc-pump -turbo -no-sbindent-files-in-lockdown DEBUG=  ASSERTS=1 DISABLE_WARNINGS_AS_ERROR=1"
+    alias sbod="sbsmartbuild -opened -distcc-pump -turbo -no-sbindent-files-in-lockdown DEBUG=1 ASSERTS=1 DISABLE_WARNINGS_AS_ERROR=1"
+    alias sbout="sbsmartbuild -opened -distcc-pump -turbo -no-sbindent-files-in-lockdown DEBUG=1 ASSERTS=1 DISABLE_WARNINGS_AS_ERROR=1 -skip-downstream"
+    alias sbobo="sbsmartbuild -opened -distcc-pump -turbo -no-sbindent-files-in-lockdown DEBUG=  ASSERTS=1 DISABLE_WARNINGS_AS_ERROR=1 NOBUILDTESTS=1 NORUNTEST=1"
+    alias sbobod="sbsmartbuild -opened -distcc-pump -turbo -no-sbindent-files-in-lockdown DEBUG=1 ASSERTS=1 DISABLE_WARNINGS_AS_ERROR=1 NOBUILDTESTS=1 NORUNTEST=1"
+
+    alias abvg="sbvalgrind -s --leak-check=full --track-origins=yes"
+
+    alias check="sbcheck  -no-clickable-shell -skip toptesters -skip sbedits -skip typos -opened"
+    alias typos="sbcheck  -no-clickable-shell -check typos"
+    alias submit="sbsubmit -no-clickable-shell -skip toptesters -skip sbedits -opened"
+    alias ralog="( cd matlab/bin/glnxa64 && ln -sf RA_LOGGING/libmwcgir_support-RA_LOG.so libmwcgir_support.so && ln -sf RA_LOGGING/libmwcgir_support-RA_LOG.so.dbg libmwcgir_support.so.dbg )"
+    alias ranolog="( cd matlab/bin/glnxa64 && ln -sf RA_LOGGING/libmwcgir_support-NO_LOG.so libmwcgir_support.so && ln -sf RA_LOGGING/libmwcgir_support-NO_LOG.so.dbg libmwcgir_support.so.dbg )"
+
+    # if [ -d /sandbox/savadhan/sbtools ]; then
+    #     if [ -f /sandbox/savadhan/sbtools/_bash_functions ]; then
+    #         . /sandbox/savadhan/sbtools/_bash_functions
+    #     fi
+    # fi
+
+fi
+#
+########### END MATHWORKS SPECIFIC ###########

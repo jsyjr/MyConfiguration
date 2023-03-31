@@ -50,6 +50,10 @@ resources.")
   (advice-add #'x-apply-session-resources :override
               #'radian--advice-disable-x-resource-application)
 
+  ;; Ensure that packages not handled by init.el are already
+  ;; loaded and available by the time init.el gets loaded.
+  (package-activate-all)
+
   ;; Load the regular init-file.
   (load
    (expand-file-name "init.el" user-emacs-directory) nil 'nomessage 'nosuffix)
