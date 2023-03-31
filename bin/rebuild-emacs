@@ -50,8 +50,14 @@ export CXX=${CC}
   --with-small-ja-dic \
   >/tmp/config
 
+#  --prefix=/usr/local/emacs \
 #  --with-tree-sitter=ifavailable \
 #  --with-x-toolkit=athena \
+#  --with-native-compilation=AOT \
+#  --with-xwidgets \
+
+
+compile-emacs >/tmp/compile
 
 echo
 echo ===================================================================
@@ -60,9 +66,3 @@ cat /tmp/config
 echo
 echo ===================================================================
 echo
-
-#  --with-native-compilation=AOT \
-#  --prefix=/usr/local/emacs \
-#  --with-xwidgets \
-
-compile-emacs >/tmp/compile

@@ -34,6 +34,15 @@ alias gdp="(cd \$(sbroot) ; git status --short | sed -nre 's|...(.*)|git \1|p' |
 
 ###################################
 
+########## START BOSTON SPECIFIC ##########
+#
+if [ -d /ccc ]; then
+
+    alias turris='ssh root@turris'
+
+fi
+
+
 ########## START MATHWORKS SPECIFIC ##########
 #
 if [ -d /mathworks ]; then

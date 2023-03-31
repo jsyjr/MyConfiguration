@@ -70,22 +70,22 @@ common to all directory paths is factored out.")
 ;;====================================================
 
 ;;;###autoload
-(defun wsf-ivy-find-file ()
+(defun wsf-find-file ()
   "Use IVY completion with find-file in a workspace."
   (interactive)
-  (wsf--ivy-find-file-helper #'find-file))
+  (wsf--find-file-helper #'find-file))
 
 ;;;###autoload
-(defun wsf-ivy-find-file-read-only ()
+(defun wsf-find-file-read-only ()
   "Use IVY completion with find-file-read-only in a workspace."
   (interactive)
-  (wsf--ivy-find-file-helper #'find-file-read-only))
+  (wsf--find-file-helper #'find-file-read-only))
 
 ;;;###autoload
-(defun wsf-ivy-view-file ()
+(defun wsf-view-file ()
   "Use IVY completion with view-file in a workspace."
   (interactive)
-  (wsf--ivy-find-file-helper #'view-file))
+  (wsf--find-file-helper #'view-file))
 
 ;;====================================================
 ;; Lesser entrypoints
@@ -103,21 +103,24 @@ common to all directory paths is factored out.")
 ;; Find-file-helper and final path reconstruction
 ;;====================================================
 
-(defun wsf--ivy-find-file-helper (find-file-func)
+(defun wsf--find-file-helper (find-file-func)
   "Use IVY completion with find-file-func in a Mathworks workspace."
   (wsf--current-completions)
+
+
   (let* ((prompt (concat "Find-file in workspace " wsf--workspace ": "))
          (filename (let ((preselect (thing-at-point 'filename)))
-                     (cond
-                      (preselect
-                       (ivy-read prompt wsf--uniquified-list
-                                 :history 'wsf--find-file-history
-                                 :preselect (file-name-nondirectory preselect)))
-                      (t
-                       (ivy-read prompt wsf--uniquified-list
-                                 :history 'wsf--find-file-history))))))
+                     (completing-read-default prompt                    ; prompt
+                                              wsf--uniquified-list      ; collection
+                                              nil                       ; predicate
+                                              t                         ; require match
+                                              nil                       ; initial input
+                                              'wsf--find-file-history   ; history
+                                              (if preselect             ; default
+                                                  (file-name-nondirectory preselect)
+                                                nil))))))
     (when (> (length filename) 0)
-      (funcall find-file-func (wsf--reconstitute-file-path filename)))))
+      (funcall find-file-func (wsf--reconstitute-file-path filename))))
 
 (defun wsf--reconstitute-file-path (filename)
   ""

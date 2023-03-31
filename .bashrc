@@ -60,10 +60,16 @@ export P4EDITOR=emacs
 export ALTERNATE_EDITOR=emacs
 export ESHELL=/bin/bash
 
-if [ -d /local/.ccache ]; then
+if [ -d /ws/.ccache ]; then
     export CCACHE_DIR=/ws/.ccache
-    export CCACHE_CONFIGPATH=/ws/.ccache/ccache.conf
+elif [ -d /ccc ]; then
+    export CCACHE_DIR=/ccc
 fi
+export CCACHE_CONFIGPATH=${CCACHE_DIR}/ccache.conf
+export CCACHE_TEMPDIR=/tmp
+export CCACHE_LOGFILE=/tmp/ccache.log
+export CCACHE_SLOPPINESS=include_file_mtime,file_macro,time_macros
+export USE_CCACHE=1
 
 # Suppress offer to report MATLAB crashes
 export CG_ASSERT_CONTINUE=1
@@ -72,6 +78,4 @@ export CG_ASSERT_CONTINUE=1
 . ${HOME}/.my_path
 
 # Shell aliases
-. ~/.alias
-
-alias turris='ssh root@turris'
+. ${HOME}/.alias

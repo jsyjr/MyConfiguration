@@ -49,6 +49,11 @@ define caf
   b foundation::core::diag::terminate
 end
 
+define bex
+  handle SIGSEGV nostop noprint pass
+  caf
+end
+
 
 # Don't display the thread creation/deletion/switch messages
 # This doesn't work on MACI, so comment it out when debuggin on MACI
@@ -57,7 +62,6 @@ set print thread-events off
 # Seem to get set on so reset to our desired state
 set print static-members off
 
-# exit
 
 define hint
     echo \n
@@ -75,17 +79,59 @@ define hint
     echo \n
 end
 
-
 # Avoid loading symbols from most libraries
-#set auto-solib-add off
+set auto-solib-add off
 
-# But do load these
-sb-auto-load-libs cgir_
-sharedlibrary libmwcg_ir.so
-sharedlibrary libmweml.so
-sharedlibrary libmwrange_services.so
-# sharedlibrary libmwrtw_core.so
+catch load
+commands
+  silent
+  delete breakpoint 1
+  sharedlibrary libmwcg_ir.so
+#  sharedlibrary libmwcgir_algorithm.so
+#  sharedlibrary libmwcgir_analysis.so
+#  sharedlibrary libmwcgir_cgel.so
+#  sharedlibrary libmwcgir_clair.so
+#  sharedlibrary libmwcgir_construct.so
+#  sharedlibrary libmwcgir_cpp_emitter.so
+#  sharedlibrary libmwcgir_fixpt.so
+#  sharedlibrary libmwcgir_gpu.so
+#  sharedlibrary libmwcgir_hdl.so
+#  sharedlibrary libmwcgir_interp.so
+#  sharedlibrary libmwcgir_mi.so
+#  sharedlibrary libmwcgir_plc.so
+  sharedlibrary libmwcgir_support.so
+  sharedlibrary libmwcgir_tests.so
+#  sharedlibrary libmwcgir_tfl.so
+#  sharedlibrary libmwcgir_vm_rt.so
+#  sharedlibrary libmwcgir_vm.so
+  sharedlibrary libmwcgir_xform.so
+#  sharedlibrary libmweml.so
+#  sharedlibrary libmwrtw_core.so
+  sharedlibrary libmweml.so
+  sharedlibrary libmwrange_services.so
+  skip _dl_fixup _dl_runtime_resolve_xsave patched__dl_lookup_symbol_x
 
+  segv
+  caf
+  echo \n
+  echo Caught load shared library event. Now is the time to set breakpoints.\n
+  echo \n
+
+  echo \n
+  echo A few cgir libraries have been loaded:\n
+  echo  - libmwcg_ir.so\n
+  echo  - libmwcgir_cpp_emitter.so\n
+  echo  - libmwcgir_support.so\n
+  echo  - libmwcgir_tests.so\n
+  echo  - libmwcgir_xform.so\n
+  echo  - libmweml.so\n
+  echo  - libmwrange_services.so\n
+
+  echo \n
+  echo Set additional breakpoints, then continue.\n
+  echo \n
+  echo (gdb)
+end
 
 echo \n
 echo ===================================================================\n
@@ -94,8 +140,10 @@ echo Running a unittest?  DO NOT SETUP BREAKPOINTS YET.
 echo \n
 echo For much faster loading do the following:\n
 echo \n
-echo (gdb) unittest\n
-echo (gdb) run [ --gtest_filter=? ]\n
+echo Do not set breakpoints yet. Issue appropriate run command.  GDB will break at the\n
+echo first load shared library event.  At that you should set up any breakpoints, then\n
+echo run or\n
+echo run --gtest_filter=\n
 echo \n
 echo Once your unittest loads its first shared library GDB will break,\n
 echo perform some bookkeeping and then display its (gdb) prompt.\n
