@@ -564,12 +564,14 @@ as in `defun'."
 
 
 ;;; === Protection =====================================================
-;;;; Bostr: Backup On Save To Rcs
+;;;; vc-bos: Backup On Save (to RCS)
 ;; Remember to install rcs
 
-(use-package bostr
-  :straight (:host github :repo "jsyjr/bostr")
-  :hook after-save)
+(use-package vc-bos
+  :straight (:type built-in)
+  :after vc
+  :config
+  (vc-bos-mode +1))
 
 
 ;;;; Byte-compile on save of a .el file
@@ -2594,23 +2596,29 @@ Use a normal parenthesis if not inside any."
 ;;; === VC, git, magit, etc ============================================
 ;;;; Vc: a version control system driver (Eric S. Raymond)
 
+;; (use-package vc
+;;   :disabled
+;;   :straight (:type built-in)
+;;   ;; :custom
+;;   ;; (vc-follow-symlinks true)
+;;   :init
+;;   (defun my/vc-follow-some-symbolic-links ()
+;;     (message "my/vc-follow-some-symbolic-links: %s" buffer-file-name)
+;;     (when (and
+;;            (file-exists-p buffer-file-name)
+;;            (stringp buffer-file-name)
+;;            (or (string-prefix-p "/home/jyates/.emacs.d/straight/repos/" buffer-file-name)
+;;                (string-equal "" buffer-file-name)))
+;;          (setq-local vc-follow-symlinks t)))
+;;   :hook
+;;   (find-file-hook . my/vc-follow-some-symbolic-links)
+;;   )
+
 (use-package vc
-  :disabled
   :straight (:type built-in)
-  ;; :custom
-  ;; (vc-follow-symlinks true)
-  :init
-  (defun my/vc-follow-some-symbolic-links ()
-    (message "my/vc-follow-some-symbolic-links: %s" buffer-file-name)
-    (when (and
-           (file-exists-p buffer-file-name)
-           (stringp buffer-file-name)
-           (or (string-prefix-p "/home/jyates/.emacs.d/straight/repos/" buffer-file-name)
-               (string-equal "" buffer-file-name)))
-         (setq-local vc-follow-symlinks t)))
-  :hook
-  (find-file-hook . my/vc-follow-some-symbolic-links)
-  )
+  :custom
+  (vc-mirror-root "~/.backups-and-cache/RCS"))
+
 
 
 ;;;; Magit: a git porcelain inside Emacs (Jonas Bernoulli)
