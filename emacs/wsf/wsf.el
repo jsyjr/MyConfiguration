@@ -66,24 +66,24 @@ common to all directory paths is factored out.")
 
 
 ;;====================================================
-;; Autoloaded entrypoints for IVY access
+;; Autoloaded entrypoints for completing-read access
 ;;====================================================
 
 ;;;###autoload
 (defun wsf-find-file ()
-  "Use IVY completion with find-file in a workspace."
+  "Find-file in a workspace."
   (interactive)
   (wsf--find-file-helper #'find-file))
 
 ;;;###autoload
 (defun wsf-find-file-read-only ()
-  "Use IVY completion with find-file-read-only in a workspace."
+  "Find-file-read-only in a workspace."
   (interactive)
   (wsf--find-file-helper #'find-file-read-only))
 
 ;;;###autoload
 (defun wsf-view-file ()
-  "Use IVY completion with view-file in a workspace."
+  "View-file in a workspace."
   (interactive)
   (wsf--find-file-helper #'view-file))
 
@@ -104,7 +104,7 @@ common to all directory paths is factored out.")
 ;;====================================================
 
 (defun wsf--find-file-helper (find-file-func)
-  "Use IVY completion with find-file-func in a Mathworks workspace."
+  "Completing-read for find-file-func in a Mathworks workspace."
   (wsf--current-completions)
 
 
@@ -141,7 +141,7 @@ common to all directory paths is factored out.")
     (let ((value (gethash filename wsf--hash-table)))
       (unless (stringp value)
         (catch 'found-match
-          (loop for path across value do
+          (cl-loop for path across value do
                 (when (string-match-p tag path)
                   (setq value path)
                   (throw 'found-match nil)))
@@ -193,7 +193,7 @@ common to all directory paths is factored out.")
 
 (defun wsf--workspace-root-marker-directory (path)
   "Return workspace root mark directory name if one exists at PATH"
-  (loop for (state-dir _search-roots) in wsf--workspace-root-marker-alist
+  (cl-loop for (state-dir _search-roots) in wsf--workspace-root-marker-alist
         if (file-exists-p (concat path "/" state-dir)) return state-dir))
 
 
@@ -225,9 +225,9 @@ common to all directory paths is factored out.")
                                      wsf--workspace-root-marker-alist)))
            (find-cmd (concat "cd " wsf--workspace
                              " ; find"
-                             (loop for dir in search-roots concat (concat " " dir))
+                             (cl-loop for dir in search-roots concat (concat " " dir))
                              " -type d \\( "
-                             (loop for (state-dir _search-roots) in wsf--workspace-root-marker-alist
+                             (cl-loop for (state-dir _search-roots) in wsf--workspace-root-marker-alist
                                    with dash-o = ""
                                    concat (concat dash-o "-name " state-dir)
                                    do (setq dash-o " -o "))
@@ -251,7 +251,7 @@ common to all directory paths is factored out.")
     (let ((line-end (point-min))
           (path-beg nil)
           (name-end nil))
-      (loop until (eq line-end (point-max)) do
+      (cl-loop until (eq line-end (point-max)) do
             (setq path-beg line-end)
             (goto-char path-beg)
             (forward-line 1)
@@ -291,7 +291,7 @@ common to all directory paths is factored out.")
 
 (defun wsf--adjust-common-prefix (path)
   "If necessary shorten the current notion of the common prefix"
-  (loop until (or (zerop (length wsf--common-prefix))
+  (cl-loop until (or (zerop (length wsf--common-prefix))
                   (string-prefix-p wsf--common-prefix path))
         ;; FIXME: must strip an entire path element
         do (setq wsf--common-prefix (substring wsf--common-prefix 0 -1))))
@@ -313,7 +313,7 @@ common to all directory paths is factored out.")
   (if (stringp paths)
       (setq paths (substring paths wsf--common-prefix-length))
     (setq paths (vconcat paths))
-    (loop for path across-ref paths do
+    (cl-loop for path across-ref paths do
           (setf path (substring path wsf--common-prefix-length)))
     (sort paths 'string<))
   (puthash file (gethash paths wsf--vector-hash paths) wsf--hash-table))
@@ -339,19 +339,19 @@ is that no single filename will be duplciated too many times.
 Also all loops over duplicates have numerous early exits."
   (let ((uniquified nil))
     (with-temp-buffer
-      (loop for file being the hash-keys of wsf--hash-table
+      (cl-loop for file being the hash-keys of wsf--hash-table
             using (hash-values paths) do
             (if (stringp paths)
                 (setq uniquified (cons file uniquified))
-              (loop for this across paths do
+              (cl-loop for this across paths do
                     (let ((suffix nil))
                       (catch 'found-unique
                         (erase-buffer)
                         (insert this)
                         (catch 'path-exhausted
-                          (loop for path-elements from 1 do
+                          (cl-loop for path-elements from 1 do
                                 (catch 'sequence-too-long
-                                  (loop for start-element from 1 do
+                                  (cl-loop for start-element from 1 do
                                         (catch 'not-unique
                                           (goto-char (point-min))
                                           (let ((start (search-forward "/" nil t start-element)))
@@ -364,7 +364,7 @@ Also all loops over duplicates have numerous early exits."
                                                   (throw 'found-unique nil))
                                                 (throw 'sequence-too-long nil))
                                               (let ((needle (buffer-substring (1- start) end)))
-                                                (loop for other across paths do
+                                                (cl-loop for other across paths do
                                                       (when (and (not (string= this other))
                                                                  (string-match-p needle other))
                                                         (throw 'not-unique nil)))
