@@ -437,7 +437,7 @@ as in `defun'."
   ;; larger than the system default.
   (frame-inhibit-implied-resize t)
   (gc-cons-threshold most-positive-fixnum)
-  (ad-redefinition-action 'accept)
+  (read-process-output-max (* 1024 1024)) ;; accelerate external process reads
   :hook
   (after-init . (lambda ()
                   (setq frame-inhibit-implied-resize nil)

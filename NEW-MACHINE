@@ -358,7 +358,7 @@ fc-list | grep Dina
 fc-list | grep Hack
 fc-list | grep Slashed
 fc-list | grep Source
-
+fc-list | grep iosevka
 
 # Create a directory for projects to be cloned from the net
 #
