@@ -839,6 +839,7 @@ as in `defun'."
 
   (let
 ;;    ((fixed-family "Monoid") (variable-family "Source Sans Pro"))
+; ;https://git.sr.ht/~protesilaos/iosevka-comfy
     ((fixed-family "Iosevka Comfy Fixed") (variable-family "Iosevka Comfy Duo"))
 ;;  ((fixed-family "Source Code Pro") (variable-family "Source Sans Pro"))
 ;;    ((fixed-family "Terminus") (variable-family "Source Sans Pro"))
