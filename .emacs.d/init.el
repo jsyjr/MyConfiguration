@@ -2,6 +2,7 @@
 
 ;(setq debug-on-error t)
 ;(debug-on-variable-change ??)
+;(setq enable-recursive-minibuffers t)
 (setq native-comp-async-report-warnings-errors nil)
 (setq warning-minimum-level :error)
 
@@ -3862,7 +3863,6 @@ to a function that generates a unique name."
   (defun my/minibuffer-setup-oneshot()
     (remove-hook 'minibuffer-setup-hook #'my/minibuffer-setup-oneshot)
 
-    ;; (setq enable-recursive-minibuffers t)
     (minibuffer-depth-indicate-mode 1)  ; show recursion depth in promp
     (setq read-extended-command-predicate       ; Hide M-x commands which do
         #'command-completion-default-include-p) ; not work in current mode
