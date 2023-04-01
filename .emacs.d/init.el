@@ -187,7 +187,7 @@
 
 
 ;;; === Package management via straight and use-package (not custom) ===
-;;;; Activate any packages install from an ELPA or MELPA
+;;;; Activate any packages installed from an ELPA or MELPA
 
 (package-activate-all)
 
