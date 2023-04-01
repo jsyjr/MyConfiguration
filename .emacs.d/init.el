@@ -300,7 +300,7 @@
   :custom
   (use-package-always-defer t)          ; Always defer load package to speed up startup
   (use-package-compute-statistics t)    ; Collect use-package statistics
-  (use-package-enable-imenu-support t)  ; Let imenu finds use-package definitions
+;xxx  (use-package-enable-imenu-support t)  ; Let imenu finds use-package definitions
   (use-package-expand-minimally t)      ; Make the expanded code as minimal as possible
   (use-package-verbose t))              ; Report loading details
 
